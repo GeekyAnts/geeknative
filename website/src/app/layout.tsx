@@ -19,7 +19,8 @@ const description =
   "Your coding agent builds the same app in SwiftUI, Jetpack Compose and TanStack Start from one spec, with no cross-platform runtime. Open source, by GeekyAnts.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://geekyants.github.io/geeknative/"),
+  // Next adds the /geeknative base path to metadata URLs itself.
+  metadataBase: new URL("https://geekyants.github.io"),
   title: {
     default: "geeknative · One prompt. Three native apps.",
     template: "%s · geeknative",
