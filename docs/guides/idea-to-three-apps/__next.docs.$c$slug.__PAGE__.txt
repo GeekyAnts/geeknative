@@ -1,0 +1,81 @@
+1:"$Sreact.fragment"
+2:I[68989,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],"ArticleEnhancer"]
+3:Te4a,<p>The first prompt in a new project usually describes the app. The agent treats it as a <strong>Product</strong> request and follows <code>.geeknative/playbooks/product.md</code>.</p>
+<blockquote>
+<p>Build a habit tracker. People create habits, check them off each day, and see their current streak.</p>
+</blockquote>
+<h2 id="what-the-agent-does">What the agent does<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#what-the-agent-does">#</a></h2>
+<ol>
+<li><strong>Understands the product.</strong> It restates the product in one sentence. It asks only about things that would change the data model or the navigation structure, and assumes the rest.</li>
+<li><strong>Fills in PRODUCT.md.</strong> The one-sentence description, the audience, the feature list, the glossary and what's out of scope. Glossary terms become the names used in code on every platform, so a "Habit" is <code>Habit</code> in Swift, Kotlin and TypeScript.</li>
+<li><strong>Sets the design direction.</strong> If you described a look, it writes the direction in DESIGN.md and updates <code>contracts/tokens.json</code> (colors in light and dark, type, spacing and radii), then runs <code>make gen</code>.</li>
+<li><strong>Plans navigation.</strong> It updates <code>spec/navigation.md</code> with the screens and how people move between them: tabs, stacks and modals. The starter Settings screen stays unless you say otherwise.</li>
+<li><strong>Writes feature specs.</strong> One spec per feature in <code>spec/features/</code>, from <code>.geeknative/templates/feature.md</code>, with every platform's status set to <code>planned</code>. The first version is kept small: the core loop first.</li>
+<li><strong>Builds in vertical slices.</strong> It takes the first feature through the whole loop on all three apps (spec, contracts, implementation, checks, status), then starts the next. It never builds every screen on one platform first.</li>
+<li><strong>Replaces the starter content.</strong> Once real features exist, it updates or removes Home's welcome card and updates <code>spec/features/home.md</code> to match.</li>
+<li><strong>Reports</strong> what it built on each platform, what's planned next, and the assumptions it made.</li>
+</ol>
+<h2 id="why-vertical-slices">Why vertical slices<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#why-vertical-slices">#</a></h2>
+<p>Building one feature across all three platforms before starting the next keeps the apps in step at every point. If the second platform reveals a gap in the spec, only one feature needs rechecking, not a whole app.</p>
+<h2 id="what-to-review">What to review<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#what-to-review">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>File</th>
+<th>Look for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PRODUCT.md</td>
+<td>Is the one-sentence description right? Is anything in the feature list out of scope?</td>
+</tr>
+<tr>
+<td>DESIGN.md</td>
+<td>Does the direction match what you had in mind?</td>
+</tr>
+<tr>
+<td><code>spec/navigation.md</code></td>
+<td>Is the screen structure right? It's expensive to change later.</td>
+</tr>
+<tr>
+<td><code>spec/features/*.md</code></td>
+<td>Are the acceptance criteria what you'd test by hand?</td>
+</tr>
+<tr>
+<td><code>spec/decisions.md</code></td>
+<td>Do you agree with the assumptions?</td>
+</tr>
+<tr>
+<td><code>spec/parity.md</code></td>
+<td>Which criteria each platform's tests cover.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Then run the apps with <code>make run-ios</code>, <code>make run-android</code> and <code>make run-web</code>, and keep going one feature at a time.</p>9:X
+e:X
+e:C
+0:{"buildId":"IqLtbHoxpi_j-UYkJN6Rr","data":[{"rsc":["$","$1","c",{"children":[[["$","article",null,{"className":"min-w-0 pb-24 pt-10 lg:pt-14","data-pagefind-body":true,"children":[["$","header",null,{"className":"max-w-[46rem] border-b border-line pb-10","children":[["$","p",null,{"className":"label flex items-center gap-3 text-muted","children":[["$","span",null,{"aria-hidden":true,"className":"inline-block size-[7px] shrink-0 rounded-full bg-brand "}],["$","span",null,{"className":"tabular-nums","children":"02"}],["$","span",null,{"className":"h-px w-5 bg-current opacity-30"}],["$","span",null,{"children":"Guides"}]]}],["$","h1",null,{"className":"mt-6 display-m","data-pagefind-meta":"title","children":"From idea to three apps"}],["$","p",null,{"className":"mt-5 max-w-[40rem] text-[1.125rem] leading-[1.55] text-ink/70","children":"What the agent does with your first prompt in a new project, following the product playbook."}]]}],["$","div",null,{"className":"mt-10 max-w-[46rem]","children":["$","$L2","guides/idea-to-three-apps",{"children":[["$","div","0",{"className":"docs-prose","dangerouslySetInnerHTML":{"__html":"$3"}}]]}]}],"$L4"]}],"$L5"],["$L6"],"$L7"]}],"isPartial":"$@8","staleTime":"$9","varyParams":null},{"rsc":"$La","isPartial":"$@b","staleTime":"$9","varyParams":null},{"rsc":"$Lc","isPartial":"$@d","staleTime":"$9","varyParams":"$e"}],"isUpgradeableISRFallback":false,"a":"$@f","rootVaryParams":null,"needsRuntimeRequest":"$@10"}
+11:I[54249,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],""]
+12:I[35820,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],"Toc"]
+13:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"OutletBoundary"]
+14:"$Sreact.suspense"
+16:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"ViewportBoundary"]
+17:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"MetadataBoundary"]
+18:I[18516,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"IconMark"]
+19:I[87180,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+1a:I[42045,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+4:["$","footer",null,{"className":"mt-20 max-w-[46rem]","data-pagefind-ignore":true,"children":[["$","a",null,{"href":"https://github.com/GeekyAnts/geeknative/edit/main/website/content/docs/guides/idea-to-three-apps.md","className":"label inline-flex items-center gap-2 text-muted transition-colors hover:text-ink","rel":"noreferrer","children":["Edit this page on GitHub ",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0 -rotate-45 ","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}],["$","nav",null,{"aria-label":"Previous and next","className":"mt-8 grid gap-px overflow-hidden rounded-2xl bg-line ring-1 ring-line sm:grid-cols-2","children":[["$","$L11",null,{"href":"/docs/guides/working-with-your-agent/","className":"group flex flex-col gap-3 bg-white p-6 transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Previous"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":[["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  rotate-180 transition-transform duration-500 ease-[var(--ease-expo)] group-hover:-translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}],"Working with your agent"]}]]}],["$","$L11",null,{"href":"/docs/guides/design-changes/","className":"group flex flex-col items-end gap-3 bg-white p-6 text-right transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Next"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":["Design changes",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  transition-transform duration-500 ease-[var(--ease-expo)] group-hover:translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}]]}]]}]]}]
+5:["$","$L12",null,{"items":[{"depth":2,"id":"what-the-agent-does","text":"What the agent does"},{"depth":2,"id":"why-vertical-slices","text":"Why vertical slices"},{"depth":2,"id":"what-to-review","text":"What to review"}]}]
+6:["$","script","script-0",{"src":"/geeknative/_next/static/chunks/1lnswdcfwctsn.js","async":true}]
+7:["$","$L13",null,{"children":["$","$14",null,{"name":"Next.MetadataOutlet","children":"$@15"}]}]
+a:["$","$1","h",{"children":[null,["$","$L16",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#ffffff"}]]}],["$","div",null,{"hidden":true,"children":["$","$L17",null,{"children":["$","$14",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"From idea to three apps · geeknative"}],["$","meta","1",{"name":"description","content":"What the agent does with your first prompt in a new project, following the product playbook."}],["$","meta","2",{"property":"og:title","content":"From idea to three apps · geeknative"}],["$","meta","3",{"property":"og:description","content":"What the agent does with your first prompt in a new project, following the product playbook."}],["$","meta","4",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","5",{"name":"twitter:title","content":"From idea to three apps · geeknative"}],["$","meta","6",{"name":"twitter:description","content":"What the agent does with your first prompt in a new project, following the product playbook."}],["$","meta","7",{"name":"twitter:image","content":"https://geekyants.github.io/geeknative/twitter-image.png?twitter-image.2fjuh4p5ndhng.png"}],["$","meta","8",{"name":"twitter:image:type","content":"image/png"}],["$","meta","9",{"name":"twitter:image:width","content":"1200"}],["$","meta","10",{"name":"twitter:image:height","content":"630"}],["$","link","11",{"rel":"icon","href":"/geeknative/icon.svg?icon.12cpu7ud8w87b.svg","sizes":"any","type":"image/svg+xml"}],["$","link","12",{"rel":"apple-touch-icon","href":"/geeknative/apple-icon.png?apple-icon.1b0eoaalscjqq.png","sizes":"180x180","type":"image/png"}],["$","$L18","13",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}]
+c:["$","$1","c",{"children":[null,["$","$L19",null,{"parallelRouterKey":"children","template":["$","$L1a",null,{}]}]]}]
+10:true
+15:null
+9:300
+9:C
+f:0
+b:"$undefined"
+d:"$undefined"
+8:"$undefined"

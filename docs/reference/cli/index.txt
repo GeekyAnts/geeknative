@@ -1,0 +1,277 @@
+1:"$Sreact.fragment"
+2:I[87180,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+3:I[42045,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+4:I[45057,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js"],"Nav"]
+5:I[54249,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],""]
+f:I[89192,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default",1]
+:HL["/geeknative/_next/static/chunks/0f9oy_8mo2rz_.css","style"]
+:HL["/geeknative/_next/static/chunks/1_hgmev11l5db.css","style"]
+:HL["/geeknative/_next/static/media/21ca8f3f56c22ca2-s.p.1cp9-4nby68jc.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/geeknative/_next/static/media/70bc3e132a0a741e-s.p.3t6q91iet4nsy.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+d:X
+0:{"P":null,"c":["","docs","reference","cli",""],"q":"","i":false,"f":[[["",{"children":["docs",{"children":[["slug","reference/cli","c",[]],{"children":["__PAGE__",{},"$undefined","$undefined",4608]},"$undefined","$undefined",4608]},"$undefined","$undefined",4608]},"$undefined","$undefined",4624],[["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/geeknative/_next/static/chunks/0f9oy_8mo2rz_.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","script","script-0",{"src":"/geeknative/_next/static/chunks/3ylnlcypto1do.js","async":true,"nonce":"$undefined"}]],["$","html",null,{"lang":"en","className":"archivo_50e8c9bb-module___CSDRq__variable jetbrains_mono_3ff90238-module__iziPYa__variable","suppressHydrationWarning":true,"children":[["$","head",null,{"children":["$","script",null,{"dangerouslySetInnerHTML":{"__html":"document.documentElement.classList.add('js')"}}]}],["$","body",null,{"children":["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","$L4",null,{"solid":true}],["$","main",null,{"className":"mx-auto w-full max-w-[1480px] px-5 sm:px-8 lg:px-12 flex min-h-[78svh] flex-col justify-center pb-20 pt-32","children":[["$","p",null,{"className":"label flex items-center gap-3 text-muted","children":[["$","span",null,{"aria-hidden":true,"className":"inline-block size-[7px] shrink-0 rounded-full bg-brand "}],["$","span",null,{"className":"tabular-nums","children":"404"}],["$","span",null,{"className":"h-px w-5 bg-current opacity-30"}],["$","span",null,{"children":"Page not found"}]]}],["$","h1",null,{"className":"mt-8 display-xl","children":["Not found",[["$","span",null,{"className":"sr-only","children":"."}],["$","span",null,{"aria-hidden":true,"className":"ml-[0.05em] inline-block aspect-square w-[0.19em] rounded-full bg-brand"}]]]}],["$","p",null,{"className":"mt-8 max-w-[34rem] text-[1.125rem] leading-[1.55] text-ink/70","children":"This page doesn't exist, or it moved when the docs were reorganized. Start from the docs home, or go back to the front page."}],["$","div",null,{"className":"mt-10 flex flex-wrap items-center gap-x-7 gap-y-4","children":[["$","$L5",null,{"href":"/docs/","className":"group inline-flex h-12 items-center gap-3 rounded-full px-6 text-[15px] font-medium tracking-[-0.005em] transition-colors duration-300 bg-ink text-white hover:bg-brand ","children":[["$","span",null,{"children":"Read the docs"}],["$","span",null,{"className":"relative -mr-1 inline-flex size-4 overflow-hidden","children":[["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  absolute inset-0 transition-transform duration-500 ease-[var(--ease-expo)] group-hover:translate-x-full","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}],["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  absolute inset-0 -translate-x-full transition-transform duration-500 ease-[var(--ease-expo)] group-hover:translate-x-0","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}]]}],["$","a",null,{"href":"/geeknative/","className":"group inline-flex items-center gap-2 text-[15px] font-medium ","children":[["$","span",null,{"className":"bg-[linear-gradient(currentColor,currentColor)] bg-[length:0%_1px] bg-left-bottom bg-no-repeat pb-0.5 transition-[background-size] duration-500 ease-[var(--ease-expo)] group-hover:bg-[length:100%_1px]","children":"Go to the front page"}],["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  transition-transform duration-500 ease-[var(--ease-expo)] group-hover:translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}]]}]]}],["$","footer",null,{"className":"border-t border-line bg-paper","children":[["$","div",null,{"className":"mx-auto w-full max-w-[1480px] px-5 sm:px-8 lg:px-12 grid gap-y-14 py-20 lg:grid-cols-12 lg:gap-x-6 lg:py-24","children":[["$","div",null,{"className":"flex flex-col gap-8 lg:col-span-5","children":["$L6","$L7",null]}],"$L8"]}],"$L9"]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]}]]}]]}],{"children":["$La",{"children":["$Lb",{"children":["$Lc",{},null,false,null]},null,false,"$d"]},null,false,null]},null,false,null],"$Le",false]],"m":"$undefined","G":["$f",["$L10"]],"S":true,"h":null,"r":"$undefined","s":"$undefined","a":"$undefined","l":"$undefined","p":"$undefined","d":"$undefined","b":"IqLtbHoxpi_j-UYkJN6Rr"}
+11:I[35043,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js"],"DocsSidebar"]
+16:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"OutletBoundary"]
+17:"$Sreact.suspense"
+19:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"ViewportBoundary"]
+1b:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"MetadataBoundary"]
+6:["$","span",null,{"className":"inline-flex items-center gap-[0.42em] text-ink self-start text-[26px]","children":[["$","svg",null,{"viewBox":"0 0 24 24","className":"h-[1.18em] w-[1.18em] shrink-0","role":"$undefined","aria-label":"$undefined","aria-hidden":true,"children":[["$","circle",null,{"cx":12,"cy":12,"r":12,"fill":"#CA0515"}],["$","g",null,{"fill":"#fff","children":[["$","circle","0",{"cx":8.54,"cy":15.46,"r":3.3}],["$","circle","1",{"cx":12.88,"cy":11.12,"r":2.05}],["$","circle","2",{"cx":15.89,"cy":8.11,"r":1.55}]]}],["$","g",null,{"fill":"none","stroke":"#fff","strokeWidth":0.8,"strokeLinecap":"round","children":[["$","path","0",{"d":"M17.02 7.69C18.05 7.01 19.04 6.87 20.13 6.98"}],["$","path","1",{"d":"M16.31 6.98C16.99 5.95 17.13 4.96 17.02 3.87"}]]}]]}],["$","span",null,{"className":"text-[1em] font-[760] leading-none tracking-[-0.035em] wide","children":"geeknative"}]]}]
+7:["$","p",null,{"className":"max-w-[24rem] text-[15px] leading-[1.6] text-ink/65","children":"One prompt, three native apps. An open source framework that lets your coding agent build SwiftUI, Jetpack Compose and TanStack Start apps from one spec. Built by GeekyAnts."}]
+8:["$","nav",null,{"aria-label":"Footer","className":"grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-3 lg:col-span-7","children":[["$","div","Docs",{"children":[["$","p",null,{"className":"label text-muted","children":"Docs"}],["$","ul",null,{"className":"mt-5 space-y-2.5","children":[["$","li","Quick start",{"children":["$","$L5",null,{"href":"/docs/start-here/quick-start/","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"Quick start"}]}],["$","li","How it works",{"children":["$","$L5",null,{"href":"/docs/concepts/how-it-works/","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"How it works"}]}],["$","li","Working with your agent",{"children":["$","$L5",null,{"href":"/docs/guides/working-with-your-agent/","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"Working with your agent"}]}],["$","li","CLI reference",{"children":["$","$L5",null,{"href":"/docs/reference/cli/","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"CLI reference"}]}],["$","li","Contracts",{"children":["$","$L5",null,{"href":"/docs/reference/contracts/","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"Contracts"}]}]]}]]}],["$","div","Project",{"children":[["$","p",null,{"className":"label text-muted","children":"Project"}],["$","ul",null,{"className":"mt-5 space-y-2.5","children":[["$","li","GitHub",{"children":["$","a",null,{"href":"https://github.com/GeekyAnts/geeknative","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"GitHub"}]}],["$","li","npm",{"children":["$","a",null,{"href":"https://www.npmjs.com/package/geeknative","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"npm"}]}],["$","li","Releases",{"children":["$","a",null,{"href":"https://github.com/GeekyAnts/geeknative/releases","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"Releases"}]}],["$","li","Roadmap",{"children":["$","$L5",null,{"href":"/docs/project/roadmap/","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"Roadmap"}]}],["$","li","Contributing",{"children":["$","$L5",null,{"href":"/docs/project/contributing/","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"Contributing"}]}]]}]]}],["$","div","GeekyAnts",{"children":[["$","p",null,{"className":"label text-muted","children":"GeekyAnts"}],["$","ul",null,{"className":"mt-5 space-y-2.5","children":[["$","li","geekyants.com",{"children":["$","a",null,{"href":"https://geekyants.com","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"geekyants.com"}]}],["$","li","The colony",{"children":["$","a",null,{"href":"https://colony.geekyants.com","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"The colony"}]}],["$","li","Open source",{"children":["$","a",null,{"href":"https://geekyants.com/open-source","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"Open source"}]}]]}]]}]]}]
+9:["$","div",null,{"className":"border-t border-line","children":["$","div",null,{"className":"mx-auto w-full max-w-[1480px] px-5 sm:px-8 lg:px-12 label flex flex-col gap-4 py-6 text-muted md:flex-row md:items-center md:justify-between","children":[["$","span",null,{"children":"© 2026 GeekyAnts. Apache 2.0 license."}],["$","span",null,{"children":["The ants come from"," ",["$","a",null,{"href":"https://colony.geekyants.com","className":"text-ink hover:text-brand","children":"the GeekyAnts colony"}]]}]]}]}]
+a:["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/geeknative/_next/static/chunks/1_hgmev11l5db.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","script","script-0",{"src":"/geeknative/_next/static/chunks/06hh46w2ougjo.js","async":true,"nonce":"$undefined"}]],[["$","$L4",null,{"solid":true}],["$","div",null,{"className":"mx-auto w-full max-w-[1480px] px-5 sm:px-8 lg:px-12 pt-16 lg:pt-[72px]","children":["$","div",null,{"className":"grid grid-cols-1 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-x-12 xl:grid-cols-[15rem_minmax(0,1fr)_13rem] xl:gap-x-14","children":[["$","$L11",null,{"sections":[{"id":"start-here","title":"Start here","index":1,"pages":[{"href":"/docs/start-here/introduction/","title":"Introduction","description":"What geeknative is, why it exists, and what you get when you create a project."},{"href":"/docs/start-here/quick-start/","title":"Quick start","description":"Create a geeknative project, check your toolchains, build all three apps and give your agent its first prompt."},{"href":"/docs/start-here/requirements/","title":"Requirements","description":"The toolchains geeknative needs, and the minimum OS versions the apps support."}]},{"id":"guides","title":"Guides","index":2,"pages":[{"href":"/docs/guides/working-with-your-agent/","title":"Working with your agent","description":"How plain prompts become changes in all three apps, and how to get the best results."},{"href":"/docs/guides/idea-to-three-apps/","title":"From idea to three apps","description":"What the agent does with your first prompt in a new project, following the product playbook."},{"href":"/docs/guides/design-changes/","title":"Design changes","description":"How look-and-feel requests flow through DESIGN.md and design tokens into all three apps."},{"href":"/docs/guides/claude-code/","title":"Claude Code","description":"How a geeknative project integrates with Claude Code, through instruction imports, platform subagents, hooks and permissions."},{"href":"/docs/guides/other-agents/","title":"Other agents","description":"Using a geeknative project with Codex, Cursor, GitHub Copilot, Gemini CLI and other coding agents."}]},{"id":"concepts","title":"Concepts","index":3,"pages":[{"href":"/docs/concepts/how-it-works/","title":"How it works","description":"The three layers that keep three codebases consistent, the loop every change follows, and what \"done\" means."},{"href":"/docs/concepts/project-structure/","title":"Project structure","description":"What's in a geeknative project, file by file."},{"href":"/docs/concepts/architecture/","title":"Architecture","description":"The mirrored architecture every geeknative app follows, with the same names on iOS, Android and web."},{"href":"/docs/concepts/specs-and-parity/","title":"Specs and parity","description":"The feature spec format, acceptance criteria IDs, platform status, and how make parity reports coverage."},{"href":"/docs/concepts/file-ownership/","title":"File ownership","description":"Which files in a project belong to you, which belong to the framework, and which are generated."}]},{"id":"reference","title":"Reference","index":4,"pages":[{"href":"/docs/reference/cli/","title":"CLI","description":"Every geeknative command and option, and the make targets that wrap them."},{"href":"/docs/reference/contracts/","title":"Contracts","description":"The format of every file in contracts/, its validation rules, and the code it generates on each platform."},{"href":"/docs/reference/platforms/","title":"Platforms","description":"How each of the three apps is built, laid out, tested and run."}]},{"id":"project","title":"Project","index":5,"pages":[{"href":"/docs/project/roadmap/","title":"Roadmap","description":"What's planned for geeknative after 0.1.0."},{"href":"/docs/project/contributing/","title":"Contributing","description":"How the geeknative repository is organized, and how to change and test it."},{"href":"/docs/project/changelog/","title":"Changelog","description":"Release notes for geeknative."}]}]}],"$L12"]}]}],"$L13","$L14"]]}]
+b:["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}]
+c:["$","$1","c",{"children":["$L15",[["$","script","script-0",{"src":"/geeknative/_next/static/chunks/1lnswdcfwctsn.js","async":true,"nonce":"$undefined"}]],["$","$L16",null,{"children":["$","$17",null,{"name":"Next.MetadataOutlet","children":"$@18"}]}]]}]
+e:["$","$1","h",{"children":[null,["$","$L19",null,{"children":"$L1a"}],["$","div",null,{"hidden":true,"children":["$","$L1b",null,{"children":["$","$17",null,{"name":"Next.Metadata","children":"$L1c"}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}]
+10:["$","link","0",{"rel":"stylesheet","href":"/geeknative/_next/static/chunks/0f9oy_8mo2rz_.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]
+1f:I[58602,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js"],"SearchDialog"]
+d:C
+12:["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]
+13:["$","footer",null,{"className":"border-t border-line bg-paper","children":[["$","div",null,{"className":"mx-auto w-full max-w-[1480px] px-5 sm:px-8 lg:px-12 grid gap-y-14 py-20 lg:grid-cols-12 lg:gap-x-6 lg:py-24","children":[["$","div",null,{"className":"flex flex-col gap-8 lg:col-span-5","children":[["$","span",null,{"className":"inline-flex items-center gap-[0.42em] text-ink self-start text-[26px]","children":[["$","svg",null,{"viewBox":"0 0 24 24","className":"h-[1.18em] w-[1.18em] shrink-0","role":"$undefined","aria-label":"$undefined","aria-hidden":true,"children":[["$","circle",null,{"cx":12,"cy":12,"r":12,"fill":"#CA0515"}],["$","g",null,{"fill":"#fff","children":[["$","circle","0",{"cx":8.54,"cy":15.46,"r":3.3}],["$","circle","1",{"cx":12.88,"cy":11.12,"r":2.05}],["$","circle","2",{"cx":15.89,"cy":8.11,"r":1.55}]]}],["$","g",null,{"fill":"none","stroke":"#fff","strokeWidth":0.8,"strokeLinecap":"round","children":[["$","path","0",{"d":"M17.02 7.69C18.05 7.01 19.04 6.87 20.13 6.98"}],["$","path","1",{"d":"M16.31 6.98C16.99 5.95 17.13 4.96 17.02 3.87"}]]}]]}],["$","span",null,{"className":"text-[1em] font-[760] leading-none tracking-[-0.035em] wide","children":"geeknative"}]]}],["$","p",null,{"className":"max-w-[24rem] text-[15px] leading-[1.6] text-ink/65","children":"One prompt, three native apps. An open source framework that lets your coding agent build SwiftUI, Jetpack Compose and TanStack Start apps from one spec. Built by GeekyAnts."}],null]}],["$","nav",null,{"aria-label":"Footer","className":"grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-3 lg:col-span-7","children":[["$","div","Docs",{"children":[["$","p",null,{"className":"label text-muted","children":"Docs"}],["$","ul",null,{"className":"mt-5 space-y-2.5","children":[["$","li","Quick start",{"children":["$","$L5",null,{"href":"/docs/start-here/quick-start/","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"Quick start"}]}],["$","li","How it works",{"children":["$","$L5",null,{"href":"/docs/concepts/how-it-works/","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"How it works"}]}],["$","li","Working with your agent",{"children":["$","$L5",null,{"href":"/docs/guides/working-with-your-agent/","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"Working with your agent"}]}],["$","li","CLI reference",{"children":["$","$L5",null,{"href":"/docs/reference/cli/","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"CLI reference"}]}],["$","li","Contracts",{"children":["$","$L5",null,{"href":"/docs/reference/contracts/","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"Contracts"}]}]]}]]}],["$","div","Project",{"children":[["$","p",null,{"className":"label text-muted","children":"Project"}],["$","ul",null,{"className":"mt-5 space-y-2.5","children":[["$","li","GitHub",{"children":["$","a",null,{"href":"https://github.com/GeekyAnts/geeknative","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"GitHub"}]}],["$","li","npm",{"children":["$","a",null,{"href":"https://www.npmjs.com/package/geeknative","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"npm"}]}],["$","li","Releases",{"children":["$","a",null,{"href":"https://github.com/GeekyAnts/geeknative/releases","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"Releases"}]}],["$","li","Roadmap",{"children":["$","$L5",null,{"href":"/docs/project/roadmap/","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"Roadmap"}]}],["$","li","Contributing",{"children":["$","$L5",null,{"href":"/docs/project/contributing/","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"Contributing"}]}]]}]]}],["$","div","GeekyAnts",{"children":[["$","p",null,{"className":"label text-muted","children":"GeekyAnts"}],["$","ul",null,{"className":"mt-5 space-y-2.5","children":[["$","li","geekyants.com",{"children":["$","a",null,{"href":"https://geekyants.com","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"geekyants.com"}]}],["$","li","The colony",{"children":["$","a",null,{"href":"https://colony.geekyants.com","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"The colony"}]}],"$L1d"]}]]}]]}]]}],"$L1e"]}]
+14:["$","$L1f",null,{}]
+1d:["$","li","Open source",{"children":["$","a",null,{"href":"https://geekyants.com/open-source","className":"text-[14.5px] text-ink/80 transition-colors hover:text-brand","children":"Open source"}]}]
+1e:["$","div",null,{"className":"border-t border-line","children":["$","div",null,{"className":"mx-auto w-full max-w-[1480px] px-5 sm:px-8 lg:px-12 label flex flex-col gap-4 py-6 text-muted md:flex-row md:items-center md:justify-between","children":[["$","span",null,{"children":"© 2026 GeekyAnts. Apache 2.0 license."}],["$","span",null,{"children":["The ants come from"," ",["$","a",null,{"href":"https://colony.geekyants.com","className":"text-ink hover:text-brand","children":"the GeekyAnts colony"}]]}]]}]}]
+1a:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#ffffff"}]]
+20:I[18516,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"IconMark"]
+18:null
+1c:[["$","title","0",{"children":"CLI · geeknative"}],["$","meta","1",{"name":"description","content":"Every geeknative command and option, and the make targets that wrap them."}],["$","meta","2",{"property":"og:title","content":"CLI · geeknative"}],["$","meta","3",{"property":"og:description","content":"Every geeknative command and option, and the make targets that wrap them."}],["$","meta","4",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","5",{"name":"twitter:title","content":"CLI · geeknative"}],["$","meta","6",{"name":"twitter:description","content":"Every geeknative command and option, and the make targets that wrap them."}],["$","meta","7",{"name":"twitter:image","content":"https://geekyants.github.io/geeknative/twitter-image.png?twitter-image.2fjuh4p5ndhng.png"}],["$","meta","8",{"name":"twitter:image:type","content":"image/png"}],["$","meta","9",{"name":"twitter:image:width","content":"1200"}],["$","meta","10",{"name":"twitter:image:height","content":"630"}],["$","link","11",{"rel":"icon","href":"/geeknative/icon.svg?icon.12cpu7ud8w87b.svg","sizes":"any","type":"image/svg+xml"}],["$","link","12",{"rel":"apple-touch-icon","href":"/geeknative/apple-icon.png?apple-icon.1b0eoaalscjqq.png","sizes":"180x180","type":"image/png"}],["$","$L20","13",{}]]
+21:I[68989,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],"ArticleEnhancer"]
+22:T329e,<p>The <code>geeknative</code> CLI is a dev dependency of every project. Inside a project you normally use it through <code>make</code>. Run it directly with <code>npx geeknative &#x3C;command></code>.</p>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="text"><code><span class="line"><span>geeknative &#x3C;command></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  create &#x3C;folder>      Create a project. Options: --name "My App" --id com.acme.myapp --no-install --no-git</span></span>
+<span class="line"><span>  gen                  Regenerate platform code from contracts/</span></span>
+<span class="line"><span>  check [targets]      Verify contracts, then build and test. Targets: all (default), contracts, ios, android, web</span></span>
+<span class="line"><span>  doctor [--fix]       Check Xcode, the Android SDK and Node; --fix installs what it can</span></span>
+<span class="line"><span>  parity               Update spec/parity.md from feature specs and tests</span></span>
+<span class="line"><span>  run &#x3C;platform>       Build and launch: ios (simulator), android (emulator or device), web (dev server)</span></span>
+<span class="line"><span>  version              Print the version</span></span></code></pre>
+<p><code>geeknative help</code> (or <code>-h</code>) prints this list, and <code>-v</code> prints the version. Every command except <code>create</code> and <code>version</code> works from anywhere inside a project: it walks up from the current folder to the one containing <code>contracts/app.json</code>.</p>
+<h2 id="create">create<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#create">#</a></h2>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="shell"><code><span class="line"><span style="color:#0B0B0B;font-weight:bold">npm</span><span style="color:#0B0B0B"> create</span><span style="color:#0B0B0B"> geeknative@latest</span><span style="color:#686664"> &#x3C;</span><span style="color:#0B0B0B">folde</span><span style="color:#0B0B0B">r</span><span style="color:#686664">></span><span style="color:#686664"> --</span><span style="color:#0B0B0B"> [--name </span><span style="color:#9F0310">"My App"</span><span style="color:#0B0B0B">]</span><span style="color:#0B0B0B"> [--id </span><span style="color:#0B0B0B">com.acme.myapp]</span><span style="color:#0B0B0B"> [--no-install] </span><span style="color:#686664">[</span><span style="color:#0B0B0B">--no-git</span><span style="color:#686664">]</span></span>
+<span class="line"><span style="color:#0B0B0B;font-weight:bold">npx</span><span style="color:#0B0B0B"> geeknative@latest</span><span style="color:#0B0B0B"> create</span><span style="color:#686664"> &#x3C;</span><span style="color:#0B0B0B">folde</span><span style="color:#0B0B0B">r</span><span style="color:#686664">></span><span style="color:#0B0B0B"> [options]</span></span></code></pre>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--name</code></td>
+<td>The folder name in title case (<code>my-app</code> becomes "My App")</td>
+<td>The app's display name</td>
+</tr>
+<tr>
+<td><code>--id</code></td>
+<td><code>com.example.&#x3C;folder name without dashes></code></td>
+<td>Bundle ID on iOS, application ID on Android</td>
+</tr>
+<tr>
+<td><code>--no-install</code></td>
+<td></td>
+<td>Skip <code>npm install</code></td>
+</tr>
+<tr>
+<td><code>--no-git</code></td>
+<td></td>
+<td>Skip <code>git init</code> and the first commit</td>
+</tr>
+</tbody>
+</table></div>
+<p><code>create</code>:</p>
+<ol>
+<li>checks that the folder doesn't exist or is empty, and that the name and ID are valid on every platform;</li>
+<li>copies the template;</li>
+<li>writes the name and ID to <code>contracts/app.json</code> and the folder name to <code>package.json</code>;</li>
+<li>runs <code>gen</code> and writes <code>.geeknative/lock.json</code>;</li>
+<li>writes <code>apps/android/local.properties</code> if it finds an Android SDK;</li>
+<li>runs <code>npm install</code>, then <code>git init</code> and a first commit (unless you passed <code>--no-install</code> or <code>--no-git</code>).</li>
+</ol>
+<h2 id="gen">gen<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#gen">#</a></h2>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="shell"><code><span class="line"><span style="color:#0B0B0B;font-weight:bold">npx</span><span style="color:#0B0B0B"> geeknative</span><span style="color:#0B0B0B"> gen</span><span style="color:#A3A09C;font-style:italic">        # or: make gen</span></span></code></pre>
+<p>Validates every contract, writes the generated files that changed, and deletes generated files that are no longer produced (for example, after removing a locale). It lists the files it changed. Invalid contracts fail with a message naming the file and field. See <a href="/geeknative/docs/reference/contracts/">Contracts</a>.</p>
+<h2 id="check">check<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#check">#</a></h2>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="shell"><code><span class="line"><span style="color:#0B0B0B;font-weight:bold">npx</span><span style="color:#0B0B0B"> geeknative</span><span style="color:#0B0B0B"> check</span><span style="color:#0B0B0B"> [all </span><span style="color:#686664">|</span><span style="color:#0B0B0B;font-weight:bold"> contracts</span><span style="color:#686664"> |</span><span style="color:#0B0B0B;font-weight:bold"> ios</span><span style="color:#686664"> |</span><span style="color:#0B0B0B;font-weight:bold"> android</span><span style="color:#686664"> |</span><span style="color:#0B0B0B;font-weight:bold"> web</span><span style="color:#0B0B0B"> ...]</span><span style="color:#A3A09C;font-style:italic">   # or: make check, make check-ios, ...</span></span></code></pre>
+<p>Always validates the contracts first and fails if generated files are out of date. Then it builds and tests each requested app and prints one line per app. Full output goes to <code>.geeknative/logs/&#x3C;platform>.log</code>; on failure, the most relevant lines are printed (up to 25). The exit code is 1 if anything failed.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Target</th>
+<th>What runs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ios</code></td>
+<td><code>xcodebuild test</code> for the <code>App</code> scheme on an iPhone simulator, with derived data in <code>apps/ios/.build/</code>. macOS only.</td>
+</tr>
+<tr>
+<td><code>android</code></td>
+<td><code>./gradlew :app:testDebugUnitTest :app:assembleDebug</code> in <code>apps/android</code>. Writes <code>local.properties</code> if it's missing.</td>
+</tr>
+<tr>
+<td><code>web</code></td>
+<td><code>npm run check</code> in <code>apps/web</code>: route generation and <code>tsc</code>, then Vitest, then a production build. Needs <code>npm install</code> first.</td>
+</tr>
+<tr>
+<td><code>contracts</code></td>
+<td>Only the contract validation.</td>
+</tr>
+</tbody>
+</table></div>
+<p>The simulator is the one named in <code>GEEKNATIVE_IOS_SIMULATOR</code> (a name or UDID) if set, otherwise a booted iPhone, otherwise an iPhone on the newest iOS runtime.</p>
+<h2 id="doctor">doctor<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#doctor">#</a></h2>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="shell"><code><span class="line"><span style="color:#0B0B0B;font-weight:bold">npx</span><span style="color:#0B0B0B"> geeknative</span><span style="color:#0B0B0B"> doctor</span><span style="color:#0B0B0B"> [--fix]   </span><span style="color:#A3A09C;font-style:italic"># or: make doctor, make doctor FIX=1</span></span></code></pre>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Passes when</th>
+<th><code>--fix</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>node</td>
+<td>Node 22 or later</td>
+<td></td>
+</tr>
+<tr>
+<td>deps</td>
+<td><code>node_modules/</code> exists</td>
+<td>Runs <code>npm install</code></td>
+</tr>
+<tr>
+<td>contracts</td>
+<td>Contracts are valid and generated files are current</td>
+<td></td>
+</tr>
+<tr>
+<td>xcode</td>
+<td>Xcode 26 or later (macOS only)</td>
+<td></td>
+</tr>
+<tr>
+<td>simulator</td>
+<td>An iPhone simulator is available</td>
+<td></td>
+</tr>
+<tr>
+<td>java</td>
+<td>A JDK can start Gradle</td>
+<td></td>
+</tr>
+<tr>
+<td>android</td>
+<td>An Android SDK is found (and <code>local.properties</code> is written)</td>
+<td></td>
+</tr>
+<tr>
+<td>platform</td>
+<td>The Android API level the app compiles against (37) is installed</td>
+<td>Accepts the SDK licenses and installs it with <code>sdkmanager</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>It ends with the number of problems found and exits with 1 if there were any.</p>
+<h2 id="parity">parity<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#parity">#</a></h2>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="shell"><code><span class="line"><span style="color:#0B0B0B;font-weight:bold">npx</span><span style="color:#0B0B0B"> geeknative</span><span style="color:#0B0B0B"> parity</span><span style="color:#A3A09C;font-style:italic">   # or: make parity</span></span></code></pre>
+<p>Writes <code>spec/parity.md</code> from the feature specs and the tests, and prints each feature's status and untested criteria. See <a href="/geeknative/docs/concepts/specs-and-parity/">Specs and parity</a>.</p>
+<h2 id="run">run<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#run">#</a></h2>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="shell"><code><span class="line"><span style="color:#0B0B0B;font-weight:bold">npx</span><span style="color:#0B0B0B"> geeknative</span><span style="color:#0B0B0B"> run</span><span style="color:#0B0B0B"> ios</span><span style="color:#686664"> |</span><span style="color:#0B0B0B;font-weight:bold"> android</span><span style="color:#686664"> |</span><span style="color:#0B0B0B;font-weight:bold"> web</span><span style="color:#A3A09C;font-style:italic">   # or: make run-ios, make run-android, make run-web</span></span></code></pre>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ios</code></td>
+<td>Boots the chosen simulator if needed, opens Simulator, builds, installs and launches the app by its bundle ID.</td>
+</tr>
+<tr>
+<td><code>android</code></td>
+<td>Uses a connected device or running emulator. If there's none, it starts the first emulator from <code>emulator -list-avds</code> and waits for it to boot. Then <code>./gradlew :app:installDebug</code> and launches <code>app.MainActivity</code>.</td>
+</tr>
+<tr>
+<td><code>web</code></td>
+<td>Starts the TanStack Start dev server at <code>http://localhost:3000</code>.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="make-targets">make targets<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#make-targets">#</a></h2>
+<p>The project's Makefile includes <code>.geeknative/framework.mk</code>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Target</th>
+<th>Runs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>make</code> or <code>make help</code></td>
+<td>Lists the targets</td>
+</tr>
+<tr>
+<td><code>make doctor</code></td>
+<td><code>geeknative doctor</code> (<code>FIX=1</code> adds <code>--fix</code>)</td>
+</tr>
+<tr>
+<td><code>make gen</code></td>
+<td><code>geeknative gen</code></td>
+</tr>
+<tr>
+<td><code>make check</code></td>
+<td><code>geeknative check all</code></td>
+</tr>
+<tr>
+<td><code>make check-contracts</code></td>
+<td><code>geeknative check contracts</code></td>
+</tr>
+<tr>
+<td><code>make check-ios</code>, <code>check-android</code>, <code>check-web</code></td>
+<td><code>geeknative check &#x3C;platform></code></td>
+</tr>
+<tr>
+<td><code>make parity</code></td>
+<td><code>geeknative parity</code></td>
+</tr>
+<tr>
+<td><code>make run-ios</code>, <code>run-android</code>, <code>run-web</code></td>
+<td><code>geeknative run &#x3C;platform></code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Add your own targets to the root Makefile, below the <code>include</code> line.</p>
+<h2 id="environment-variables">Environment variables<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#environment-variables">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GEEKNATIVE_IOS_SIMULATOR</code></td>
+<td>The simulator to build, test and run on (name or UDID)</td>
+</tr>
+<tr>
+<td><code>NO_COLOR</code></td>
+<td>Turns off colored output</td>
+</tr>
+<tr>
+<td><code>ANDROID_HOME</code>, <code>ANDROID_SDK_ROOT</code></td>
+<td>Where to find the Android SDK</td>
+</tr>
+</tbody>
+</table></div>15:[["$","article",null,{"className":"min-w-0 pb-24 pt-10 lg:pt-14","data-pagefind-body":true,"children":[["$","header",null,{"className":"max-w-[46rem] border-b border-line pb-10","children":[["$","p",null,{"className":"label flex items-center gap-3 text-muted","children":[["$","span",null,{"aria-hidden":true,"className":"inline-block size-[7px] shrink-0 rounded-full bg-brand "}],["$","span",null,{"className":"tabular-nums","children":"04"}],["$","span",null,{"className":"h-px w-5 bg-current opacity-30"}],["$","span",null,{"children":"Reference"}]]}],["$","h1",null,{"className":"mt-6 display-m","data-pagefind-meta":"title","children":"CLI"}],["$","p",null,{"className":"mt-5 max-w-[40rem] text-[1.125rem] leading-[1.55] text-ink/70","children":"Every geeknative command and option, and the make targets that wrap them."}]]}],["$","div",null,{"className":"mt-10 max-w-[46rem]","children":["$","$L21","reference/cli",{"children":[["$","div","0",{"className":"docs-prose","dangerouslySetInnerHTML":{"__html":"$22"}}]]}]}],"$L23"]}],"$L24"]
+25:I[35820,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],"Toc"]
+23:["$","footer",null,{"className":"mt-20 max-w-[46rem]","data-pagefind-ignore":true,"children":[["$","a",null,{"href":"https://github.com/GeekyAnts/geeknative/edit/main/website/content/docs/reference/cli.md","className":"label inline-flex items-center gap-2 text-muted transition-colors hover:text-ink","rel":"noreferrer","children":["Edit this page on GitHub ",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0 -rotate-45 ","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}],["$","nav",null,{"aria-label":"Previous and next","className":"mt-8 grid gap-px overflow-hidden rounded-2xl bg-line ring-1 ring-line sm:grid-cols-2","children":[["$","$L5",null,{"href":"/docs/concepts/file-ownership/","className":"group flex flex-col gap-3 bg-white p-6 transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Previous"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":[["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  rotate-180 transition-transform duration-500 ease-[var(--ease-expo)] group-hover:-translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}],"File ownership"]}]]}],["$","$L5",null,{"href":"/docs/reference/contracts/","className":"group flex flex-col items-end gap-3 bg-white p-6 text-right transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Next"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":["Contracts",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  transition-transform duration-500 ease-[var(--ease-expo)] group-hover:translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}]]}]]}]]}]
+24:["$","$L25",null,{"items":[{"depth":2,"id":"create","text":"create"},{"depth":2,"id":"gen","text":"gen"},{"depth":2,"id":"check","text":"check"},{"depth":2,"id":"doctor","text":"doctor"},{"depth":2,"id":"parity","text":"parity"},{"depth":2,"id":"run","text":"run"},{"depth":2,"id":"make-targets","text":"make targets"},{"depth":2,"id":"environment-variables","text":"Environment variables"}]}]

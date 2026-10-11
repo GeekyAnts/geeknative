@@ -1,0 +1,96 @@
+1:"$Sreact.fragment"
+2:I[68989,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],"ArticleEnhancer"]
+3:T1b21,<p>Every file in a geeknative project has one owner. That's what makes framework upgrades possible without touching your work.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Owner</th>
+<th>Files</th>
+<th>On upgrade</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Framework</strong></td>
+<td><code>.geeknative/framework.mk</code>, <code>.geeknative/playbooks/</code>, <code>.geeknative/templates/</code>, <code>.geeknative/hooks/</code>, <code>.claude/agents/ios-engineer.md</code>, <code>android-engineer.md</code> and <code>web-engineer.md</code>, and the managed block in each <code>AGENTS.md</code> and the root <code>CLAUDE.md</code></td>
+<td>Replaced</td>
+</tr>
+<tr>
+<td><strong>You</strong></td>
+<td>Everything else: PRODUCT.md, DESIGN.md, <code>spec/</code>, <code>contracts/</code>, all app code, your sections of <code>AGENTS.md</code>, the Makefile, <code>.claude/settings.json</code></td>
+<td>Never touched</td>
+</tr>
+<tr>
+<td><strong>Generated</strong></td>
+<td><code>Generated/</code>, <code>generated/</code>, <code>generated_*.xml</code>, <code>Identity.xcconfig</code>, <code>identity.properties</code></td>
+<td>Rebuilt by <code>make gen</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="managed-blocks">Managed blocks<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#managed-blocks">#</a></h2>
+<p>AGENTS.md files mix framework rules and your rules. The framework's part sits between markers:</p>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="md"><code><span class="line"><span style="color:#A3A09C;font-style:italic">&#x3C;!-- geeknative:begin (managed by geeknative: replaced on upgrade. Add your own rules under "Project rules" at the end.) --></span></span>
+<span class="line"><span style="color:#686664;font-weight:bold">#</span><span style="color:#0B0B0B;font-weight:bold"> How to work in this repo</span></span>
+<span class="line"><span style="color:#0B0B0B">...</span></span>
+<span class="line"><span style="color:#A3A09C;font-style:italic">&#x3C;!-- geeknative:end --></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#686664;font-weight:bold">##</span><span style="color:#0B0B0B;font-weight:bold"> Project rules</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#686664">-</span><span style="color:#0B0B0B"> Brand voice is playful.</span></span>
+<span class="line"><span style="color:#686664">-</span><span style="color:#0B0B0B"> No bottom sheets on iOS.</span></span></code></pre>
+<p>Put your own rules under "Project rules". They override the framework defaults above them.</p>
+<p>The same applies to <code>apps/ios/AGENTS.md</code>, <code>apps/android/AGENTS.md</code>, <code>apps/web/AGENTS.md</code> and the Claude Code section of the root <code>CLAUDE.md</code>.</p>
+<h2 id="the-lockfile">The lockfile<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#the-lockfile">#</a></h2>
+<p><code>geeknative create</code> writes <code>.geeknative/lock.json</code> with the framework version and a SHA-256 hash of every framework-owned file and block, as installed:</p>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="json"><code><span class="line"><span style="color:#686664">{</span></span>
+<span class="line"><span style="color:#686664">  "</span><span style="color:#0B0B0B">geeknative</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "0.1.0"</span><span style="color:#686664">,</span></span>
+<span class="line"><span style="color:#686664">  "</span><span style="color:#0B0B0B">files</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#686664"> {</span></span>
+<span class="line"><span style="color:#686664">    "</span><span style="color:#0B0B0B">.claude/agents/android-engineer.md</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "sha256-3a8f..."</span><span style="color:#686664">,</span></span>
+<span class="line"><span style="color:#686664">    "</span><span style="color:#0B0B0B">.geeknative/framework.mk</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "sha256-fc52..."</span><span style="color:#686664">,</span></span>
+<span class="line"><span style="color:#686664">    "</span><span style="color:#0B0B0B">...</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "..."</span></span>
+<span class="line"><span style="color:#686664">  },</span></span>
+<span class="line"><span style="color:#686664">  "</span><span style="color:#0B0B0B">blocks</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#686664"> {</span></span>
+<span class="line"><span style="color:#686664">    "</span><span style="color:#0B0B0B">AGENTS.md</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "sha256-..."</span><span style="color:#686664">,</span></span>
+<span class="line"><span style="color:#686664">    "</span><span style="color:#0B0B0B">...</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "..."</span></span>
+<span class="line"><span style="color:#686664">  }</span></span>
+<span class="line"><span style="color:#686664">}</span></span></code></pre>
+<h2 id="upgrades">Upgrades<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#upgrades">#</a></h2>
+<p><code>geeknative upgrade</code> is planned, not built yet; see the <a href="/geeknative/docs/project/roadmap/">roadmap</a>. The lockfile is what will make it safe:</p>
+<ul>
+<li>framework files you never touched (their hash still matches) get replaced;</li>
+<li>framework files you edited get a three-way merge with the new version, with conflicts listed;</li>
+<li>your files are never touched, except by explicit migrations;</li>
+<li>generated files are rebuilt by <code>make gen</code>.</li>
+</ul>
+<p>Because <code>create</code> already writes the lockfile, projects created today can be upgraded when the command ships.</p>
+<h2 id="generated-files">Generated files<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#generated-files">#</a></h2>
+<p>Never edit generated files. Change the contract in <code>contracts/</code> and run <code>make gen</code>. <code>make check</code> fails if generated files are out of date:</p>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="text"><code><span class="line"><span>✖ contracts  Generated files are out of date:</span></span>
+<span class="line"><span>  apps/web/src/generated/strings.ts</span></span>
+<span class="line"><span>Run `make gen`, and never edit generated files by hand.</span></span></code></pre>9:X
+e:X
+e:C
+0:{"buildId":"IqLtbHoxpi_j-UYkJN6Rr","data":[{"rsc":["$","$1","c",{"children":[[["$","article",null,{"className":"min-w-0 pb-24 pt-10 lg:pt-14","data-pagefind-body":true,"children":[["$","header",null,{"className":"max-w-[46rem] border-b border-line pb-10","children":[["$","p",null,{"className":"label flex items-center gap-3 text-muted","children":[["$","span",null,{"aria-hidden":true,"className":"inline-block size-[7px] shrink-0 rounded-full bg-brand "}],["$","span",null,{"className":"tabular-nums","children":"03"}],["$","span",null,{"className":"h-px w-5 bg-current opacity-30"}],["$","span",null,{"children":"Concepts"}]]}],["$","h1",null,{"className":"mt-6 display-m","data-pagefind-meta":"title","children":"File ownership"}],["$","p",null,{"className":"mt-5 max-w-[40rem] text-[1.125rem] leading-[1.55] text-ink/70","children":"Which files in a project belong to you, which belong to the framework, and which are generated."}]]}],["$","div",null,{"className":"mt-10 max-w-[46rem]","children":["$","$L2","concepts/file-ownership",{"children":[["$","div","0",{"className":"docs-prose","dangerouslySetInnerHTML":{"__html":"$3"}}]]}]}],"$L4"]}],"$L5"],["$L6"],"$L7"]}],"isPartial":"$@8","staleTime":"$9","varyParams":null},{"rsc":"$La","isPartial":"$@b","staleTime":"$9","varyParams":null},{"rsc":"$Lc","isPartial":"$@d","staleTime":"$9","varyParams":"$e"}],"isUpgradeableISRFallback":false,"a":"$@f","rootVaryParams":null,"needsRuntimeRequest":"$@10"}
+11:I[54249,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],""]
+12:I[35820,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],"Toc"]
+13:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"OutletBoundary"]
+14:"$Sreact.suspense"
+16:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"ViewportBoundary"]
+17:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"MetadataBoundary"]
+18:I[18516,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"IconMark"]
+19:I[87180,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+1a:I[42045,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+4:["$","footer",null,{"className":"mt-20 max-w-[46rem]","data-pagefind-ignore":true,"children":[["$","a",null,{"href":"https://github.com/GeekyAnts/geeknative/edit/main/website/content/docs/concepts/file-ownership.md","className":"label inline-flex items-center gap-2 text-muted transition-colors hover:text-ink","rel":"noreferrer","children":["Edit this page on GitHub ",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0 -rotate-45 ","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}],["$","nav",null,{"aria-label":"Previous and next","className":"mt-8 grid gap-px overflow-hidden rounded-2xl bg-line ring-1 ring-line sm:grid-cols-2","children":[["$","$L11",null,{"href":"/docs/concepts/specs-and-parity/","className":"group flex flex-col gap-3 bg-white p-6 transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Previous"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":[["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  rotate-180 transition-transform duration-500 ease-[var(--ease-expo)] group-hover:-translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}],"Specs and parity"]}]]}],["$","$L11",null,{"href":"/docs/reference/cli/","className":"group flex flex-col items-end gap-3 bg-white p-6 text-right transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Next"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":["CLI",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  transition-transform duration-500 ease-[var(--ease-expo)] group-hover:translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}]]}]]}]]}]
+5:["$","$L12",null,{"items":[{"depth":2,"id":"managed-blocks","text":"Managed blocks"},{"depth":2,"id":"the-lockfile","text":"The lockfile"},{"depth":2,"id":"upgrades","text":"Upgrades"},{"depth":2,"id":"generated-files","text":"Generated files"}]}]
+6:["$","script","script-0",{"src":"/geeknative/_next/static/chunks/1lnswdcfwctsn.js","async":true}]
+7:["$","$L13",null,{"children":["$","$14",null,{"name":"Next.MetadataOutlet","children":"$@15"}]}]
+a:["$","$1","h",{"children":[null,["$","$L16",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#ffffff"}]]}],["$","div",null,{"hidden":true,"children":["$","$L17",null,{"children":["$","$14",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"File ownership · geeknative"}],["$","meta","1",{"name":"description","content":"Which files in a project belong to you, which belong to the framework, and which are generated."}],["$","meta","2",{"property":"og:title","content":"File ownership · geeknative"}],["$","meta","3",{"property":"og:description","content":"Which files in a project belong to you, which belong to the framework, and which are generated."}],["$","meta","4",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","5",{"name":"twitter:title","content":"File ownership · geeknative"}],["$","meta","6",{"name":"twitter:description","content":"Which files in a project belong to you, which belong to the framework, and which are generated."}],["$","meta","7",{"name":"twitter:image","content":"https://geekyants.github.io/geeknative/twitter-image.png?twitter-image.2fjuh4p5ndhng.png"}],["$","meta","8",{"name":"twitter:image:type","content":"image/png"}],["$","meta","9",{"name":"twitter:image:width","content":"1200"}],["$","meta","10",{"name":"twitter:image:height","content":"630"}],["$","link","11",{"rel":"icon","href":"/geeknative/icon.svg?icon.12cpu7ud8w87b.svg","sizes":"any","type":"image/svg+xml"}],["$","link","12",{"rel":"apple-touch-icon","href":"/geeknative/apple-icon.png?apple-icon.1b0eoaalscjqq.png","sizes":"180x180","type":"image/png"}],["$","$L18","13",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}]
+c:["$","$1","c",{"children":[null,["$","$L19",null,{"parallelRouterKey":"children","template":["$","$L1a",null,{}]}]]}]
+10:true
+15:null
+9:300
+9:C
+f:0
+b:"$undefined"
+d:"$undefined"
+8:"$undefined"

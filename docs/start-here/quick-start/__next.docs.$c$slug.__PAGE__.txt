@@ -1,0 +1,77 @@
+1:"$Sreact.fragment"
+2:I[68989,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],"ArticleEnhancer"]
+3:T16f3,<ol>
+<li>
+<p><strong>Create a project.</strong></p>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="shell"><code><span class="line"><span style="color:#0B0B0B;font-weight:bold">npm</span><span style="color:#0B0B0B"> create</span><span style="color:#0B0B0B"> geeknative@latest</span><span style="color:#0B0B0B"> my-app</span><span style="color:#686664"> --</span><span style="color:#686664"> --name</span><span style="color:#9F0310"> "My App"</span><span style="color:#686664"> --id</span><span style="color:#0B0B0B"> com.acme.myapp</span></span></code></pre>
+<p><code>--name</code> is the display name and <code>--id</code> is the bundle ID on iOS and the application ID on Android. Both are written to <code>contracts/app.json</code>, the only place they live. Without them, the name comes from the folder (<code>my-app</code> becomes "My App") and the ID is <code>com.example.myapp</code>.</p>
+<p>The command copies the template, generates the platform code, installs dependencies with npm and makes a first git commit. Add <code>--no-install</code> or <code>--no-git</code> to skip those steps.</p>
+<p>You can also run the CLI directly: <code>npx geeknative@latest create my-app --name "My App" --id com.acme.myapp</code>.</p>
+</li>
+<li>
+<p><strong>Check your toolchains.</strong></p>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="shell"><code><span class="line"><span style="color:#0B0B0B;font-weight:bold">cd</span><span style="color:#0B0B0B"> my-app</span></span>
+<span class="line"><span style="color:#0B0B0B;font-weight:bold">make</span><span style="color:#0B0B0B"> doctor</span></span></code></pre>
+<p><code>make doctor</code> checks Node, the npm dependencies, the contracts, Xcode and an iPhone simulator, Java, and the Android SDK. <code>make doctor FIX=1</code> installs what it safely can: npm dependencies and the Android API level the app compiles against. See <a href="/geeknative/docs/start-here/requirements/">Requirements</a>.</p>
+</li>
+<li>
+<p><strong>Build and test all three apps.</strong></p>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="shell"><code><span class="line"><span style="color:#0B0B0B;font-weight:bold">make</span><span style="color:#0B0B0B"> check</span></span></code></pre>
+<p>This validates the contracts, then builds and tests the iOS, Android and web apps, printing one line per app. Full logs go to <code>.geeknative/logs/</code>.</p>
+<aside class="callout callout-note" data-label="Note"><p>The first Android build downloads Gradle, JDK 21 and the app's dependencies, so it can take several minutes. Later builds take seconds.</p></aside>
+</li>
+<li>
+<p><strong>Run the apps.</strong></p>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="shell"><code><span class="line"><span style="color:#0B0B0B;font-weight:bold">make</span><span style="color:#0B0B0B"> run-ios</span><span style="color:#A3A09C;font-style:italic">       # builds, installs and launches in an iPhone simulator</span></span>
+<span class="line"><span style="color:#0B0B0B;font-weight:bold">make</span><span style="color:#0B0B0B"> run-android</span><span style="color:#A3A09C;font-style:italic">   # installs and launches on a connected device or an emulator</span></span>
+<span class="line"><span style="color:#0B0B0B;font-weight:bold">make</span><span style="color:#0B0B0B"> run-web</span><span style="color:#A3A09C;font-style:italic">       # starts the dev server at http://localhost:3000</span></span></code></pre>
+</li>
+<li>
+<p><strong>Give your agent its first prompt.</strong></p>
+<p>Open the folder in Claude Code, Codex, Cursor, Gemini CLI or another agent that reads AGENTS.md, and describe your app:</p>
+<blockquote>
+<p>Build a habit tracker. People create habits, check them off each day, and see their current streak.</p>
+</blockquote>
+<p>The agent fills in PRODUCT.md and DESIGN.md, writes a spec for each feature, and builds them one at a time on all three platforms. See <a href="/geeknative/docs/guides/idea-to-three-apps/">From idea to three apps</a>.</p>
+</li>
+</ol>
+<h2 id="run-make-to-see-every-command">Run <code>make</code> to see every command<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#run-make-to-see-every-command">#</a></h2>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="text"><code><span class="line"><span>  make help             List the commands</span></span>
+<span class="line"><span>  make doctor           Check toolchains (FIX=1 installs what it can)</span></span>
+<span class="line"><span>  make gen              Regenerate app code from contracts/</span></span>
+<span class="line"><span>  make check            Validate contracts, then build and test all three apps</span></span>
+<span class="line"><span>  make check-contracts  Validate contracts and check generated code is current</span></span>
+<span class="line"><span>  make check-ios        Build and test the iOS app</span></span>
+<span class="line"><span>  make check-android    Build and test the Android app</span></span>
+<span class="line"><span>  make check-web        Type-check, test and build the web app</span></span>
+<span class="line"><span>  make parity           Update spec/parity.md from feature specs and tests</span></span>
+<span class="line"><span>  make run-ios          Build and launch the iOS app in a simulator</span></span>
+<span class="line"><span>  make run-android      Build and launch the Android app on an emulator or device</span></span>
+<span class="line"><span>  make run-web          Start the web dev server</span></span></code></pre>
+<p>The <a href="/geeknative/docs/reference/cli/">CLI reference</a> describes each one.</p>9:X
+e:X
+e:C
+0:{"buildId":"IqLtbHoxpi_j-UYkJN6Rr","data":[{"rsc":["$","$1","c",{"children":[[["$","article",null,{"className":"min-w-0 pb-24 pt-10 lg:pt-14","data-pagefind-body":true,"children":[["$","header",null,{"className":"max-w-[46rem] border-b border-line pb-10","children":[["$","p",null,{"className":"label flex items-center gap-3 text-muted","children":[["$","span",null,{"aria-hidden":true,"className":"inline-block size-[7px] shrink-0 rounded-full bg-brand "}],["$","span",null,{"className":"tabular-nums","children":"01"}],["$","span",null,{"className":"h-px w-5 bg-current opacity-30"}],["$","span",null,{"children":"Start here"}]]}],["$","h1",null,{"className":"mt-6 display-m","data-pagefind-meta":"title","children":"Quick start"}],["$","p",null,{"className":"mt-5 max-w-[40rem] text-[1.125rem] leading-[1.55] text-ink/70","children":"Create a geeknative project, check your toolchains, build all three apps and give your agent its first prompt."}]]}],["$","div",null,{"className":"mt-10 max-w-[46rem]","children":["$","$L2","start-here/quick-start",{"children":[["$","div","0",{"className":"docs-prose","dangerouslySetInnerHTML":{"__html":"$3"}}]]}]}],"$L4"]}],"$L5"],["$L6"],"$L7"]}],"isPartial":"$@8","staleTime":"$9","varyParams":null},{"rsc":"$La","isPartial":"$@b","staleTime":"$9","varyParams":null},{"rsc":"$Lc","isPartial":"$@d","staleTime":"$9","varyParams":"$e"}],"isUpgradeableISRFallback":false,"a":"$@f","rootVaryParams":null,"needsRuntimeRequest":"$@10"}
+11:I[54249,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],""]
+12:I[35820,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],"Toc"]
+13:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"OutletBoundary"]
+14:"$Sreact.suspense"
+16:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"ViewportBoundary"]
+17:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"MetadataBoundary"]
+18:I[18516,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"IconMark"]
+19:I[87180,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+1a:I[42045,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+4:["$","footer",null,{"className":"mt-20 max-w-[46rem]","data-pagefind-ignore":true,"children":[["$","a",null,{"href":"https://github.com/GeekyAnts/geeknative/edit/main/website/content/docs/start-here/quick-start.md","className":"label inline-flex items-center gap-2 text-muted transition-colors hover:text-ink","rel":"noreferrer","children":["Edit this page on GitHub ",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0 -rotate-45 ","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}],["$","nav",null,{"aria-label":"Previous and next","className":"mt-8 grid gap-px overflow-hidden rounded-2xl bg-line ring-1 ring-line sm:grid-cols-2","children":[["$","$L11",null,{"href":"/docs/start-here/introduction/","className":"group flex flex-col gap-3 bg-white p-6 transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Previous"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":[["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  rotate-180 transition-transform duration-500 ease-[var(--ease-expo)] group-hover:-translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}],"Introduction"]}]]}],["$","$L11",null,{"href":"/docs/start-here/requirements/","className":"group flex flex-col items-end gap-3 bg-white p-6 text-right transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Next"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":["Requirements",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  transition-transform duration-500 ease-[var(--ease-expo)] group-hover:translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}]]}]]}]]}]
+5:["$","$L12",null,{"items":[{"depth":2,"id":"run-make-to-see-every-command","text":"Run make to see every command"}]}]
+6:["$","script","script-0",{"src":"/geeknative/_next/static/chunks/1lnswdcfwctsn.js","async":true}]
+7:["$","$L13",null,{"children":["$","$14",null,{"name":"Next.MetadataOutlet","children":"$@15"}]}]
+a:["$","$1","h",{"children":[null,["$","$L16",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#ffffff"}]]}],["$","div",null,{"hidden":true,"children":["$","$L17",null,{"children":["$","$14",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Quick start · geeknative"}],["$","meta","1",{"name":"description","content":"Create a geeknative project, check your toolchains, build all three apps and give your agent its first prompt."}],["$","meta","2",{"property":"og:title","content":"Quick start · geeknative"}],["$","meta","3",{"property":"og:description","content":"Create a geeknative project, check your toolchains, build all three apps and give your agent its first prompt."}],["$","meta","4",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","5",{"name":"twitter:title","content":"Quick start · geeknative"}],["$","meta","6",{"name":"twitter:description","content":"Create a geeknative project, check your toolchains, build all three apps and give your agent its first prompt."}],["$","meta","7",{"name":"twitter:image","content":"https://geekyants.github.io/geeknative/twitter-image.png?twitter-image.2fjuh4p5ndhng.png"}],["$","meta","8",{"name":"twitter:image:type","content":"image/png"}],["$","meta","9",{"name":"twitter:image:width","content":"1200"}],["$","meta","10",{"name":"twitter:image:height","content":"630"}],["$","link","11",{"rel":"icon","href":"/geeknative/icon.svg?icon.12cpu7ud8w87b.svg","sizes":"any","type":"image/svg+xml"}],["$","link","12",{"rel":"apple-touch-icon","href":"/geeknative/apple-icon.png?apple-icon.1b0eoaalscjqq.png","sizes":"180x180","type":"image/png"}],["$","$L18","13",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}]
+c:["$","$1","c",{"children":[null,["$","$L19",null,{"parallelRouterKey":"children","template":["$","$L1a",null,{}]}]]}]
+10:true
+15:null
+9:300
+9:C
+f:0
+b:"$undefined"
+d:"$undefined"
+8:"$undefined"

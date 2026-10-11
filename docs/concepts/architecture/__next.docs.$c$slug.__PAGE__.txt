@@ -1,0 +1,193 @@
+1:"$Sreact.fragment"
+2:I[68989,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],"ArticleEnhancer"]
+3:T1bee,<p>Each app is idiomatic for its platform, but all three share one structure and one vocabulary. An agent that knows where something lives in one app knows where it lives in the other two.</p>
+<h2 id="the-same-concepts-in-each-platforms-idiom">The same concepts, in each platform's idiom<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#the-same-concepts-in-each-platforms-idiom">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>iOS</th>
+<th>Android</th>
+<th>Web</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Screen</td>
+<td><code>struct NotesScreen: View</code></td>
+<td><code>@Composable fun NotesScreen(...)</code></td>
+<td><code>NotesScreen</code> component, rendered by <code>routes/notes.tsx</code></td>
+</tr>
+<tr>
+<td>State and actions</td>
+<td><code>@Observable final class NotesViewModel</code></td>
+<td><code>NotesViewModel : ViewModel()</code> with <code>uiState: StateFlow&#x3C;NotesUiState></code></td>
+<td><code>useNotesViewModel()</code> hook, using TanStack Query</td>
+</tr>
+<tr>
+<td>Data</td>
+<td><code>protocol NotesRepository</code></td>
+<td><code>interface NotesRepository</code></td>
+<td><code>interface NotesRepository</code></td>
+</tr>
+<tr>
+<td>Dependencies</td>
+<td><code>AppContainer</code>, from <code>@Environment(AppContainer.self)</code></td>
+<td><code>AppContainer</code>, from <code>LocalAppContainer.current</code></td>
+<td><code>AppContainer</code>, from router context</td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>A case in the <code>Route</code> enum</td>
+<td>An object in the <code>Route</code> sealed interface</td>
+<td>A file in <code>routes/</code></td>
+</tr>
+<tr>
+<td>Copy</td>
+<td><code>Strings.notesEmptyTitle</code></td>
+<td><code>stringResource(R.string.notes_empty_title)</code></td>
+<td><code>strings.notesEmptyTitle</code></td>
+</tr>
+<tr>
+<td>Colors, spacing, radii, type</td>
+<td><code>AppColors.primary</code>, <code>AppSpacing.md</code>, <code>AppRadius.lg</code>, <code>AppTypography.title</code></td>
+<td><code>AppTheme.colors.primary</code>, <code>AppSpacing.md</code>, <code>AppRadius.lg</code>, <code>AppTypography.title</code></td>
+<td><code>bg-primary</code>, <code>p-md</code>, <code>rounded-lg</code>, <code>text-title</code></td>
+</tr>
+<tr>
+<td>Icons</td>
+<td><code>Image(systemName: AppIcon.settings)</code></td>
+<td><code>Icon(AppIcons.settings, ...)</code></td>
+<td><code>&#x3C;AppIcons.settings /></code></td>
+</tr>
+<tr>
+<td>Test IDs</td>
+<td><code>.accessibilityIdentifier("notes.addButton")</code></td>
+<td><code>Modifier.testTag("notes.addButton")</code></td>
+<td><code>data-testid="notes.addButton"</code></td>
+</tr>
+<tr>
+<td>Tests</td>
+<td>Swift Testing: <code>@Test("AC-notes-2: ...")</code></td>
+<td>JUnit: <code>fun `AC-notes-2 ...`()</code></td>
+<td>Vitest: <code>test('AC-notes-2: ...')</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="the-reference-feature-settings">The reference feature: Settings<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#the-reference-feature-settings">#</a></h2>
+<p>The starter Settings screen (appearance and app version) is built the same way on every platform. New features copy its patterns.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>iOS</th>
+<th>Android</th>
+<th>Web</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Screen</td>
+<td><code>SettingsScreen.swift</code></td>
+<td><code>SettingsScreen.kt</code></td>
+<td><code>SettingsScreen.tsx</code></td>
+</tr>
+<tr>
+<td>State</td>
+<td><code>SettingsViewModel.swift</code></td>
+<td><code>SettingsViewModel.kt</code></td>
+<td><code>useSettingsViewModel.ts</code></td>
+</tr>
+<tr>
+<td>Data</td>
+<td><code>SettingsRepository.swift</code> (<code>UserDefaultsSettingsRepository</code>, <code>InMemorySettingsRepository</code>)</td>
+<td><code>SettingsRepository.kt</code> (<code>DataStoreSettingsRepository</code>, <code>InMemorySettingsRepository</code>)</td>
+<td><code>SettingsRepository.ts</code>, <code>LocalStorageSettingsRepository.ts</code></td>
+</tr>
+<tr>
+<td>Model</td>
+<td><code>Appearance.swift</code></td>
+<td><code>Appearance.kt</code></td>
+<td><code>Appearance.ts</code></td>
+</tr>
+<tr>
+<td>Tests</td>
+<td><code>AppTests/SettingsTests.swift</code></td>
+<td><code>SettingsTest.kt</code></td>
+<td><code>settings.test.ts</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>The stored data matches too: every app stores the appearance under the key <code>settings.appearance</code>, as <code>system</code>, <code>light</code> or <code>dark</code>.</p>
+<h2 id="dependencies-a-hand-written-appcontainer">Dependencies: a hand-written AppContainer<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#dependencies-a-hand-written-appcontainer">#</a></h2>
+<p>Every app wires its dependencies by hand in an <code>AppContainer</code>, with no dependency injection framework.</p>
+<ul>
+<li><strong>iOS:</strong> <code>AppContainer.live()</code> at launch, put in the SwiftUI environment. <code>AppContainer.preview()</code> uses in-memory repositories for previews and tests.</li>
+<li><strong>Android:</strong> <code>AppContainer.live(context)</code> in the <code>Application</code> class, provided to composables through <code>LocalAppContainer</code>. ViewModels are created with <code>viewModel { SettingsViewModel(container.settingsRepository) }</code>. <code>AppContainer.preview()</code> is for previews and tests.</li>
+<li><strong>Web:</strong> <code>createAppContainer()</code> in <code>router.tsx</code>, passed to every route through router context with the TanStack Query client.</li>
+</ul>
+<p>The same idea appears in all three apps, and Gradle builds stay free of annotation processing.</p>
+<h2 id="no-backend-yet">No backend yet<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#no-backend-yet">#</a></h2>
+<p>Features read and write through repository interfaces with local implementations: UserDefaults on iOS, DataStore on Android, localStorage on web. When a backend arrives, new repository implementations call it, and <code>AppContainer</code> swaps them in. Screens and view models don't change.</p>
+<p>On the web, TanStack Start's server functions and API routes are only for web-only concerns (rendering, cookies, SEO). Logic the mobile apps need too goes through repositories, so a future backend can serve all three apps.</p>
+<h2 id="native-not-identical">Native, not identical<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#native-not-identical">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Same on every platform</th>
+<th>Native to each platform</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Features, flows and data</td>
+<td>Navigation chrome (navigation bar, top app bar, site header)</td>
+</tr>
+<tr>
+<td>Copy</td>
+<td>Controls: pickers, switches, radio lists, segmented controls</td>
+</tr>
+<tr>
+<td>Colors, spacing, radii and type scale</td>
+<td>Gestures, haptics and transitions</td>
+</tr>
+<tr>
+<td>Icons by meaning</td>
+<td>Icon artwork: SF Symbols, Material icons, Lucide</td>
+</tr>
+<tr>
+<td>Screen structure and content order</td>
+<td>Sheets, dialogs and menus</td>
+</tr>
+<tr>
+<td>Accessibility labels and test IDs</td>
+<td>System font</td>
+</tr>
+</tbody>
+</table></div>9:X
+e:X
+e:C
+0:{"buildId":"IqLtbHoxpi_j-UYkJN6Rr","data":[{"rsc":["$","$1","c",{"children":[[["$","article",null,{"className":"min-w-0 pb-24 pt-10 lg:pt-14","data-pagefind-body":true,"children":[["$","header",null,{"className":"max-w-[46rem] border-b border-line pb-10","children":[["$","p",null,{"className":"label flex items-center gap-3 text-muted","children":[["$","span",null,{"aria-hidden":true,"className":"inline-block size-[7px] shrink-0 rounded-full bg-brand "}],["$","span",null,{"className":"tabular-nums","children":"03"}],["$","span",null,{"className":"h-px w-5 bg-current opacity-30"}],["$","span",null,{"children":"Concepts"}]]}],["$","h1",null,{"className":"mt-6 display-m","data-pagefind-meta":"title","children":"Architecture"}],["$","p",null,{"className":"mt-5 max-w-[40rem] text-[1.125rem] leading-[1.55] text-ink/70","children":"The mirrored architecture every geeknative app follows, with the same names on iOS, Android and web."}]]}],["$","div",null,{"className":"mt-10 max-w-[46rem]","children":["$","$L2","concepts/architecture",{"children":[["$","div","0",{"className":"docs-prose","dangerouslySetInnerHTML":{"__html":"$3"}}]]}]}],"$L4"]}],"$L5"],["$L6"],"$L7"]}],"isPartial":"$@8","staleTime":"$9","varyParams":null},{"rsc":"$La","isPartial":"$@b","staleTime":"$9","varyParams":null},{"rsc":"$Lc","isPartial":"$@d","staleTime":"$9","varyParams":"$e"}],"isUpgradeableISRFallback":false,"a":"$@f","rootVaryParams":null,"needsRuntimeRequest":"$@10"}
+11:I[54249,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],""]
+12:I[35820,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],"Toc"]
+13:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"OutletBoundary"]
+14:"$Sreact.suspense"
+16:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"ViewportBoundary"]
+17:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"MetadataBoundary"]
+18:I[18516,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"IconMark"]
+19:I[87180,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+1a:I[42045,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+4:["$","footer",null,{"className":"mt-20 max-w-[46rem]","data-pagefind-ignore":true,"children":[["$","a",null,{"href":"https://github.com/GeekyAnts/geeknative/edit/main/website/content/docs/concepts/architecture.md","className":"label inline-flex items-center gap-2 text-muted transition-colors hover:text-ink","rel":"noreferrer","children":["Edit this page on GitHub ",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0 -rotate-45 ","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}],["$","nav",null,{"aria-label":"Previous and next","className":"mt-8 grid gap-px overflow-hidden rounded-2xl bg-line ring-1 ring-line sm:grid-cols-2","children":[["$","$L11",null,{"href":"/docs/concepts/project-structure/","className":"group flex flex-col gap-3 bg-white p-6 transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Previous"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":[["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  rotate-180 transition-transform duration-500 ease-[var(--ease-expo)] group-hover:-translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}],"Project structure"]}]]}],["$","$L11",null,{"href":"/docs/concepts/specs-and-parity/","className":"group flex flex-col items-end gap-3 bg-white p-6 text-right transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Next"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":["Specs and parity",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  transition-transform duration-500 ease-[var(--ease-expo)] group-hover:translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}]]}]]}]]}]
+5:["$","$L12",null,{"items":[{"depth":2,"id":"the-same-concepts-in-each-platforms-idiom","text":"The same concepts, in each platform's idiom"},{"depth":2,"id":"the-reference-feature-settings","text":"The reference feature: Settings"},{"depth":2,"id":"dependencies-a-hand-written-appcontainer","text":"Dependencies: a hand-written AppContainer"},{"depth":2,"id":"no-backend-yet","text":"No backend yet"},{"depth":2,"id":"native-not-identical","text":"Native, not identical"}]}]
+6:["$","script","script-0",{"src":"/geeknative/_next/static/chunks/1lnswdcfwctsn.js","async":true}]
+7:["$","$L13",null,{"children":["$","$14",null,{"name":"Next.MetadataOutlet","children":"$@15"}]}]
+a:["$","$1","h",{"children":[null,["$","$L16",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#ffffff"}]]}],["$","div",null,{"hidden":true,"children":["$","$L17",null,{"children":["$","$14",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Architecture · geeknative"}],["$","meta","1",{"name":"description","content":"The mirrored architecture every geeknative app follows, with the same names on iOS, Android and web."}],["$","meta","2",{"property":"og:title","content":"Architecture · geeknative"}],["$","meta","3",{"property":"og:description","content":"The mirrored architecture every geeknative app follows, with the same names on iOS, Android and web."}],["$","meta","4",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","5",{"name":"twitter:title","content":"Architecture · geeknative"}],["$","meta","6",{"name":"twitter:description","content":"The mirrored architecture every geeknative app follows, with the same names on iOS, Android and web."}],["$","meta","7",{"name":"twitter:image","content":"https://geekyants.github.io/geeknative/twitter-image.png?twitter-image.2fjuh4p5ndhng.png"}],["$","meta","8",{"name":"twitter:image:type","content":"image/png"}],["$","meta","9",{"name":"twitter:image:width","content":"1200"}],["$","meta","10",{"name":"twitter:image:height","content":"630"}],["$","link","11",{"rel":"icon","href":"/geeknative/icon.svg?icon.12cpu7ud8w87b.svg","sizes":"any","type":"image/svg+xml"}],["$","link","12",{"rel":"apple-touch-icon","href":"/geeknative/apple-icon.png?apple-icon.1b0eoaalscjqq.png","sizes":"180x180","type":"image/png"}],["$","$L18","13",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}]
+c:["$","$1","c",{"children":[null,["$","$L19",null,{"parallelRouterKey":"children","template":["$","$L1a",null,{}]}]]}]
+10:true
+15:null
+9:300
+9:C
+f:0
+b:"$undefined"
+d:"$undefined"
+8:"$undefined"

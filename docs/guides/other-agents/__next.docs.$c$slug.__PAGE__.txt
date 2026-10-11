@@ -1,0 +1,70 @@
+1:"$Sreact.fragment"
+2:I[68989,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],"ArticleEnhancer"]
+3:Td24,<p>geeknative's instructions are plain markdown in <code>AGENTS.md</code> files, the format most coding agents read. Nothing in them depends on a particular agent.</p>
+<h2 id="agents-that-read-agentsmd">Agents that read AGENTS.md<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#agents-that-read-agentsmd">#</a></h2>
+<p>Codex, Cursor, the GitHub Copilot coding agent and many others read <code>AGENTS.md</code> at the project root. Open the project folder and prompt as usual.</p>
+<p>Each app also has its own <code>AGENTS.md</code> with its conventions:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>File</th>
+<th>Covers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>apps/ios/AGENTS.md</code></td>
+<td>SwiftUI patterns, the Xcode project, iOS commands</td>
+</tr>
+<tr>
+<td><code>apps/android/AGENTS.md</code></td>
+<td>Compose patterns, Gradle, Android commands</td>
+</tr>
+<tr>
+<td><code>apps/web/AGENTS.md</code></td>
+<td>React and TanStack patterns, web commands</td>
+</tr>
+</tbody>
+</table></div>
+<p>Some agents load nested AGENTS.md files on their own and some don't, so the root file also tells the agent to read <code>apps/&#x3C;platform>/AGENTS.md</code> before editing in that folder.</p>
+<h2 id="gemini-cli">Gemini CLI<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#gemini-cli">#</a></h2>
+<p>Gemini CLI reads <code>GEMINI.md</code> by default. The project's <code>.gemini/settings.json</code> points it at AGENTS.md instead:</p>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="json"><code><span class="line"><span style="color:#686664">{</span></span>
+<span class="line"><span style="color:#686664">  "</span><span style="color:#0B0B0B">context</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#686664"> {</span></span>
+<span class="line"><span style="color:#686664">    "</span><span style="color:#0B0B0B">fileName</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#686664"> [</span><span style="color:#9F0310">"AGENTS.md"</span><span style="color:#686664">]</span></span>
+<span class="line"><span style="color:#686664">  }</span></span>
+<span class="line"><span style="color:#686664">}</span></span></code></pre>
+<h2 id="agents-without-sub-agents">Agents without sub-agents<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#agents-without-sub-agents">#</a></h2>
+<p>The loop in AGENTS.md works with or without sub-agents. If your agent can run sub-agents in parallel, it gives each platform its own. Otherwise it does the platforms one after another. Either way, the request isn't done until all three apps do it (or the spec marks the difference).</p>
+<h2 id="whats-claude-specific">What's Claude-specific<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#whats-claude-specific">#</a></h2>
+<p>The hooks and subagents in <code>.claude/</code> only run in Claude Code. With other agents:</p>
+<ul>
+<li>AGENTS.md tells the agent to run <code>make gen</code> after editing <code>contracts/</code>. The <a href="/geeknative/docs/guides/claude-code/">Claude Code</a> hook does that automatically.</li>
+<li>The parity reminder doesn't run, but <code>make parity</code> and the agent's per-platform report show the same information.</li>
+</ul>9:X
+e:X
+e:C
+0:{"buildId":"IqLtbHoxpi_j-UYkJN6Rr","data":[{"rsc":["$","$1","c",{"children":[[["$","article",null,{"className":"min-w-0 pb-24 pt-10 lg:pt-14","data-pagefind-body":true,"children":[["$","header",null,{"className":"max-w-[46rem] border-b border-line pb-10","children":[["$","p",null,{"className":"label flex items-center gap-3 text-muted","children":[["$","span",null,{"aria-hidden":true,"className":"inline-block size-[7px] shrink-0 rounded-full bg-brand "}],["$","span",null,{"className":"tabular-nums","children":"02"}],["$","span",null,{"className":"h-px w-5 bg-current opacity-30"}],["$","span",null,{"children":"Guides"}]]}],["$","h1",null,{"className":"mt-6 display-m","data-pagefind-meta":"title","children":"Other agents"}],["$","p",null,{"className":"mt-5 max-w-[40rem] text-[1.125rem] leading-[1.55] text-ink/70","children":"Using a geeknative project with Codex, Cursor, GitHub Copilot, Gemini CLI and other coding agents."}]]}],["$","div",null,{"className":"mt-10 max-w-[46rem]","children":["$","$L2","guides/other-agents",{"children":[["$","div","0",{"className":"docs-prose","dangerouslySetInnerHTML":{"__html":"$3"}}]]}]}],"$L4"]}],"$L5"],["$L6"],"$L7"]}],"isPartial":"$@8","staleTime":"$9","varyParams":null},{"rsc":"$La","isPartial":"$@b","staleTime":"$9","varyParams":null},{"rsc":"$Lc","isPartial":"$@d","staleTime":"$9","varyParams":"$e"}],"isUpgradeableISRFallback":false,"a":"$@f","rootVaryParams":null,"needsRuntimeRequest":"$@10"}
+11:I[54249,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],""]
+12:I[35820,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],"Toc"]
+13:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"OutletBoundary"]
+14:"$Sreact.suspense"
+16:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"ViewportBoundary"]
+17:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"MetadataBoundary"]
+18:I[18516,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"IconMark"]
+19:I[87180,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+1a:I[42045,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+4:["$","footer",null,{"className":"mt-20 max-w-[46rem]","data-pagefind-ignore":true,"children":[["$","a",null,{"href":"https://github.com/GeekyAnts/geeknative/edit/main/website/content/docs/guides/other-agents.md","className":"label inline-flex items-center gap-2 text-muted transition-colors hover:text-ink","rel":"noreferrer","children":["Edit this page on GitHub ",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0 -rotate-45 ","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}],["$","nav",null,{"aria-label":"Previous and next","className":"mt-8 grid gap-px overflow-hidden rounded-2xl bg-line ring-1 ring-line sm:grid-cols-2","children":[["$","$L11",null,{"href":"/docs/guides/claude-code/","className":"group flex flex-col gap-3 bg-white p-6 transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Previous"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":[["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  rotate-180 transition-transform duration-500 ease-[var(--ease-expo)] group-hover:-translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}],"Claude Code"]}]]}],["$","$L11",null,{"href":"/docs/concepts/how-it-works/","className":"group flex flex-col items-end gap-3 bg-white p-6 text-right transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Next"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":["How it works",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  transition-transform duration-500 ease-[var(--ease-expo)] group-hover:translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}]]}]]}]]}]
+5:["$","$L12",null,{"items":[{"depth":2,"id":"agents-that-read-agentsmd","text":"Agents that read AGENTS.md"},{"depth":2,"id":"gemini-cli","text":"Gemini CLI"},{"depth":2,"id":"agents-without-sub-agents","text":"Agents without sub-agents"},{"depth":2,"id":"whats-claude-specific","text":"What's Claude-specific"}]}]
+6:["$","script","script-0",{"src":"/geeknative/_next/static/chunks/1lnswdcfwctsn.js","async":true}]
+7:["$","$L13",null,{"children":["$","$14",null,{"name":"Next.MetadataOutlet","children":"$@15"}]}]
+a:["$","$1","h",{"children":[null,["$","$L16",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#ffffff"}]]}],["$","div",null,{"hidden":true,"children":["$","$L17",null,{"children":["$","$14",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Other agents · geeknative"}],["$","meta","1",{"name":"description","content":"Using a geeknative project with Codex, Cursor, GitHub Copilot, Gemini CLI and other coding agents."}],["$","meta","2",{"property":"og:title","content":"Other agents · geeknative"}],["$","meta","3",{"property":"og:description","content":"Using a geeknative project with Codex, Cursor, GitHub Copilot, Gemini CLI and other coding agents."}],["$","meta","4",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","5",{"name":"twitter:title","content":"Other agents · geeknative"}],["$","meta","6",{"name":"twitter:description","content":"Using a geeknative project with Codex, Cursor, GitHub Copilot, Gemini CLI and other coding agents."}],["$","meta","7",{"name":"twitter:image","content":"https://geekyants.github.io/geeknative/twitter-image.png?twitter-image.2fjuh4p5ndhng.png"}],["$","meta","8",{"name":"twitter:image:type","content":"image/png"}],["$","meta","9",{"name":"twitter:image:width","content":"1200"}],["$","meta","10",{"name":"twitter:image:height","content":"630"}],["$","link","11",{"rel":"icon","href":"/geeknative/icon.svg?icon.12cpu7ud8w87b.svg","sizes":"any","type":"image/svg+xml"}],["$","link","12",{"rel":"apple-touch-icon","href":"/geeknative/apple-icon.png?apple-icon.1b0eoaalscjqq.png","sizes":"180x180","type":"image/png"}],["$","$L18","13",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}]
+c:["$","$1","c",{"children":[null,["$","$L19",null,{"parallelRouterKey":"children","template":["$","$L1a",null,{}]}]]}]
+10:true
+15:null
+9:300
+9:C
+f:0
+b:"$undefined"
+d:"$undefined"
+8:"$undefined"

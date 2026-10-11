@@ -1,0 +1,107 @@
+1:"$Sreact.fragment"
+2:I[68989,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],"ArticleEnhancer"]
+3:T16f9,<p>geeknative is open source under the Apache 2.0 license, at <a href="https://github.com/GeekyAnts/geeknative" rel="noreferrer">github.com/GeekyAnts/geeknative</a>.</p>
+<h2 id="repository-layout">Repository layout<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#repository-layout">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Path</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>template/</code></td>
+<td>The project every <code>geeknative create</code> copies: docs, contracts, the three apps and the agent config. It's a working project you can build in place.</td>
+</tr>
+<tr>
+<td><code>packages/geeknative/</code></td>
+<td>The CLI: <code>create</code>, <code>gen</code> (codegen), <code>check</code>, <code>doctor</code>, <code>parity</code> and <code>run</code>. Plain ESM JavaScript with <code>// @ts-check</code> and no dependencies.</td>
+</tr>
+<tr>
+<td><code>packages/geeknative/test/</code></td>
+<td>The CLI test suite.</td>
+</tr>
+<tr>
+<td><code>packages/create-geeknative/</code></td>
+<td>The <code>npm create geeknative</code> entry point. It forwards to <code>geeknative create</code>.</td>
+</tr>
+<tr>
+<td><code>scripts/smoke.js</code></td>
+<td>Creates a fresh project in a temp folder and runs every check in it.</td>
+</tr>
+<tr>
+<td><code>website/</code></td>
+<td>This site: the landing page and docs, a static Next.js export styled after colony.geekyants.com.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="working-on-the-template">Working on the template<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#working-on-the-template">#</a></h2>
+<p><code>template/</code> is a real project. Build it in place:</p>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="shell"><code><span class="line"><span style="color:#0B0B0B;font-weight:bold">cd</span><span style="color:#0B0B0B"> template</span></span>
+<span class="line"><span style="color:#0B0B0B;font-weight:bold">npm</span><span style="color:#0B0B0B"> install</span></span>
+<span class="line"><span style="color:#0B0B0B;font-weight:bold">make</span><span style="color:#0B0B0B"> check</span></span></code></pre>
+<p>Generated code is committed in <code>template/</code>. After changing a contract in <code>template/contracts/</code> or a generator in <code>packages/geeknative/src/codegen/</code>, regenerate and commit the output:</p>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="shell"><code><span class="line"><span style="color:#0B0B0B;font-weight:bold">cd</span><span style="color:#0B0B0B"> template</span></span>
+<span class="line"><span style="color:#0B0B0B;font-weight:bold">node</span><span style="color:#0B0B0B"> ../packages/geeknative/bin/geeknative.js</span><span style="color:#0B0B0B"> gen</span></span></code></pre>
+<p>Codegen output must be deterministic.</p>
+<p>Some template files belong to the framework (the files listed in <code>packages/geeknative/src/lib/managed.js</code>, and the <code>geeknative:begin</code> and <code>geeknative:end</code> blocks in AGENTS.md and CLAUDE.md files). Upgrades will replace them in existing projects. Everything else in <code>template/</code> is copied once at create time and then belongs to the project, so changes there only reach new projects.</p>
+<p>Template files named <code>_gitignore</code> become <code>.gitignore</code> when a project is created, because npm drops real <code>.gitignore</code> files from published packages.</p>
+<h2 id="tests">Tests<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#tests">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Command</th>
+<th>What it covers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>npm test</code></td>
+<td>The CLI test suite, with Node's built-in test runner</td>
+</tr>
+<tr>
+<td><code>cd template &#x26;&#x26; make check</code></td>
+<td>The three template apps: iOS, Android and web</td>
+</tr>
+<tr>
+<td><code>npm run smoke</code></td>
+<td>A freshly created project, end to end</td>
+</tr>
+</tbody>
+</table></div>
+<p>CI (<code>.github/workflows/ci.yml</code>) runs on every push and pull request: the CLI test suite, a smoke test that creates a project and checks its contracts and web app, and the template's web and Android checks on Ubuntu and iOS checks on macOS. <code>.github/workflows/docs.yml</code> builds this site and deploys it to GitHub Pages.</p>
+<h2 id="documentation">Documentation<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#documentation">#</a></h2>
+<p>The docs live in <code>website/content/docs/</code> as Markdown. Update them in the same change as the behavior they describe.</p>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="shell"><code><span class="line"><span style="color:#0B0B0B;font-weight:bold">cd</span><span style="color:#0B0B0B"> website</span></span>
+<span class="line"><span style="color:#0B0B0B;font-weight:bold">npm</span><span style="color:#0B0B0B"> install</span></span>
+<span class="line"><span style="color:#0B0B0B;font-weight:bold">npm</span><span style="color:#0B0B0B"> run</span><span style="color:#0B0B0B"> dev</span></span></code></pre>
+<p><code>npm run build</code> exports the site to <code>out/</code> and indexes it for search; <code>npm run check-links</code> then fails on any broken internal link.</p>
+<h2 id="releasing">Releasing<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#releasing">#</a></h2>
+<p>Bump the version in <code>packages/geeknative/package.json</code> and <code>packages/create-geeknative/package.json</code> (including its <code>geeknative</code> dependency). Publish <code>geeknative</code> first, then <code>create-geeknative</code>. Publishing bundles <code>template/</code> into the <code>geeknative</code> package automatically.</p>9:X
+e:X
+e:C
+0:{"buildId":"IqLtbHoxpi_j-UYkJN6Rr","data":[{"rsc":["$","$1","c",{"children":[[["$","article",null,{"className":"min-w-0 pb-24 pt-10 lg:pt-14","data-pagefind-body":true,"children":[["$","header",null,{"className":"max-w-[46rem] border-b border-line pb-10","children":[["$","p",null,{"className":"label flex items-center gap-3 text-muted","children":[["$","span",null,{"aria-hidden":true,"className":"inline-block size-[7px] shrink-0 rounded-full bg-brand "}],["$","span",null,{"className":"tabular-nums","children":"05"}],["$","span",null,{"className":"h-px w-5 bg-current opacity-30"}],["$","span",null,{"children":"Project"}]]}],["$","h1",null,{"className":"mt-6 display-m","data-pagefind-meta":"title","children":"Contributing"}],["$","p",null,{"className":"mt-5 max-w-[40rem] text-[1.125rem] leading-[1.55] text-ink/70","children":"How the geeknative repository is organized, and how to change and test it."}]]}],["$","div",null,{"className":"mt-10 max-w-[46rem]","children":["$","$L2","project/contributing",{"children":[["$","div","0",{"className":"docs-prose","dangerouslySetInnerHTML":{"__html":"$3"}}]]}]}],"$L4"]}],"$L5"],["$L6"],"$L7"]}],"isPartial":"$@8","staleTime":"$9","varyParams":null},{"rsc":"$La","isPartial":"$@b","staleTime":"$9","varyParams":null},{"rsc":"$Lc","isPartial":"$@d","staleTime":"$9","varyParams":"$e"}],"isUpgradeableISRFallback":false,"a":"$@f","rootVaryParams":null,"needsRuntimeRequest":"$@10"}
+11:I[54249,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],""]
+12:I[35820,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],"Toc"]
+13:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"OutletBoundary"]
+14:"$Sreact.suspense"
+16:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"ViewportBoundary"]
+17:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"MetadataBoundary"]
+18:I[18516,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"IconMark"]
+19:I[87180,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+1a:I[42045,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+4:["$","footer",null,{"className":"mt-20 max-w-[46rem]","data-pagefind-ignore":true,"children":[["$","a",null,{"href":"https://github.com/GeekyAnts/geeknative/edit/main/website/content/docs/project/contributing.md","className":"label inline-flex items-center gap-2 text-muted transition-colors hover:text-ink","rel":"noreferrer","children":["Edit this page on GitHub ",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0 -rotate-45 ","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}],["$","nav",null,{"aria-label":"Previous and next","className":"mt-8 grid gap-px overflow-hidden rounded-2xl bg-line ring-1 ring-line sm:grid-cols-2","children":[["$","$L11",null,{"href":"/docs/project/roadmap/","className":"group flex flex-col gap-3 bg-white p-6 transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Previous"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":[["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  rotate-180 transition-transform duration-500 ease-[var(--ease-expo)] group-hover:-translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}],"Roadmap"]}]]}],["$","$L11",null,{"href":"/docs/project/changelog/","className":"group flex flex-col items-end gap-3 bg-white p-6 text-right transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Next"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":["Changelog",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  transition-transform duration-500 ease-[var(--ease-expo)] group-hover:translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}]]}]]}]]}]
+5:["$","$L12",null,{"items":[{"depth":2,"id":"repository-layout","text":"Repository layout"},{"depth":2,"id":"working-on-the-template","text":"Working on the template"},{"depth":2,"id":"tests","text":"Tests"},{"depth":2,"id":"documentation","text":"Documentation"},{"depth":2,"id":"releasing","text":"Releasing"}]}]
+6:["$","script","script-0",{"src":"/geeknative/_next/static/chunks/1lnswdcfwctsn.js","async":true}]
+7:["$","$L13",null,{"children":["$","$14",null,{"name":"Next.MetadataOutlet","children":"$@15"}]}]
+a:["$","$1","h",{"children":[null,["$","$L16",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#ffffff"}]]}],["$","div",null,{"hidden":true,"children":["$","$L17",null,{"children":["$","$14",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Contributing · geeknative"}],["$","meta","1",{"name":"description","content":"How the geeknative repository is organized, and how to change and test it."}],["$","meta","2",{"property":"og:title","content":"Contributing · geeknative"}],["$","meta","3",{"property":"og:description","content":"How the geeknative repository is organized, and how to change and test it."}],["$","meta","4",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","5",{"name":"twitter:title","content":"Contributing · geeknative"}],["$","meta","6",{"name":"twitter:description","content":"How the geeknative repository is organized, and how to change and test it."}],["$","meta","7",{"name":"twitter:image","content":"https://geekyants.github.io/geeknative/twitter-image.png?twitter-image.2fjuh4p5ndhng.png"}],["$","meta","8",{"name":"twitter:image:type","content":"image/png"}],["$","meta","9",{"name":"twitter:image:width","content":"1200"}],["$","meta","10",{"name":"twitter:image:height","content":"630"}],["$","link","11",{"rel":"icon","href":"/geeknative/icon.svg?icon.12cpu7ud8w87b.svg","sizes":"any","type":"image/svg+xml"}],["$","link","12",{"rel":"apple-touch-icon","href":"/geeknative/apple-icon.png?apple-icon.1b0eoaalscjqq.png","sizes":"180x180","type":"image/png"}],["$","$L18","13",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}]
+c:["$","$1","c",{"children":[null,["$","$L19",null,{"parallelRouterKey":"children","template":["$","$L1a",null,{}]}]]}]
+10:true
+15:null
+9:300
+9:C
+f:0
+b:"$undefined"
+d:"$undefined"
+8:"$undefined"

@@ -1,0 +1,50 @@
+1:"$Sreact.fragment"
+2:I[68989,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],"ArticleEnhancer"]
+3:T8d1,<p>geeknative 0.1.0 is the foundation: three apps that build and test from the command line, contracts and codegen, the agent instructions, Claude Code integration, and the <code>create</code>, <code>gen</code>, <code>check</code>, <code>doctor</code>, <code>parity</code> and <code>run</code> commands.</p>
+<p>Everything below is planned, not built.</p>
+<h2 id="upgrades-and-agent-evaluation">Upgrades and agent evaluation<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#upgrades-and-agent-evaluation">#</a></h2>
+<ul>
+<li><strong><code>geeknative upgrade</code>.</strong> Replace framework files that you haven't changed, three-way merge the ones you have, and list conflicts, using the hashes in <code>.geeknative/lock.json</code>. See <a href="/geeknative/docs/concepts/file-ownership/">File ownership</a>.</li>
+<li><strong>Migrations.</strong> Scripted migrations for mechanical changes (such as a new spec format), and written migrations an agent applies across all three apps for changes that need judgment.</li>
+<li><strong>Agent evaluation.</strong> A set of real prompts (a feature, a design change, a bug, a platform-only tweak) run through several agents, used to tune AGENTS.md and the playbooks wherever agents go wrong.</li>
+</ul>
+<h2 id="visual-and-end-to-end-parity">Visual and end-to-end parity<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#visual-and-end-to-end-parity">#</a></h2>
+<ul>
+<li><strong>UI tests</strong> on iOS and Android, so screen-level acceptance criteria (like the starter Home screen's) are covered on every platform.</li>
+<li><strong>Screenshots</strong> of each screen from all three apps, side by side, for visual review.</li>
+<li><strong>Shared end-to-end flows</strong> with Maestro for iOS and Android, and Playwright for the web.</li>
+<li><strong>CI for generated projects.</strong></li>
+</ul>
+<h2 id="more">More<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#more">#</a></h2>
+<ul>
+<li><strong>Backends.</strong> An API contract in <code>contracts/</code>, generated clients, and repository implementations that call it.</li>
+<li><strong>Custom fonts</strong> in design tokens.</li>
+<li><strong>Windows</strong> support for the Android and web apps.</li>
+</ul>a:X
+f:X
+f:C
+0:{"buildId":"IqLtbHoxpi_j-UYkJN6Rr","data":[{"rsc":["$","$1","c",{"children":[[["$","article",null,{"className":"min-w-0 pb-24 pt-10 lg:pt-14","data-pagefind-body":true,"children":[["$","header",null,{"className":"max-w-[46rem] border-b border-line pb-10","children":[["$","p",null,{"className":"label flex items-center gap-3 text-muted","children":[["$","span",null,{"aria-hidden":true,"className":"inline-block size-[7px] shrink-0 rounded-full bg-brand "}],["$","span",null,{"className":"tabular-nums","children":"05"}],["$","span",null,{"className":"h-px w-5 bg-current opacity-30"}],["$","span",null,{"children":"Project"}]]}],["$","h1",null,{"className":"mt-6 display-m","data-pagefind-meta":"title","children":"Roadmap"}],["$","p",null,{"className":"mt-5 max-w-[40rem] text-[1.125rem] leading-[1.55] text-ink/70","children":"What's planned for geeknative after 0.1.0."}]]}],["$","div",null,{"className":"mt-10 max-w-[46rem]","children":["$","$L2","project/roadmap",{"children":[["$","div","0",{"className":"docs-prose","dangerouslySetInnerHTML":{"__html":"$3"}}]]}]}],["$","footer",null,{"className":"mt-20 max-w-[46rem]","data-pagefind-ignore":true,"children":[["$","a",null,{"href":"https://github.com/GeekyAnts/geeknative/edit/main/website/content/docs/project/roadmap.md","className":"label inline-flex items-center gap-2 text-muted transition-colors hover:text-ink","rel":"noreferrer","children":["Edit this page on GitHub ","$L4"]}],"$L5"]}]]}],"$L6"],["$L7"],"$L8"]}],"isPartial":"$@9","staleTime":"$a","varyParams":null},{"rsc":"$Lb","isPartial":"$@c","staleTime":"$a","varyParams":null},{"rsc":"$Ld","isPartial":"$@e","staleTime":"$a","varyParams":"$f"}],"isUpgradeableISRFallback":false,"a":"$@10","rootVaryParams":null,"needsRuntimeRequest":"$@11"}
+12:I[54249,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],""]
+13:I[35820,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],"Toc"]
+14:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"OutletBoundary"]
+15:"$Sreact.suspense"
+17:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"ViewportBoundary"]
+18:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"MetadataBoundary"]
+19:I[18516,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"IconMark"]
+1a:I[87180,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+1b:I[42045,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+4:["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0 -rotate-45 ","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]
+5:["$","nav",null,{"aria-label":"Previous and next","className":"mt-8 grid gap-px overflow-hidden rounded-2xl bg-line ring-1 ring-line sm:grid-cols-2","children":[["$","$L12",null,{"href":"/docs/reference/platforms/","className":"group flex flex-col gap-3 bg-white p-6 transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Previous"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":[["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  rotate-180 transition-transform duration-500 ease-[var(--ease-expo)] group-hover:-translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}],"Platforms"]}]]}],["$","$L12",null,{"href":"/docs/project/contributing/","className":"group flex flex-col items-end gap-3 bg-white p-6 text-right transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Next"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":["Contributing",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  transition-transform duration-500 ease-[var(--ease-expo)] group-hover:translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}]]}]]}]
+6:["$","$L13",null,{"items":[{"depth":2,"id":"upgrades-and-agent-evaluation","text":"Upgrades and agent evaluation"},{"depth":2,"id":"visual-and-end-to-end-parity","text":"Visual and end-to-end parity"},{"depth":2,"id":"more","text":"More"}]}]
+7:["$","script","script-0",{"src":"/geeknative/_next/static/chunks/1lnswdcfwctsn.js","async":true}]
+8:["$","$L14",null,{"children":["$","$15",null,{"name":"Next.MetadataOutlet","children":"$@16"}]}]
+b:["$","$1","h",{"children":[null,["$","$L17",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#ffffff"}]]}],["$","div",null,{"hidden":true,"children":["$","$L18",null,{"children":["$","$15",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Roadmap · geeknative"}],["$","meta","1",{"name":"description","content":"What's planned for geeknative after 0.1.0."}],["$","meta","2",{"property":"og:title","content":"Roadmap · geeknative"}],["$","meta","3",{"property":"og:description","content":"What's planned for geeknative after 0.1.0."}],["$","meta","4",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","5",{"name":"twitter:title","content":"Roadmap · geeknative"}],["$","meta","6",{"name":"twitter:description","content":"What's planned for geeknative after 0.1.0."}],["$","meta","7",{"name":"twitter:image","content":"https://geekyants.github.io/geeknative/twitter-image.png?twitter-image.2fjuh4p5ndhng.png"}],["$","meta","8",{"name":"twitter:image:type","content":"image/png"}],["$","meta","9",{"name":"twitter:image:width","content":"1200"}],["$","meta","10",{"name":"twitter:image:height","content":"630"}],["$","link","11",{"rel":"icon","href":"/geeknative/icon.svg?icon.12cpu7ud8w87b.svg","sizes":"any","type":"image/svg+xml"}],["$","link","12",{"rel":"apple-touch-icon","href":"/geeknative/apple-icon.png?apple-icon.1b0eoaalscjqq.png","sizes":"180x180","type":"image/png"}],["$","$L19","13",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}]
+d:["$","$1","c",{"children":[null,["$","$L1a",null,{"parallelRouterKey":"children","template":["$","$L1b",null,{}]}]]}]
+11:true
+16:null
+a:300
+a:C
+10:0
+c:"$undefined"
+e:"$undefined"
+9:"$undefined"

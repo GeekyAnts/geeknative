@@ -1,0 +1,152 @@
+1:"$Sreact.fragment"
+2:I[68989,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],"ArticleEnhancer"]
+3:T160a,<p>Requests about colors, type, spacing, corner radii, dark mode or "make it feel more ..." are <strong>Design</strong> requests. The agent follows <code>.geeknative/playbooks/design.md</code>.</p>
+<h2 id="tokens-before-code">Tokens before code<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#tokens-before-code">#</a></h2>
+<p>Most visual changes are a change to <code>contracts/tokens.json</code> followed by <code>make gen</code>. Every app reads its colors, spacing, radii and type from the generated code, so one edit restyles all three:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Token</th>
+<th>iOS</th>
+<th>Android</th>
+<th>Web (Tailwind)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Color <code>primary</code></td>
+<td><code>AppColors.primary</code></td>
+<td><code>AppTheme.colors.primary</code></td>
+<td><code>bg-primary</code>, <code>text-primary</code></td>
+</tr>
+<tr>
+<td>Color <code>onPrimary</code></td>
+<td><code>AppColors.onPrimary</code></td>
+<td><code>AppTheme.colors.onPrimary</code></td>
+<td><code>text-on-primary</code></td>
+</tr>
+<tr>
+<td>Spacing <code>md</code></td>
+<td><code>AppSpacing.md</code></td>
+<td><code>AppSpacing.md</code></td>
+<td><code>p-md</code>, <code>gap-md</code></td>
+</tr>
+<tr>
+<td>Radius <code>lg</code></td>
+<td><code>AppRadius.lg</code></td>
+<td><code>AppRadius.lg</code></td>
+<td><code>rounded-lg</code></td>
+</tr>
+<tr>
+<td>Type <code>title</code></td>
+<td><code>AppTypography.title</code></td>
+<td><code>AppTypography.title</code></td>
+<td><code>text-title</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Every color has a light and a dark value, and the agent keeps text readable in both (WCAG AA, 4.5:1 for body text).</p>
+<h2 id="direction-first">Direction first<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#direction-first">#</a></h2>
+<p>For a broad request ("warmer", "more premium", "calmer"), the agent first updates the Direction section of DESIGN.md in a sentence or two. Later changes stay consistent with it.</p>
+<h2 id="roles-not-hues">Roles, not hues<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#roles-not-hues">#</a></h2>
+<p>New colors are named by purpose (<code>success</code>, <code>warning</code>), not by hue (<code>green</code>). That keeps the meaning stable when the palette changes, and every app gets the new color on the next <code>make gen</code>.</p>
+<p>The built-in roles are:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Used for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>background</code> / <code>onBackground</code></td>
+<td>Screens</td>
+</tr>
+<tr>
+<td><code>surface</code> / <code>onSurface</code></td>
+<td>Cards and grouped content on a screen</td>
+</tr>
+<tr>
+<td><code>surfaceVariant</code> / <code>onSurfaceVariant</code></td>
+<td>Subtle fills and secondary text</td>
+</tr>
+<tr>
+<td><code>primary</code> / <code>onPrimary</code></td>
+<td>The brand color, for primary actions and selection</td>
+</tr>
+<tr>
+<td><code>outline</code></td>
+<td>Borders and dividers</td>
+</tr>
+<tr>
+<td><code>error</code> / <code>onError</code></td>
+<td>Errors and destructive actions</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="components">Components<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#components">#</a></h2>
+<p>If a change affects a pattern (for example, every card gets a border), the agent updates the Components table in DESIGN.md, then changes that pattern in all three apps. The table records how each platform builds each shared pattern:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>iOS</th>
+<th>Android</th>
+<th>Web</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Screen</td>
+<td>Screen in a <code>NavigationStack</code>, with a navigation title</td>
+<td><code>Scaffold</code> with a <code>TopAppBar</code></td>
+<td>Page in the app shell</td>
+</tr>
+<tr>
+<td>Single choice</td>
+<td>Inline <code>Picker</code> (checkmarks)</td>
+<td>Radio buttons</td>
+<td>Radio group</td>
+</tr>
+<tr>
+<td>Card</td>
+<td><code>AppCard</code></td>
+<td><code>AppCard</code></td>
+<td><code>AppCard</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="stay-native">Stay native<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#stay-native">#</a></h2>
+<p>Brand elements (color, type, spacing, imagery) change everywhere. Platform conventions stay native unless you explicitly ask otherwise: navigation bars, system controls, gestures and sheets. DESIGN.md's "Same everywhere, native where it counts" table lists which is which.</p>
+<h2 id="type-and-fonts">Type and fonts<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#type-and-fonts">#</a></h2>
+<p>Typography tokens are roles: <code>display</code>, <code>headline</code>, <code>title</code>, <code>body</code>, <code>label</code> and <code>caption</code>. On iOS each maps to a Dynamic Type style, so it follows the user's text size. On Android sizes are in sp and on web in rem, so they scale with the user's font size setting. Each token says which iOS style and which Material 3 type style it maps to; see the <a href="/geeknative/docs/reference/contracts/#tokensjson">contracts reference</a>.</p>
+<p>The apps use each platform's system font. Custom fonts aren't supported by codegen yet; they're on the <a href="/geeknative/docs/project/roadmap/">roadmap</a>.</p>
+<h2 id="check-the-result">Check the result<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#check-the-result">#</a></h2>
+<p>The agent runs <code>make check</code>, and if it can, launches the apps with <code>make run-ios</code>, <code>make run-android</code> and <code>make run-web</code> to look at the result.</p>9:X
+e:X
+e:C
+0:{"buildId":"IqLtbHoxpi_j-UYkJN6Rr","data":[{"rsc":["$","$1","c",{"children":[[["$","article",null,{"className":"min-w-0 pb-24 pt-10 lg:pt-14","data-pagefind-body":true,"children":[["$","header",null,{"className":"max-w-[46rem] border-b border-line pb-10","children":[["$","p",null,{"className":"label flex items-center gap-3 text-muted","children":[["$","span",null,{"aria-hidden":true,"className":"inline-block size-[7px] shrink-0 rounded-full bg-brand "}],["$","span",null,{"className":"tabular-nums","children":"02"}],["$","span",null,{"className":"h-px w-5 bg-current opacity-30"}],["$","span",null,{"children":"Guides"}]]}],["$","h1",null,{"className":"mt-6 display-m","data-pagefind-meta":"title","children":"Design changes"}],["$","p",null,{"className":"mt-5 max-w-[40rem] text-[1.125rem] leading-[1.55] text-ink/70","children":"How look-and-feel requests flow through DESIGN.md and design tokens into all three apps."}]]}],["$","div",null,{"className":"mt-10 max-w-[46rem]","children":["$","$L2","guides/design-changes",{"children":[["$","div","0",{"className":"docs-prose","dangerouslySetInnerHTML":{"__html":"$3"}}]]}]}],"$L4"]}],"$L5"],["$L6"],"$L7"]}],"isPartial":"$@8","staleTime":"$9","varyParams":null},{"rsc":"$La","isPartial":"$@b","staleTime":"$9","varyParams":null},{"rsc":"$Lc","isPartial":"$@d","staleTime":"$9","varyParams":"$e"}],"isUpgradeableISRFallback":false,"a":"$@f","rootVaryParams":null,"needsRuntimeRequest":"$@10"}
+11:I[54249,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],""]
+12:I[35820,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],"Toc"]
+13:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"OutletBoundary"]
+14:"$Sreact.suspense"
+16:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"ViewportBoundary"]
+17:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"MetadataBoundary"]
+18:I[18516,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"IconMark"]
+19:I[87180,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+1a:I[42045,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+4:["$","footer",null,{"className":"mt-20 max-w-[46rem]","data-pagefind-ignore":true,"children":[["$","a",null,{"href":"https://github.com/GeekyAnts/geeknative/edit/main/website/content/docs/guides/design-changes.md","className":"label inline-flex items-center gap-2 text-muted transition-colors hover:text-ink","rel":"noreferrer","children":["Edit this page on GitHub ",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0 -rotate-45 ","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}],["$","nav",null,{"aria-label":"Previous and next","className":"mt-8 grid gap-px overflow-hidden rounded-2xl bg-line ring-1 ring-line sm:grid-cols-2","children":[["$","$L11",null,{"href":"/docs/guides/idea-to-three-apps/","className":"group flex flex-col gap-3 bg-white p-6 transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Previous"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":[["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  rotate-180 transition-transform duration-500 ease-[var(--ease-expo)] group-hover:-translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}],"From idea to three apps"]}]]}],["$","$L11",null,{"href":"/docs/guides/claude-code/","className":"group flex flex-col items-end gap-3 bg-white p-6 text-right transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Next"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":["Claude Code",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  transition-transform duration-500 ease-[var(--ease-expo)] group-hover:translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}]]}]]}]]}]
+5:["$","$L12",null,{"items":[{"depth":2,"id":"tokens-before-code","text":"Tokens before code"},{"depth":2,"id":"direction-first","text":"Direction first"},{"depth":2,"id":"roles-not-hues","text":"Roles, not hues"},{"depth":2,"id":"components","text":"Components"},{"depth":2,"id":"stay-native","text":"Stay native"},{"depth":2,"id":"type-and-fonts","text":"Type and fonts"},{"depth":2,"id":"check-the-result","text":"Check the result"}]}]
+6:["$","script","script-0",{"src":"/geeknative/_next/static/chunks/1lnswdcfwctsn.js","async":true}]
+7:["$","$L13",null,{"children":["$","$14",null,{"name":"Next.MetadataOutlet","children":"$@15"}]}]
+a:["$","$1","h",{"children":[null,["$","$L16",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#ffffff"}]]}],["$","div",null,{"hidden":true,"children":["$","$L17",null,{"children":["$","$14",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Design changes · geeknative"}],["$","meta","1",{"name":"description","content":"How look-and-feel requests flow through DESIGN.md and design tokens into all three apps."}],["$","meta","2",{"property":"og:title","content":"Design changes · geeknative"}],["$","meta","3",{"property":"og:description","content":"How look-and-feel requests flow through DESIGN.md and design tokens into all three apps."}],["$","meta","4",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","5",{"name":"twitter:title","content":"Design changes · geeknative"}],["$","meta","6",{"name":"twitter:description","content":"How look-and-feel requests flow through DESIGN.md and design tokens into all three apps."}],["$","meta","7",{"name":"twitter:image","content":"https://geekyants.github.io/geeknative/twitter-image.png?twitter-image.2fjuh4p5ndhng.png"}],["$","meta","8",{"name":"twitter:image:type","content":"image/png"}],["$","meta","9",{"name":"twitter:image:width","content":"1200"}],["$","meta","10",{"name":"twitter:image:height","content":"630"}],["$","link","11",{"rel":"icon","href":"/geeknative/icon.svg?icon.12cpu7ud8w87b.svg","sizes":"any","type":"image/svg+xml"}],["$","link","12",{"rel":"apple-touch-icon","href":"/geeknative/apple-icon.png?apple-icon.1b0eoaalscjqq.png","sizes":"180x180","type":"image/png"}],["$","$L18","13",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}]
+c:["$","$1","c",{"children":[null,["$","$L19",null,{"parallelRouterKey":"children","template":["$","$L1a",null,{}]}]]}]
+10:true
+15:null
+9:300
+9:C
+f:0
+b:"$undefined"
+d:"$undefined"
+8:"$undefined"

@@ -1,0 +1,278 @@
+1:"$Sreact.fragment"
+2:I[68989,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],"ArticleEnhancer"]
+3:T5881,<p><code>contracts/</code> holds everything that must be identical in all three apps. <code>make gen</code> validates it and generates platform code. Generated files are committed and never edited by hand.</p>
+<h2 id="appjson">app.json<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#appjson">#</a></h2>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="json"><code><span class="line"><span style="color:#686664">{</span></span>
+<span class="line"><span style="color:#686664">  "</span><span style="color:#0B0B0B">name</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "GeekNative"</span><span style="color:#686664">,</span></span>
+<span class="line"><span style="color:#686664">  "</span><span style="color:#0B0B0B">id</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "com.example.geeknative"</span><span style="color:#686664">,</span></span>
+<span class="line"><span style="color:#686664">  "</span><span style="color:#0B0B0B">version</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "1.0.0"</span><span style="color:#686664">,</span></span>
+<span class="line"><span style="color:#686664">  "</span><span style="color:#0B0B0B">build</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#CA0515"> 1</span><span style="color:#686664">,</span></span>
+<span class="line"><span style="color:#686664">  "</span><span style="color:#0B0B0B">defaultLocale</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "en"</span></span>
+<span class="line"><span style="color:#686664">}</span></span></code></pre>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Rule</th>
+<th>Becomes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>Not empty; no <code>$</code>, <code>//</code> or line breaks</td>
+<td>The display name on iOS and Android, and the web page title</td>
+</tr>
+<tr>
+<td><code>id</code></td>
+<td>Reverse-DNS, like <code>com.acme.notes</code></td>
+<td>iOS bundle ID and Android application ID</td>
+</tr>
+<tr>
+<td><code>version</code></td>
+<td>Like <code>1.0.0</code></td>
+<td>iOS marketing version, Android <code>versionName</code></td>
+</tr>
+<tr>
+<td><code>build</code></td>
+<td>A whole number, 1 or more</td>
+<td>iOS build number, Android <code>versionCode</code></td>
+</tr>
+<tr>
+<td><code>defaultLocale</code></td>
+<td>A language code like <code>en</code> or <code>pt-BR</code>; defaults to <code>en</code></td>
+<td>The source locale for strings</td>
+</tr>
+</tbody>
+</table></div>
+<p>In code: <code>AppIdentity.name</code> and <code>AppIdentity.version</code> (iOS), <code>AppIdentity.NAME</code> and <code>AppIdentity.VERSION</code> (Android), <code>AppIdentity.name</code> and <code>AppIdentity.version</code> (web).</p>
+<h2 id="tokensjson">tokens.json<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#tokensjson">#</a></h2>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="json"><code><span class="line"><span style="color:#686664">{</span></span>
+<span class="line"><span style="color:#686664">  "</span><span style="color:#0B0B0B">color</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#686664"> {</span></span>
+<span class="line"><span style="color:#686664">    "</span><span style="color:#0B0B0B">primary</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#686664"> {</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">light</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "#4F46E5"</span><span style="color:#686664">,</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">dark</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "#A5B4FC"</span><span style="color:#686664"> },</span></span>
+<span class="line"><span style="color:#686664">    "</span><span style="color:#0B0B0B">onPrimary</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#686664"> {</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">light</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "#FFFFFF"</span><span style="color:#686664">,</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">dark</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "#1E1B4B"</span><span style="color:#686664"> }</span></span>
+<span class="line"><span style="color:#686664">  },</span></span>
+<span class="line"><span style="color:#686664">  "</span><span style="color:#0B0B0B">spacing</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#686664"> {</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">xs</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#CA0515"> 4</span><span style="color:#686664">,</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">sm</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#CA0515"> 8</span><span style="color:#686664">,</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">md</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#CA0515"> 12</span><span style="color:#686664">,</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">lg</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#CA0515"> 16</span><span style="color:#686664">,</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">xl</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#CA0515"> 24</span><span style="color:#686664">,</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">xxl</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#CA0515"> 32</span><span style="color:#686664"> },</span></span>
+<span class="line"><span style="color:#686664">  "</span><span style="color:#0B0B0B">radius</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#686664"> {</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">sm</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#CA0515"> 6</span><span style="color:#686664">,</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">md</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#CA0515"> 10</span><span style="color:#686664">,</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">lg</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#CA0515"> 16</span><span style="color:#686664">,</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">full</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#CA0515"> 9999</span><span style="color:#686664"> },</span></span>
+<span class="line"><span style="color:#686664">  "</span><span style="color:#0B0B0B">typography</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#686664"> {</span></span>
+<span class="line"><span style="color:#686664">    "</span><span style="color:#0B0B0B">title</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#686664"> {</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">size</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#CA0515"> 20</span><span style="color:#686664">,</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">lineHeight</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#CA0515"> 26</span><span style="color:#686664">,</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">weight</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#CA0515"> 600</span><span style="color:#686664">,</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">ios</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "title3"</span><span style="color:#686664">,</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">android</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "titleLarge"</span><span style="color:#686664"> }</span></span>
+<span class="line"><span style="color:#686664">  },</span></span>
+<span class="line"><span style="color:#686664">  "</span><span style="color:#0B0B0B">font</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#686664"> {</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">family</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "system"</span><span style="color:#686664"> }</span></span>
+<span class="line"><span style="color:#686664">}</span></span></code></pre>
+<p><strong>Names</strong> are camelCase letters and digits starting lowercase, and can't be reserved words in Swift, Kotlin or TypeScript (like <code>default</code> or <code>class</code>).</p>
+<p><strong>Colors</strong> are <code>#RRGGBB</code> or <code>#RRGGBBAA</code>. <code>dark</code> is optional and defaults to <code>light</code>. These colors are required: <code>background</code>, <code>onBackground</code>, <code>surface</code>, <code>onSurface</code>, <code>surfaceVariant</code>, <code>onSurfaceVariant</code>, <code>primary</code>, <code>onPrimary</code>, <code>outline</code>, <code>error</code> and <code>onError</code>. You can add more.</p>
+<p><strong>Spacing and radius</strong> values are numbers of points (iOS), dp (Android) or pixels (web). A radius of 9999 or more is fully rounded on the web.</p>
+<p><strong>Typography</strong> entries need:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Rule</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>size</code>, <code>lineHeight</code></td>
+<td>Positive numbers (sp on Android, converted to rem on web)</td>
+</tr>
+<tr>
+<td><code>weight</code></td>
+<td>100, 200, ... 900</td>
+</tr>
+<tr>
+<td><code>ios</code></td>
+<td>The Dynamic Type style it maps to: <code>largeTitle</code>, <code>title</code>, <code>title2</code>, <code>title3</code>, <code>headline</code>, <code>subheadline</code>, <code>body</code>, <code>callout</code>, <code>footnote</code>, <code>caption</code>, <code>caption2</code></td>
+</tr>
+<tr>
+<td><code>android</code></td>
+<td>The Material 3 type style it fills: <code>displayLarge</code> to <code>displaySmall</code>, <code>headlineLarge</code> to <code>headlineSmall</code>, <code>titleLarge</code> to <code>titleSmall</code>, <code>bodyLarge</code> to <code>bodySmall</code>, <code>labelLarge</code> to <code>labelSmall</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>A <code>body</code> style is required. On iOS, sizes come from Dynamic Type for the mapped style, so text follows the user's text size setting.</p>
+<p><strong>Font family</strong> must be <code>"system"</code> for now.</p>
+<h3 id="generated">Generated<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#generated">#</a></h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Token</th>
+<th>iOS</th>
+<th>Android</th>
+<th>Web</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Colors</td>
+<td><code>AppColors.primary</code> (adapts to dark mode) and the global accent color</td>
+<td><code>AppTheme.colors.primary</code>, mapped onto Material 3 roles; <code>@color/token_primary</code> resources with night variants</td>
+<td><code>--color-primary</code> in a Tailwind <code>@theme</code>: <code>bg-primary</code>, <code>text-on-primary</code></td>
+</tr>
+<tr>
+<td>Spacing</td>
+<td><code>AppSpacing.md</code></td>
+<td><code>AppSpacing.md</code></td>
+<td><code>--spacing-md</code>: <code>p-md</code>, <code>gap-md</code></td>
+</tr>
+<tr>
+<td>Radius</td>
+<td><code>AppRadius.lg</code></td>
+<td><code>AppRadius.lg</code>, and Material 3 shapes</td>
+<td><code>--radius-lg</code>: <code>rounded-lg</code></td>
+</tr>
+<tr>
+<td>Type</td>
+<td><code>AppTypography.title</code></td>
+<td><code>AppTypography.title</code>, and Material 3 typography</td>
+<td><code>--text-title</code>: <code>text-title</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>On Android, screens and app bars sit on <code>background</code> (as on iOS) and <code>surface</code> is used for cards. A color named after another Material 3 role (like <code>secondary</code>) replaces that role's default. On the web, the theme also defines shadcn/ui's variable names (<code>foreground</code>, <code>card</code>, <code>muted</code>, <code>border</code>, ...) mapped onto the tokens, so shadcn/ui components pick up the design. Dark values apply when <code>&#x3C;html></code> has the <code>dark</code> class.</p>
+<h2 id="strings">strings/<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#strings">#</a></h2>
+<p>One JSON file per locale: <code>contracts/strings/en.json</code>, <code>contracts/strings/fr.json</code>, and so on. The default locale's file (from <code>app.json</code>) is the source; other files translate its keys.</p>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="json"><code><span class="line"><span style="color:#686664">{</span></span>
+<span class="line"><span style="color:#686664">  "</span><span style="color:#0B0B0B">settings.title</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "Settings"</span><span style="color:#686664">,</span></span>
+<span class="line"><span style="color:#686664">  "</span><span style="color:#0B0B0B">settings.about.version</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "Version {version} ({build:int})"</span><span style="color:#686664">,</span></span>
+<span class="line"><span style="color:#686664">  "</span><span style="color:#0B0B0B">notes.count</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#686664"> {</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">one</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "{count} note"</span><span style="color:#686664">,</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">other</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "{count} notes"</span><span style="color:#686664"> }</span></span>
+<span class="line"><span style="color:#686664">}</span></span></code></pre>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Rule</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Keys</td>
+<td>Dot-separated camelCase words: <code>settings.appearance.title</code>. Two keys can't map to the same name. <code>app.name</code> isn't allowed (the name comes from <code>app.json</code>).</td>
+</tr>
+<tr>
+<td>Placeholders</td>
+<td><code>{name}</code> is a string, <code>{name:int}</code> an integer.</td>
+</tr>
+<tr>
+<td>Plurals</td>
+<td>An object with <code>zero</code>, <code>one</code>, <code>two</code>, <code>few</code>, <code>many</code> and <code>other</code> forms. <code>other</code> is required, and the only placeholder allowed is <code>{count}</code>.</td>
+</tr>
+<tr>
+<td>Translations</td>
+<td>Must use the same placeholders and plural shape as the source, and can't add keys the source doesn't have. Missing keys fall back to the source.</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="generated-1">Generated<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#generated-1">#</a></h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Key</th>
+<th>iOS</th>
+<th>Android</th>
+<th>Web</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>settings.title</code></td>
+<td><code>Strings.settingsTitle</code></td>
+<td><code>stringResource(R.string.settings_title)</code></td>
+<td><code>strings.settingsTitle</code></td>
+</tr>
+<tr>
+<td><code>settings.about.version</code></td>
+<td><code>Strings.settingsAboutVersion(version:build:)</code></td>
+<td><code>stringResource(R.string.settings_about_version, version, build)</code></td>
+<td><code>strings.settingsAboutVersion({ version, build })</code></td>
+</tr>
+<tr>
+<td><code>notes.count</code></td>
+<td><code>Strings.notesCount(count:)</code></td>
+<td><code>pluralStringResource(R.plurals.notes_count, count, count)</code></td>
+<td><code>strings.notesCount(count)</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Files: <code>App/Generated/Localizable.xcstrings</code> and <code>Strings.swift</code> on iOS; <code>res/values/generated_strings.xml</code> (plus <code>values-fr</code>, <code>values-pt-rBR</code>, <code>values-b+zh+Hans</code> and so on) on Android, which also gets <code>app_name</code>; <code>src/generated/strings.ts</code> on web, with <code>setLocale()</code>.</p>
+<h2 id="iconsjson">icons.json<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#iconsjson">#</a></h2>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="json"><code><span class="line"><span style="color:#686664">{</span></span>
+<span class="line"><span style="color:#686664">  "</span><span style="color:#0B0B0B">settings</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#686664"> {</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">ios</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "gearshape"</span><span style="color:#686664">,</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">android</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "Icons.Filled.Settings"</span><span style="color:#686664">,</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">web</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "Settings"</span><span style="color:#686664"> },</span></span>
+<span class="line"><span style="color:#686664">  "</span><span style="color:#0B0B0B">back</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#686664"> {</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">ios</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "chevron.backward"</span><span style="color:#686664">,</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">android</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "Icons.AutoMirrored.Filled.ArrowBack"</span><span style="color:#686664">,</span><span style="color:#686664"> "</span><span style="color:#0B0B0B">web</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#9F0310"> "ArrowLeft"</span><span style="color:#686664"> }</span></span>
+<span class="line"><span style="color:#686664">}</span></span></code></pre>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ios</code></td>
+<td>An SF Symbol name</td>
+</tr>
+<tr>
+<td><code>android</code></td>
+<td>A Material icon: <code>Icons.Filled.Name</code>, <code>Icons.Outlined.Name</code>, <code>Icons.Rounded.Name</code>, <code>Icons.Sharp.Name</code> or <code>Icons.TwoTone.Name</code>, optionally with <code>AutoMirrored.</code> after <code>Icons.</code></td>
+</tr>
+<tr>
+<td><code>web</code></td>
+<td>A Lucide icon component name, like <code>Settings</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>In code: <code>Image(systemName: AppIcon.settings)</code> on iOS, <code>Icon(AppIcons.settings, contentDescription = ...)</code> on Android, and <code>&#x3C;AppIcons.settings className="size-6" /></code> on web.</p>
+<h2 id="all-generated-files">All generated files<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#all-generated-files">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Files</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>iOS</td>
+<td><code>apps/ios/App/Generated/</code>: <code>AppIdentity.swift</code>, <code>Tokens.swift</code>, <code>Strings.swift</code>, <code>Icons.swift</code>, <code>Localizable.xcstrings</code>, <code>Colors.xcassets</code> (accent color); <code>apps/ios/Config/Identity.xcconfig</code></td>
+</tr>
+<tr>
+<td>Android</td>
+<td><code>apps/android/app/src/main/kotlin/app/generated/</code>: <code>AppIdentity.kt</code>, <code>Tokens.kt</code>, <code>Icons.kt</code>; <code>res/values/generated_colors.xml</code>, <code>res/values-night/generated_colors.xml</code>, <code>res/values*/generated_strings.xml</code>; <code>apps/android/app/identity.properties</code></td>
+</tr>
+<tr>
+<td>Web</td>
+<td><code>apps/web/src/generated/</code>: <code>app.ts</code>, <code>tokens.css</code>, <code>strings.ts</code>, <code>icons.ts</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="validation-errors">Validation errors<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#validation-errors">#</a></h2>
+<p>Problems are reported with the file and field, so an agent can fix them directly:</p>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="text"><code><span class="line"><span>✖ contracts/tokens.json color.primary.light must be a hex color like "#4F46E5" or "#4F46E5CC" (got "#4F46E").</span></span>
+<span class="line"><span>✖ contracts/strings/fr.json "settings.about.version" must use the same placeholders and plural shape as en.json.</span></span>
+<span class="line"><span>✖ contracts/icons.json "star" needs "android": a Material icon like "Icons.Filled.Settings" or "Icons.AutoMirrored.Filled.ArrowBack".</span></span></code></pre>9:X
+e:X
+e:C
+0:{"buildId":"IqLtbHoxpi_j-UYkJN6Rr","data":[{"rsc":["$","$1","c",{"children":[[["$","article",null,{"className":"min-w-0 pb-24 pt-10 lg:pt-14","data-pagefind-body":true,"children":[["$","header",null,{"className":"max-w-[46rem] border-b border-line pb-10","children":[["$","p",null,{"className":"label flex items-center gap-3 text-muted","children":[["$","span",null,{"aria-hidden":true,"className":"inline-block size-[7px] shrink-0 rounded-full bg-brand "}],["$","span",null,{"className":"tabular-nums","children":"04"}],["$","span",null,{"className":"h-px w-5 bg-current opacity-30"}],["$","span",null,{"children":"Reference"}]]}],["$","h1",null,{"className":"mt-6 display-m","data-pagefind-meta":"title","children":"Contracts"}],["$","p",null,{"className":"mt-5 max-w-[40rem] text-[1.125rem] leading-[1.55] text-ink/70","children":"The format of every file in contracts/, its validation rules, and the code it generates on each platform."}]]}],["$","div",null,{"className":"mt-10 max-w-[46rem]","children":["$","$L2","reference/contracts",{"children":[["$","div","0",{"className":"docs-prose","dangerouslySetInnerHTML":{"__html":"$3"}}]]}]}],"$L4"]}],"$L5"],["$L6"],"$L7"]}],"isPartial":"$@8","staleTime":"$9","varyParams":null},{"rsc":"$La","isPartial":"$@b","staleTime":"$9","varyParams":null},{"rsc":"$Lc","isPartial":"$@d","staleTime":"$9","varyParams":"$e"}],"isUpgradeableISRFallback":false,"a":"$@f","rootVaryParams":null,"needsRuntimeRequest":"$@10"}
+11:I[54249,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],""]
+12:I[35820,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],"Toc"]
+13:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"OutletBoundary"]
+14:"$Sreact.suspense"
+16:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"ViewportBoundary"]
+17:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"MetadataBoundary"]
+18:I[18516,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"IconMark"]
+19:I[87180,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+1a:I[42045,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+4:["$","footer",null,{"className":"mt-20 max-w-[46rem]","data-pagefind-ignore":true,"children":[["$","a",null,{"href":"https://github.com/GeekyAnts/geeknative/edit/main/website/content/docs/reference/contracts.md","className":"label inline-flex items-center gap-2 text-muted transition-colors hover:text-ink","rel":"noreferrer","children":["Edit this page on GitHub ",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0 -rotate-45 ","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}],["$","nav",null,{"aria-label":"Previous and next","className":"mt-8 grid gap-px overflow-hidden rounded-2xl bg-line ring-1 ring-line sm:grid-cols-2","children":[["$","$L11",null,{"href":"/docs/reference/cli/","className":"group flex flex-col gap-3 bg-white p-6 transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Previous"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":[["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  rotate-180 transition-transform duration-500 ease-[var(--ease-expo)] group-hover:-translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}],"CLI"]}]]}],["$","$L11",null,{"href":"/docs/reference/platforms/","className":"group flex flex-col items-end gap-3 bg-white p-6 text-right transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Next"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":["Platforms",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  transition-transform duration-500 ease-[var(--ease-expo)] group-hover:translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}]]}]]}]]}]
+5:["$","$L12",null,{"items":[{"depth":2,"id":"appjson","text":"app.json"},{"depth":2,"id":"tokensjson","text":"tokens.json"},{"depth":3,"id":"generated","text":"Generated"},{"depth":2,"id":"strings","text":"strings/"},{"depth":3,"id":"generated-1","text":"Generated"},{"depth":2,"id":"iconsjson","text":"icons.json"},{"depth":2,"id":"all-generated-files","text":"All generated files"},{"depth":2,"id":"validation-errors","text":"Validation errors"}]}]
+6:["$","script","script-0",{"src":"/geeknative/_next/static/chunks/1lnswdcfwctsn.js","async":true}]
+7:["$","$L13",null,{"children":["$","$14",null,{"name":"Next.MetadataOutlet","children":"$@15"}]}]
+a:["$","$1","h",{"children":[null,["$","$L16",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#ffffff"}]]}],["$","div",null,{"hidden":true,"children":["$","$L17",null,{"children":["$","$14",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Contracts · geeknative"}],["$","meta","1",{"name":"description","content":"The format of every file in contracts/, its validation rules, and the code it generates on each platform."}],["$","meta","2",{"property":"og:title","content":"Contracts · geeknative"}],["$","meta","3",{"property":"og:description","content":"The format of every file in contracts/, its validation rules, and the code it generates on each platform."}],["$","meta","4",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","5",{"name":"twitter:title","content":"Contracts · geeknative"}],["$","meta","6",{"name":"twitter:description","content":"The format of every file in contracts/, its validation rules, and the code it generates on each platform."}],["$","meta","7",{"name":"twitter:image","content":"https://geekyants.github.io/geeknative/twitter-image.png?twitter-image.2fjuh4p5ndhng.png"}],["$","meta","8",{"name":"twitter:image:type","content":"image/png"}],["$","meta","9",{"name":"twitter:image:width","content":"1200"}],["$","meta","10",{"name":"twitter:image:height","content":"630"}],["$","link","11",{"rel":"icon","href":"/geeknative/icon.svg?icon.12cpu7ud8w87b.svg","sizes":"any","type":"image/svg+xml"}],["$","link","12",{"rel":"apple-touch-icon","href":"/geeknative/apple-icon.png?apple-icon.1b0eoaalscjqq.png","sizes":"180x180","type":"image/png"}],["$","$L18","13",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}]
+c:["$","$1","c",{"children":[null,["$","$L19",null,{"parallelRouterKey":"children","template":["$","$L1a",null,{}]}]]}]
+10:true
+15:null
+9:300
+9:C
+f:0
+b:"$undefined"
+d:"$undefined"
+8:"$undefined"

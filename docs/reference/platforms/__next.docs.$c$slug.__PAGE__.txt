@@ -1,0 +1,79 @@
+1:"$Sreact.fragment"
+2:I[68989,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],"ArticleEnhancer"]
+3:T1909,<p>Each app has its own <code>AGENTS.md</code> with these conventions, for agents working in that folder.</p>
+<h2 id="ios">iOS<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#ios">#</a></h2>
+<p><strong>Stack:</strong> SwiftUI and Observation (<code>@Observable</code>), iOS 17 and later. Swift 6 language mode, with code isolated to the main actor by default: background work is marked <code>nonisolated</code> or <code>@concurrent</code> explicitly. Swift Testing for tests. No third-party dependencies.</p>
+<p><strong>Project:</strong> <code>apps/ios/App.xcodeproj</code> uses synchronized folders for <code>App/</code> and <code>AppTests/</code>, so new files are picked up without editing <code>project.pbxproj</code>. Build settings live in <code>Config/*.xcconfig</code>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>File</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Base.xcconfig</code></td>
+<td>Shared settings: deployment target, Swift version, concurrency</td>
+</tr>
+<tr>
+<td><code>Debug.xcconfig</code>, <code>Release.xcconfig</code></td>
+<td>Per-configuration settings</td>
+</tr>
+<tr>
+<td><code>App.xcconfig</code></td>
+<td>The app target: Info.plist keys, app icon, accent color. Set <code>DEVELOPMENT_TEAM</code> here to run on a device.</td>
+</tr>
+<tr>
+<td><code>AppTests.xcconfig</code></td>
+<td>The unit test target</td>
+</tr>
+<tr>
+<td><code>Identity.xcconfig</code></td>
+<td>Generated from <code>contracts/app.json</code></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Patterns:</strong> a screen is <code>struct NotesScreen: View</code>; it holds its <code>@Observable final class NotesViewModel</code> in <code>@State</code>; data goes through <code>protocol NotesRepository</code>; dependencies come from <code>@Environment(AppContainer.self)</code>. Navigation is one <code>NavigationStack</code> in <code>RootView</code>: add a case to <code>Route</code> and handle it in <code>navigationDestination</code>. Each screen has a <code>#Preview</code> using <code>AppContainer.preview()</code> or in-memory repositories.</p>
+<p><strong>Appearance:</strong> <code>RootView</code> applies the chosen appearance to the windows themselves, so sheets and alerts follow it too.</p>
+<p><strong>Commands:</strong> <code>make check-ios</code> (build and tests on a simulator), <code>make run-ios</code>, or <code>open apps/ios/App.xcodeproj</code>.</p>
+<p><strong>Gotchas:</strong> adding a Swift package changes the project file, so the agent asks you first.</p>
+<h2 id="android">Android<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#android">#</a></h2>
+<p><strong>Stack:</strong> Kotlin and Jetpack Compose with Material 3, Android 7.0 (API 24) and later, compiled against API 37. Navigation 3, ViewModel with StateFlow, coroutines and DataStore. AGP 9 with built-in Kotlin. JUnit and kotlinx-coroutines-test for unit tests.</p>
+<p><strong>Build:</strong> every dependency version is in <code>gradle/libs.versions.toml</code>. <code>app/build.gradle.kts</code> reads the application ID and version from <code>app/identity.properties</code>, generated from <code>contracts/app.json</code>. Gradle downloads JDK 21 for the build (<code>gradle/gradle-daemon-jvm.properties</code>), so any JDK 17 or later can start it.</p>
+<p><strong>Package:</strong> the Kotlin package is always <code>app</code>. The app's identity is its application ID, so renaming the app never moves code.</p>
+<p><strong>Patterns:</strong> a screen is <code>@Composable fun NotesScreen(...)</code>, with a stateless content composable below it for previews. <code>NotesViewModel : ViewModel()</code> exposes <code>uiState: StateFlow&#x3C;NotesUiState></code> and action functions. Data goes through <code>interface NotesRepository</code>. Composables get dependencies from <code>LocalAppContainer.current</code>, and ViewModels are created with <code>viewModel { NotesViewModel(container.notesRepository) }</code>. Navigation is one Navigation 3 back stack: add an object to <code>Route</code>, an <code>entry&#x3C;Route.Notes></code> in <code>AppNavigation</code>, and push with <code>backStack.add(Route.Notes)</code>. Flows are collected with <code>collectAsStateWithLifecycle()</code>.</p>
+<p><strong>Appearance:</strong> <code>MainActivity</code> themes the whole app from the stored appearance, waits for it to load before the first frame, and keeps the system bar icons readable.</p>
+<p><strong>Commands:</strong> <code>make check-android</code> (build and unit tests), <code>make run-android</code>, or open <code>apps/android</code> in Android Studio for previews.</p>
+<h2 id="web">Web<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#web">#</a></h2>
+<p><strong>Stack:</strong> React 19 on TanStack Start (server rendering), with TanStack Router file routes and TanStack Query. Tailwind CSS v4 with the generated tokens, and Lucide icons. Strict TypeScript, Vite and Vitest. Supports Safari 16.4, Chrome 111 and Firefox 128 or later (Tailwind v4's minimum).</p>
+<p><strong>Layout:</strong> <code>router.tsx</code> creates the router with <code>{ queryClient, container }</code> as context. Each URL is a thin file in <code>routes/</code> that renders a feature's screen; <code>routes/__root.tsx</code> is the HTML shell and the site header. Features live in <code>features/&#x3C;name>/</code>.</p>
+<p><strong>Patterns:</strong> <code>NotesScreen</code> renders state from <code>useNotesViewModel()</code>, which reads data with TanStack Query and returns state and actions. Data goes through a <code>NotesRepository</code> interface. Dependencies come from router context: <code>useRouteContext({ from: '__root__' }).container</code>. Styling uses token classes (<code>bg-surface</code>, <code>p-lg</code>), not arbitrary values. For complex primitives (dialogs, menus, popovers), shadcn/ui fits: the tokens already map onto its CSS variables.</p>
+<p><strong>Server rendering:</strong> code that uses browser APIs (localStorage, window) also runs safely on the server. Server functions and API routes are only for web-only concerns. The stored appearance is applied by a small script before the first paint, so there's no flash of the wrong theme.</p>
+<p><strong>Commands:</strong> <code>make check-web</code> (type-check, unit tests and a production build) and <code>make run-web</code> (dev server at <code>http://localhost:3000</code>).</p>9:X
+e:X
+e:C
+0:{"buildId":"IqLtbHoxpi_j-UYkJN6Rr","data":[{"rsc":["$","$1","c",{"children":[[["$","article",null,{"className":"min-w-0 pb-24 pt-10 lg:pt-14","data-pagefind-body":true,"children":[["$","header",null,{"className":"max-w-[46rem] border-b border-line pb-10","children":[["$","p",null,{"className":"label flex items-center gap-3 text-muted","children":[["$","span",null,{"aria-hidden":true,"className":"inline-block size-[7px] shrink-0 rounded-full bg-brand "}],["$","span",null,{"className":"tabular-nums","children":"04"}],["$","span",null,{"className":"h-px w-5 bg-current opacity-30"}],["$","span",null,{"children":"Reference"}]]}],["$","h1",null,{"className":"mt-6 display-m","data-pagefind-meta":"title","children":"Platforms"}],["$","p",null,{"className":"mt-5 max-w-[40rem] text-[1.125rem] leading-[1.55] text-ink/70","children":"How each of the three apps is built, laid out, tested and run."}]]}],["$","div",null,{"className":"mt-10 max-w-[46rem]","children":["$","$L2","reference/platforms",{"children":[["$","div","0",{"className":"docs-prose","dangerouslySetInnerHTML":{"__html":"$3"}}]]}]}],"$L4"]}],"$L5"],["$L6"],"$L7"]}],"isPartial":"$@8","staleTime":"$9","varyParams":null},{"rsc":"$La","isPartial":"$@b","staleTime":"$9","varyParams":null},{"rsc":"$Lc","isPartial":"$@d","staleTime":"$9","varyParams":"$e"}],"isUpgradeableISRFallback":false,"a":"$@f","rootVaryParams":null,"needsRuntimeRequest":"$@10"}
+11:I[54249,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],""]
+12:I[35820,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],"Toc"]
+13:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"OutletBoundary"]
+14:"$Sreact.suspense"
+16:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"ViewportBoundary"]
+17:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"MetadataBoundary"]
+18:I[18516,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"IconMark"]
+19:I[87180,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+1a:I[42045,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+4:["$","footer",null,{"className":"mt-20 max-w-[46rem]","data-pagefind-ignore":true,"children":[["$","a",null,{"href":"https://github.com/GeekyAnts/geeknative/edit/main/website/content/docs/reference/platforms.md","className":"label inline-flex items-center gap-2 text-muted transition-colors hover:text-ink","rel":"noreferrer","children":["Edit this page on GitHub ",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0 -rotate-45 ","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}],["$","nav",null,{"aria-label":"Previous and next","className":"mt-8 grid gap-px overflow-hidden rounded-2xl bg-line ring-1 ring-line sm:grid-cols-2","children":[["$","$L11",null,{"href":"/docs/reference/contracts/","className":"group flex flex-col gap-3 bg-white p-6 transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Previous"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":[["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  rotate-180 transition-transform duration-500 ease-[var(--ease-expo)] group-hover:-translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}],"Contracts"]}]]}],["$","$L11",null,{"href":"/docs/project/roadmap/","className":"group flex flex-col items-end gap-3 bg-white p-6 text-right transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Next"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":["Roadmap",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  transition-transform duration-500 ease-[var(--ease-expo)] group-hover:translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}]]}]]}]]}]
+5:["$","$L12",null,{"items":[{"depth":2,"id":"ios","text":"iOS"},{"depth":2,"id":"android","text":"Android"},{"depth":2,"id":"web","text":"Web"}]}]
+6:["$","script","script-0",{"src":"/geeknative/_next/static/chunks/1lnswdcfwctsn.js","async":true}]
+7:["$","$L13",null,{"children":["$","$14",null,{"name":"Next.MetadataOutlet","children":"$@15"}]}]
+a:["$","$1","h",{"children":[null,["$","$L16",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#ffffff"}]]}],["$","div",null,{"hidden":true,"children":["$","$L17",null,{"children":["$","$14",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Platforms · geeknative"}],["$","meta","1",{"name":"description","content":"How each of the three apps is built, laid out, tested and run."}],["$","meta","2",{"property":"og:title","content":"Platforms · geeknative"}],["$","meta","3",{"property":"og:description","content":"How each of the three apps is built, laid out, tested and run."}],["$","meta","4",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","5",{"name":"twitter:title","content":"Platforms · geeknative"}],["$","meta","6",{"name":"twitter:description","content":"How each of the three apps is built, laid out, tested and run."}],["$","meta","7",{"name":"twitter:image","content":"https://geekyants.github.io/geeknative/twitter-image.png?twitter-image.2fjuh4p5ndhng.png"}],["$","meta","8",{"name":"twitter:image:type","content":"image/png"}],["$","meta","9",{"name":"twitter:image:width","content":"1200"}],["$","meta","10",{"name":"twitter:image:height","content":"630"}],["$","link","11",{"rel":"icon","href":"/geeknative/icon.svg?icon.12cpu7ud8w87b.svg","sizes":"any","type":"image/svg+xml"}],["$","link","12",{"rel":"apple-touch-icon","href":"/geeknative/apple-icon.png?apple-icon.1b0eoaalscjqq.png","sizes":"180x180","type":"image/png"}],["$","$L18","13",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}]
+c:["$","$1","c",{"children":[null,["$","$L19",null,{"parallelRouterKey":"children","template":["$","$L1a",null,{}]}]]}]
+10:true
+15:null
+9:300
+9:C
+f:0
+b:"$undefined"
+d:"$undefined"
+8:"$undefined"

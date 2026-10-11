@@ -1,0 +1,168 @@
+1:"$Sreact.fragment"
+2:I[68989,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],"ArticleEnhancer"]
+3:T1ade,<p>You don't need special commands. Describe what you want, the way you would to a teammate. The root <code>AGENTS.md</code> tells the agent what to do with it.</p>
+<h2 id="every-request-is-for-all-three-apps">Every request is for all three apps<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#every-request-is-for-all-three-apps">#</a></h2>
+<p>Unless you name a platform ("on Android, ...") or the spec marks something as platform-only, a request is done only when iOS, Android and web all do it.</p>
+<h2 id="the-agent-triages-first-out-loud">The agent triages first, out loud<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#the-agent-triages-first-out-loud">#</a></h2>
+<p>Before changing anything, the agent decides what kind of request it is and says so in the first line of its reply:</p>
+<blockquote>
+<p><strong>Feature:</strong> notes list → spec/features/notes.md, strings · iOS, Android, Web</p>
+</blockquote>
+<p>If it read you wrong, correct it before any work happens.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>The request...</th>
+<th>Type</th>
+<th>Updated first</th>
+<th>Playbook</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>describes an app, or changes what it is or who it's for</td>
+<td>Product</td>
+<td>PRODUCT.md, DESIGN.md, spec/navigation.md, feature specs</td>
+<td><code>.geeknative/playbooks/product.md</code></td>
+</tr>
+<tr>
+<td>adds a screen, flow or capability</td>
+<td>Feature</td>
+<td>a new <code>spec/features/&#x3C;id>.md</code></td>
+<td><code>.geeknative/playbooks/feature.md</code></td>
+</tr>
+<tr>
+<td>changes how something existing behaves</td>
+<td>Behavior change</td>
+<td>that feature's spec</td>
+<td><code>.geeknative/playbooks/feature.md</code></td>
+</tr>
+<tr>
+<td>changes the look and feel</td>
+<td>Design</td>
+<td>DESIGN.md and/or <code>contracts/tokens.json</code></td>
+<td><code>.geeknative/playbooks/design.md</code></td>
+</tr>
+<tr>
+<td>changes wording only</td>
+<td>Copy</td>
+<td><code>contracts/strings/*.json</code>, then <code>make gen</code></td>
+<td>none</td>
+</tr>
+<tr>
+<td>reports something broken</td>
+<td>Bug</td>
+<td>the spec, only if it was silent or wrong</td>
+<td><code>.geeknative/playbooks/bug.md</code></td>
+</tr>
+<tr>
+<td>names one platform</td>
+<td>Platform-specific</td>
+<td>the feature's "Platform notes", if users can see it</td>
+<td><code>.geeknative/playbooks/platform-specific.md</code></td>
+</tr>
+<tr>
+<td>is about tooling, dependencies, builds or refactoring</td>
+<td>Engineering</td>
+<td>nothing</td>
+<td><code>.geeknative/playbooks/engineering.md</code></td>
+</tr>
+<tr>
+<td>asks a question</td>
+<td>Question</td>
+<td>nothing: the agent answers and doesn't edit files</td>
+<td>none</td>
+</tr>
+</tbody>
+</table></div>
+<p>A request can be several types at once: a feature usually adds copy too. Small tweaks don't get new spec files; the agent updates a doc only when what it says changes.</p>
+<h2 id="example-prompts">Example prompts<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#example-prompts">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>You type</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"Build a habit tracker where people check off habits daily and see streaks."</td>
+<td><strong>Product.</strong> PRODUCT.md, DESIGN.md, navigation and one spec per feature, then features built one at a time on all three apps.</td>
+</tr>
+<tr>
+<td>"Add a notes list where I can add and delete notes."</td>
+<td><strong>Feature.</strong> <code>spec/features/notes.md</code> with acceptance criteria, new strings, then <code>NotesScreen</code>, <code>NotesViewModel</code> and <code>NotesRepository</code> in each app.</td>
+</tr>
+<tr>
+<td>"Sort notes by when they were last edited."</td>
+<td><strong>Behavior change.</strong> The notes spec changes first, then all three apps.</td>
+</tr>
+<tr>
+<td>"Make it feel warmer, with rounder corners."</td>
+<td><strong>Design.</strong> DESIGN.md's direction and <code>contracts/tokens.json</code>, then <code>make gen</code>.</td>
+</tr>
+<tr>
+<td>"Rename the Save button to Done."</td>
+<td><strong>Copy.</strong> One edit in <code>contracts/strings/en.json</code> and <code>make gen</code>.</td>
+</tr>
+<tr>
+<td>"The app crashes when I delete the last note."</td>
+<td><strong>Bug.</strong> Fixed where it breaks, then the other two apps are checked for the same mistake, with a regression test.</td>
+</tr>
+<tr>
+<td>"On iPhone, add a haptic when a note is deleted."</td>
+<td><strong>Platform-specific.</strong> iOS only, recorded in the feature's Platform notes so nobody "fixes" the difference later.</td>
+</tr>
+<tr>
+<td>"Why does Android use radio buttons for the appearance setting?"</td>
+<td><strong>Question.</strong> Answered from DESIGN.md and the spec. Nothing changes.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="plan-before-building">Plan before building<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#plan-before-building">#</a></h2>
+<p>Say "plan", "spec only" or "don't build yet" and the agent stops after updating the docs. Review the spec, then ask it to build.</p>
+<h2 id="when-the-agent-asks-and-when-it-assumes">When the agent asks, and when it assumes<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#when-the-agent-asks-and-when-it-assumes">#</a></h2>
+<p>The agent asks only when a wrong guess would be expensive to undo: the data model, the navigation structure, deleting features or data, or anything irreversible. Otherwise it picks the conventional option, notes it under "Assumptions" in the spec (and in <code>spec/decisions.md</code> if it affects more than one feature), and mentions it in its report.</p>
+<h2 id="what-done-means">What "done" means<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#what-done-means">#</a></h2>
+<p>The agent finishes when:</p>
+<ul>
+<li>the docs and contracts describe the new behavior;</li>
+<li><code>make gen</code> leaves no changes;</li>
+<li>checks pass for every platform it touched;</li>
+<li>each platform's status is recorded in the feature's front matter and <code>spec/parity.md</code> is current;</li>
+<li>anything left undone is in its report, with the reason.</li>
+</ul>
+<p>Its report has one line per platform (done, partial or skipped, and why), the checks it ran, and the assumptions it made.</p>
+<h2 id="tips">Tips<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#tips">#</a></h2>
+<ul>
+<li><strong>One feature at a time.</strong> The agent finishes a feature on every platform before starting the next. Big asks work best as a sequence of features.</li>
+<li><strong>Review the spec diff.</strong> It's the shortest description of what changed in three codebases.</li>
+<li><strong>Name a platform only when you mean it.</strong> "On Android" makes a change Android-only.</li>
+<li><strong>Ask questions freely.</strong> Questions never change files.</li>
+</ul>9:X
+e:X
+e:C
+0:{"buildId":"IqLtbHoxpi_j-UYkJN6Rr","data":[{"rsc":["$","$1","c",{"children":[[["$","article",null,{"className":"min-w-0 pb-24 pt-10 lg:pt-14","data-pagefind-body":true,"children":[["$","header",null,{"className":"max-w-[46rem] border-b border-line pb-10","children":[["$","p",null,{"className":"label flex items-center gap-3 text-muted","children":[["$","span",null,{"aria-hidden":true,"className":"inline-block size-[7px] shrink-0 rounded-full bg-brand "}],["$","span",null,{"className":"tabular-nums","children":"02"}],["$","span",null,{"className":"h-px w-5 bg-current opacity-30"}],["$","span",null,{"children":"Guides"}]]}],["$","h1",null,{"className":"mt-6 display-m","data-pagefind-meta":"title","children":"Working with your agent"}],["$","p",null,{"className":"mt-5 max-w-[40rem] text-[1.125rem] leading-[1.55] text-ink/70","children":"How plain prompts become changes in all three apps, and how to get the best results."}]]}],["$","div",null,{"className":"mt-10 max-w-[46rem]","children":["$","$L2","guides/working-with-your-agent",{"children":[["$","div","0",{"className":"docs-prose","dangerouslySetInnerHTML":{"__html":"$3"}}]]}]}],"$L4"]}],"$L5"],["$L6"],"$L7"]}],"isPartial":"$@8","staleTime":"$9","varyParams":null},{"rsc":"$La","isPartial":"$@b","staleTime":"$9","varyParams":null},{"rsc":"$Lc","isPartial":"$@d","staleTime":"$9","varyParams":"$e"}],"isUpgradeableISRFallback":false,"a":"$@f","rootVaryParams":null,"needsRuntimeRequest":"$@10"}
+11:I[54249,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],""]
+12:I[35820,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/06hh46w2ougjo.js","/geeknative/_next/static/chunks/1lnswdcfwctsn.js"],"Toc"]
+13:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"OutletBoundary"]
+14:"$Sreact.suspense"
+16:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"ViewportBoundary"]
+17:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"MetadataBoundary"]
+18:I[18516,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"IconMark"]
+19:I[87180,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+1a:I[42045,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+4:["$","footer",null,{"className":"mt-20 max-w-[46rem]","data-pagefind-ignore":true,"children":[["$","a",null,{"href":"https://github.com/GeekyAnts/geeknative/edit/main/website/content/docs/guides/working-with-your-agent.md","className":"label inline-flex items-center gap-2 text-muted transition-colors hover:text-ink","rel":"noreferrer","children":["Edit this page on GitHub ",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0 -rotate-45 ","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}],["$","nav",null,{"aria-label":"Previous and next","className":"mt-8 grid gap-px overflow-hidden rounded-2xl bg-line ring-1 ring-line sm:grid-cols-2","children":[["$","$L11",null,{"href":"/docs/start-here/requirements/","className":"group flex flex-col gap-3 bg-white p-6 transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Previous"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":[["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  rotate-180 transition-transform duration-500 ease-[var(--ease-expo)] group-hover:-translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}],"Requirements"]}]]}],["$","$L11",null,{"href":"/docs/guides/idea-to-three-apps/","className":"group flex flex-col items-end gap-3 bg-white p-6 text-right transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Next"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":["From idea to three apps",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  transition-transform duration-500 ease-[var(--ease-expo)] group-hover:translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}]]}]]}]]}]
+5:["$","$L12",null,{"items":[{"depth":2,"id":"every-request-is-for-all-three-apps","text":"Every request is for all three apps"},{"depth":2,"id":"the-agent-triages-first-out-loud","text":"The agent triages first, out loud"},{"depth":2,"id":"example-prompts","text":"Example prompts"},{"depth":2,"id":"plan-before-building","text":"Plan before building"},{"depth":2,"id":"when-the-agent-asks-and-when-it-assumes","text":"When the agent asks, and when it assumes"},{"depth":2,"id":"what-done-means","text":"What \"done\" means"},{"depth":2,"id":"tips","text":"Tips"}]}]
+6:["$","script","script-0",{"src":"/geeknative/_next/static/chunks/1lnswdcfwctsn.js","async":true}]
+7:["$","$L13",null,{"children":["$","$14",null,{"name":"Next.MetadataOutlet","children":"$@15"}]}]
+a:["$","$1","h",{"children":[null,["$","$L16",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#ffffff"}]]}],["$","div",null,{"hidden":true,"children":["$","$L17",null,{"children":["$","$14",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Working with your agent · geeknative"}],["$","meta","1",{"name":"description","content":"How plain prompts become changes in all three apps, and how to get the best results."}],["$","meta","2",{"property":"og:title","content":"Working with your agent · geeknative"}],["$","meta","3",{"property":"og:description","content":"How plain prompts become changes in all three apps, and how to get the best results."}],["$","meta","4",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","5",{"name":"twitter:title","content":"Working with your agent · geeknative"}],["$","meta","6",{"name":"twitter:description","content":"How plain prompts become changes in all three apps, and how to get the best results."}],["$","meta","7",{"name":"twitter:image","content":"https://geekyants.github.io/geeknative/twitter-image.png?twitter-image.2fjuh4p5ndhng.png"}],["$","meta","8",{"name":"twitter:image:type","content":"image/png"}],["$","meta","9",{"name":"twitter:image:width","content":"1200"}],["$","meta","10",{"name":"twitter:image:height","content":"630"}],["$","link","11",{"rel":"icon","href":"/geeknative/icon.svg?icon.12cpu7ud8w87b.svg","sizes":"any","type":"image/svg+xml"}],["$","link","12",{"rel":"apple-touch-icon","href":"/geeknative/apple-icon.png?apple-icon.1b0eoaalscjqq.png","sizes":"180x180","type":"image/png"}],["$","$L18","13",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}]
+c:["$","$1","c",{"children":[null,["$","$L19",null,{"parallelRouterKey":"children","template":["$","$L1a",null,{}]}]]}]
+10:true
+15:null
+9:300
+9:C
+f:0
+b:"$undefined"
+d:"$undefined"
+8:"$undefined"

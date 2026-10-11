@@ -1,0 +1,5 @@
+:HL["/geeknative/_next/static/chunks/0f9oy_8mo2rz_.css","style"]
+:HL["/geeknative/_next/static/chunks/1_hgmev11l5db.css","style"]
+:HL["/geeknative/_next/static/media/21ca8f3f56c22ca2-s.p.1cp9-4nby68jc.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/geeknative/_next/static/media/70bc3e132a0a741e-s.p.3t6q91iet4nsy.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+0:{"tree":{"name":"","param":null,"prefetchHints":4112,"slots":{"children":{"name":"docs","param":null,"prefetchHints":4096,"slots":{"children":{"name":"slug","param":{"type":"c","key":"guides/design-changes","siblings":[]},"prefetchHints":4160,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":4256,"slots":null}}}}}}},"staleTime":300,"buildId":"IqLtbHoxpi_j-UYkJN6Rr"}
