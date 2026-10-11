@@ -10,7 +10,6 @@
 <h1 align="center">One prompt. Three native apps.</h1>
 
 [![npm](https://img.shields.io/npm/v/geeknative?color=CA0515)](https://www.npmjs.com/package/geeknative)
-[![CI](https://github.com/GeekyAnts/geeknative/actions/workflows/ci.yml/badge.svg)](https://github.com/GeekyAnts/geeknative/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache%202.0-0B0B0B)](LICENSE)
 
 <p align="center">
@@ -97,7 +96,7 @@ Every file in a generated project has one owner:
 | `npm run smoke` | Creates a fresh project and runs `make check` in it (add `-- web` to limit platforms) |
 | `cd template && make check` | Builds and tests the template's iOS, Android and web apps |
 
-CI runs all of these on every push: the CLI tests, a smoke test, and the template's web (Ubuntu), Android (Ubuntu) and iOS (macOS) builds and tests.
+The CI workflow (`.github/workflows/ci.yml`) runs all of these: the CLI tests, a smoke test, and the template's web (Ubuntu), Android (Ubuntu) and iOS (macOS) builds and tests.
 
 ## Roadmap
 
