@@ -1,11 +1,11 @@
-// Publishes the built site (dist/) to the gh-pages branch, which GitHub Pages serves.
+// Publishes the built site (out/) to the gh-pages branch, which GitHub Pages serves.
 // CI does this on every push to main (.github/workflows/docs.yml). `npm run deploy` does it by hand.
 import { execFileSync } from 'node:child_process'
 import { existsSync, rmSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const dist = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'dist')
+const dist = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'out')
 if (!existsSync(path.join(dist, 'index.html'))) throw new Error('Run `npm run build` first.')
 
 const remote = process.env.DEPLOY_REMOTE ?? execFileSync('git', ['remote', 'get-url', 'origin'], { encoding: 'utf8' }).trim()

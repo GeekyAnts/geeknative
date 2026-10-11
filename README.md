@@ -1,10 +1,23 @@
-# geeknative
+<p align="center">
+  <a href="https://geekyants.github.io/geeknative/">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset=".github/assets/logo-dark.png">
+      <img src=".github/assets/logo-light.png" alt="geeknative" width="420">
+    </picture>
+  </a>
+</p>
 
-[![npm](https://img.shields.io/npm/v/geeknative?color=4F46E5)](https://www.npmjs.com/package/geeknative)
+<h1 align="center">One prompt. Three native apps.</h1>
+
+[![npm](https://img.shields.io/npm/v/geeknative?color=CA0515)](https://www.npmjs.com/package/geeknative)
 [![CI](https://github.com/GeekyAnts/geeknative/actions/workflows/ci.yml/badge.svg)](https://github.com/GeekyAnts/geeknative/actions/workflows/ci.yml)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache%202.0-0B0B0B)](LICENSE)
 
-**One prompt, three native apps.** geeknative is a project template and CLI that lets a coding agent build the same app natively for iOS (SwiftUI), Android (Kotlin + Jetpack Compose) and the web (React + TanStack Start), from one spec, with no cross-platform runtime.
+<p align="center">
+  <img src=".github/assets/showcase.png" alt="The geeknative starter app on iOS (SwiftUI), the web (TanStack Start) and Android (Jetpack Compose)" width="900">
+</p>
+
+geeknative is a project template and CLI that lets a coding agent build the same app natively for iOS (SwiftUI), Android (Kotlin + Jetpack Compose) and the web (React + TanStack Start), from one spec, with no cross-platform runtime.
 
 You talk to your agent normally ("add a notes list", "make it feel warmer", "the app crashes when..."). The project's AGENTS.md teaches any agent to work out what kind of request it is, update the shared spec and contracts first, build the change in all three apps, and verify it.
 
@@ -73,7 +86,7 @@ Every file in a generated project has one owner:
 | template/ | The project that `create` copies. It's a working project: run `make check` inside it. |
 | packages/geeknative/ | The CLI and codegen (dependency-free Node), with its tests in test/. |
 | packages/create-geeknative/ | `npm create geeknative` |
-| website/ | The documentation site (Astro Starlight), deployed to GitHub Pages. |
+| website/ | The landing page and docs (Next.js, static export), deployed to GitHub Pages. |
 | scripts/smoke.js | Creates a fresh project in a temp folder and runs its checks. |
 
 ### Tests

@@ -1,0 +1,201 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #ffffff;
+  --color-ink: #0b0b0b;
+  --color-brand: #ca0515;
+  --color-brand-deep: #9f0310;
+  --color-muted: #686664;
+  --color-faint: #a3a09c;
+  --color-line: rgb(11 11 11 / 0.12);
+  --color-line-strong: rgb(11 11 11 / 0.22);
+  --color-mist: #f5f4f2;
+
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-face), ui-monospace, SFMono-Regular, monospace;
+
+  --ease-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --breakpoint-3xl: 112rem;
+}
+
+@utility wide {
+  font-stretch: 112%;
+}
+@utility wider {
+  font-stretch: 125%;
+}
+@utility narrow {
+  font-stretch: 78%;
+}
+
+@utility display-xl {
+  font-size: clamp(2.6rem, 0.9rem + 5.9vw, 7.4rem);
+  line-height: 0.93;
+  letter-spacing: -0.038em;
+  font-weight: 760;
+  font-stretch: 112%;
+}
+@utility display-l {
+  font-size: clamp(2.2rem, 1rem + 3.7vw, 5.1rem);
+  line-height: 0.96;
+  letter-spacing: -0.034em;
+  font-weight: 740;
+  font-stretch: 110%;
+}
+@utility display-m {
+  font-size: clamp(1.6rem, 1rem + 1.7vw, 2.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.026em;
+  font-weight: 700;
+  font-stretch: 106%;
+}
+@utility label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.25;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+@layer base {
+  html {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "ss01", "cv11";
+  }
+  body {
+    background: var(--color-paper);
+    font-family: var(--font-sans);
+    overflow-x: clip;
+  }
+  ::selection {
+    background: var(--color-brand);
+    color: #fff;
+  }
+  code,
+  kbd,
+  pre {
+    font-family: var(--font-mono);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+/* The colony replaces the static fallbacks once it is running. */
+.colony-fallback {
+  opacity: 0;
+  transition: opacity 0.6s var(--ease-quint);
+}
+html[data-colony="off"] .colony-fallback {
+  opacity: 1;
+}
+html[data-colony="off"] .colony-canvas {
+  opacity: 0;
+}
+.colony-canvas {
+  transition: opacity 0.5s var(--ease-quint);
+}
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+
+/* Reveal motion. Only hidden when JS is known to run. */
+html.js .reveal {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+  transition:
+    opacity 1s var(--ease-expo) var(--d, 0ms),
+    transform 1.2s var(--ease-expo) var(--d, 0ms);
+}
+html.js .reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+.words .word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+.words .word > span {
+  display: inline-block;
+}
+html.js .reveal .words .word > span,
+html.js .words.reveal .word > span {
+  transform: translate3d(0, 105%, 0);
+  transition: transform 1.1s var(--ease-expo);
+  transition-delay: calc(var(--d, 0ms) + var(--i, 0) * 45ms);
+}
+html.js .reveal.is-in .words .word > span,
+html.js .words.reveal.is-in .word > span {
+  transform: none;
+}
+/* When a Reveal only wraps words, keep the container itself still. */
+html.js .reveal:has(> .words:only-child) {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js .reveal,
+  html.js .reveal .words .word > span {
+    transform: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Scroll-scrubbed words: each fades in as --p passes its threshold --t. */
+.scrub > span {
+  opacity: clamp(0.13, calc((var(--p) - var(--t)) * 9 + 0.13), 1);
+  transition: opacity 0.2s linear;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 6px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes label-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.figure-label {
+  animation: label-in 0.8s var(--ease-expo) 0.45s both;
+}
+
+/* Device frames: a soft contact shadow, as if the devices sit on the paper. */
+.device-shadow {
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.06) inset,
+    0 40px 80px -30px rgb(11 11 11 / 0.35),
+    0 18px 36px -18px rgb(11 11 11 / 0.3);
+}
+
+/* Screens crossfade when the showcase switches screen or appearance. */
+.screen-layer {
+  transition: opacity 0.6s var(--ease-quint);
+}

@@ -33,6 +33,8 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
+      - name: Check links
+        run: npm run check-links
       - name: Publish to the gh-pages branch
         env:
           DEPLOY_REMOTE: https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
