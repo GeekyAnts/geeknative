@@ -1,0 +1,5 @@
+{
+  "back": { "ios": "chevron.backward", "android": "Icons.AutoMirrored.Filled.ArrowBack", "web": "ArrowLeft" },
+  "home": { "ios": "house", "android": "Icons.Filled.Home", "web": "House" },
+  "settings": { "ios": "gearshape", "android": "Icons.Filled.Settings", "web": "Settings" }
+}

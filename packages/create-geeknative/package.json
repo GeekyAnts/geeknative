@@ -1,0 +1,20 @@
+{
+  "name": "create-geeknative",
+  "version": "0.1.0",
+  "description": "Create a geeknative project: `npm create geeknative my-app`.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": {
+    "create-geeknative": "index.js"
+  },
+  "files": [
+    "index.js",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "geeknative": "0.1.0"
+  }
+}

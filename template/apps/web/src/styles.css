@@ -1,0 +1,9 @@
+@import 'tailwindcss';
+@import './generated/tokens.css';
+
+/* `dark:` utilities follow the "dark" class on <html>, which AppearanceEffect sets. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+html {
+  font-family: var(--font-sans);
+}

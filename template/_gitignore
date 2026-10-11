@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# geeknative logs
+.geeknative/logs/
+
+# iOS
+apps/ios/.build/
+xcuserdata/
+*.xcuserstate
+
+# Android
+apps/android/.gradle/
+apps/android/.kotlin/
+apps/android/build/
+apps/android/app/build/
+apps/android/local.properties
+apps/android/.idea/
+*.iml
+.cxx/
+
+# Web
+apps/web/dist/
+apps/web/.output/
+apps/web/.tanstack/
+apps/web/.nitro/
+apps/web/.vinxi/
+
+# OS and editors
+.DS_Store
+.env
+.env.*
+!.env.example

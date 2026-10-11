@@ -1,0 +1,17 @@
+{
+  "name": "geeknative-app",
+  "private": true,
+  "workspaces": [
+    "apps/web"
+  ],
+  "scripts": {
+    "gen": "geeknative gen",
+    "check": "geeknative check",
+    "doctor": "geeknative doctor",
+    "parity": "geeknative parity",
+    "dev": "npm run dev --workspace apps/web"
+  },
+  "devDependencies": {
+    "geeknative": "file:../packages/geeknative"
+  }
+}

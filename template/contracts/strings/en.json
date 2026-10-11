@@ -1,0 +1,13 @@
+{
+  "common.back": "Back",
+  "home.openSettings": "Settings",
+  "home.welcomeTitle": "You're all set",
+  "home.welcomeBody": "This app is built natively for iOS, Android and the web from one shared spec. Describe what you want to build to your coding agent, and it will build it for all three.",
+  "settings.title": "Settings",
+  "settings.appearance.title": "Appearance",
+  "settings.appearance.system": "System",
+  "settings.appearance.light": "Light",
+  "settings.appearance.dark": "Dark",
+  "settings.about.title": "About",
+  "settings.about.version": "Version {version} ({build:int})"
+}

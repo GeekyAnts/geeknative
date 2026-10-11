@@ -1,0 +1,18 @@
+# Keeps each app's dependencies current. geeknative itself is an npm dev dependency,
+# so framework releases arrive here too (then run `make gen` and `make check`).
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      tanstack:
+        patterns: ["@tanstack/*"]
+  - package-ecosystem: gradle
+    directory: /apps/android
+    schedule:
+      interval: weekly
+    groups:
+      androidx:
+        patterns: ["androidx.*"]

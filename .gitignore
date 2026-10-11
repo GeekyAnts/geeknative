@@ -1,0 +1,22 @@
+node_modules/
+.DS_Store
+
+# Bundled copy of template/, created only while packing
+packages/geeknative/template/
+
+# Build output and local state from developing the template in place
+template/node_modules/
+template/package-lock.json
+template/.geeknative/logs/
+template/apps/ios/.build/
+template/apps/android/.gradle/
+template/apps/android/.kotlin/
+template/apps/android/build/
+template/apps/android/app/build/
+template/apps/android/local.properties
+template/apps/web/.output/
+template/apps/web/.tanstack/
+template/apps/web/.nitro/
+template/apps/web/dist/
+xcuserdata/
+*.xcuserstate

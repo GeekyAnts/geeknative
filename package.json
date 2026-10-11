@@ -1,0 +1,13 @@
+{
+  "name": "geeknative-repo",
+  "private": true,
+  "description": "Development repo for geeknative: the CLI (packages/) and the project template (template/).",
+  "license": "Apache-2.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "geeknative": "node packages/geeknative/bin/geeknative.js",
+    "smoke": "node scripts/smoke.js"
+  }
+}

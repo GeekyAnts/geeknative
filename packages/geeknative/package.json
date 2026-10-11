@@ -1,0 +1,33 @@
+{
+  "name": "geeknative",
+  "version": "0.1.0",
+  "description": "One prompt, three native apps: your coding agent builds SwiftUI, Jetpack Compose and TanStack Start apps from one shared spec.",
+  "license": "Apache-2.0",
+  "keywords": [
+    "agents",
+    "AGENTS.md",
+    "swiftui",
+    "jetpack-compose",
+    "tanstack-start",
+    "native",
+    "codegen",
+    "design-tokens"
+  ],
+  "type": "module",
+  "bin": {
+    "geeknative": "bin/geeknative.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "template",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "prepack": "node scripts/prepack.js",
+    "postpack": "node scripts/prepack.js --clean"
+  }
+}
