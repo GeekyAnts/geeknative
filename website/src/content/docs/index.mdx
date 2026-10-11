@@ -1,0 +1,121 @@
+---
+title: geeknative
+description: One prompt, three native apps. Your coding agent builds the same app in SwiftUI, Jetpack Compose and TanStack Start from one shared spec.
+template: splash
+hero:
+  title: One prompt. Three native apps.
+  tagline: Your coding agent builds the same app in SwiftUI, Jetpack Compose and TanStack Start from one shared spec, with no cross-platform runtime.
+  image:
+    html: |
+      <div class="gn-terminal" aria-hidden="true">
+        <div class="gn-terminal-bar"><span></span><span></span><span></span></div>
+        <pre><span class="gn-you">you</span>    Add a notes list where I can add
+             and delete notes.
+      <span class="gn-agent">agent</span>  Feature: notes list
+             → spec/features/notes.md, strings
+             · iOS, Android, Web
+      <span class="gn-dim">$ make check</span>
+      <span class="gn-ok">✔</span> contracts  valid, generated files up to date
+      <span class="gn-ok">✔</span> ios        build and tests passed
+      <span class="gn-ok">✔</span> android    build and unit tests passed
+      <span class="gn-ok">✔</span> web        types, tests and build passed</pre>
+      </div>
+  actions:
+    - text: Get started
+      link: /geeknative/start-here/quick-start/
+      icon: right-arrow
+    - text: View on GitHub
+      link: https://github.com/GeekyAnts/geeknative
+      icon: github
+      variant: minimal
+---
+
+import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components'
+
+## Start in a minute
+
+```sh
+npm create geeknative@latest my-app -- --name "My App" --id com.acme.myapp
+cd my-app
+make doctor   # checks Xcode, the Android SDK, Java and Node; FIX=1 installs what's missing
+make check    # builds and tests all three apps
+```
+
+Then open the folder in your coding agent and describe what you want to build. The CLI is on npm as [geeknative](https://www.npmjs.com/package/geeknative).
+
+## Three native apps, one product
+
+<div class="gn-three">
+<CardGrid>
+  <Card title="iOS" icon="apple">
+    SwiftUI with Observation, NavigationStack and Swift Testing. iOS 17 and later.
+  </Card>
+  <Card title="Android" icon="mobile-android">
+    Kotlin and Jetpack Compose with Material 3, Navigation 3 and DataStore. Android 7.0 (API 24) and later.
+  </Card>
+  <Card title="Web" icon="laptop">
+    React with TanStack Start, Router and Query, and Tailwind CSS. Safari 16.4, Chrome 111 and Firefox 128 or later.
+  </Card>
+</CardGrid>
+</div>
+
+The apps share no code. Each one is written in its platform's own language and follows its own conventions, so it looks and behaves the way people on that platform expect.
+
+## How it works
+
+<CardGrid>
+  <Card title="One source of truth" icon="open-book">
+    PRODUCT.md says what the app is, DESIGN.md how it looks, and `spec/features/` how each feature behaves, with numbered acceptance criteria.
+  </Card>
+  <Card title="Contracts compiled into every app" icon="setting">
+    `contracts/` holds the app identity, design tokens, copy and icons. `make gen` turns them into Swift, Kotlin, Android resources, TypeScript and Tailwind, so they can't drift.
+  </Card>
+  <Card title="Same architecture, same names" icon="list-format">
+    A feature `notes` is `NotesScreen`, `NotesViewModel` and `NotesRepository` on every platform. One search finds all three.
+  </Card>
+  <Card title="Checks for every app" icon="approve-check">
+    `make check` builds and tests all three apps. Tests carry acceptance criteria IDs, and `make parity` shows what each platform covers.
+  </Card>
+</CardGrid>
+
+## What happens when you prompt
+
+<Steps>
+
+1. You describe what you want in plain words: "Add a notes list where I can add and delete notes."
+
+2. The agent states how it reads the request, in one line, so you can correct it early:
+   `Feature: notes list → spec/features/notes.md, strings · iOS, Android, Web`
+
+3. It writes `spec/features/notes.md`, with acceptance criteria numbered `AC-notes-1`, `AC-notes-2`, and so on.
+
+4. It adds the new copy to `contracts/strings/en.json` and runs `make gen`.
+
+5. It builds the feature in SwiftUI, Compose and React. Agents that support sub-agents do the three apps in parallel.
+
+6. It runs `make check` until every app builds and passes its tests, records each platform's status, runs `make parity`, and reports one line per platform.
+
+</Steps>
+
+## Works with your agent
+
+<CardGrid>
+  <Card title="Any agent" icon="document">
+    AGENTS.md at the root and in each app is the instruction set. Codex, Cursor, GitHub Copilot and other agents that read AGENTS.md follow it.
+  </Card>
+  <Card title="Claude Code" icon="puzzle">
+    One-line CLAUDE.md imports, plus `ios-engineer`, `android-engineer` and `web-engineer` subagents and hooks that keep generated code and the three apps in step.
+  </Card>
+  <Card title="Gemini CLI" icon="star">
+    `.gemini/settings.json` points Gemini CLI at AGENTS.md.
+  </Card>
+</CardGrid>
+
+## Learn more
+
+<CardGrid>
+  <LinkCard title="Quick start" description="Create a project and build all three apps." href="/geeknative/start-here/quick-start/" />
+  <LinkCard title="How it works" description="The layers, the loop and what done means." href="/geeknative/concepts/how-it-works/" />
+  <LinkCard title="Working with your agent" description="How plain prompts become changes in three apps." href="/geeknative/guides/working-with-your-agent/" />
+  <LinkCard title="CLI reference" description="create, gen, check, doctor, parity and run." href="/geeknative/reference/cli/" />
+</CardGrid>

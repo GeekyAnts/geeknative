@@ -1,11 +1,15 @@
 # geeknative
 
+[![npm](https://img.shields.io/npm/v/geeknative?color=4F46E5)](https://www.npmjs.com/package/geeknative)
+[![CI](https://github.com/GeekyAnts/geeknative/actions/workflows/ci.yml/badge.svg)](https://github.com/GeekyAnts/geeknative/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
+
 **One prompt, three native apps.** geeknative is a project template and CLI that lets a coding agent build the same app natively for iOS (SwiftUI), Android (Kotlin + Jetpack Compose) and the web (React + TanStack Start), from one spec, with no cross-platform runtime.
 
 You talk to your agent normally ("add a notes list", "make it feel warmer", "the app crashes when..."). The project's AGENTS.md teaches any agent to work out what kind of request it is, update the shared spec and contracts first, build the change in all three apps, and verify it.
 
 ```sh
-npm create geeknative my-app -- --name "My App" --id com.acme.myapp
+npm create geeknative@latest my-app -- --name "My App" --id com.acme.myapp
 cd my-app
 make doctor    # checks Xcode, the Android SDK, Java and Node; FIX=1 installs what's missing
 make check     # builds and tests all three apps
@@ -13,7 +17,7 @@ make check     # builds and tests all three apps
 
 Then open the folder in Claude Code, Codex, Cursor, Gemini CLI or any agent that reads AGENTS.md, and describe your app.
 
-> Not on npm yet. From this repo: `node packages/geeknative/bin/geeknative.js create ../my-app --name "My App" --id com.acme.myapp`.
+**Documentation:** [geekyants.github.io/geeknative](https://geekyants.github.io/geeknative/)
 
 ## How it works
 
@@ -67,13 +71,28 @@ Every file in a generated project has one owner:
 | Path | Contents |
 |---|---|
 | template/ | The project that `create` copies. It's a working project: run `make check` inside it. |
-| packages/geeknative/ | The CLI and codegen (dependency-free Node). |
+| packages/geeknative/ | The CLI and codegen (dependency-free Node), with its tests in test/. |
 | packages/create-geeknative/ | `npm create geeknative` |
-| scripts/smoke.js | Creates a fresh project in a temp folder and runs every check (`npm run smoke`). |
+| website/ | The documentation site (Astro Starlight), deployed to GitHub Pages. |
+| scripts/smoke.js | Creates a fresh project in a temp folder and runs its checks. |
+
+### Tests
+
+| Command | What it runs |
+|---|---|
+| `npm test` | The CLI test suite (`node --test`): codegen for every platform, contract validation, `gen`, `create`, `parity`, file ownership, the Claude Code hooks and template consistency |
+| `npm run smoke` | Creates a fresh project and runs `make check` in it (add `-- web` to limit platforms) |
+| `cd template && make check` | Builds and tests the template's iOS, Android and web apps |
+
+CI runs all of these on every push: the CLI tests, a smoke test, and the template's web (Ubuntu), Android (Ubuntu) and iOS (macOS) builds and tests.
 
 ## Roadmap
 
 1. **Foundation** (this release): three apps building from the CLI, contracts and codegen, the agent instructions, Claude Code integration, `create`, `doctor`, `check`, `parity`, `run`.
 2. **Upgrades and evals:** `geeknative upgrade` with three-way merges and migrations (scripted and agent-applied); a set of real prompts run through several agents to tune AGENTS.md.
-3. **Visual and end-to-end parity:** per-screen screenshots from all three apps, shared Maestro flows for iOS and Android, Playwright for web, CI.
+3. **Visual and end-to-end parity:** per-screen screenshots from all three apps, shared Maestro flows for iOS and Android, Playwright for web, and a CI workflow for generated projects.
 4. **Backends:** an API contract in contracts/, generated clients, remote repositories.
+
+## License
+
+[Apache 2.0](LICENSE). Built by [GeekyAnts](https://geekyants.com).

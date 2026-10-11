@@ -11,7 +11,15 @@ import { banner, kotlinString, OUT, swiftString } from './util.js'
 
 /** @param {string} root @returns {AppIdentity} */
 export function readApp(root) {
-  const app = readJson(path.join(root, 'contracts', 'app.json'), 'contracts/app.json')
+  return validateApp(readJson(path.join(root, 'contracts', 'app.json'), 'contracts/app.json'))
+}
+
+/**
+ * Checks an app identity and fills in defaults. Throws a CliError describing the first problem.
+ * @param {any} app
+ * @returns {AppIdentity}
+ */
+export function validateApp(app) {
   const where = 'contracts/app.json'
   if (typeof app.name !== 'string' || !app.name.trim() || /[\n$]|\/\//.test(app.name)) {
     throw new CliError(`${where} "name" must be a non-empty display name without "$", "//" or line breaks.`)

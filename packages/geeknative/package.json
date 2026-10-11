@@ -3,6 +3,16 @@
   "version": "0.1.0",
   "description": "One prompt, three native apps: your coding agent builds SwiftUI, Jetpack Compose and TanStack Start apps from one shared spec.",
   "license": "Apache-2.0",
+  "homepage": "https://geekyants.github.io/geeknative/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GeekyAnts/geeknative.git",
+    "directory": "packages/geeknative"
+  },
+  "bugs": {
+    "url": "https://github.com/GeekyAnts/geeknative/issues"
+  },
+  "author": "GeekyAnts (https://geekyants.com)",
   "keywords": [
     "agents",
     "AGENTS.md",
@@ -28,6 +38,7 @@
   },
   "scripts": {
     "prepack": "node scripts/prepack.js",
-    "postpack": "node scripts/prepack.js --clean"
+    "postpack": "node scripts/prepack.js --clean",
+    "test": "node --test 'test/**/*.test.js'"
   }
 }

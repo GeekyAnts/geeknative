@@ -3,6 +3,16 @@
   "version": "0.1.0",
   "description": "Create a geeknative project: `npm create geeknative my-app`.",
   "license": "Apache-2.0",
+  "homepage": "https://geekyants.github.io/geeknative/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GeekyAnts/geeknative.git",
+    "directory": "packages/create-geeknative"
+  },
+  "bugs": {
+    "url": "https://github.com/GeekyAnts/geeknative/issues"
+  },
+  "author": "GeekyAnts (https://geekyants.com)",
   "type": "module",
   "bin": {
     "create-geeknative": "index.js"

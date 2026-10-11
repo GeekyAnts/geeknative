@@ -15,7 +15,8 @@ export const PLATFORMS = ['ios', 'android', 'web']
  * @param {string[]} targets "all", "contracts", or platform names
  */
 export async function check(root, targets) {
-  const wanted = !targets.length || targets.includes('all') ? PLATFORMS : targets
+  const everything = !targets.length || targets.includes('all')
+  const wanted = everything ? PLATFORMS : targets
   for (const target of wanted) {
     if (target !== 'contracts' && !PLATFORMS.includes(target)) {
       throw new CliError(`Unknown check "${target}". Use: all, contracts, ${PLATFORMS.join(', ')}.`)
@@ -31,6 +32,10 @@ export async function check(root, targets) {
   }
 
   for (const platform of wanted.filter((t) => t !== 'contracts')) {
+    if (everything && platform === 'ios' && process.platform !== 'darwin') {
+      log.warn('ios', 'skipped: iOS builds need macOS with Xcode')
+      continue
+    }
     const started = Date.now()
     const result = await CHECKS[platform](root)
     const seconds = `${Math.round((Date.now() - started) / 1000)}s`

@@ -7,6 +7,7 @@ import { CliError, color, log } from '../lib/log.js'
 import { writeLock } from '../lib/managed.js'
 import { isLocalCheckout, PACKAGE_DIR, packageVersion, templateDir } from '../lib/project.js'
 import { findAndroidSdk, writeLocalProperties } from '../lib/toolchains.js'
+import { validateApp } from '../codegen/app.js'
 import { gen } from './gen.js'
 
 /**
@@ -23,6 +24,9 @@ export async function create(dir, { name, id, install = true, git = true }) {
   const appName = name?.trim() || titleCase(slug)
   const appId = id ?? `com.example.${slug.replace(/-/g, '')}`
   const version = packageVersion()
+
+  // Fail before writing anything if the name or ID can't work on every platform.
+  validateApp({ name: appName, id: appId, version: '1.0.0', build: 1 })
 
   log.step('create', `${appName} (${appId}) in ${dir}`)
   copyTemplate(templateDir(), root)
