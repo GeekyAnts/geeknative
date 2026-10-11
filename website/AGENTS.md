@@ -7,7 +7,7 @@ The landing page and documentation for geeknative: a static Next.js site (`outpu
 | Path | What it is |
 |---|---|
 | src/app/page.tsx, src/components/landing/ | The landing page, one component per section |
-| src/lib/colony/ | The ant colony: engine and shaders from colony.geekyants.com, plus geeknative's formations (mark, devices, flow, parity, markwhite, trail) |
+| src/lib/colony/ | The ant colony: engine and shaders adapted from colony.geekyants.com, plus geeknative's formations (mark, devices, flow, parity, markwhite, trail) |
 | src/components/colony/ | The canvas, stages, and overlays that align labels with formations |
 | src/components/showcase/ | The device frames with real app screenshots (public/screens/) |
 | src/components/diagrams/ | The architecture diagram (also embedded in the docs with `{{architecture}}`) |
@@ -21,6 +21,7 @@ The landing page and documentation for geeknative: a static Next.js site (`outpu
 - Document only what exists in the repo today (template/ and packages/geeknative/). Planned work belongs on the Roadmap page.
 - Writing style: short, plain sentences. No em dashes or en dashes. Code samples must match real file names, commands and generated symbols.
 - Screenshots are real captures of the starter app; regenerate them rather than editing them.
+- The colony: every `ColonyStage` gets its own ants, and they stay in that stage. Unlike colony.geekyants.com, ants never travel between sections as the page scrolls, because that was distracting. Rebuilds after a resize place ants directly instead of walking them over.
 
 ## Commands
 

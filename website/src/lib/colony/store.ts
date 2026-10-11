@@ -16,7 +16,8 @@ class ColonyStore {
   stages = new Map<string, StageRecord>();
   status: ColonyStatus = "idle";
   enabled = true;
-  population = 0;
+  // How many ants each stage holds, by stage id.
+  counts = new Map<string, number>();
   private listeners = new Set<Listener>();
 
   register(id: string, el: HTMLElement, formation: FormationName) {
@@ -32,10 +33,14 @@ class ColonyStore {
     if (this.stages.get(id)?.el === el) this.stages.delete(id);
   }
 
-  setStatus(status: ColonyStatus, population = this.population) {
+  setStatus(status: ColonyStatus) {
     this.status = status;
-    this.population = population;
     document.documentElement.dataset.colony = status === "running" ? "on" : status === "idle" ? "" : "off";
+    this.emit();
+  }
+
+  setCounts(counts: Map<string, number>) {
+    this.counts = counts;
     this.emit();
   }
 

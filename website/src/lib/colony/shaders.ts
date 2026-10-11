@@ -3,7 +3,7 @@
 
 export const PATH_SAMPLES = 512;
 export const PATH_ROWS = 16;
-export const MAX_STATIONS = 8;
+export const MAX_STAGES = 8;
 
 const common = /* glsl */ `
 float hash12(vec2 p) {
@@ -48,22 +48,22 @@ vec2 curl(vec2 p, float t) {
 }
 `;
 
-// Per-ant formation data:
-//   uTA  static  (x, y, 0, 0)          segment (x0, y0, x1, y1)     path (row, closed, length, 0)
-//   uTB  (u0, cyclesPerSecond, lateralOffset, tint + 10 * type)
-//   type 0 static, 1 segment, 2 path, 3 hidden. tint 0 ink, 1 red, 2 white.
+// Per-ant formation data, relative to the centre of the ant's own stage:
+//   uTA   static  (x, y, 0, 0)          segment (x0, y0, x1, y1)     path (row, closed, length, 0)
+//   uTB   (u0, cyclesPerSecond, lateralOffset, tint + 10 * type)
+//   uMeta (stage slot, ant size, snap, 0)
+//   type 0 static, 1 segment, 2 path, 3 spare. tint 0 ink, 1 red, 2 white.
 const target = /* glsl */ `
 uniform sampler2D uTA;
 uniform sampler2D uTB;
+uniform sampler2D uMeta;
 uniform sampler2D uPaths;
-uniform vec2 uStage;
+uniform vec2 uStages[${MAX_STAGES}]; // each stage's centre
 uniform float uTime;
 uniform float uDtSec;
-uniform vec2 uHideX;
-uniform vec4 uBraid; // enabled, gap, min scale, unused
-uniform float uStations[${MAX_STATIONS}];
 uniform vec4 uIntro; // waypoint x, y, start time, on
 uniform float uIntroGate; // ants stay in the stream until they pass this x
+uniform float uIntroStage; // the stage whose ants make the entrance
 
 struct Tgt {
   vec2 pos;
@@ -72,6 +72,8 @@ struct Tgt {
   float type;
   float tint;
   float wrapped;
+  int stage;
+  float snap;
 };
 
 vec2 pathPoint(float row, float u) {
@@ -85,18 +87,10 @@ vec2 pathPoint(float row, float u) {
   return mix(p0, p1, f);
 }
 
-float braidFactor(float u) {
-  float k = 1.0;
-  for (int i = 0; i < ${MAX_STATIONS}; i++) {
-    float s = uStations[i];
-    if (s >= 0.0) k = min(k, smoothstep(0.0, uBraid.y, abs(u - s)));
-  }
-  return k;
-}
-
 Tgt getTarget(vec2 uv, vec2 cur) {
   vec4 a = texture2D(uTA, uv);
   vec4 b = texture2D(uTB, uv);
+  vec4 m = texture2D(uMeta, uv);
   float type = floor(b.w / 10.0 + 0.001);
   Tgt t;
   t.type = type;
@@ -104,7 +98,10 @@ Tgt getTarget(vec2 uv, vec2 cur) {
   t.vis = 1.0;
   t.vel = vec2(0.0);
   t.wrapped = 0.0;
-  t.pos = uStage + a.xy;
+  t.stage = int(clamp(m.x, 0.0, ${(MAX_STAGES - 1).toFixed(1)}) + 0.5);
+  t.snap = m.z;
+  vec2 c = uStages[t.stage];
+  t.pos = c + a.xy;
   if (type > 0.5 && type < 1.5) {
     float u = fract(b.x + uTime * b.y);
     float up = fract(b.x + (uTime - uDtSec) * b.y);
@@ -112,7 +109,7 @@ Tgt getTarget(vec2 uv, vec2 cur) {
     vec2 d = a.zw - a.xy;
     float len = max(length(d), 0.0001);
     vec2 n = vec2(-d.y, d.x) / len;
-    t.pos = uStage + mix(a.xy, a.zw, u) + n * b.z;
+    t.pos = c + mix(a.xy, a.zw, u) + n * b.z;
     t.vel = d * b.y / 60.0;
     t.vis = smoothstep(0.0, 0.08, u) * smoothstep(1.0, 0.92, u);
   } else if (type > 1.5 && type < 2.5) {
@@ -123,21 +120,19 @@ Tgt getTarget(vec2 uv, vec2 cur) {
     float tl = length(tg);
     vec2 tn = tl > 0.00001 ? tg / tl : vec2(1.0, 0.0);
     vec2 n = vec2(-tn.y, tn.x);
-    float off = b.z;
-    if (uBraid.x > 0.5) off *= mix(uBraid.z, 1.0, braidFactor(u));
-    t.pos = uStage + p + n * off;
+    t.pos = c + p + n * b.z;
     t.vel = tn * sign(b.y) * abs(b.y) * a.z / 60.0;
     if (a.y < 0.5) {
       t.wrapped = step(0.5, abs(u - up));
       t.vis = smoothstep(0.0, 0.025, u) * smoothstep(1.0, 0.975, u);
     }
   } else if (type > 2.5) {
-    float mid = (uHideX.x + uHideX.y) * 0.5;
-    t.pos = vec2(cur.x < mid ? uHideX.x : uHideX.y, cur.y);
+    // A spare ant stays where it is, unseen.
+    t.pos = cur;
     t.vis = 0.0;
   }
-  // Intro: march along the top of the page to a waypoint, then peel off.
-  if (uIntro.w > 0.5 && type < 2.5) {
+  // Intro: one stage's ants march along the top of the page to a waypoint, then peel off.
+  if (uIntro.w > 0.5 && type < 2.5 && abs(m.x - uIntroStage) < 0.5) {
     float s = hash12(uv * 91.3);
     if (uTime < uIntro.z + 0.6 + s * 1.1 || cur.x < uIntroGate) {
       t.pos = uIntro.xy + vec2((hash12(uv * 17.1) - 0.3) * 220.0, (hash12(uv * 5.7) - 0.5) * 14.0);
@@ -168,13 +163,19 @@ void main() {
   vec2 uv = gl_FragCoord.xy / resolution.xy;
   vec4 P = texture2D(texturePosition, uv);
   vec4 V = texture2D(textureVelocity, uv);
-  float seed = hash12(uv * 311.7);
   Tgt T = getTarget(uv, P.xy);
+  if (T.type > 2.5) {
+    // Spare ants slow to a stop and fade out where they are.
+    V.xy *= pow(0.8, uDt);
+    V.w = mix(V.w, 0.0, 1.0 - pow(0.93, uDt));
+    gl_FragColor = V;
+    return;
+  }
+  float seed = hash12(uv * 311.7);
 
   vec2 to = T.pos - P.xy;
   float d = length(to);
   float ms = uMaxSpeed * mix(0.7, 1.3, seed) * (1.0 + smoothstep(260.0, 1400.0, d) * 1.6);
-  if (T.type > 2.5) ms *= 0.45;
   vec2 desired = T.vel;
   if (d > 0.001) desired += to / d * ms * smoothstep(0.0, uArrive, d);
   vec2 steer = desired - V.xy;
@@ -213,37 +214,27 @@ export const positionShader = /* glsl */ `
 ${common}
 ${target}
 uniform float uDt;
-uniform vec2 uCarry;
+uniform vec2 uCarry[${MAX_STAGES}]; // how far each stage moved since the last frame
 uniform float uSnap;
-uniform float uViewTop;
-uniform float uViewH;
 
 void main() {
   vec2 uv = gl_FragCoord.xy / resolution.xy;
   vec4 P = texture2D(texturePosition, uv);
   vec4 V = texture2D(textureVelocity, uv);
-  float seed = hash12(uv * 311.7);
   Tgt T = getTarget(uv, P.xy);
 
-  if (T.type < 2.5) P.xy += uCarry;
+  // Ants ride along when their stage moves.
+  if (T.type < 2.5) P.xy += uCarry[T.stage];
   P.xy += V.xy * uDt;
   P.z = mod(P.z + length(V.xy) * uDt * 0.85, 6283.1853);
   P.w = mix(P.w, T.tint, 1.0 - pow(0.95, uDt));
 
   if (T.wrapped > 0.5) P.xy = T.pos;
-
-  if (T.type < 2.5) {
-    float top = uViewTop;
-    float bot = uViewTop - uViewH;
-    if (P.y > top + 160.0 && T.pos.y < P.y - uViewH) {
-      P.y = top + 24.0 + seed * 120.0;
-      P.x = mix(P.x, T.pos.x, 0.6);
-    } else if (P.y < bot - 160.0 && T.pos.y > P.y + uViewH) {
-      P.y = bot - 24.0 - seed * 120.0;
-      P.x = mix(P.x, T.pos.x, 0.6);
-    }
+  // Placed, not walked: on load, and when a resize moves an ant to another stage.
+  if (uSnap > 0.5 && T.snap > 0.5) {
+    P.xy = T.pos;
+    P.w = T.tint;
   }
-  if (uSnap > 0.5) P.xy = T.pos;
   gl_FragColor = P;
 }
 `;
@@ -263,7 +254,8 @@ ${common}
 ${antVaryings}
 uniform sampler2D tPos;
 uniform sampler2D tVel;
-uniform float uSize;
+uniform sampler2D tMeta;
+uniform float uDensity;
 uniform float uDpr;
 uniform float uTime;
 attribute vec2 aRef;
@@ -271,6 +263,7 @@ attribute vec2 aRef;
 void main() {
   vec4 P = texture2D(tPos, aRef);
   vec4 V = texture2D(tVel, aRef);
+  vec4 M = texture2D(tMeta, aRef);
   float seed = hash12(aRef * 311.7);
   float sp = length(V.xy);
   float fa = seed * 6.2831 + uTime * (0.08 + seed * 0.1);
@@ -279,7 +272,9 @@ void main() {
   dir = normalize(mix(fallback, dir, smoothstep(0.015, 0.3, sp)) + vec2(0.00001));
   vec2 perp = vec2(-dir.y, dir.x);
   float vis = clamp(V.w, 0.0, 1.0);
-  float size = uSize * mix(0.84, 1.16, seed) * smoothstep(0.0, 1.0, vis);
+  // Slow devices draw a random share of every stage's ants.
+  float drawn = step(hash12(aRef * 57.3), uDensity);
+  float size = M.y * mix(0.84, 1.16, seed) * smoothstep(0.0, 1.0, vis) * drawn;
   vec2 q = position.xy * vec2(1.5, 1.24);
   vLocal = q;
   vec2 world = P.xy + (dir * q.x + perp * q.y) * size;

@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { GPUComputationRenderer, type Variable } from "three/addons/misc/GPUComputationRenderer.js";
 import type { Formation } from "./formations";
 import {
-  MAX_STATIONS,
+  MAX_STAGES,
   PATH_ROWS,
   PATH_SAMPLES,
   antFragment,
@@ -12,9 +12,10 @@ import {
   velocityShader,
 } from "./shaders";
 
+export { MAX_STAGES };
+
 export interface EngineOptions {
-  sx: number;
-  sy: number;
+  count: number;
   dpr: number;
   calm: boolean;
 }
@@ -25,7 +26,14 @@ export interface FrameInput {
   width: number;
   height: number;
   mouse: { x: number; y: number; on: boolean };
-  stage: { x: number; y: number } | null;
+  // The centre of each stage slot in page coords, or null when that slot is empty.
+  stages: ({ x: number; y: number } | null)[];
+}
+
+// One stage's share of the colony: the slot that holds its centre, and its formation.
+export interface StagePlan {
+  slot: number;
+  formation: Formation;
 }
 
 // Raw sRGB components: the shaders write straight to the canvas without colour management.
@@ -33,6 +41,9 @@ const hex = (c: string) => {
   const n = parseInt(c.slice(1), 16);
   return new THREE.Vector3(((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255);
 };
+
+// uTB.w for an ant no stage is using: type 3 (spare), tint red.
+const SPARE = 3 * 10 + 1;
 
 export function supportsColony(): boolean {
   try {
@@ -57,23 +68,26 @@ export class ColonyEngine {
   private velVar: Variable;
   private tA: THREE.DataTexture;
   private tB: THREE.DataTexture;
+  private tMeta: THREE.DataTexture;
   private tPaths: THREE.DataTexture;
   private antMat: THREE.ShaderMaterial;
   private shadowMat: THREE.ShaderMaterial;
   private time = 0;
-  private size = 10;
-  private targetSize = 10;
-  private lastStage: { x: number; y: number } | null = null;
   private pulse = new THREE.Vector4(0, 0, 99, 0);
   private snapFrames = 0;
   private w = 1;
   private h = 1;
   private calm = false;
-  private geometry: THREE.InstancedBufferGeometry;
+  // The stage slot each ant belongs to (-1: spare), and which slots had a centre last frame.
+  private slotOf: Int16Array;
+  private placed: boolean[] = new Array(MAX_STAGES).fill(false);
 
-  constructor(canvas: HTMLCanvasElement, private opts: EngineOptions) {
-    this.count = opts.sx * opts.sy;
+  constructor(canvas: HTMLCanvasElement, opts: EngineOptions) {
+    const sx = Math.ceil(Math.sqrt(opts.count));
+    const sy = Math.ceil(opts.count / sx);
+    this.count = sx * sy;
     this.calm = opts.calm;
+    this.slotOf = new Int16Array(this.count).fill(-1);
     this.renderer = new THREE.WebGLRenderer({
       canvas,
       alpha: true,
@@ -85,7 +99,6 @@ export class ColonyEngine {
     this.renderer.setPixelRatio(opts.dpr);
     this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 
-    const { sx, sy } = opts;
     this.gpu = new GPUComputationRenderer(sx, sy, this.renderer);
 
     const pos0 = this.gpu.createTexture();
@@ -103,22 +116,22 @@ export class ColonyEngine {
     };
     this.tA = dataTex(sx, sy);
     this.tB = dataTex(sx, sy);
+    this.tMeta = dataTex(sx, sy);
     this.tPaths = dataTex(PATH_SAMPLES, PATH_ROWS);
-    // Hidden until the first formation arrives.
-    (this.tB.image.data as Float32Array).fill(31);
+    // Spare until the stages are laid out.
+    (this.tB.image.data as Float32Array).fill(SPARE);
 
     const shared = {
       uTA: { value: this.tA },
       uTB: { value: this.tB },
+      uMeta: { value: this.tMeta },
       uPaths: { value: this.tPaths },
-      uStage: { value: new THREE.Vector2() },
+      uStages: { value: Array.from({ length: MAX_STAGES }, () => new THREE.Vector2()) },
       uTime: { value: 0 },
       uDtSec: { value: 1 / 60 },
-      uHideX: { value: new THREE.Vector2(-80, 2000) },
-      uBraid: { value: new THREE.Vector4() },
-      uStations: { value: new Array(MAX_STATIONS).fill(-1) },
       uIntro: { value: new THREE.Vector4(0, 0, 0, 0) },
       uIntroGate: { value: -1e6 },
+      uIntroStage: { value: -1 },
       uDt: { value: 1 },
     };
     const vu = this.velVar.material.uniforms;
@@ -138,10 +151,8 @@ export class ColonyEngine {
     // Position and velocity passes must not share uniform objects that differ; the
     // shared ones are identical references on purpose.
     Object.assign(pu, shared, {
-      uCarry: { value: new THREE.Vector2() },
+      uCarry: { value: Array.from({ length: MAX_STAGES }, () => new THREE.Vector2()) },
       uSnap: { value: 0 },
-      uViewTop: { value: 0 },
-      uViewH: { value: 1000 },
     });
 
     const err = this.gpu.init();
@@ -161,12 +172,12 @@ export class ColonyEngine {
     }
     geo.setAttribute("aRef", new THREE.InstancedBufferAttribute(refs, 2));
     geo.instanceCount = this.count;
-    this.geometry = geo;
 
     const antUniforms = {
       tPos: { value: null as THREE.Texture | null },
       tVel: { value: null as THREE.Texture | null },
-      uSize: { value: 10 },
+      tMeta: { value: this.tMeta },
+      uDensity: { value: 1 },
       uDpr: { value: opts.dpr },
       uTime: { value: 0 },
     };
@@ -213,7 +224,6 @@ export class ColonyEngine {
     this.renderer.setPixelRatio(dpr);
     this.renderer.setSize(width, height, true);
     this.antMat.uniforms.uDpr.value = dpr;
-    this.velVar.material.uniforms.uHideX.value.set(-90, width + 90);
   }
 
   // Calm: no wander, no cursor, and the clock stops so marching lanes hold still.
@@ -224,16 +234,78 @@ export class ColonyEngine {
 
   // Draw only a fraction of the colony (slow devices).
   setDensity(fraction: number) {
-    this.geometry.instanceCount = Math.max(1, Math.round(this.count * fraction));
+    this.antMat.uniforms.uDensity.value = fraction;
   }
 
-  // Seed every ant around one point (page coords), e.g. the nav logo.
-  spawnAt(x: number, y: number, spread = 8) {
+  // Give each stage its own run of ants, placed straight onto their spots: ants never
+  // walk from one stage to another, or across a stage when it is rebuilt after a resize.
+  // `hold` names a slot whose ants are left where they are, for the intro to bring in.
+  // Returns how many ants each slot got.
+  setStages(plans: StagePlan[], hold = -1) {
+    const A = this.tA.image.data as Float32Array;
+    const B = this.tB.image.data as Float32Array;
+    const M = this.tMeta.image.data as Float32Array;
+    const P = this.tPaths.image.data as Float32Array;
+    const total = plans.reduce((n, p) => n + p.formation.used, 0);
+    // A window that grew a lot can ask for more ants than there are: every stage gives up a share.
+    const scale = total > this.count ? this.count / total : 1;
+    const counts = new Map<number, number>();
+    let i = 0;
+    let row = 0;
+    for (const { slot, formation: f } of plans) {
+      const firstRow = row;
+      for (const p of f.paths) {
+        if (row >= PATH_ROWS) break;
+        for (let s = 0; s < PATH_SAMPLES; s++) {
+          const k = (row * PATH_SAMPLES + s) * 4;
+          P[k] = p.pts[s * 2];
+          P[k + 1] = p.pts[s * 2 + 1];
+          P[k + 2] = p.closed ? 1 : 0;
+          P[k + 3] = p.length;
+        }
+        row++;
+      }
+      const n = Math.min(Math.floor(f.used * scale), this.count - i);
+      for (let k = 0; k < n; k++, i++) {
+        const src = k * 4;
+        const dst = i * 4;
+        A.set(f.a.subarray(src, src + 4), dst);
+        B.set(f.b.subarray(src, src + 4), dst);
+        // Path ants name their stage's own rows; shift them to where those rows landed.
+        if (Math.floor(B[dst + 3] / 10 + 0.001) === 2) {
+          A[dst] += firstRow;
+          if (A[dst] >= row) B[dst + 3] = SPARE;
+        }
+        M[dst] = slot;
+        M[dst + 1] = f.antSize;
+        M[dst + 2] = slot === hold ? 0 : 1;
+        M[dst + 3] = 0;
+        this.slotOf[i] = slot;
+      }
+      counts.set(slot, n);
+    }
+    for (; i < this.count; i++) {
+      const dst = i * 4;
+      A.fill(0, dst, dst + 4);
+      B.fill(0, dst, dst + 3);
+      B[dst + 3] = SPARE;
+      M.fill(0, dst, dst + 4);
+      this.slotOf[i] = -1;
+    }
+    this.tA.needsUpdate = this.tB.needsUpdate = this.tMeta.needsUpdate = this.tPaths.needsUpdate = true;
+    this.snapFrames = 2;
+    return counts;
+  }
+
+  // Seed one stage's ants around a point (page coords), e.g. the nav logo. Call it right after
+  // setStages: every other ant starts at the origin, and setStages has flagged them to be placed.
+  spawnAt(x: number, y: number, spread: number, slot: number) {
     const pos = this.gpu.createTexture();
     const vel = this.gpu.createTexture();
     const p = pos.image.data as Float32Array;
     const v = vel.image.data as Float32Array;
     for (let i = 0; i < this.count; i++) {
+      if (this.slotOf[i] !== slot) continue;
       const a = Math.random() * Math.PI * 2;
       const r = Math.random() * spread;
       p[i * 4] = x + Math.cos(a) * r;
@@ -252,53 +324,22 @@ export class ColonyEngine {
     vel.dispose();
   }
 
-  // Route every ant through a waypoint (page coords) before it takes its place.
-  intro(x: number, y: number, gateX: number) {
-    this.velVar.material.uniforms.uIntro.value.set(x, -y, this.time, 1);
-    this.velVar.material.uniforms.uIntroGate.value = gateX;
-  }
-
-  setFormation(f: Formation, snap = false) {
-    (this.tA.image.data as Float32Array).set(f.a);
-    (this.tB.image.data as Float32Array).set(f.b);
-    this.tA.needsUpdate = true;
-    this.tB.needsUpdate = true;
-    const pd = this.tPaths.image.data as Float32Array;
-    f.paths.forEach((p, row) => {
-      for (let s = 0; s < PATH_SAMPLES; s++) {
-        const k = (row * PATH_SAMPLES + s) * 4;
-        pd[k] = p.pts[s * 2];
-        pd[k + 1] = p.pts[s * 2 + 1];
-        pd[k + 2] = p.closed ? 1 : 0;
-        pd[k + 3] = p.length;
-      }
-    });
-    this.tPaths.needsUpdate = true;
+  // Route one stage's ants through a waypoint (page coords) before they take their places.
+  intro(x: number, y: number, gateX: number, slot: number) {
     const u = this.velVar.material.uniforms;
-    if (f.braid) {
-      u.uBraid.value.set(1, f.braid.gap, f.braid.min, 0);
-      const st = u.uStations.value as number[];
-      for (let i = 0; i < MAX_STATIONS; i++) st[i] = f.braid.stations[i] ?? -1;
-    } else {
-      u.uBraid.value.set(0, 0, 0, 0);
-    }
-    this.targetSize = f.antSize;
-    this.lastStage = null;
-    if (snap) {
-      this.size = f.antSize;
-      this.snapFrames = 2;
-    }
+    u.uIntro.value.set(x, -y, this.time, 1);
+    u.uIntroGate.value = gateX;
+    u.uIntroStage.value = slot;
   }
 
   kick(x: number, y: number, strength = 5) {
     this.pulse.set(x, -y, 0, strength);
   }
 
-  frame({ dt, scrollY, width, height, mouse, stage }: FrameInput) {
+  frame({ dt, scrollY, width, height, mouse, stages }: FrameInput) {
     const step = Math.min(dt, 1 / 20);
     if (!this.calm) this.time += step;
     const f = step * 60;
-    this.size += (this.targetSize - this.size) * (1 - Math.pow(0.94, f));
 
     const vu = this.velVar.material.uniforms;
     const pu = this.posVar.material.uniforms;
@@ -306,20 +347,24 @@ export class ColonyEngine {
     vu.uDtSec.value = step;
     vu.uDt.value = f;
     pu.uDt.value = f;
-    pu.uViewTop.value = -scrollY;
-    pu.uViewH.value = height;
     this.pulse.z += step;
     const intro = vu.uIntro.value as THREE.Vector4;
     if (intro.w > 0 && this.time > intro.z + 2.6) intro.w = 0;
 
-    if (stage) {
-      const sx = stage.x, sy = -stage.y;
-      if (this.lastStage) pu.uCarry.value.set(sx - this.lastStage.x, sy - this.lastStage.y);
-      else pu.uCarry.value.set(0, 0);
-      this.lastStage = { x: sx, y: sy };
-      vu.uStage.value.set(sx, sy);
-    } else {
-      pu.uCarry.value.set(0, 0);
+    // Stages are pinned to the page, but layout shifts move them: their ants ride along.
+    const centres = vu.uStages.value as THREE.Vector2[];
+    const carry = pu.uCarry.value as THREE.Vector2[];
+    for (let s = 0; s < MAX_STAGES; s++) {
+      const c = stages[s];
+      if (!c) {
+        carry[s].set(0, 0);
+        this.placed[s] = false;
+        continue;
+      }
+      if (this.placed[s]) carry[s].set(c.x - centres[s].x, -c.y - centres[s].y);
+      else carry[s].set(0, 0);
+      centres[s].set(c.x, -c.y);
+      this.placed[s] = true;
     }
     vu.uMouse.value.set(mouse.x, -(mouse.y + scrollY));
     vu.uMouseOn.value += ((mouse.on && !this.calm ? 1 : 0) - vu.uMouseOn.value) * 0.15;
@@ -330,7 +375,6 @@ export class ColonyEngine {
 
     this.antMat.uniforms.tPos.value = this.gpu.getCurrentRenderTarget(this.posVar).texture;
     this.antMat.uniforms.tVel.value = this.gpu.getCurrentRenderTarget(this.velVar).texture;
-    this.antMat.uniforms.uSize.value = this.size;
     this.antMat.uniforms.uTime.value = this.time;
 
     if (width !== this.w || height !== this.h) this.resize(width, height, this.renderer.getPixelRatio());
@@ -347,6 +391,7 @@ export class ColonyEngine {
     this.gpu.dispose();
     this.tA.dispose();
     this.tB.dispose();
+    this.tMeta.dispose();
     this.tPaths.dispose();
     this.antMat.dispose();
     this.shadowMat.dispose();

@@ -1,9 +1,10 @@
 import { MARK_ANTENNAE, MARK_BOX, MARK_SEGMENTS, MARK_STROKE } from "@/lib/brand";
-import { MAX_STATIONS, PATH_ROWS, PATH_SAMPLES } from "./shaders";
+import { PATH_ROWS, PATH_SAMPLES } from "./shaders";
 
-// Every formation describes where each ant should be, in stage pixels relative
-// to the stage centre (y up). Builders work in canvas space (y down) and the
-// writer converts.
+// Every formation describes where each of its ants should be, in stage pixels
+// relative to the stage centre (y up). Builders work in canvas space (y down) and
+// the writer converts. A formation holds only the ants it uses: each stage on the
+// page gets its own, and they stay in that stage.
 
 export const INK = 0;
 export const RED = 1;
@@ -23,12 +24,12 @@ export interface Formation {
   paths: PathDef[];
   antSize: number;
   used: number;
-  braid?: { stations: number[]; gap: number; min: number };
 }
 
 export interface BuildCtx {
   w: number;
   h: number;
+  // The most ants the formation may use.
   n: number;
   mobile: boolean;
 }
@@ -273,20 +274,18 @@ class Writer {
     }
   }
 
-  finish(rng: () => number, antSize: number, braid?: Formation["braid"]): Formation {
+  finish(rng: () => number, antSize: number): Formation {
     const used = this.i;
-    while (!this.full) this.put(0, 0, 0, 0, 0, 0, 0, RED + 30);
-    // Shuffle so that which ant goes where is random between formations.
-    const order = shuffle(Array.from({ length: this.n }, (_, k) => k), rng);
-    const a = new Float32Array(this.n * 4);
-    const b = new Float32Array(this.n * 4);
+    // Shuffle, so a formation trimmed to fit the colony loses a random share of its ants.
+    const order = shuffle(Array.from({ length: used }, (_, k) => k), rng);
+    const a = new Float32Array(used * 4);
+    const b = new Float32Array(used * 4);
     order.forEach((src, dst) => {
       a.set(this.a.subarray(src * 4, src * 4 + 4), dst * 4);
       b.set(this.b.subarray(src * 4, src * 4 + 4), dst * 4);
     });
     if (this.paths.length > PATH_ROWS) this.paths.length = PATH_ROWS;
-    if (braid && braid.stations.length > MAX_STATIONS) braid.stations.length = MAX_STATIONS;
-    return { a, b, paths: this.paths, antSize, used, braid };
+    return { a, b, paths: this.paths, antSize, used };
   }
 }
 
@@ -321,7 +320,7 @@ function mark({ w, h, n, mobile }: BuildCtx): Formation {
     for (const d of MARK_ANTENNAE) ctx.stroke(new Path2D(d));
   });
   const W = new Writer(n, w, h);
-  W.points(scatter(m, n, rng), RED);
+  W.points(scatter(m, Math.min(n, antsFor(maskArea(m), antSize, 1.4)), rng), RED);
   return W.finish(rng, antSize);
 }
 
@@ -419,10 +418,13 @@ export function screenOf(d: DeviceRect) {
   return { x: d.x + inset, y: d.y + inset, w: d.w - inset * 2, h: d.h - inset * 2, r: d.r * 0.8, bar: 0 };
 }
 
+// The hero keeps a whole Colony-sized crowd: 6,400 ants, or 3,136 on phones.
+const HERO_ANTS = { desktop: 80 * 80, mobile: 56 * 56 };
+
 function devices({ w, h, n, mobile }: BuildCtx): Formation {
   const rng = mulberry32(31);
   const antSize = mobile ? 6.5 : 8;
-  const W = new Writer(n, w, h);
+  const W = new Writer(Math.min(n, mobile ? HERO_ANTS.mobile : HERO_ANTS.desktop), w, h);
   const list = devicesGeometry(w, h);
 
   // Frames: ink ants marching around each device, both ways.
@@ -457,6 +459,7 @@ function devices({ w, h, n, mobile }: BuildCtx): Formation {
   });
 
   // The app on each screen, in red: a title and the welcome card, then a few rows (phones) or cards (web).
+  // These take every ant the frames and details leave.
   const content = rasterMask(w, h, (ctx) => {
     for (const d of list) {
       const s = screenOf(d);

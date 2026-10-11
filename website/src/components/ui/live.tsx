@@ -53,24 +53,21 @@ export function OfficeClock({ tz }: { tz: string }) {
   return <span className="tabular-nums">{time ?? "--:--"}</span>;
 }
 
-function useColony() {
-  return useSyncExternalStore(
-    colonyStore.subscribe,
-    () => `${colonyStore.status}|${colonyStore.enabled}|${colonyStore.population}`,
-    () => "idle|true|0",
-  );
+function useColony<T extends string | number | boolean>(select: (colony: typeof colonyStore) => T, server: T) {
+  return useSyncExternalStore(colonyStore.subscribe, () => select(colonyStore), () => server);
 }
 
-export function ColonyCount({ fallback }: { fallback: string }) {
-  const [status, , population] = useColony().split("|");
-  return <>{status === "running" && Number(population) > 0 ? Number(population).toLocaleString("en-US") : fallback}</>;
+// How many ants are drawing one stage.
+export function ColonyCount({ stage, fallback }: { stage: string; fallback: string }) {
+  const n = useColony((c) => (c.status === "running" ? (c.counts.get(stage) ?? 0) : 0), 0);
+  return <>{n > 0 ? n.toLocaleString("en-US") : fallback}</>;
 }
 
 // Lets visitors park the colony. Remembered per browser.
 export function ColonyToggle({ className = "" }: { className?: string }) {
-  const [status, enabled] = useColony().split("|");
-  if (status === "unsupported") return null;
-  const on = enabled === "true";
+  const unsupported = useColony((c) => c.status === "unsupported", false);
+  const on = useColony((c) => c.enabled, true);
+  if (unsupported) return null;
   return (
     <button
       type="button"
@@ -88,7 +85,7 @@ export function ColonyToggle({ className = "" }: { className?: string }) {
 
 // The invitation to play only makes sense while the ants are awake.
 export function ColonyHint({ children }: { children: ReactNode }) {
-  const [status, enabled] = useColony().split("|");
+  const awake = useColony((c) => c.status === "running" && c.enabled, false);
   const [reduced, setReduced] = useState(false);
   useEffect(() => {
     const q = matchMedia("(prefers-reduced-motion: reduce)");
@@ -97,6 +94,6 @@ export function ColonyHint({ children }: { children: ReactNode }) {
     q.addEventListener("change", sync);
     return () => q.removeEventListener("change", sync);
   }, []);
-  if (status !== "running" || enabled !== "true" || reduced) return null;
+  if (!awake || reduced) return null;
   return <>{children}</>;
 }

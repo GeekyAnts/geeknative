@@ -106,15 +106,24 @@ export function FlowLabels() {
       {({ w, h }) => {
         const g = flowGeometry(w, h);
         const points = { prompt: g.prompt, agents: g.agents, truth: g.truth, ios: g.apps[0], android: g.apps[1], web: g.apps[2], check: g.check };
+        // Side by side, the apps' labels share the row: each gets the space up to its neighbours and wraps.
+        const appWidth = g.apps[1][0] - g.apps[0][0] - 12;
         return STATIONS.map((s) => {
           const [x, y] = points[s.key];
           const isApp = s.key === "ios" || s.key === "android" || s.key === "web";
           const r = isApp ? g.r * 1.3 : g.r;
           const style = g.vertical
-            ? { left: isApp ? x : x + r + 14, top: isApp ? y + r + 10 : y, transform: isApp ? "translateX(-50%)" : "translateY(-50%)" }
+            ? isApp
+              ? { left: x, top: y + r + 10, width: appWidth, transform: "translateX(-50%)" }
+              : { left: x + r + 14, top: y, transform: "translateY(-50%)" }
             : { left: x, top: y + r + 12, transform: "translateX(-50%)" };
+          const wrap = g.vertical && isApp;
           return (
-            <div key={s.key} className={`figure-label absolute whitespace-nowrap ${g.vertical && !isApp ? "text-left" : "text-center"}`} style={style}>
+            <div
+              key={s.key}
+              className={`figure-label absolute ${wrap ? "" : "whitespace-nowrap"} ${g.vertical && !isApp ? "text-left" : "text-center"}`}
+              style={style}
+            >
               <p className="text-[13.5px] font-[650] tracking-[-0.01em] wide">{s.title}</p>
               <p className="label mt-1 text-muted">{s.note}</p>
             </div>

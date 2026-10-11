@@ -56,7 +56,7 @@ export function Hero() {
           <figcaption className="label mt-10 hidden items-center justify-between gap-4 text-muted lg:flex">
             <span>Fig. 00</span>
             <span className="text-right">
-              <ColonyCount fallback="6,400" /> ants. Three apps. One spec.
+              <ColonyCount stage="hero" fallback="6,400" /> ants. Three apps. One spec.
               <ColonyHint>
                 <span className="pointer-coarse:hidden"> Stir them with your cursor.</span>
               </ColonyHint>
