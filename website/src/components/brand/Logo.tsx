@@ -5,39 +5,35 @@ export function Mark({
   className = "",
   disc = BRAND_RED,
   ant = "#fff",
-  spawn = false,
   title,
 }: {
   className?: string;
   disc?: string;
   ant?: string;
-  spawn?: boolean;
   title?: string;
 }) {
   return (
     <svg viewBox="0 0 24 24" className={className} role={title ? "img" : undefined} aria-label={title} aria-hidden={title ? undefined : true}>
-      <g data-colony-spawn={spawn ? "" : undefined}>
-        <circle {...MARK_DISC} fill={disc} />
-        <g fill={ant}>
-          {MARK_SEGMENTS.map((s, i) => (
-            <circle key={i} {...s} />
-          ))}
-        </g>
-        <g fill="none" stroke={ant} strokeWidth={MARK_STROKE} strokeLinecap="round">
-          {MARK_ANTENNAE.map((d, i) => (
-            <path key={i} d={d} />
-          ))}
-        </g>
+      <circle {...MARK_DISC} fill={disc} />
+      <g fill={ant}>
+        {MARK_SEGMENTS.map((s, i) => (
+          <circle key={i} {...s} />
+        ))}
+      </g>
+      <g fill="none" stroke={ant} strokeWidth={MARK_STROKE} strokeLinecap="round">
+        {MARK_ANTENNAE.map((d, i) => (
+          <path key={i} d={d} />
+        ))}
       </g>
     </svg>
   );
 }
 
 // Mark and wordmark. The wordmark is live Archivo, set wide and tight like the headlines.
-export function Logo({ className = "", spawn = false, tone = "ink" }: { className?: string; spawn?: boolean; tone?: "ink" | "white" }) {
+export function Logo({ className = "", tone = "ink" }: { className?: string; tone?: "ink" | "white" }) {
   return (
     <span className={`inline-flex items-center gap-[0.42em] ${tone === "white" ? "text-white" : "text-ink"} ${className}`}>
-      <Mark spawn={spawn} className="h-[1.18em] w-[1.18em] shrink-0" />
+      <Mark className="h-[1.18em] w-[1.18em] shrink-0" />
       <span className="text-[1em] font-[760] leading-none tracking-[-0.035em] wide">geeknative</span>
     </span>
   );

@@ -21,7 +21,7 @@ The landing page and documentation for geeknative: a static Next.js site (`outpu
 - Document only what exists in the repo today (template/ and packages/geeknative/). Planned work belongs on the Roadmap page.
 - Writing style: short, plain sentences. No em dashes or en dashes. Code samples must match real file names, commands and generated symbols.
 - Screenshots are real captures of the starter app; regenerate them rather than editing them.
-- The colony: every `ColonyStage` gets its own ants, and they stay in that stage. Unlike colony.geekyants.com, ants never travel between sections as the page scrolls, because that was distracting. Rebuilds after a resize place ants directly instead of walking them over.
+- The colony: every `ColonyStage` gets its own ants, and they stay in that stage. Unlike colony.geekyants.com, ants never travel between sections as the page scrolls, because that was distracting. Every stage starts formed on load, the hero included (no entrance from the nav logo), and rebuilds after a resize place ants directly instead of walking them over.
 - Scrolling is the browser's own. Don't add smooth-scroll or scroll-jacking libraries such as Lenis. The colony's canvas sits in the page and scrolls with it (it covers the viewport plus a margin and moves along each frame), so the ants stay locked to their figures under native scrolling.
 
 ## Commands

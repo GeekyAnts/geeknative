@@ -90,8 +90,8 @@ export function ColonyCanvas() {
       }
       const eng = engine;
       eng.resize(document.documentElement.clientWidth, canvasHeight(window.innerHeight), dpr);
-      const layout = (list: Measured[], hold?: number) => {
-        const counts = eng.setStages(plan(list), hold);
+      const layout = (list: Measured[]) => {
+        const counts = eng.setStages(plan(list));
         colonyStore.setCounts(new Map(list.map((s, slot) => [s.id, counts.get(slot) ?? 0])));
       };
 
@@ -152,24 +152,8 @@ export function ColonyCanvas() {
         }
       };
 
-      // Every stage starts formed, except the first one on screen at the top of the
-      // page: its ants pour out of the nav logo, as on colony.geekyants.com.
-      {
-        const vh = window.innerHeight;
-        const scrollY = window.scrollY;
-        const logo = document.querySelector<HTMLElement>("[data-colony-spawn]")?.getBoundingClientRect();
-        const first = stages.findIndex((s) => visible(s.rect) && s.rect.bottom > 0 && s.rect.top < vh);
-        if (!calm && logo && scrollY < vh && first >= 0) {
-          const r = stages[first].rect;
-          const y = logo.top + logo.height / 2 + scrollY;
-          layout(stages, first);
-          eng.spawnAt(logo.left + logo.width / 2, y, 6, first);
-          // March along the top of the page, then pour into the stage from above.
-          eng.intro(r.left + r.width * 0.55, y, r.left - 24, first);
-        } else {
-          layout(stages);
-        }
-      }
+      // Every stage starts formed, the hero included: the ants appear where they belong.
+      layout(stages);
       colonyStore.setStatus("running");
 
       const sameStages = (a: Measured[], b: Measured[]) =>

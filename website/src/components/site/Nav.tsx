@@ -14,8 +14,7 @@ export function GitHubIcon({ className = "" }: { className?: string }) {
   );
 }
 
-// `spawn` marks the logo as the colony's nest: on the home page the ants pour out of it.
-export function Nav({ spawn = false, solid = false }: { spawn?: boolean; solid?: boolean }) {
+export function Nav({ solid = false }: { solid?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -43,7 +42,7 @@ export function Nav({ spawn = false, solid = false }: { spawn?: boolean; solid?:
     >
       <div className={`${wrap} flex h-16 items-center justify-between gap-6 lg:h-[72px]`}>
         <Link href="/" className="relative z-10 -m-2 p-2" aria-label="geeknative home">
-          <Logo spawn={spawn} className="text-[20px] lg:text-[22px]" />
+          <Logo className="text-[20px] lg:text-[22px]" />
         </Link>
 
         <nav aria-label="Primary" className="hidden lg:block">

@@ -9,7 +9,7 @@ export default function Home() {
   return (
     // Relative, so the colony's canvas can span the whole page.
     <div className="relative">
-      <Nav spawn />
+      <Nav />
       <main>
         <Hero />
         <Idea />

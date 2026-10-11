@@ -80,8 +80,7 @@ export class ColonyEngine {
   private w = 1;
   private h = 1;
   private calm = false;
-  // The stage slot each ant belongs to (-1: spare), and which slots had a centre last frame.
-  private slotOf: Int16Array;
+  // Which stage slots had a centre last frame.
   private placed: boolean[] = new Array(MAX_STAGES).fill(false);
 
   constructor(canvas: HTMLCanvasElement, opts: EngineOptions) {
@@ -89,7 +88,6 @@ export class ColonyEngine {
     const sy = Math.ceil(opts.count / sx);
     this.count = sx * sy;
     this.calm = opts.calm;
-    this.slotOf = new Int16Array(this.count).fill(-1);
     this.renderer = new THREE.WebGLRenderer({
       canvas,
       alpha: true,
@@ -131,9 +129,6 @@ export class ColonyEngine {
       uStages: { value: Array.from({ length: MAX_STAGES }, () => new THREE.Vector2()) },
       uTime: { value: 0 },
       uDtSec: { value: 1 / 60 },
-      uIntro: { value: new THREE.Vector4(0, 0, 0, 0) },
-      uIntroGate: { value: -1e6 },
-      uIntroStage: { value: -1 },
       uDt: { value: 1 },
     };
     const vu = this.velVar.material.uniforms;
@@ -239,11 +234,10 @@ export class ColonyEngine {
     this.antMat.uniforms.uDensity.value = fraction;
   }
 
-  // Give each stage its own run of ants, placed straight onto their spots: ants never
-  // walk from one stage to another, or across a stage when it is rebuilt after a resize.
-  // `hold` names a slot whose ants are left where they are, for the intro to bring in.
-  // Returns how many ants each slot got.
-  setStages(plans: StagePlan[], hold = -1) {
+  // Give each stage its own run of ants, placed straight onto their spots: on load, and
+  // when a resize rebuilds the stages. Ants never walk from one stage to another, or in
+  // from anywhere else. Returns how many ants each slot got.
+  setStages(plans: StagePlan[]) {
     const A = this.tA.image.data as Float32Array;
     const B = this.tB.image.data as Float32Array;
     const M = this.tMeta.image.data as Float32Array;
@@ -280,9 +274,8 @@ export class ColonyEngine {
         }
         M[dst] = slot;
         M[dst + 1] = f.antSize;
-        M[dst + 2] = slot === hold ? 0 : 1;
+        M[dst + 2] = 1;
         M[dst + 3] = 0;
-        this.slotOf[i] = slot;
       }
       counts.set(slot, n);
     }
@@ -292,46 +285,10 @@ export class ColonyEngine {
       B.fill(0, dst, dst + 3);
       B[dst + 3] = SPARE;
       M.fill(0, dst, dst + 4);
-      this.slotOf[i] = -1;
     }
     this.tA.needsUpdate = this.tB.needsUpdate = this.tMeta.needsUpdate = this.tPaths.needsUpdate = true;
     this.snapFrames = 2;
     return counts;
-  }
-
-  // Seed one stage's ants around a point (page coords), e.g. the nav logo. Call it right after
-  // setStages: every other ant starts at the origin, and setStages has flagged them to be placed.
-  spawnAt(x: number, y: number, spread: number, slot: number) {
-    const pos = this.gpu.createTexture();
-    const vel = this.gpu.createTexture();
-    const p = pos.image.data as Float32Array;
-    const v = vel.image.data as Float32Array;
-    for (let i = 0; i < this.count; i++) {
-      if (this.slotOf[i] !== slot) continue;
-      const a = Math.random() * Math.PI * 2;
-      const r = Math.random() * spread;
-      p[i * 4] = x + Math.cos(a) * r;
-      p[i * 4 + 1] = -(y + Math.sin(a) * r);
-      p[i * 4 + 2] = Math.random() * 6.28;
-      p[i * 4 + 3] = 1;
-      const s = 0.5 + Math.random() * 4;
-      v[i * 4] = Math.cos(a) * s;
-      v[i * 4 + 1] = Math.sin(a) * s;
-      v[i * 4 + 3] = 0;
-    }
-    for (const t of [pos, vel]) t.needsUpdate = true;
-    for (const rt of this.posVar.renderTargets) this.gpu.renderTexture(pos, rt);
-    for (const rt of this.velVar.renderTargets) this.gpu.renderTexture(vel, rt);
-    pos.dispose();
-    vel.dispose();
-  }
-
-  // Route one stage's ants through a waypoint (page coords) before they take their places.
-  intro(x: number, y: number, gateX: number, slot: number) {
-    const u = this.velVar.material.uniforms;
-    u.uIntro.value.set(x, -y, this.time, 1);
-    u.uIntroGate.value = gateX;
-    u.uIntroStage.value = slot;
   }
 
   kick(x: number, y: number, strength = 5) {
@@ -350,8 +307,6 @@ export class ColonyEngine {
     vu.uDt.value = f;
     pu.uDt.value = f;
     this.pulse.z += step;
-    const intro = vu.uIntro.value as THREE.Vector4;
-    if (intro.w > 0 && this.time > intro.z + 2.6) intro.w = 0;
 
     // Stages are pinned to the page, but layout shifts move them: their ants ride along.
     const centres = vu.uStages.value as THREE.Vector2[];

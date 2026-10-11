@@ -61,9 +61,6 @@ uniform sampler2D uPaths;
 uniform vec2 uStages[${MAX_STAGES}]; // each stage's centre
 uniform float uTime;
 uniform float uDtSec;
-uniform vec4 uIntro; // waypoint x, y, start time, on
-uniform float uIntroGate; // ants stay in the stream until they pass this x
-uniform float uIntroStage; // the stage whose ants make the entrance
 
 struct Tgt {
   vec2 pos;
@@ -130,15 +127,6 @@ Tgt getTarget(vec2 uv, vec2 cur) {
     // A spare ant stays where it is, unseen.
     t.pos = cur;
     t.vis = 0.0;
-  }
-  // Intro: one stage's ants march along the top of the page to a waypoint, then peel off.
-  if (uIntro.w > 0.5 && type < 2.5 && abs(m.x - uIntroStage) < 0.5) {
-    float s = hash12(uv * 91.3);
-    if (uTime < uIntro.z + 0.6 + s * 1.1 || cur.x < uIntroGate) {
-      t.pos = uIntro.xy + vec2((hash12(uv * 17.1) - 0.3) * 220.0, (hash12(uv * 5.7) - 0.5) * 14.0);
-      t.vel = vec2(0.0);
-      t.wrapped = 0.0;
-    }
   }
   return t;
 }
