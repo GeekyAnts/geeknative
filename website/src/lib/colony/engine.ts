@@ -23,6 +23,8 @@ export interface EngineOptions {
 export interface FrameInput {
   dt: number;
   scrollY: number;
+  // The page area the canvas covers: its top edge in page coords, and its size.
+  top: number;
   width: number;
   height: number;
   mouse: { x: number; y: number; on: boolean };
@@ -336,7 +338,7 @@ export class ColonyEngine {
     this.pulse.set(x, -y, 0, strength);
   }
 
-  frame({ dt, scrollY, width, height, mouse, stages }: FrameInput) {
+  frame({ dt, scrollY, top, width, height, mouse, stages }: FrameInput) {
     const step = Math.min(dt, 1 / 20);
     if (!this.calm) this.time += step;
     const f = step * 60;
@@ -380,8 +382,8 @@ export class ColonyEngine {
     if (width !== this.w || height !== this.h) this.resize(width, height, this.renderer.getPixelRatio());
     this.camera.left = 0;
     this.camera.right = width;
-    this.camera.top = -scrollY;
-    this.camera.bottom = -scrollY - height;
+    this.camera.top = -top;
+    this.camera.bottom = -top - height;
     this.camera.updateProjectionMatrix();
     this.renderer.setRenderTarget(null);
     this.renderer.render(this.scene, this.camera);

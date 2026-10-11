@@ -16,8 +16,15 @@ interface Measured {
 
 const visible = (r: DOMRect) => r.width >= 4 && r.height >= 4;
 
-// Owns the fixed canvas. Every stage on the page gets its own ants, and they stay
-// there: they march and mill about in their own section and never travel to
+// The canvas scrolls with the page instead of sitting fixed over it. The browser
+// scrolls natively, off the main thread, so a fixed canvas redrawn every frame
+// would trail the page. It covers the viewport plus this share of it above and
+// below, and moves along each frame.
+const OVERSCAN = 0.3;
+const canvasHeight = (vh: number) => vh + Math.round(vh * OVERSCAN) * 2;
+
+// Owns the colony's canvas. Every stage on the page gets its own ants, and they
+// stay there: they march and mill about in their own section and never travel to
 // another one as the page scrolls.
 export function ColonyCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -82,7 +89,7 @@ export function ColonyCanvas() {
         return;
       }
       const eng = engine;
-      eng.resize(document.documentElement.clientWidth, window.innerHeight, dpr);
+      eng.resize(document.documentElement.clientWidth, canvasHeight(window.innerHeight), dpr);
       const layout = (list: Measured[], hold?: number) => {
         const counts = eng.setStages(plan(list), hold);
         colonyStore.setCounts(new Map(list.map((s, slot) => [s.id, counts.get(slot) ?? 0])));
@@ -137,7 +144,7 @@ export function ColonyCanvas() {
           qualityStep = 2;
         } else if (qualityStep === 0 && dpr > 1) {
           dpr = 1;
-          eng.resize(document.documentElement.clientWidth, window.innerHeight, dpr);
+          eng.resize(document.documentElement.clientWidth, canvasHeight(window.innerHeight), dpr);
           qualityStep = 1;
         } else {
           eng.setDensity(0.5);
@@ -171,6 +178,7 @@ export function ColonyCanvas() {
         a.some((s, i) => Math.abs(s.rect.width - b[i].rect.width) > 2 || Math.abs(s.rect.height - b[i].rect.height) > 2);
       let previous = stages;
       let settling = 0;
+      let canvasTop = 0;
       let last = performance.now();
 
       const loop = (now: number) => {
@@ -196,11 +204,18 @@ export function ColonyCanvas() {
         }
         previous = current;
 
+        const vh = window.innerHeight;
+        const top = Math.max(0, Math.round(scrollY) - Math.round(vh * OVERSCAN));
+        if (top !== canvasTop) {
+          canvas.style.transform = `translate3d(0, ${top}px, 0)`;
+          canvasTop = top;
+        }
         eng.frame({
           dt,
           scrollY,
+          top,
           width: document.documentElement.clientWidth,
-          height: window.innerHeight,
+          height: canvasHeight(vh),
           mouse,
           stages: current.map(({ rect: r }) =>
             visible(r) ? { x: r.left + r.width / 2, y: r.top + r.height / 2 + scrollY } : null,
@@ -219,5 +234,10 @@ export function ColonyCanvas() {
     };
   }, []);
 
-  return <canvas ref={canvasRef} aria-hidden className="colony-canvas pointer-events-none fixed left-0 top-0 z-40" />;
+  // The parent spans the whole page, so this box does too; it clips the canvas at the page's end.
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 z-40 overflow-hidden">
+      <canvas ref={canvasRef} className="colony-canvas absolute left-0 top-0" />
+    </div>
+  );
 }

@@ -104,15 +104,6 @@ html[data-colony="off"] .colony-canvas {
   transition: opacity 0.5s var(--ease-quint);
 }
 
-/* Lenis */
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-.lenis:not(.lenis-autoToggle).lenis-stopped {
-  overflow: clip;
-}
-
 /* Reveal motion. Only hidden when JS is known to run. */
 html.js .reveal {
   opacity: 0;

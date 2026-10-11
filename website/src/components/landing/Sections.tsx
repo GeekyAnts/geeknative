@@ -35,7 +35,7 @@ function Head({ index, eyebrow, title, id, aside }: { index: string; eyebrow: st
 /* 02: real screenshots */
 export function Apps() {
   return (
-    <section id="apps" aria-labelledby="apps-title" className="scroll-mt-16 pt-32 lg:pt-44">
+    <section id="apps" aria-labelledby="apps-title" className="scroll-mt-16 lg:scroll-mt-[72px] pt-32 lg:pt-44">
       <div className={wrap}>
         <Head
           index="02"
@@ -69,7 +69,7 @@ const LOOP = [
 /* 03: how it works */
 export function HowItWorks() {
   return (
-    <section id="how-it-works" aria-labelledby="how-title" className="scroll-mt-16 border-t border-line pt-28 lg:pt-40">
+    <section id="how-it-works" aria-labelledby="how-title" className="scroll-mt-16 lg:scroll-mt-[72px] border-t border-line pt-28 lg:pt-40">
       <div className={wrap}>
         <Head
           index="03"
@@ -192,7 +192,7 @@ export function Triage() {
 /* 05: contracts */
 export function Contracts() {
   return (
-    <section id="contracts" aria-labelledby="contracts-title" className="scroll-mt-16 border-t border-line py-28 lg:py-40">
+    <section id="contracts" aria-labelledby="contracts-title" className="scroll-mt-16 lg:scroll-mt-[72px] border-t border-line py-28 lg:py-40">
       <div className={wrap}>
         <Head
           index="05"
@@ -280,7 +280,7 @@ const AGENTS = [
 /* 07: agents */
 export function Agents() {
   return (
-    <section id="agents" aria-labelledby="agents-title" className="scroll-mt-16 border-t border-line py-28 lg:py-40">
+    <section id="agents" aria-labelledby="agents-title" className="scroll-mt-16 lg:scroll-mt-[72px] border-t border-line py-28 lg:py-40">
       <div className={wrap}>
         <Head
           index="07"
