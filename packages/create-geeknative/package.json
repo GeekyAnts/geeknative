@@ -1,6 +1,6 @@
 {
   "name": "create-geeknative",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Create a geeknative project: `npm create geeknative my-app`.",
   "license": "Apache-2.0",
   "homepage": "https://geekyants.github.io/geeknative/",
@@ -25,6 +25,6 @@
     "node": ">=22"
   },
   "dependencies": {
-    "geeknative": "0.1.0"
+    "geeknative": "0.1.1"
   }
 }

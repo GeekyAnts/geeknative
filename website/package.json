@@ -6,7 +6,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "deploy": "npm run build && node scripts/deploy.mjs"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.42.6",
