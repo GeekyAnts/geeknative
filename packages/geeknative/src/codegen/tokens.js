@@ -541,6 +541,9 @@ const cssColor = ([r, g, b, a]) => `#${hex2(r)}${hex2(g)}${hex2(b)}${a === 255 ?
 /** @param {number} px */
 const rem = (px) => `${Number((px / 16).toFixed(4))}rem`
 
+/** Tailwind's container size names (--container-*), which width utilities also look up. */
+const TAILWIND_CONTAINERS = new Set(['3xs', '2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl'])
+
 /** @type {Record<string, string>} */
 const CSS_FONT_FORMATS = { '.woff2': 'woff2', '.woff': 'woff', '.ttf': 'truetype', '.otf': 'opentype' }
 
@@ -567,6 +570,13 @@ function css(tokens) {
         `  --text-${kebab(name)}--font-weight: ${t.weight};`,
       ].join('\n'),
     )
+    .join('\n')
+  // Tailwind resolves w-*, min-w-* and max-w-* from --width/--min-width/--max-width, then
+  // --spacing, then --container. A spacing token named like a container size (sm, md, xl, ...)
+  // would turn max-w-md into 12px, so those names point back at the container sizes.
+  const widthNames = Object.keys(tokens.spacing).map(kebab).filter((name) => TAILWIND_CONTAINERS.has(name))
+  const widths = widthNames
+    .flatMap((name) => ['width', 'min-width', 'max-width'].map((prefix) => `  --${prefix}-${name}: var(--container-${name});`))
     .join('\n')
   const iconSizes = Object.entries(tokens.icon)
     .map(([name, value]) => `  --spacing-icon-${kebab(name)}: ${value}px;`)
@@ -600,7 +610,7 @@ ${colorVars('light', '  ')}
 ${aliases}
 
 ${numbers(tokens.spacing, 'spacing')}
-
+${widths ? `\n  /* w-md, max-w-md, ... stay Tailwind's container widths; use w-(--spacing-md) for a spacing-sized width */\n${widths}\n` : ''}
 ${numbers(tokens.radius, 'radius')}
 
   /* icon sizes: size-icon-md, w-icon-lg, ... */
