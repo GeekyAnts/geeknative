@@ -106,6 +106,96 @@ const cases = [
     (c) => editJson(path.join(c, 'app.json'), (a) => (a.build = 0)),
     /"build" must be a whole number/,
   ],
+  // contracts/config.json
+  [
+    'a missing config.json',
+    (c) => rmSync(path.join(c, 'config.json')),
+    /contracts\/config\.json is missing\. Create it with/,
+  ],
+  [
+    'an unknown top-level config key',
+    (c) => editJson(path.join(c, 'config.json'), (cfg) => (cfg.value = {})),
+    /unknown key "value"/,
+  ],
+  [
+    'environments without production',
+    (c) => editJson(path.join(c, 'config.json'), (cfg) => (cfg.environments = ['development', 'staging'])),
+    /must include "development" and "production"/,
+  ],
+  [
+    'a duplicate environment',
+    (c) => editJson(path.join(c, 'config.json'), (cfg) => cfg.environments.push('staging')),
+    /lists "staging" twice/,
+  ],
+  [
+    'an environment that is not an identifier',
+    (c) => editJson(path.join(c, 'config.json'), (cfg) => cfg.environments.push('Dev-1')),
+    /environment "Dev-1": names must be camelCase/,
+  ],
+  [
+    'a config value with an unknown type',
+    (c) => editJson(path.join(c, 'config.json'), (cfg) => (cfg.values.timeout = { type: 'float' })),
+    /values\.timeout "type" must be "string", "url", "boolean" or "int"/,
+  ],
+  [
+    'a config value missing an environment',
+    (c) =>
+      editJson(path.join(c, 'config.json'), (cfg) => {
+        cfg.values.pageSize = { type: 'int', development: 10, production: 20 }
+      }),
+    /values\.pageSize is missing a value for "staging"/,
+  ],
+  [
+    'a config value for an undeclared environment',
+    (c) =>
+      editJson(path.join(c, 'config.json'), (cfg) => {
+        cfg.values.pageSize = { type: 'int', development: 1, staging: 2, production: 3, qa: 4 }
+      }),
+    /values\.pageSize has "qa", which isn't in "environments"/,
+  ],
+  [
+    'a config url that is not absolute',
+    (c) =>
+      editJson(path.join(c, 'config.json'), (cfg) => {
+        cfg.values.apiBaseUrl = { type: 'url', development: 'localhost:8080', staging: 'https://s.example.com', production: 'https://a.example.com' }
+      }),
+    /values\.apiBaseUrl\.development must be an absolute URL/,
+  ],
+  [
+    'a config boolean that is not a boolean',
+    (c) =>
+      editJson(path.join(c, 'config.json'), (cfg) => {
+        cfg.values.beta = { type: 'boolean', development: 'yes', staging: true, production: false }
+      }),
+    /values\.beta\.development must be true or false/,
+  ],
+  [
+    'a config int that is not whole',
+    (c) =>
+      editJson(path.join(c, 'config.json'), (cfg) => {
+        cfg.values.pageSize = { type: 'int', development: 1.5, staging: 2, production: 3 }
+      }),
+    /values\.pageSize\.development must be a whole number/,
+  ],
+  [
+    'a secret that carries a value',
+    (c) => editJson(path.join(c, 'config.json'), (cfg) => (cfg.secrets.mapsApiKey = { type: 'string', value: 'abc' })),
+    /secrets\.mapsApiKey has "value"\. Secrets are names only: put the value in \.env as MAPS_API_KEY/,
+  ],
+  [
+    'a secret that is not a string',
+    (c) => editJson(path.join(c, 'config.json'), (cfg) => (cfg.secrets.retries = { type: 'int' })),
+    /secrets\.retries "type" must be "string"/,
+  ],
+  [
+    'two secrets that map to one .env key',
+    (c) =>
+      editJson(path.join(c, 'config.json'), (cfg) => {
+        cfg.secrets.apiKey = { type: 'string' }
+        cfg.secrets.apiKEY = { type: 'string' }
+      }),
+    /"apiKey" and "apiKEY" both map to the \.env key API_KEY/,
+  ],
   [
     'invalid JSON',
     (c) => writeFileSync(path.join(c, 'app.json'), '{'),
