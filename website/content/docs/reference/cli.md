@@ -33,6 +33,7 @@ npx geeknative@latest create <folder> [options]
 | `--id` | `com.example.<folder name without dashes>` | Bundle ID on iOS, application ID on Android |
 | `--no-install` | | Skip `npm install` |
 | `--no-git` | | Skip `git init` and the first commit |
+| `--link` | | Only when running from a geeknative checkout: depend on the checkout itself instead of a snapshot of it (see below) |
 
 `create`:
 
@@ -42,6 +43,8 @@ npx geeknative@latest create <folder> [options]
 4. runs `gen` and writes `.geeknative/lock.json`;
 5. writes `apps/android/local.properties` if it finds an Android SDK;
 6. runs `npm install`, then `git init` and a first commit (unless you passed `--no-install` or `--no-git`).
+
+A project created from npm depends on `geeknative` at `^<version>`. A project created from a git checkout of geeknative (`node packages/geeknative/bin/geeknative.js create ...`) is pinned to a snapshot of that checkout: `create` packs it into `.geeknative/geeknative-<version>-<commit>.tgz` (with `-dirty` if the checkout had uncommitted changes) and depends on that file, so switching the checkout to another branch never changes the project. Commit the tarball with the project. With `--link`, the project depends on the checkout folder instead and follows whatever branch is checked out there, which is useful only while working on geeknative itself.
 
 ## gen
 
@@ -93,6 +96,7 @@ npx geeknative doctor [--fix]   # or: make doctor, make doctor FIX=1
 |---|---|---|
 | node | Node 22 or later | |
 | deps | `node_modules/` exists | Runs `npm install` |
+| geeknative | Says where the CLI comes from: npm, a pinned snapshot, or a checkout. A live link to a checkout is a warning, naming the branch and commit it's on now. | Pins the project to a snapshot of that checkout and runs `npm install` |
 | contracts | Contracts are valid and generated files are current | |
 | xcode | Xcode 26 or later (macOS only) | |
 | simulator | An iPhone simulator is available | |
