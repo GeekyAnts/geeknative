@@ -23,6 +23,7 @@ export function createProgress({ phases, passed, heartbeat = 30_000, now = Date.
   const started = now()
   /** @type {string | null} */
   let current = null
+  let reached = -1
   let tests = 0
   const elapsed = () => `${Math.round((now() - started) / 1000)}s`
   const testsSoFar = () => (passed && tests ? `, ${tests} test${tests === 1 ? '' : 's'} passed so far` : '')
@@ -35,10 +36,13 @@ export function createProgress({ phases, passed, heartbeat = 30_000, now = Date.
     /** @param {string} line */
     onLine(line) {
       if (passed?.test(line)) tests++
-      const next = phases.find((p) => p.match.test(line))?.phase
-      if (next && next !== current) {
-        current = next
-        print(`${next}… (${elapsed()})`)
+      // Phases only move forward: Xcode builds the app and then the test bundle, which would
+      // otherwise flip between compiling and linking.
+      const index = phases.findIndex((p) => p.match.test(line))
+      if (index > reached) {
+        reached = index
+        current = phases[index].phase
+        print(`${current}… (${elapsed()})`)
       }
     },
     stop() {
@@ -61,8 +65,11 @@ export const XCODE_PHASES = [
   { match: /^(Testing started|Test suite '.*' started)/, phase: 'running tests' },
 ]
 
-/** A passed test in xcodebuild's output. */
-export const XCODE_PASSED = /^Test case '.*' passed/
+/**
+ * A passed test in xcodebuild's output: Swift Testing (`✔ Test "..." passed`) or XCTest
+ * (`Test Case '...' passed`, or `Test case '...' passed` when tests run in parallel).
+ */
+export const XCODE_PASSED = /^(✔ Test ".*" passed|Test [Cc]ase '.*' passed)/
 
 /** Phases of the Gradle tasks `make check-android` runs, from `--console=plain` output. */
 export const GRADLE_PHASES = [
