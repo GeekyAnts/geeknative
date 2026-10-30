@@ -2,28 +2,43 @@
 import path from 'node:path'
 import { readdirSync, existsSync } from 'node:fs'
 import { walk } from '../lib/fsutil.js'
+import { readEnvFile } from '../lib/env.js'
 import { rel } from '../lib/project.js'
 import { appOutputs, readApp } from './app.js'
-import { configOutputs, readConfig } from './config.js'
+import { configOutputs, readConfig, resolveSecrets } from './config.js'
 import { iconOutputs, readIcons } from './icons.js'
 import { readStrings, stringOutputs } from './strings.js'
 import { readTokens, tokenOutputs } from './tokens.js'
 import { OUT } from './util.js'
 
 /**
- * Reads and validates every contract, and returns the files they generate in each app.
+ * Reads and validates every contract, and returns the files they generate in each app,
+ * plus warnings that should be shown but don't stop generation (like a secret missing from .env).
  * @param {string} root
- * @returns {{ path: string, content: string | Buffer }[]}
+ * @returns {{ outputs: { path: string, content: string | Buffer, local?: boolean }[], warnings: string[] }}
+ */
+export function generateAll(root) {
+  const app = readApp(root)
+  const config = readConfig(root)
+  const secrets = resolveSecrets(config, Object.keys(config.secrets).length ? readEnvFile(root) : null)
+  return {
+    outputs: [
+      ...appOutputs(app),
+      ...tokenOutputs(readTokens(root)),
+      ...stringOutputs(readStrings(root, app.defaultLocale), app.name),
+      ...iconOutputs(readIcons(root)),
+      ...configOutputs(config, secrets.values),
+    ],
+    warnings: secrets.warnings,
+  }
+}
+
+/**
+ * Just the generated files; see generateAll for warnings.
+ * @param {string} root
  */
 export function generate(root) {
-  const app = readApp(root)
-  return [
-    ...appOutputs(app),
-    ...tokenOutputs(readTokens(root)),
-    ...stringOutputs(readStrings(root, app.defaultLocale), app.name),
-    ...iconOutputs(readIcons(root)),
-    ...configOutputs(readConfig(root)),
-  ]
+  return generateAll(root).outputs
 }
 
 /**

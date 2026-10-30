@@ -14,7 +14,8 @@ const VALUE_TYPES = ['string', 'url', 'boolean', 'int']
  * @typedef {{ type: ValueType, description?: string, perEnv: Record<string, string | boolean | number> }} ConfigValue
  * @typedef {{ description?: string, envKey: string }} ConfigSecret
  * @typedef {{ environments: string[], values: Record<string, ConfigValue>, secrets: Record<string, ConfigSecret> }} Config
- * @typedef {{ path: string, content: string | Buffer }} Output
+ * @typedef {{ path: string, content: string | Buffer, local?: boolean }} Output `local` files come from .env, are
+ * gitignored, and are written by `gen` but never compared against what's on disk.
  */
 
 /** "mapsApiKey" → "MAPS_API_KEY": the name of a secret in .env. @param {string} name */
@@ -156,14 +157,56 @@ function readSecrets(group) {
 /** Value names sorted, so output doesn't depend on the order in the contract. @param {Config} config */
 const sortedValues = (config) => Object.entries(config.values).sort(([a], [b]) => (a < b ? -1 : 1))
 
-/** @param {Config} config @returns {Output[]} */
-export function configOutputs(config) {
-  return [
+/**
+ * Looks up each declared secret in .env. A missing one becomes an empty string (so the apps still
+ * compile on a fresh clone) plus a warning.
+ * @param {Config} config
+ * @param {Record<string, string> | null} env the parsed .env, or null when there is none
+ * @returns {{ values: Record<string, string>, warnings: string[] }}
+ */
+export function resolveSecrets(config, env) {
+  /** @type {Record<string, string>} */
+  const values = {}
+  /** @type {string[]} */
+  const missing = []
+  for (const [name, { envKey: key }] of Object.entries(config.secrets)) {
+    values[name] = env?.[key] ?? ''
+    if (!values[name]) missing.push(key)
+  }
+  if (!missing.length) return { values, warnings: [] }
+  const empty = `${missing.join(', ')} ${missing.length === 1 ? 'is' : 'are'} empty in AppSecrets`
+  return {
+    values,
+    warnings: [env ? `.env lacks ${missing.join(', ')}: ${empty}.` : `.env is missing: ${empty}. Copy .env.example to .env and fill it in.`],
+  }
+}
+
+/**
+ * @param {Config} config
+ * @param {Record<string, string>} [secretValues] by secret name, from resolveSecrets
+ * @returns {Output[]}
+ */
+export function configOutputs(config, secretValues = {}) {
+  /** @type {Output[]} */
+  const outputs = [
     { path: `${OUT.iosGenerated}/AppConfig.swift`, content: swift(config) },
     { path: `${OUT.androidKotlin}/AppConfig.kt`, content: kotlin(config) },
     { path: `${OUT.webGenerated}/config.ts`, content: typescript(config) },
   ]
+  if (!Object.keys(config.secrets).length) return outputs // nothing declared, so no secret files at all
+  return [
+    ...outputs,
+    // Mobile apps embed the values, so these two files hold real secrets and must stay out of git.
+    { path: `${OUT.iosGenerated}/AppSecrets.swift`, content: swiftSecrets(config, secretValues), local: true },
+    { path: `${OUT.androidKotlin}/AppSecrets.kt`, content: kotlinSecrets(config, secretValues), local: true },
+    // The web side only names the keys and reads process.env on the server, so it is safe to commit.
+    { path: `${OUT.webGenerated}/secrets.server.ts`, content: typescriptSecrets(config) },
+    { path: ENV_EXAMPLE, content: envExample(config) },
+  ]
 }
+
+/** The committed template for .env, listing every declared secret. */
+export const ENV_EXAMPLE = '.env.example'
 
 /** @param {Config} config */
 function swift(config) {
@@ -269,5 +312,85 @@ export const environment = requested as AppEnvironment
 ${pick}
 /** Settings that differ per environment, shared with the iOS and Android apps. */
 export const AppConfig = {${members.length ? `\n${members.join('\n')}\n` : ''}} as const
+`
+}
+
+// ---------- Secrets ----------
+
+const LOCAL_NOTE = 'Local file: it holds secret values and is ignored by git.'
+
+/** @param {Config} config @param {Record<string, string>} values */
+function swiftSecrets(config, values) {
+  const members = Object.entries(config.secrets)
+    .sort(([a], [b]) => (a < b ? -1 : 1))
+    .map(([name, { description }]) => `${description ? `    /// ${docText(description)}\n` : ''}    static let ${name} = ${swiftString(values[name] ?? '')}`)
+  return `// ${banner(`${SOURCE} and .env`)}
+// ${LOCAL_NOTE}
+
+/// Secrets declared in contracts/config.json, with values from .env when \`make gen\` ran.
+nonisolated enum AppSecrets {
+${members.join('\n')}
+}
+`
+}
+
+/** @param {Config} config @param {Record<string, string>} values */
+function kotlinSecrets(config, values) {
+  const members = Object.entries(config.secrets)
+    .sort(([a], [b]) => (a < b ? -1 : 1))
+    .map(([name, { description }]) => `${description ? `    /** ${docText(description)} */\n` : ''}    val ${name}: String = ${kotlinString(values[name] ?? '')}`)
+  return `// ${banner(`${SOURCE} and .env`)}
+// ${LOCAL_NOTE}
+package app.generated
+
+/** Secrets declared in contracts/config.json, with values from .env when \`make gen\` ran. */
+object AppSecrets {
+${members.join('\n')}
+}
+`
+}
+
+/** @param {Config} config */
+function typescriptSecrets(config) {
+  const sorted = Object.entries(config.secrets).sort(([a], [b]) => (a < b ? -1 : 1))
+  const keys = sorted.map(([name, { envKey: key }]) => `  ${name}: ${JSON.stringify(key)},`).join('\n')
+  const getters = sorted
+    .map(([name, { description }]) => `${description ? `  /** ${docText(description)} */\n` : ''}  get ${name}(): string {\n    return secret('${name}')\n  },`)
+    .join('\n')
+  return `// ${banner(SOURCE)}
+/// <reference types="node" />
+
+/** The .env key of each secret declared in contracts/config.json. */
+const keys = {
+${keys}
+} as const
+
+function secret(name: keyof typeof keys): string {
+  if (typeof window !== 'undefined') {
+    throw new Error(\`AppSecrets.\${name} is server-only. Read it in a server function or API route, never in a component.\`)
+  }
+  const value = process.env[keys[name]]
+  if (!value) {
+    throw new Error(\`\${keys[name]} is not set. Add it to .env (see .env.example) or to the server's environment.\`)
+  }
+  return value
+}
+
+/** Server-only secrets, read from the environment when first used. Never import this from client code. */
+export const AppSecrets = {
+${getters}
+}
+`
+}
+
+/** @param {Config} config */
+function envExample(config) {
+  const entries = Object.entries(config.secrets)
+    .sort(([a], [b]) => (a < b ? -1 : 1))
+    .map(([, { description, envKey: key }]) => `${description ? `# ${docText(description)}\n` : ''}${key}=`)
+  return `# ${banner(SOURCE)}
+# Copy this file to .env and fill in the values. .env is ignored by git.
+
+${entries.join('\n\n')}
 `
 }
