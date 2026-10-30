@@ -1,6 +1,8 @@
 # Managed by geeknative: replaced on upgrade. Add your own targets to the root Makefile.
 
 GEEKNATIVE ?= ./node_modules/.bin/geeknative
+# `make check ENV=staging` builds the staging environment from contracts/config.json.
+ENV_PREFIX = $(if $(ENV),GEEKNATIVE_ENV=$(ENV) )
 
 .PHONY: help doctor gen check check-contracts check-ios check-android check-web parity run-ios run-android run-web
 
@@ -14,28 +16,28 @@ gen: ## Regenerate app code from contracts/
 	@$(GEEKNATIVE) gen
 
 check: ## Validate contracts, then build and test all three apps
-	@$(GEEKNATIVE) check all
+	@$(ENV_PREFIX)$(GEEKNATIVE) check all
 
 check-contracts: ## Validate contracts and check generated code is current
 	@$(GEEKNATIVE) check contracts
 
 check-ios: ## Build and test the iOS app
-	@$(GEEKNATIVE) check ios
+	@$(ENV_PREFIX)$(GEEKNATIVE) check ios
 
 check-android: ## Build and test the Android app
-	@$(GEEKNATIVE) check android
+	@$(ENV_PREFIX)$(GEEKNATIVE) check android
 
 check-web: ## Type-check, test and build the web app
-	@$(GEEKNATIVE) check web
+	@$(ENV_PREFIX)$(GEEKNATIVE) check web
 
 parity: ## Update spec/parity.md from feature specs and tests
 	@$(GEEKNATIVE) parity
 
 run-ios: ## Build and launch the iOS app in a simulator
-	@$(GEEKNATIVE) run ios
+	@$(ENV_PREFIX)$(GEEKNATIVE) run ios
 
 run-android: ## Build and launch the Android app on an emulator or device
-	@$(GEEKNATIVE) run android
+	@$(ENV_PREFIX)$(GEEKNATIVE) run android
 
 run-web: ## Start the web dev server
-	@$(GEEKNATIVE) run web
+	@$(ENV_PREFIX)$(GEEKNATIVE) run web
