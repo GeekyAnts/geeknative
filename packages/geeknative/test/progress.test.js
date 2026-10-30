@@ -52,6 +52,14 @@ test('progress: phases only move forward, as Xcode builds the app and then its t
   assert.deepEqual(printed, ['compiling… (0s)', 'linking… (0s)', 'running tests… (0s)'])
 })
 
+test('progress: tests start in any of the forms xcodebuild prints', () => {
+  for (const line of ["Test Suite 'All tests' started at 2026-10-30", '◇ Test run started.', "Test suite 'HomeTests' started on 'iPhone'", 'Testing started']) {
+    const { progress, printed } = fakeProgress({ phases: XCODE_PHASES })
+    progress.onLine(line)
+    assert.deepEqual(printed, ['running tests… (0s)'], line)
+  }
+})
+
 test('progress: the heartbeat says nothing before the first phase', () => {
   const { printed, advance } = fakeProgress({ phases: XCODE_PHASES })
   advance(30)
