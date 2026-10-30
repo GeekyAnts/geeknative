@@ -22,6 +22,6 @@ Everything below is planned, not built.
 
 ## More
 
-- **Backends.** An API contract in `contracts/`, generated clients, and repository implementations that call it.
+- **Backends.** An API contract in `contracts/`, generated clients that use the URLs in `contracts/config.json`, and repository implementations that call it.
 - **Custom fonts** in design tokens.
 - **Windows** support for the Android and web apps.
