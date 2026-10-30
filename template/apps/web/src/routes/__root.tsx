@@ -50,7 +50,7 @@ function AppShell() {
     <>
       <AppearanceEffect />
       <header className="border-b border-outline">
-        <nav className="mx-auto flex max-w-2xl items-center justify-between px-lg py-md">
+        <nav className="flex items-center justify-between px-lg py-md md:px-xl">
           <Link to="/" className="text-title">
             {AppIdentity.name}
           </Link>
@@ -64,7 +64,8 @@ function AppShell() {
           </Link>
         </nav>
       </header>
-      <main className="mx-auto max-w-2xl px-lg py-xl">
+      {/* Full width, like the mobile apps: content runs edge to edge with the same side padding as the header. */}
+      <main className="px-lg py-xl md:px-xl">
         <Outlet />
       </main>
     </>
