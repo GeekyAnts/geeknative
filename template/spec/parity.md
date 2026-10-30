@@ -2,7 +2,9 @@
 # Parity
 
 Status comes from each feature spec's front matter. "Tested" counts acceptance criteria whose ID
-(like `AC-settings-2`) appears in that platform's tests.
+(like `AC-settings-2`) appears in that platform's tests. A criterion marked (ui) counts only when a
+test drives the real UI (iOS UI tests, Android Compose tests, web tests that render into a DOM);
+🟡 means only other tests (values, view models, routes) name it.
 
 | Feature | iOS | Android | Web |
 |---|---|---|---|
