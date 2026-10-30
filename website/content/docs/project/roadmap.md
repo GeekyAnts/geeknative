@@ -23,5 +23,6 @@ Everything below is planned, not built.
 ## More
 
 - **Backends.** An API contract in `contracts/`, generated clients that use the URLs in `contracts/config.json`, and repository implementations that call it.
-- **Custom fonts** in design tokens.
+- **More icon families** as bundled catalogs beside Lucide, and multi-color icons.
+- **Italic and variable fonts**, and letter spacing in the type scale.
 - **Windows** support for the Android and web apps.

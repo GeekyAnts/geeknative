@@ -6,7 +6,7 @@ Read the root AGENTS.md first. This file covers how the web app is built.
 ## Stack
 
 - React 19 and TanStack Start (server rendering), with TanStack Router file routes and TanStack Query.
-- Tailwind CSS v4 with the generated design tokens, and Lucide icons.
+- Tailwind CSS v4 with the generated design tokens, typeface and icons (no icon library: `generated/icons.tsx` holds the drawings).
 - TypeScript (strict), Vite, Vitest.
 - Supports Safari 16.4+, Chrome 111+ and Firefox 128+ (Tailwind v4's minimum).
 
@@ -37,8 +37,8 @@ Same names and responsibilities as the iOS and Android apps.
 | Dependencies | `AppContainer`, in router context: `useRouteContext({ from: '__root__' }).container` |
 | Navigation | A file in routes/ per screen; link with `<Link to="/notes">` |
 | Copy | `strings.notesEmptyTitle` (generated) |
-| Colors, spacing, radii, type | Tailwind token classes: `bg-primary`, `p-md`, `rounded-lg`, `text-title` |
-| Icons | `<AppIcons.settings className="size-6" />` (generated) |
+| Colors, spacing, radii, icon sizes, type | Tailwind token classes: `bg-primary`, `p-md`, `rounded-lg`, `size-icon-md`, `text-title` (the typeface comes with `font-sans`) |
+| Icons | `<AppIcons.settings className="size-icon-md" />` (generated) |
 | Config | `AppConfig.apiBaseUrl`, `environment` from `#/generated/config` (generated from contracts/config.json) |
 | Secrets | `AppSecrets.mapsApiKey` from `#/generated/secrets.server` (server functions and API routes only) |
 | Test IDs | `data-testid="notes.addButton"` |

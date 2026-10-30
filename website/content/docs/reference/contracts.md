@@ -37,10 +37,14 @@ In code: `AppIdentity.name` and `AppIdentity.version` (iOS), `AppIdentity.NAME` 
   },
   "spacing": { "xs": 4, "sm": 8, "md": 12, "lg": 16, "xl": 24, "xxl": 32 },
   "radius": { "sm": 6, "md": 10, "lg": 16, "full": 9999 },
+  "icon": { "sm": 16, "md": 24, "lg": 32 },
   "typography": {
     "title": { "size": 20, "lineHeight": 26, "weight": 600, "ios": "title3", "android": "titleLarge" }
   },
-  "font": { "family": "system" }
+  "font": {
+    "family": "Inter",
+    "files": { "400": "Inter-Regular.ttf", "600": "Inter-SemiBold.ttf" }
+  }
 }
 ```
 
@@ -48,20 +52,28 @@ In code: `AppIdentity.name` and `AppIdentity.version` (iOS), `AppIdentity.NAME` 
 
 **Colors** are `#RRGGBB` or `#RRGGBBAA`. `dark` is optional and defaults to `light`. These colors are required: `background`, `onBackground`, `surface`, `onSurface`, `surfaceVariant`, `onSurfaceVariant`, `primary`, `onPrimary`, `outline`, `error` and `onError`. You can add more.
 
-**Spacing and radius** values are numbers of points (iOS), dp (Android) or pixels (web). A radius of 9999 or more is fully rounded on the web.
+**Spacing, radius and icon** values are numbers of points (iOS), dp (Android) or pixels (web). A radius of 9999 or more is fully rounded on the web. Icon sizes are the sizes icons are drawn at in content.
 
 **Typography** entries need:
 
 | Field | Rule |
 |---|---|
-| `size`, `lineHeight` | Positive numbers (sp on Android, converted to rem on web) |
-| `weight` | 100, 200, ... 900 |
-| `ios` | The Dynamic Type style it maps to: `largeTitle`, `title`, `title2`, `title3`, `headline`, `subheadline`, `body`, `callout`, `footnote`, `caption`, `caption2` |
+| `size`, `lineHeight` | Positive numbers (points on iOS, sp on Android, converted to rem on web) |
+| `weight` | 100, 200, ... 900. With a shared font, every weight used here needs a file under `font.files`. |
+| `ios` | The Dynamic Type style it scales with: `largeTitle`, `title`, `title2`, `title3`, `headline`, `subheadline`, `body`, `callout`, `footnote`, `caption`, `caption2` |
 | `android` | The Material 3 type style it fills: `displayLarge` to `displaySmall`, `headlineLarge` to `headlineSmall`, `titleLarge` to `titleSmall`, `bodyLarge` to `bodySmall`, `labelLarge` to `labelSmall` |
 
-A `body` style is required. On iOS, sizes come from Dynamic Type for the mapped style, so text follows the user's text size setting.
+A `body` style is required. Every platform uses `size`; `lineHeight` applies on Android and web. On iOS the style scales relative to its Dynamic Type style, so text follows the user's text size setting.
 
-**Font family** must be `"system"` for now.
+**Font** is the typeface all three apps share:
+
+| Field | Rule |
+|---|---|
+| `family` | The font's family name as the files carry it (`"Inter"`), or `"system"` for each platform's own font |
+| `files` | A map from weight to a `.ttf` or `.otf` file in `contracts/fonts/`. Each file must really be that family and weight, and every weight the typography uses must be present. Not allowed with `"system"`. |
+| `web` | Optional: a map from weight to a `.woff2` (or `.woff`) file to serve on the web instead of the mobile file |
+
+`make font FAMILY="Open Sans"` downloads a Google Fonts family and fills this in; see the [CLI reference](/docs/reference/cli/#font). With `"system"`, each style's `size` must equal its iOS style's default size (`body` is 17, `subheadline` 15, `title3` 20, and so on), because iOS then takes the size from Dynamic Type.
 
 ### Generated
 
@@ -70,7 +82,11 @@ A `body` style is required. On iOS, sizes come from Dynamic Type for the mapped 
 | Colors | `AppColors.primary` (adapts to dark mode) and the global accent color | `AppTheme.colors.primary`, mapped onto Material 3 roles; `@color/token_primary` resources with night variants | `--color-primary` in a Tailwind `@theme`: `bg-primary`, `text-on-primary` |
 | Spacing | `AppSpacing.md` | `AppSpacing.md` | `--spacing-md`: `p-md`, `gap-md` |
 | Radius | `AppRadius.lg` | `AppRadius.lg`, and Material 3 shapes | `--radius-lg`: `rounded-lg` |
-| Type | `AppTypography.title` | `AppTypography.title`, and Material 3 typography | `--text-title`: `text-title` |
+| Icon sizes | `AppIconSize.md` | `AppIconSize.md` | `--spacing-icon-md`: `size-icon-md` |
+| Type | `AppTypography.title`, as `Font.custom("Inter-SemiBold", size: 20, relativeTo: .title3)` | `AppTypography.title`, with `fontFamily = AppFontFamily`, and Material 3 typography | `--text-title`: `text-title` |
+| Font | The files in `App/Generated/Fonts/`, registered at launch by `AppFonts.register()` (called from `AppMain`) | The files as `res/font/generated_*` resources behind `AppFontFamily` | The files in `src/generated/fonts/`, with one `@font-face` per weight and `--font-sans` set to the family |
+
+With `"family": "system"`, `AppTypography.title` is `.title3.weight(.semibold)` on iOS, Android styles have no `fontFamily`, and `--font-sans` is the system stack.
 
 On Android, screens and app bars sit on `background` (as on iOS) and `surface` is used for cards. A color named after another Material 3 role (like `secondary`) replaces that role's default. On the web, the theme also defines shadcn/ui's variable names (`foreground`, `card`, `muted`, `border`, ...) mapped onto the tokens, so shadcn/ui components pick up the design. Dark values apply when `<html>` has the `dark` class.
 
@@ -105,20 +121,34 @@ Files: `App/Generated/Localizable.xcstrings` and `Strings.swift` on iOS; `res/va
 
 ## icons.json
 
+Every icon is drawn from the same shape data on all three platforms, so it looks the same everywhere.
+
 ```json
 {
-  "settings": { "ios": "gearshape", "android": "Icons.Filled.Settings", "web": "Settings" },
-  "back": { "ios": "chevron.backward", "android": "Icons.AutoMirrored.Filled.ArrowBack", "web": "ArrowLeft" }
+  "$family": "lucide",
+  "settings": "settings",
+  "back": { "icon": "arrow-left", "mirrored": true },
+  "logo": { "svg": "logo.svg" }
 }
 ```
 
 | Field | Value |
 |---|---|
-| `ios` | An SF Symbol name |
-| `android` | A Material icon: `Icons.Filled.Name`, `Icons.Outlined.Name`, `Icons.Rounded.Name`, `Icons.Sharp.Name` or `Icons.TwoTone.Name`, optionally with `AutoMirrored.` after `Icons.` |
-| `web` | A Lucide icon component name, like `Settings` |
+| `$family` | The icon family names come from. Optional; `lucide` is the only one geeknative ships, with all of [Lucide's](https://lucide.dev/icons) icons built in. |
+| `$strokeWidth` | Optional stroke width for the whole set, in Lucide's 24-unit grid (default 2) |
+| A name: `"settings"` | A Lucide icon name. A name that isn't in the catalog fails `make gen`. |
+| `{ "icon": "arrow-left", "mirrored": true }` | The same, flipped in right-to-left layouts |
+| `{ "svg": "logo.svg" }` | Your own single-color SVG in `contracts/icons/`: a square `viewBox`, built from `path`, `circle`, `ellipse`, `rect`, `line`, `polyline` and `polygon`, without transforms, gradients, masks or text |
 
-In code: `Image(systemName: AppIcon.settings)` on iOS, `Icon(AppIcons.settings, contentDescription = ...)` on Android, and `<AppIcons.settings className="size-6" />` on web.
+Icons take the current text color. In code: `Image(AppIcon.settings)` on iOS, `Icon(AppIcons.settings, contentDescription = ...)` on Android, and `<AppIcons.settings className="size-icon-md" />` on web.
+
+### Generated
+
+| Platform | Files |
+|---|---|
+| iOS | `App/Generated/Icons.xcassets`, one template image set per icon (vector data kept, so it scales); `Icons.swift` with an `ImageResource` per icon |
+| Android | `res/drawable/generated_icon_<name>.xml` vector drawables (`autoMirrored` when mirrored); `Icons.kt` with an `ImageVector` per icon |
+| Web | `src/generated/icons.tsx`: one inline SVG component per icon, with no icon library dependency |
 
 ## config.json
 
@@ -203,10 +233,10 @@ Mobile apps embed the values they are built with, so treat the built app as read
 
 | Platform | Files |
 |---|---|
-| iOS | `apps/ios/App/Generated/`: `AppIdentity.swift`, `AppConfig.swift`, `AppSecrets.swift` (only with secrets), `Tokens.swift`, `Strings.swift`, `Icons.swift`, `Localizable.xcstrings`, `Colors.xcassets` (accent color); `apps/ios/Config/Identity.xcconfig` |
+| iOS | `apps/ios/App/Generated/`: `AppIdentity.swift`, `AppConfig.swift`, `AppSecrets.swift` (only with secrets), `Tokens.swift`, `Strings.swift`, `Icons.swift`, `Localizable.xcstrings`, `Colors.xcassets` (accent color), `Icons.xcassets`, `Fonts/`; `apps/ios/Config/Identity.xcconfig` |
 | Project root | `.env.example` (only with secrets) |
-| Android | `apps/android/app/src/main/kotlin/app/generated/`: `AppIdentity.kt`, `AppConfig.kt`, `AppSecrets.kt` (only with secrets), `Tokens.kt`, `Icons.kt`; `res/values/generated_colors.xml`, `res/values-night/generated_colors.xml`, `res/values*/generated_strings.xml`; `apps/android/app/identity.properties` |
-| Web | `apps/web/src/generated/`: `app.ts`, `config.ts`, `secrets.server.ts` (only with secrets), `tokens.css`, `strings.ts`, `icons.ts` |
+| Android | `apps/android/app/src/main/kotlin/app/generated/`: `AppIdentity.kt`, `AppConfig.kt`, `AppSecrets.kt` (only with secrets), `Tokens.kt`, `Icons.kt`; `res/values/generated_colors.xml`, `res/values-night/generated_colors.xml`, `res/values*/generated_strings.xml`, `res/drawable/generated_icon_*.xml`, `res/font/generated_*`; `apps/android/app/identity.properties` |
+| Web | `apps/web/src/generated/`: `app.ts`, `config.ts`, `secrets.server.ts` (only with secrets), `tokens.css`, `strings.ts`, `icons.tsx`, `fonts/` |
 
 ## Validation errors
 
@@ -217,5 +247,7 @@ Problems are reported with the file and field, so an agent can fix them directly
 ✖ contracts/strings/fr.json "settings.about.version" must use the same placeholders and plural shape as en.json.
 ✖ contracts/config.json values.apiBaseUrl is missing a value for "staging". Every value needs every environment.
 ✖ contracts/config.json secrets.mapsApiKey has "value". Secrets are names only: put the value in .env as MAPS_API_KEY.
-✖ contracts/icons.json "star" needs "android": a Material icon like "Icons.Filled.Settings" or "Icons.AutoMirrored.Filled.ArrowBack".
+✖ contracts/icons.json "star" "sparkly-star" is not a Lucide icon. Browse https://lucide.dev/icons for names like "settings" or "arrow-left".
+✖ contracts/fonts/Inter-Regular.ttf has weight 400, but font.files lists it under "500".
+✖ contracts/tokens.json font "Inter" has no file for weight 600, which typography uses. Add "600" to font.files. Run `make font FAMILY="Inter"` to download the files and fill this in.
 ```

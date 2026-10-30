@@ -47,7 +47,7 @@ Each app has its own `AGENTS.md` with these conventions, for agents working in t
 
 ## Web
 
-**Stack:** React 19 on TanStack Start (server rendering), with TanStack Router file routes and TanStack Query. Tailwind CSS v4 with the generated tokens, and Lucide icons. Strict TypeScript, Vite and Vitest. Supports Safari 16.4, Chrome 111 and Firefox 128 or later (Tailwind v4's minimum).
+**Stack:** React 19 on TanStack Start (server rendering), with TanStack Router file routes and TanStack Query. Tailwind CSS v4 with the generated tokens, typeface and icons (inline SVG components, no icon library). Strict TypeScript, Vite and Vitest. Supports Safari 16.4, Chrome 111 and Firefox 128 or later (Tailwind v4's minimum).
 
 **Layout:** `router.tsx` creates the router with `{ queryClient, container }` as context. Each URL is a thin file in `routes/` that renders a feature's screen; `routes/__root.tsx` is the HTML shell and the site header. Features live in `features/<name>/`.
 

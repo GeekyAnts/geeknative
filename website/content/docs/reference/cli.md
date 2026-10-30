@@ -10,6 +10,7 @@ geeknative <command>
 
   create <folder>      Create a project. Options: --name "My App" --id com.acme.myapp --no-install --no-git
   gen                  Regenerate platform code from contracts/
+  font <family>        Switch the shared typeface: a Google Fonts family ("Open Sans") or system
   check [targets]      Verify contracts, then build and test. Targets: all (default), contracts, ios, android, web
   doctor [--fix]       Check Xcode, the Android SDK and Node; --fix installs what it can
   parity               Update spec/parity.md from feature specs and tests
@@ -51,6 +52,17 @@ npx geeknative gen        # or: make gen
 Validates every contract, writes the generated files that changed, and deletes generated files that are no longer produced (for example, after removing a locale). It lists the files it changed. Invalid contracts fail with a message naming the file and field. See [Contracts](/docs/reference/contracts/).
 
 Files built from `.env` (`AppSecrets.swift` and `AppSecrets.kt`) are always written, even by `check`, and are never compared, because they are not committed. If `.env` lacks a declared key, `gen` prints a warning.
+
+## font
+
+```sh
+npx geeknative font "Open Sans"   # or: make font FAMILY="Open Sans"
+npx geeknative font system        # or: make font FAMILY=system
+```
+
+Switches the typeface of all three apps. For a Google Fonts family it downloads one TrueType file per weight the type scale uses into `contracts/fonts/`, checks that each file really is that family and weight, fetches the license text next to them, rewrites the `font` block of `contracts/tokens.json` (and nothing else in the file), removes the previous family's files, and runs `gen`. `system` removes the files and goes back to each platform's own font.
+
+Any family on [Google Fonts](https://fonts.google.com) works; a name it doesn't have fails with a message. For a font that isn't there, copy its `.ttf` or `.otf` files into `contracts/fonts/` and list them under `font.files` yourself. See [Contracts](/docs/reference/contracts/#tokensjson).
 
 ## check
 
@@ -122,6 +134,7 @@ The project's Makefile includes `.geeknative/framework.mk`:
 | `make` or `make help` | Lists the targets |
 | `make doctor` | `geeknative doctor` (`FIX=1` adds `--fix`) |
 | `make gen` | `geeknative gen` |
+| `make font FAMILY="Open Sans"` | `geeknative font "Open Sans"` |
 | `make check` | `geeknative check all` |
 | `make check-contracts` | `geeknative check contracts` |
 | `make check-ios`, `check-android`, `check-web` | `geeknative check <platform>` |
