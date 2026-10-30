@@ -73,7 +73,7 @@ Any family on [Google Fonts](https://fonts.google.com) works; a name it doesn't 
 npx geeknative check [all | contracts | ios | android | web ...]   # or: make check, make check-ios, ...
 ```
 
-Always validates the contracts first and fails if generated files are out of date. Then it builds and tests each requested app. While iOS and Android build, it prints each phase as it starts (compiling, linking, running tests) and a line every 30 seconds with the time so far, then one result line per app. Full output goes to `.geeknative/logs/<platform>.log`; on failure, the most relevant lines are printed (up to 25). The exit code is 1 if anything failed.
+Always validates the contracts first and fails if generated files are out of date. Then it runs [`lint`](#lint): for every app with a full `check`, with the spec rules too, or only for the app you name (`check ios`). Then it builds and tests each requested app. While iOS and Android build, it prints each phase as it starts (compiling, linking, running tests) and a line every 30 seconds with the time so far, then one result line per app. Full output goes to `.geeknative/logs/<platform>.log`; on failure, the most relevant lines are printed (up to 25). The exit code is 1 if anything failed.
 
 | Target | What runs |
 |---|---|
@@ -115,6 +115,26 @@ npx geeknative parity   # or: make parity
 
 Writes `spec/parity.md` from the feature specs and the tests, and prints each feature's status and untested criteria. See [Specs and parity](/docs/concepts/specs-and-parity/).
 
+## lint
+
+```sh
+npx geeknative lint   # or: make lint (make check runs it too)
+```
+
+Finds what builds and tests can't: places where the code breaks a rule from AGENTS.md or DESIGN.md, and spec bookkeeping nobody updated. Errors make the exit code 1.
+
+| Rule | Level | Finds |
+|---|---|---|
+| `text` | Error | User-facing text written in code instead of `contracts/strings`: `Text("Total")`, `Button("…")`, `.navigationTitle("…")` and `.accessibilityLabel("…")` on iOS; `Text("…")` and `contentDescription = "…"` on Android; text between JSX tags, string children and `aria-label`, `placeholder`, `title` and `alt` attributes on the web. Text composed around values counts too (`"\(name) × \(count)"`); a value alone (`"\(count)"`) and emoji don't. |
+| `test-id` | Error | A test ID in app code (`accessibilityIdentifier`, `testTag`, `data-testid`) that no spec lists in its "Test IDs" section. `<placeholder>` parts of a listed ID match any value. |
+| `test-id` | Warning | A listed test ID that an app whose status is `done` never uses |
+| `title` | Error | A centered screen title: `.navigationBarTitleDisplayMode(.inline)` on iOS, `CenterAlignedTopAppBar` on Android. Titles are leading-aligned on every platform. |
+| `status` | Error | A platform still `planned` although its tests name the feature's criteria. A warning for `in-progress` with every criterion covered. |
+| `parity` | Error | `spec/parity.md` doesn't match the specs and tests. Run `make parity`. |
+| `platforms` | Warning | Uncommitted changes touch some apps but not the others, the same reminder the Claude Code stop hook gives |
+
+It skips generated code, tests, iOS `#Preview` blocks and Android `@Preview` functions. To keep a line on purpose (a sheet with the system's inline title, say), add a comment containing `geeknative-ignore` to it or to the line above.
+
 ## run
 
 ```sh
@@ -143,6 +163,7 @@ The project's Makefile includes `.geeknative/framework.mk`:
 | `make check-contracts` | `geeknative check contracts` |
 | `make check-ios`, `check-android`, `check-web` | `geeknative check <platform>` |
 | `make parity` | `geeknative parity` |
+| `make lint` | `geeknative lint` |
 | `make run-ios`, `run-android`, `run-web` | `geeknative run <platform>` |
 
 Add `ENV=<name>` to a `check` or `run` target to set `GEEKNATIVE_ENV` for it, for example `make check-ios ENV=staging`.
