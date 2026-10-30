@@ -3,6 +3,7 @@ import { parseArgs } from 'node:util'
 import { check } from './commands/check.js'
 import { create } from './commands/create.js'
 import { doctor } from './commands/doctor.js'
+import { font } from './commands/font.js'
 import { gen } from './commands/gen.js'
 import { parity } from './commands/parity.js'
 import { run } from './commands/run.js'
@@ -15,6 +16,7 @@ Usage: geeknative <command>
 
   create <folder>      Create a project. Options: --name "My App" --id com.acme.myapp --no-install --no-git
   gen                  Regenerate platform code from contracts/
+  font <family>        Switch the shared typeface: a Google Fonts family ("Open Sans") or system
   check [targets]      Verify contracts, then build and test. Targets: all (default), contracts, ios, android, web
   doctor [--fix]       Check Xcode, the Android SDK and Node; --fix installs what it can
   parity               Update spec/parity.md from feature specs and tests
@@ -47,6 +49,8 @@ export async function main(argv) {
       return create(rest[0], { name: values.name, id: values.id, install: !values['no-install'], git: !values['no-git'] })
     case 'gen':
       return void gen(findProjectRoot())
+    case 'font':
+      return font(findProjectRoot(), rest.join(' '))
     case 'check':
       return check(findProjectRoot(), rest)
     case 'doctor':
