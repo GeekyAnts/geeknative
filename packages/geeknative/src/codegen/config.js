@@ -3,7 +3,7 @@ import { existsSync } from 'node:fs'
 import path from 'node:path'
 import { readJson } from '../lib/fsutil.js'
 import { CliError } from '../lib/log.js'
-import { assertIdentifier, snakeKey } from './util.js'
+import { assertIdentifier, banner, docText, kotlinString, OUT, snakeKey, swiftString } from './util.js'
 
 const SOURCE = 'contracts/config.json'
 const TOP_LEVEL_KEYS = ['environments', 'values', 'secrets']
@@ -14,6 +14,7 @@ const VALUE_TYPES = ['string', 'url', 'boolean', 'int']
  * @typedef {{ type: ValueType, description?: string, perEnv: Record<string, string | boolean | number> }} ConfigValue
  * @typedef {{ description?: string, envKey: string }} ConfigSecret
  * @typedef {{ environments: string[], values: Record<string, ConfigValue>, secrets: Record<string, ConfigSecret> }} Config
+ * @typedef {{ path: string, content: string | Buffer }} Output
  */
 
 /** "mapsApiKey" → "MAPS_API_KEY": the name of a secret in .env. @param {string} name */
@@ -148,4 +149,125 @@ function readSecrets(group) {
     secrets[name] = { description, envKey: key }
   }
   return secrets
+}
+
+// ---------- Generated code ----------
+
+/** Value names sorted, so output doesn't depend on the order in the contract. @param {Config} config */
+const sortedValues = (config) => Object.entries(config.values).sort(([a], [b]) => (a < b ? -1 : 1))
+
+/** @param {Config} config @returns {Output[]} */
+export function configOutputs(config) {
+  return [
+    { path: `${OUT.iosGenerated}/AppConfig.swift`, content: swift(config) },
+    { path: `${OUT.androidKotlin}/AppConfig.kt`, content: kotlin(config) },
+    { path: `${OUT.webGenerated}/config.ts`, content: typescript(config) },
+  ]
+}
+
+/** @param {Config} config */
+function swift(config) {
+  const cases = config.environments.map((env) => `    case ${env}`).join('\n')
+  const conditions = config.environments
+    .map((env, i) => `        #${i === 0 ? 'if' : 'elseif'} APP_ENV_${env}\n        return .${env}`)
+    .join('\n')
+  const swiftTypes = { string: 'String', url: 'URL', boolean: 'Bool', int: 'Int' }
+  const literal = (/** @type {ConfigValue} */ v, /** @type {string | boolean | number} */ x) =>
+    v.type === 'url' ? `URL(string: ${swiftString(String(x))})!` : v.type === 'string' ? swiftString(String(x)) : String(x)
+  const members = sortedValues(config).map(([name, v]) => {
+    const rows = config.environments.map((env) => `        case .${env}: return ${literal(v, v.perEnv[env])}`).join('\n')
+    const doc = v.description ? `    /// ${docText(v.description)}\n` : ''
+    return `${doc}    static let ${name}: ${swiftTypes[v.type]} = {\n        switch AppEnvironment.current {\n${rows}\n        }\n    }()`
+  })
+  return `// ${banner(SOURCE)}
+import Foundation
+
+/// The environments this app can be built for. The active one is APP_ENVIRONMENT in Config/Debug.xcconfig
+/// (development) and Config/Release.xcconfig (production). Override it with \`xcodebuild APP_ENVIRONMENT=staging\`.
+nonisolated enum AppEnvironment: String, CaseIterable {
+${cases}
+
+    /// The environment this build was made for.
+    static let current: AppEnvironment = {
+${conditions}
+        #else
+        #error("APP_ENVIRONMENT must be one of: ${config.environments.join(', ')}. See Config/Debug.xcconfig and Config/Release.xcconfig.")
+        #endif
+    }()
+}
+
+/// Settings that differ per environment, shared with the Android and web apps.
+nonisolated enum AppConfig {${members.length ? `\n${members.join('\n\n')}\n` : ''}}
+`
+}
+
+/** @param {Config} config */
+function kotlin(config) {
+  const constant = (/** @type {string} */ env) => snakeKey(env).toUpperCase()
+  const entries = config.environments.map((env) => `${constant(env)}(${kotlinString(env)})`).join(', ')
+  const kotlinTypes = { string: 'String', url: 'String', boolean: 'Boolean', int: 'Int' }
+  const literal = (/** @type {ConfigValue} */ v, /** @type {string | boolean | number} */ x) =>
+    v.type === 'boolean' || v.type === 'int' ? String(x) : kotlinString(String(x))
+  const members = sortedValues(config).map(([name, v]) => {
+    const rows = config.environments
+      .map((env) => `        AppEnvironment.${constant(env)} -> ${literal(v, v.perEnv[env])}`)
+      .join('\n')
+    const doc = v.description ? `    /** ${docText(v.description)} */\n` : ''
+    return `${doc}    val ${name}: ${kotlinTypes[v.type]} = when (AppEnvironment.current) {\n${rows}\n    }`
+  })
+  return `// ${banner(SOURCE)}
+package app.generated
+
+import app.BuildConfig
+
+/** The environments this app can be built for. */
+enum class AppEnvironment(val key: String) {
+    ${entries};
+
+    companion object {
+        /**
+         * The environment this build was made for: development for debug builds, production for release builds,
+         * or whatever \`./gradlew -PappEnvironment=staging\` asked for.
+         */
+        val current: AppEnvironment = entries.firstOrNull { it.key == BuildConfig.APP_ENVIRONMENT }
+            ?: error("APP_ENVIRONMENT is \\"\${BuildConfig.APP_ENVIRONMENT}\\". Use one of: ${config.environments.join(', ')}.")
+    }
+}
+
+/** Settings that differ per environment, shared with the iOS and web apps. */
+object AppConfig {${members.length ? `\n${members.join('\n\n')}\n` : ''}}
+`
+}
+
+/** @param {Config} config */
+function typescript(config) {
+  const tsTypes = { string: 'string', url: 'string', boolean: 'boolean', int: 'number' }
+  const names = JSON.stringify(config.environments)
+  const members = sortedValues(config).map(([name, v]) => {
+    const rows = config.environments.map((env) => `${env}: ${JSON.stringify(v.perEnv[env])}`).join(', ')
+    const doc = v.description ? `  /** ${docText(v.description)} */\n` : ''
+    return `${doc}  ${name}: pick<${tsTypes[v.type]}>({ ${rows} }),`
+  })
+  // The tsconfig has noUnusedLocals, so `pick` is only declared when something uses it.
+  const pick = members.length
+    ? '\nconst pick = <T>(values: Record<AppEnvironment, T>): T => values[environment]\n'
+    : ''
+  return `// ${banner(SOURCE)}
+
+/** The environments this app can be built for. */
+export const environments = ${names} as const
+export type AppEnvironment = (typeof environments)[number]
+
+const requested: string =
+  import.meta.env.VITE_APP_ENVIRONMENT ?? (import.meta.env.DEV ? 'development' : 'production')
+if (!(environments as readonly string[]).includes(requested)) {
+  throw new Error(\`VITE_APP_ENVIRONMENT is "\${requested}". Use one of: ${config.environments.join(', ')}.\`)
+}
+
+/** The environment this build was made for: VITE_APP_ENVIRONMENT, else development when serving and production when built. */
+export const environment = requested as AppEnvironment
+${pick}
+/** Settings that differ per environment, shared with the iOS and Android apps. */
+export const AppConfig = {${members.length ? `\n${members.join('\n')}\n` : ''}} as const
+`
 }

@@ -8,7 +8,7 @@ import { tempProject } from './helpers.js'
 test('gen writes every output once, then has nothing to do', () => {
   const dir = tempProject()
   const first = gen(dir, { quiet: true })
-  assert.ok(first.changed.length >= 18, `expected at least 18 files, got ${first.changed.length}`)
+  assert.ok(first.changed.length >= 21, `expected at least 21 files, got ${first.changed.length}`)
   assert.deepEqual(gen(dir, { quiet: true }), { changed: [], removed: [] })
   assert.doesNotThrow(() => gen(dir, { check: true, quiet: true }))
 })

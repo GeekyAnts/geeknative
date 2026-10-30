@@ -19,11 +19,13 @@ test('every app gets its generated files', () => {
     'apps/ios/App/Generated/Strings.swift',
     'apps/ios/App/Generated/Localizable.xcstrings',
     'apps/ios/App/Generated/Icons.swift',
+    'apps/ios/App/Generated/AppConfig.swift',
     'apps/ios/App/Generated/Colors.xcassets/AccentColor.colorset/Contents.json',
     'apps/android/app/identity.properties',
     'apps/android/app/src/main/kotlin/app/generated/AppIdentity.kt',
     'apps/android/app/src/main/kotlin/app/generated/Tokens.kt',
     'apps/android/app/src/main/kotlin/app/generated/Icons.kt',
+    'apps/android/app/src/main/kotlin/app/generated/AppConfig.kt',
     'apps/android/app/src/main/res/values/generated_strings.xml',
     'apps/android/app/src/main/res/values/generated_colors.xml',
     'apps/android/app/src/main/res/values-night/generated_colors.xml',
@@ -31,6 +33,7 @@ test('every app gets its generated files', () => {
     'apps/web/src/generated/tokens.css',
     'apps/web/src/generated/strings.ts',
     'apps/web/src/generated/icons.ts',
+    'apps/web/src/generated/config.ts',
   ]) {
     assert.ok(paths.includes(expected), `missing ${expected}`)
   }
@@ -181,6 +184,44 @@ test('icons: SF Symbols, Material icons and Lucide', () => {
   const ts = outputOf(outputs, 'generated/icons.ts')
   assert.match(ts, /import \{ ArrowLeft, House, Settings \} from 'lucide-react'/)
   assert.match(ts, /settings: Settings,/)
+})
+
+test('config: environments and typed values reach every platform', () => {
+  const dir = tempProject()
+  editJson(path.join(dir, 'contracts', 'config.json'), (config) => {
+    config.values = {
+      apiBaseUrl: { type: 'url', description: 'Backend API.', development: 'http://localhost:8080', staging: 'https://s.example.com', production: 'https://a.example.com' },
+      betaFeatures: { type: 'boolean', development: true, staging: true, production: false },
+      pageSize: { type: 'int', development: 10, staging: 20, production: 20 },
+    }
+  })
+  const outputs = generate(dir)
+
+  const swift = outputOf(outputs, 'AppConfig.swift')
+  assert.match(swift, /#elseif APP_ENV_staging\n\s+return \.staging/)
+  assert.match(swift, /\/\/\/ Backend API\.\n\s+static let apiBaseUrl: URL = \{/)
+  assert.match(swift, /case \.development: return URL\(string: "http:\/\/localhost:8080"\)!/)
+  assert.match(swift, /static let betaFeatures: Bool = \{[\s\S]*case \.production: return false/)
+  assert.match(swift, /static let pageSize: Int = /)
+
+  const kotlin = outputOf(outputs, 'AppConfig.kt')
+  assert.match(kotlin, /DEVELOPMENT\("development"\), STAGING\("staging"\), PRODUCTION\("production"\);/)
+  assert.match(kotlin, /import app\.BuildConfig/)
+  assert.match(kotlin, /val apiBaseUrl: String = when \(AppEnvironment\.current\) \{\n\s+AppEnvironment\.DEVELOPMENT -> "http:\/\/localhost:8080"/)
+  assert.match(kotlin, /val betaFeatures: Boolean = [\s\S]*AppEnvironment\.PRODUCTION -> false/)
+
+  const ts = outputOf(outputs, 'generated/config.ts')
+  assert.match(ts, /apiBaseUrl: pick<string>\(\{ development: "http:\/\/localhost:8080", staging: "https:\/\/s\.example\.com"/)
+  assert.match(ts, /betaFeatures: pick<boolean>\(\{ development: true, staging: true, production: false \}\)/)
+  assert.match(ts, /pageSize: pick<number>/)
+})
+
+test('config: with no values, nothing unused is generated', () => {
+  const outputs = generate(TEMPLATE)
+  assert.match(outputOf(outputs, 'AppConfig.swift'), /enum AppConfig \{\}/)
+  assert.match(outputOf(outputs, 'AppConfig.kt'), /object AppConfig \{\}/)
+  // The web tsconfig sets noUnusedLocals, so an unused `pick` would fail the type-check.
+  assert.doesNotMatch(outputOf(outputs, 'generated/config.ts'), /pick/)
 })
 
 test('every generated file says it is generated and where it comes from', () => {
