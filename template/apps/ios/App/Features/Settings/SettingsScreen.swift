@@ -21,14 +21,19 @@ struct SettingsScreen: View {
                 .pickerStyle(.inline)
                 .labelsHidden()
                 .accessibilityIdentifier("settings.appearance")
+                .listRowBackground(AppColors.surface)
             }
 
             Section(Strings.settingsAboutTitle) {
                 Text(viewModel.versionText)
                     .foregroundStyle(AppColors.onSurfaceVariant)
                     .accessibilityIdentifier("settings.version")
+                    .listRowBackground(AppColors.surface)
             }
         }
+        // The form keeps its native layout, but sits on the design tokens like the other screens.
+        .scrollContentBackground(.hidden)
+        .background(AppColors.background)
         .navigationTitle(Strings.settingsTitle)
     }
 }
