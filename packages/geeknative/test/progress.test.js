@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { createProgress, GRADLE_PHASES, XCODE_PASSED, XCODE_PHASES } from '../src/lib/progress.js'
+import { createProgress, GRADLE_PHASES, XCODE_PASSED, XCODE_PHASES, XCODE_STARTED } from '../src/lib/progress.js'
 
 /** A progress reporter on a fake clock, recording what it prints. */
 function fakeProgress(options) {
@@ -69,6 +69,22 @@ test('progress: tests start in any of the forms xcodebuild prints', () => {
     progress.onLine(line)
     assert.deepEqual(printed, ['running tests… (0s)'], line)
   }
+})
+
+test('progress: the heartbeat names the test that is running', () => {
+  const { progress, printed, advance } = fakeProgress({ phases: XCODE_PHASES, passed: XCODE_PASSED, started: XCODE_STARTED })
+  progress.onLine('Testing started')
+  progress.onLine('◇ Test "AC-home-1: shows the app name" started.')
+  progress.onLine('✔ Test "AC-home-1: shows the app name" passed after 0.005 seconds.')
+  progress.onLine("Test Case '-[CalendarUITests testMonthNavigation]' started.")
+  advance(30)
+  progress.onLine("Test Case '-[CalendarUITests testMonthNavigation]' passed (14.2 seconds).")
+  advance(30)
+  assert.deepEqual(printed, [
+    'running tests… (0s)',
+    'still running tests… (30s, 1 test passed so far, now: testMonthNavigation)',
+    'still running tests… (60s, 2 tests passed so far)',
+  ])
 })
 
 test('progress: the heartbeat says nothing before the first phase', () => {
