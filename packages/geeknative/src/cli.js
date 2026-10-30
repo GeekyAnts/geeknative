@@ -22,7 +22,7 @@ Usage: geeknative <command>
   check [targets]      Verify contracts, then build and test. Targets: all (default), contracts, ios, android, web
   doctor [--fix]       Check Xcode, the Android SDK and Node; --fix installs what it can
   parity               Update spec/parity.md from feature specs and tests
-  lint                 Find hardcoded text, unknown test IDs, centered titles and stale specs
+  lint [platforms]     Find hardcoded text, unknown test IDs, centered titles and stale specs (or one app's code)
   run <platform>       Build and launch: ios (simulator), android (emulator or device), web (dev server)
   version              Print the version
 `
@@ -61,9 +61,16 @@ export async function main(argv) {
       return doctor(findProjectRoot(), { fix: values.fix })
     case 'parity':
       return parity(findProjectRoot())
-    case 'lint':
-      if (!lint(findProjectRoot())) process.exitCode = 1
+    case 'lint': {
+      // `lint ios` checks one app's code only; plain `lint` checks every app and the specs.
+      const platforms = rest.filter((p) => ['ios', 'android', 'web'].includes(p))
+      if (rest.length !== platforms.length) throw new CliError('Usage: geeknative lint [ios | android | web ...]')
+      const ok = platforms.length
+        ? lint(findProjectRoot(), { platforms: /** @type {('ios' | 'android' | 'web')[]} */ (platforms), specs: false })
+        : lint(findProjectRoot())
+      if (!ok) process.exitCode = 1
       return
+    }
     case 'run':
       return run(findProjectRoot(), rest[0])
     default:
