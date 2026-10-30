@@ -39,6 +39,7 @@ Same names and responsibilities as the Android and web apps.
 | Navigation | Add a case to `Route` and handle it in RootView's `navigationDestination` |
 | Copy | `Strings.notesEmptyTitle` (generated) |
 | Colors, spacing, radii, icon sizes, type | `AppColors.primary`, `AppSpacing.md`, `AppRadius.lg`, `AppIconSize.md`, `AppTypography.title` (generated; the typeface comes with it) |
+| Motion and shadows | `withAnimation(AppMotion.reduced(AppMotion.snappy, reduceMotion))` with `@Environment(\.accessibilityReduceMotion)`, `AppMotion.standard(AppMotion.fast)`; `.shadow(AppElevation.low)`. Never raw durations, curves or shadow values. |
 | Icons | `Image(AppIcon.settings)` (generated template images in Icons.xcassets; color with `.foregroundStyle`) |
 | Config | `AppConfig.apiBaseUrl`, `AppEnvironment.current` (generated from contracts/config.json) |
 | Secrets | `AppSecrets.mapsApiKey` (generated from .env, git-ignored; never commit values) |
