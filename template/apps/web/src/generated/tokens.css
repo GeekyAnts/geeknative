@@ -122,6 +122,22 @@
   --text-caption--line-height: 1rem;
   --text-caption--font-weight: 400;
 
+  /* motion: duration-fast, ease-standard; a spring is ease-<name> with duration-<name>. Wrap in motion-safe: */
+  --transition-duration-fast: 150ms;
+  --transition-duration-normal: 250ms;
+  --transition-duration-slow: 350ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-decelerate: cubic-bezier(0, 0, 0, 1);
+  --ease-accelerate: cubic-bezier(0.3, 0, 1, 1);
+  --ease-snappy: linear(0, 0.0218, 0.0769, 0.1526, 0.2392, 0.3298, 0.4194, 0.5046, 0.5833, 0.6543, 0.7171, 0.7718, 0.8186, 0.8581, 0.891, 0.918, 0.9399, 0.9574, 0.9711, 0.9816, 0.9896, 0.9955, 0.9998, 1.0027, 1.0046, 1.0057, 1.0062, 1.0063, 1.0061, 1.0057, 1.0052, 1.0047, 1.0041, 1.0035, 1.003, 1.0025, 1.0021, 1.0017, 1.0014, 1.0011, 1);
+  --transition-duration-snappy: 425ms;
+  --ease-bouncy: linear(0, 0.0297, 0.1047, 0.2071, 0.3227, 0.4411, 0.5548, 0.6588, 0.7503, 0.8279, 0.8916, 0.9419, 0.9802, 1.0079, 1.0268, 1.0384, 1.0443, 1.046, 1.0446, 1.0411, 1.0363, 1.031, 1.0256, 1.0203, 1.0156, 1.0114, 1.0078, 1.0049, 1.0026, 1.0009, 0.9996, 0.9987, 0.9982, 0.998, 0.9979, 0.998, 0.9981, 0.9983, 0.9986, 0.9988, 1);
+  --transition-duration-bouncy: 660ms;
+
+  /* elevation: shadow-low, ... (adapts to dark mode through the color tokens) */
+  --shadow-low: 0 1px 3px rgb(0 0 0 / 0.12);
+  --shadow-high: 0 8px 24px rgb(0 0 0 / 0.16);
+
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
