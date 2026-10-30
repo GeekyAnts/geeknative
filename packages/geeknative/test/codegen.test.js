@@ -214,6 +214,7 @@ test('config: environments and typed values reach every platform', () => {
   assert.match(ts, /apiBaseUrl: pick<string>\(\{ development: "http:\/\/localhost:8080", staging: "https:\/\/s\.example\.com"/)
   assert.match(ts, /betaFeatures: pick<boolean>\(\{ development: true, staging: true, production: false \}\)/)
   assert.match(ts, /pageSize: pick<number>/)
+  assert.match(ts, /VITE_APP_ENVIRONMENT \|\| /, 'an empty VITE_APP_ENVIRONMENT falls back to the default')
 })
 
 test('config: with no values, nothing unused is generated', () => {
