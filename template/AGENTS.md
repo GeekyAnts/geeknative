@@ -41,12 +41,13 @@ Before changing anything, decide what kind of request it is. State it as the fir
 | App name, ID and version | contracts/app.json |
 | Backend URLs, feature flags and other per-environment settings | contracts/config.json |
 | Secret keys (names only; values live in .env and are never committed) | contracts/config.json `secrets` |
-| Colors, spacing, radii and type | contracts/tokens.json |
+| Colors, spacing, radii, icon sizes and type | contracts/tokens.json |
+| The typeface, one for all three apps | contracts/tokens.json `font`, with the files in contracts/fonts (`make font FAMILY=...`) |
 | All user-facing text | `contracts/strings/<locale>.json` |
-| Icons (SF Symbols, Material, Lucide) | contracts/icons.json |
+| Icons (Lucide names, or your own SVGs in contracts/icons) | contracts/icons.json |
 | Which platform has what | feature front matter → `make parity` → spec/parity.md |
 
-`make gen` compiles contracts/ into each app (`Generated/`, `generated/` including `AppConfig`, `generated_*.xml`, `Identity.xcconfig`, `identity.properties`, `.env.example`). `AppSecrets.swift` and `AppSecrets.kt` are built from `.env` and git-ignored. Never edit generated files: change the contract and regenerate.
+`make gen` compiles contracts/ into each app (`Generated/` with `Icons.xcassets` and `Fonts/`, `generated/` including `AppConfig`, `generated_*.xml`, `res/drawable/generated_*`, `res/font/generated_*`, `Identity.xcconfig`, `identity.properties`, `.env.example`). `AppSecrets.swift` and `AppSecrets.kt` are built from `.env` and git-ignored. Never edit generated files: change the contract and regenerate.
 
 ## 4. The loop
 
@@ -88,6 +89,7 @@ Ask only when a wrong guess is expensive to undo: the data model, the navigation
 |---|---|
 | `make doctor` | Checks Xcode, the Android SDK, Java and Node (`make doctor FIX=1` installs what it can) |
 | `make gen` | Regenerates app code from contracts/ |
+| `make font FAMILY="Open Sans"` | Switches the typeface of all three apps to a Google Fonts family (`FAMILY=system` for each platform's own) |
 | `make check` | Validates contracts, then builds and tests all three apps |
 | `make check-ios`, `make check-android`, `make check-web` | One app; full logs go to .geeknative/logs/ |
 | `make run-ios`, `make run-android`, `make run-web` | Builds and launches one app |

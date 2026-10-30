@@ -16,10 +16,11 @@ my-app/
 ├── package.json              npm workspaces (apps/web) and the geeknative dev dependency
 ├── contracts/
 │   ├── app.json              Name, ID, version, build and default locale
-│   ├── tokens.json           Colors (light and dark), spacing, radii, type
+│   ├── tokens.json           Colors (light and dark), spacing, radii, icon sizes, type, the font family
+│   ├── fonts/                The typeface's files, one per weight (Inter to start)
 │   ├── config.json           Environments and their per-environment values
 │   ├── strings/en.json       All user-facing copy (one file per locale)
-│   └── icons.json            Each icon's name on iOS, Android and web
+│   └── icons.json            Each icon's Lucide name, or an SVG of yours in contracts/icons/
 ├── spec/
 │   ├── features/             One spec per feature: home.md, settings.md
 │   ├── navigation.md         Screens and routes

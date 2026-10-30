@@ -38,8 +38,8 @@ Same names and responsibilities as the Android and web apps.
 | Dependencies | `AppContainer`, read with `@Environment(AppContainer.self)`; `.live()` for the app, `.preview()` for previews and tests |
 | Navigation | Add a case to `Route` and handle it in RootView's `navigationDestination` |
 | Copy | `Strings.notesEmptyTitle` (generated) |
-| Colors, spacing, radii, type | `AppColors.primary`, `AppSpacing.md`, `AppRadius.lg`, `AppTypography.title` (generated) |
-| Icons | `Image(systemName: AppIcon.settings)` (generated) |
+| Colors, spacing, radii, icon sizes, type | `AppColors.primary`, `AppSpacing.md`, `AppRadius.lg`, `AppIconSize.md`, `AppTypography.title` (generated; the typeface comes with it) |
+| Icons | `Image(AppIcon.settings)` (generated template images in Icons.xcassets; color with `.foregroundStyle`) |
 | Config | `AppConfig.apiBaseUrl`, `AppEnvironment.current` (generated from contracts/config.json) |
 | Secrets | `AppSecrets.mapsApiKey` (generated from .env, git-ignored; never commit values) |
 | Test IDs | `.accessibilityIdentifier("notes.addButton")` |
@@ -49,7 +49,7 @@ Follow Features/Settings as the reference implementation.
 ## Rules
 
 - Never hardcode user-facing text, colors or spacing. Add them to contracts/ and run `make gen`.
-- Prefer native components and behavior: `NavigationStack`, `Form`, `List`, toolbar items, sheets, swipe actions and SF Symbols. DESIGN.md says what must match the other platforms.
+- Prefer native components and behavior: `NavigationStack`, `Form`, `List`, toolbar items, sheets and swipe actions. Icons and the typeface come from the contracts (`AppIcon`, `AppTypography`), not from SF Symbols or `.system` fonts, so they match the other platforms. DESIGN.md says what else must match.
 - Support Dynamic Type, dark mode and VoiceOver: icon-only buttons need an accessibility label from Strings.
 - Give each screen a `#Preview` that uses `AppContainer.preview()` or in-memory repositories.
 - Name tests after acceptance criteria: `@Test("AC-notes-2: ...")`.

@@ -23,7 +23,7 @@ apps/android/
     core/                        AppContainer, navigation/ (Route, AppNavigation), designsystem/ (AppTheme, AppCard)
     features/<name>/             <Name>Screen.kt, <Name>ViewModel.kt, <Name>Repository.kt, models
     generated/                   From contracts/ by `make gen`. Never edit.
-  app/src/main/res/              values/generated_*.xml are generated; everything else is yours
+  app/src/main/res/              values/generated_*.xml, drawable/generated_* (icons) and font/generated_* are generated; everything else is yours
   app/src/test/kotlin/app/       Unit tests, named after acceptance criteria
 ```
 
@@ -41,8 +41,8 @@ Same names and responsibilities as the iOS and web apps.
 | Dependencies | `AppContainer` from `LocalAppContainer.current`; ViewModels are created with `viewModel { NotesViewModel(container.notesRepository) }` |
 | Navigation | Add a `Route` object and an `entry<Route.Notes>` in AppNavigation; push with `backStack.add(Route.Notes)` |
 | Copy | `stringResource(R.string.notes_empty_title)` (generated from contracts/strings) |
-| Colors, spacing, radii, type | `AppTheme.colors.primary`, `AppSpacing.md`, `AppRadius.lg`, `AppTypography.title` |
-| Icons | `Icon(AppIcons.settings, contentDescription = ...)` (generated) |
+| Colors, spacing, radii, icon sizes, type | `AppTheme.colors.primary`, `AppSpacing.md`, `AppRadius.lg`, `AppIconSize.md`, `AppTypography.title` (the typeface comes with it) |
+| Icons | `Icon(AppIcons.settings, contentDescription = ...)` (generated vector drawables; never `Icons.Filled.*`) |
 | Config | `AppConfig.apiBaseUrl`, `AppEnvironment.current` (generated from contracts/config.json) |
 | Secrets | `AppSecrets.mapsApiKey` (generated from .env, git-ignored; never commit values) |
 | Test IDs | `Modifier.testTag("notes.addButton")` |
