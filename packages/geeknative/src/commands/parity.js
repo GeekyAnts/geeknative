@@ -1,14 +1,13 @@
 // @ts-check
-import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { walk } from '../lib/fsutil.js'
 import { color, log } from '../lib/log.js'
 import { rel } from '../lib/project.js'
+import { AC_ID, PLATFORMS, readFeatures } from '../lib/specs.js'
 
-const PLATFORMS = /** @type {const} */ (['ios', 'android', 'web'])
 const LABELS = { ios: 'iOS', android: 'Android', web: 'Web' }
 const STATUS = { done: '✅ done', 'in-progress': '🚧 in progress', planned: '⏳ planned', 'n/a': '➖ n/a' }
-const AC_ID = /AC-[a-z0-9]+(?:-[a-z0-9]+)*-\d+/g
 
 /** Where each app's tests live. */
 const TEST_FILE = {
@@ -18,43 +17,85 @@ const TEST_FILE = {
 }
 
 /**
- * @typedef {{ id: string, text: string }} Criterion
- * @typedef {{ id: string, title: string, file: string, status: Record<string, string>, criteria: Criterion[] }} Feature
+ * Whether a test file drives the real UI (renders screens and interacts with them), as opposed
+ * to testing values, view models or routes. Only these cover criteria marked "(ui)".
+ * - iOS: XCUITest files in apps/ios/AppUITests.
+ * - Android: instrumented tests, or Compose UI tests (on Robolectric) that create a compose rule.
+ * - Web: end-to-end tests, or tests that render into a DOM (happy-dom or jsdom).
  */
+const UI_TEST = {
+  ios: (/** @type {string} */ file) => /^apps\/ios\/AppUITests\//.test(file),
+  android: (/** @type {string} */ file, /** @type {string} */ text) =>
+    /\/androidTest\//.test(file) || /\bcreate(Android)?ComposeRule\b/.test(text),
+  web: (/** @type {string} */ file, /** @type {string} */ text) =>
+    /^apps\/web\/e2e\//.test(file) ||
+    (/@vitest-environment\s+(happy-dom|jsdom)/.test(text) && /\b(createRoot|hydrateRoot|render)\(/.test(text)),
+}
+
+/** @typedef {import('../lib/specs.js').Feature} Feature */
+/** @typedef {Record<string, { unit: Set<string>, ui: Set<string> }>} Tested AC IDs named in each platform's tests */
 
 /**
- * Builds spec/parity.md: each feature's status per platform, and which acceptance
- * criteria each platform's tests cover (tests mention AC IDs in their names).
+ * Which acceptance criteria each platform's tests name, split into UI-level and other tests.
  * @param {string} root
+ * @returns {Tested}
  */
-export function parity(root) {
-  const features = readFeatures(root)
-  /** @type {Record<string, Set<string>>} */
-  const tested = { ios: new Set(), android: new Set(), web: new Set() }
+export function testedCriteria(root) {
+  /** @type {Tested} */
+  const tested = Object.fromEntries(PLATFORMS.map((p) => [p, { unit: new Set(), ui: new Set() }]))
   for (const file of walk(path.join(root, 'apps'))) {
     const relative = rel(root, file)
     for (const platform of PLATFORMS) {
       if (!TEST_FILE[platform].test(relative)) continue
-      for (const id of readFileSync(file, 'utf8').match(AC_ID) ?? []) tested[platform].add(id)
+      const text = readFileSync(file, 'utf8')
+      const level = UI_TEST[platform](relative, text) ? 'ui' : 'unit'
+      for (const id of text.match(AC_ID) ?? []) tested[platform][level].add(id)
     }
   }
+  return tested
+}
+
+/**
+ * How a platform's tests cover one criterion: "ui" or "unit" (by a UI-level test or another
+ * test), "unit-only" for a "(ui)" criterion that only non-UI tests name, or "none".
+ * @param {import('../lib/specs.js').Criterion} criterion
+ * @param {{ unit: Set<string>, ui: Set<string> }} tests
+ */
+export function coverage(criterion, tests) {
+  if (tests.ui.has(criterion.id)) return 'ui'
+  if (tests.unit.has(criterion.id)) return criterion.ui ? 'unit-only' : 'unit'
+  return 'none'
+}
+
+/** @param {string} level */
+const covered = (level) => level === 'ui' || level === 'unit'
+
+/**
+ * The content of spec/parity.md: each feature's status per platform, and which acceptance
+ * criteria each platform's tests cover (tests mention AC IDs in their names).
+ * @param {string} root
+ */
+export function parityMarkdown(root) {
+  const features = readFeatures(root)
+  const tested = testedCriteria(root)
 
   const rows = features.map((f) => {
     const cells = PLATFORMS.map((p) => {
       const status = STATUS[/** @type {keyof typeof STATUS} */ (f.status[p])] ?? f.status[p] ?? '—'
       if (f.status[p] === 'n/a' || !f.criteria.length) return status
-      const covered = f.criteria.filter((c) => tested[p].has(c.id)).length
-      return `${status} · ${covered}/${f.criteria.length} tested`
+      const count = f.criteria.filter((c) => covered(coverage(c, tested[p]))).length
+      return `${status} · ${count}/${f.criteria.length} tested`
     })
     return `| [${f.title}](features/${f.file}) | ${cells.join(' | ')} |`
   })
 
-  const coverage = features
+  const marks = { ui: '✅', unit: '✅', 'unit-only': '🟡', none: '❌' }
+  const sections = features
     .filter((f) => f.criteria.length)
     .map((f) => {
       const lines = f.criteria.map((c) => {
-        const cells = PLATFORMS.map((p) => (f.status[p] === 'n/a' ? '➖' : tested[p].has(c.id) ? '✅' : '❌'))
-        return `| ${c.id}: ${c.text.replace(/\|/g, '\\|')} | ${cells.join(' | ')} |`
+        const cells = PLATFORMS.map((p) => (f.status[p] === 'n/a' ? '➖' : marks[coverage(c, tested[p])]))
+        return `| ${c.id}${c.ui ? ' (ui)' : ''}: ${c.text.replace(/\|/g, '\\|')} | ${cells.join(' | ')} |`
       })
       return `### ${f.title}\n\n| Criterion | iOS | Android | Web |\n|---|---|---|---|\n${lines.join('\n')}`
     })
@@ -63,7 +104,9 @@ export function parity(root) {
 # Parity
 
 Status comes from each feature spec's front matter. "Tested" counts acceptance criteria whose ID
-(like \`AC-settings-2\`) appears in that platform's tests.
+(like \`AC-settings-2\`) appears in that platform's tests. A criterion marked (ui) counts only when a
+test drives the real UI (iOS UI tests, Android Compose tests, web tests that render into a DOM);
+🟡 means only other tests (values, view models, routes) name it.
 
 | Feature | iOS | Android | Web |
 |---|---|---|---|
@@ -71,64 +114,36 @@ ${rows.join('\n')}
 
 ## Acceptance criteria coverage
 
-${coverage.join('\n\n')}
+${sections.join('\n\n')}
 `
+  return { markdown, features, tested }
+}
+
+/**
+ * Writes spec/parity.md and prints a line per feature, with its gaps.
+ * @param {string} root
+ */
+export function parity(root) {
+  const { markdown, features, tested } = parityMarkdown(root)
   writeFileSync(path.join(root, 'spec', 'parity.md'), markdown)
 
   for (const f of features) {
     const parts = PLATFORMS.map((p) => {
-      const covered = f.criteria.filter((c) => tested[p].has(c.id)).length
-      return `${LABELS[p]} ${f.status[p] ?? '?'} ${f.criteria.length ? `${covered}/${f.criteria.length}` : ''}`.trim()
+      const count = f.criteria.filter((c) => covered(coverage(c, tested[p]))).length
+      return `${LABELS[p]} ${f.status[p] ?? '?'} ${f.criteria.length ? `${count}/${f.criteria.length}` : ''}`.trim()
     })
     const gaps = PLATFORMS.flatMap((p) =>
-      f.status[p] === 'n/a' ? [] : f.criteria.filter((c) => !tested[p].has(c.id)).map((c) => `${c.id} untested on ${LABELS[p]}`),
+      f.status[p] === 'n/a'
+        ? []
+        : f.criteria.flatMap((c) => {
+            const level = coverage(c, tested[p])
+            if (level === 'none') return [`${c.id} untested on ${LABELS[p]}`]
+            if (level === 'unit-only') return [`${c.id} needs a UI test on ${LABELS[p]} (only other tests name it)`]
+            return []
+          }),
     )
     ;(gaps.length ? log.warn : log.ok)(f.id, parts.join(color.dim(' · ')))
     for (const gap of gaps) log.detail(color.dim(gap))
   }
   log.info(color.dim('Wrote spec/parity.md'))
-}
-
-/** @param {string} root @returns {Feature[]} */
-function readFeatures(root) {
-  const dir = path.join(root, 'spec', 'features')
-  if (!existsSync(dir)) return []
-  return readdirSync(dir)
-    .filter((f) => f.endsWith('.md') && !f.startsWith('_'))
-    .sort()
-    .map((file) => {
-      const text = readFileSync(path.join(dir, file), 'utf8')
-      const meta = frontMatter(text)
-      const id = meta.id ?? file.replace(/\.md$/, '')
-      /** @type {Criterion[]} */
-      const criteria = []
-      for (const match of text.matchAll(/^\s*[-*]\s*\**(AC-[a-z0-9]+(?:-[a-z0-9]+)*-\d+)\**\s*[:.]?\s*(.*)$/gm)) {
-        if (!criteria.some((c) => c.id === match[1])) criteria.push({ id: match[1], text: match[2].trim() })
-      }
-      return { id, title: meta.title ?? id, file, status: meta.status ?? {}, criteria }
-    })
-}
-
-/**
- * Reads the small YAML subset used in spec front matter: `key: value` and one level of nesting.
- * @param {string} text
- * @returns {Record<string, any>}
- */
-function frontMatter(text) {
-  const match = text.match(/^---\n([\s\S]*?)\n---/)
-  /** @type {Record<string, any>} */
-  const meta = {}
-  if (!match) return meta
-  let parent = ''
-  for (const raw of match[1].split('\n')) {
-    const line = raw.replace(/\s+#.*$/, '')
-    const nested = line.match(/^\s+([\w-]+):\s*(.+)$/)
-    const top = line.match(/^([\w-]+):\s*(.*)$/)
-    if (nested && parent) meta[parent][nested[1]] = nested[2].trim()
-    else if (top) {
-      parent = top[2].trim() ? '' : top[1]
-      meta[top[1]] = top[2].trim() || {}
-    }
-  }
-  return meta
 }
