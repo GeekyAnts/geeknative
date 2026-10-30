@@ -14,7 +14,7 @@ Read the root AGENTS.md first. This file covers how the iOS app is built.
 
 ```
 apps/ios/
-  App.xcodeproj         Rarely edited. App/ and AppTests/ are synchronized folders:
+  App.xcodeproj         Rarely edited. App/, AppTests/ and AppUITests/ are synchronized folders:
                         new files are picked up automatically. Never add files to project.pbxproj.
   Config/               Build settings as .xcconfig files. Identity.xcconfig is generated.
   App/
@@ -24,6 +24,7 @@ apps/ios/
     Generated/          From contracts/ by `make gen`. Never edit.
     Resources/          Assets.xcassets (app icon)
   AppTests/             Swift Testing tests, named after acceptance criteria
+  AppUITests/           XCUITest tests that launch the app and tap through it, for (ui) criteria
 ```
 
 ## Patterns
@@ -53,7 +54,7 @@ Follow Features/Settings as the reference implementation.
 - Prefer native components and behavior: `NavigationStack`, `Form`, `List`, toolbar items, sheets and swipe actions. Icons and the typeface come from the contracts (`AppIcon`, `AppTypography`), not from SF Symbols or `.system` fonts, so they match the other platforms. DESIGN.md says what else must match.
 - Support Dynamic Type, dark mode and VoiceOver: icon-only buttons need an accessibility label from Strings.
 - Give each screen a `#Preview` that uses `AppContainer.preview()` or in-memory repositories.
-- Name tests after acceptance criteria: `@Test("AC-notes-2: ...")`.
+- Name tests after acceptance criteria: `@Test("AC-notes-2: ...")`. A criterion marked (ui) needs a UI test in AppUITests/ that finds views by test ID and taps them; put its ID in the activity name: `XCTContext.runActivity(named: "AC-notes-2: ...")`. Mark UI test methods `@MainActor`.
 
 ## Commands
 
