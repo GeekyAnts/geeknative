@@ -301,8 +301,9 @@ function typescript(config) {
 export const environments = ${names} as const
 export type AppEnvironment = (typeof environments)[number]
 
+// "||" rather than "??": a variable that is set but empty (VITE_APP_ENVIRONMENT=) means "use the default".
 const requested: string =
-  import.meta.env.VITE_APP_ENVIRONMENT ?? (import.meta.env.DEV ? 'development' : 'production')
+  import.meta.env.VITE_APP_ENVIRONMENT || (import.meta.env.DEV ? 'development' : 'production')
 if (!(environments as readonly string[]).includes(requested)) {
   throw new Error(\`VITE_APP_ENVIRONMENT is "\${requested}". Use one of: ${config.environments.join(', ')}.\`)
 }
