@@ -76,8 +76,8 @@ test('unsupported SVG features fail with a reason', () => {
 test('renderers draw the same paths for Xcode, Android and the web', () => {
   const shape = shapeFromNodes([['path', { d: 'M9 4h6' }], ['circle', { cx: '12', cy: '12', r: '3', fill: 'currentColor', stroke: 'none' }]], lucide, where)
 
-  const svg = svgDocument(shape)
-  assert.match(svg, /^<svg xmlns="http:\/\/www\.w3\.org\/2000\/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2"/)
+  const svg = svgDocument(shape, 'GENERATED')
+  assert.match(svg, /^<!-- GENERATED -->\n<svg xmlns="http:\/\/www\.w3\.org\/2000\/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2"/)
   assert.match(svg, /<path d="M9 4h6"\/>\n  <path d="M9 12a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" fill="#000000" stroke="none"\/>/)
 
   const xml = vectorDrawable(shape, { mirrored: true, banner: 'GENERATED' })

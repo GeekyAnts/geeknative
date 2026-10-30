@@ -51,7 +51,7 @@ export function staleFiles(root, produced) {
   const res = path.join(root, OUT.androidRes)
   if (existsSync(res)) {
     for (const dir of readdirSync(res)) {
-      if (!dir.startsWith('values')) continue
+      if (!/^(values|drawable|font)(-|$)/.test(dir)) continue
       for (const file of readdirSync(path.join(res, dir))) {
         if (file.startsWith('generated_')) owned.push(path.join(res, dir, file))
       }
