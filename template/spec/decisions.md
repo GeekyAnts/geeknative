@@ -6,7 +6,7 @@ A dated log of product and technical decisions, and of assumptions made along th
 
 Intentional differences between the apps, found while auditing them against each other:
 
-- iOS Settings is a `Form` on the system grouped background, not the `background` or `surface` tokens (DESIGN.md, Components). In dark mode that background is pure black, darker than the `background` token the other two apps use.
+- iOS Settings was a `Form` on the system grouped background, which in dark mode is pure black, not the app's `background` token. It now hides that background and uses `background` for the page and `surface` for the rows, like the other two apps. The form keeps its native layout (DESIGN.md, Components). The section titles still use the system gray, not `onSurfaceVariant`.
 - On Android, Material's `surface` role is mapped to the `background` token, so `Scaffold` and `TopAppBar` use `background` while cards use `surface` (DESIGN.md, Components).
 - `common.back` is used on Android only, for the explicit back button. iOS and web get back from the system and the site header (spec/features/settings.md).
 - The web browser tab title is built in a route's `head` as `<screen title> · <app name>`. It is web chrome, so its separator is exempt from the no-literal-text rule (apps/web/AGENTS.md).
