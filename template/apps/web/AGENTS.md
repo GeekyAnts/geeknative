@@ -40,6 +40,7 @@ Same names and responsibilities as the iOS and Android apps.
 | Colors, spacing, radii, type | Tailwind token classes: `bg-primary`, `p-md`, `rounded-lg`, `text-title` |
 | Icons | `<AppIcons.settings className="size-6" />` (generated) |
 | Config | `AppConfig.apiBaseUrl`, `environment` from `#/generated/config` (generated from contracts/config.json) |
+| Secrets | `AppSecrets.mapsApiKey` from `#/generated/secrets.server` (server functions and API routes only) |
 | Test IDs | `data-testid="notes.addButton"` |
 
 Follow features/settings as the reference implementation.
@@ -48,6 +49,7 @@ Follow features/settings as the reference implementation.
 
 - Never hardcode user-facing text, colors or spacing. Add them to contracts/ and run `make gen`. Use token classes (`bg-surface`, `p-lg`), not arbitrary values (`bg-[#fff]`, `p-[13px]`).
 - Server functions and API routes are only for web-only concerns (rendering, cookies, SEO). Logic the mobile apps need too goes through repositories, so a future backend can serve all three apps.
+- Never import `generated/secrets.server` from a component: secrets are server-only and the module throws in the browser.
 - Code that uses browser APIs (localStorage, window) must also run safely during server rendering.
 - Use semantic HTML, give icon-only links and buttons an `aria-label` from strings, and keep focus visible.
 - For complex primitives (dialogs, menus, popovers), use shadcn/ui: the tokens already map onto its CSS variables.

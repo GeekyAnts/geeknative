@@ -41,6 +41,7 @@ Same names and responsibilities as the Android and web apps.
 | Colors, spacing, radii, type | `AppColors.primary`, `AppSpacing.md`, `AppRadius.lg`, `AppTypography.title` (generated) |
 | Icons | `Image(systemName: AppIcon.settings)` (generated) |
 | Config | `AppConfig.apiBaseUrl`, `AppEnvironment.current` (generated from contracts/config.json) |
+| Secrets | `AppSecrets.mapsApiKey` (generated from .env, git-ignored; never commit values) |
 | Test IDs | `.accessibilityIdentifier("notes.addButton")` |
 
 Follow Features/Settings as the reference implementation.
