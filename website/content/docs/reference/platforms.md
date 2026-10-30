@@ -57,4 +57,6 @@ Each app has its own `AGENTS.md` with these conventions, for agents working in t
 
 **Environment:** the generated `environment` comes from `VITE_APP_ENVIRONMENT`, or `development` when serving and `production` when built.
 
+**Secrets:** `AppSecrets` from `generated/secrets.server.ts` reads `process.env` on the server and throws in the browser. Use it only in server functions and API routes.
+
 **Commands:** `make check-web` (type-check, unit tests and a production build) and `make run-web` (dev server at `http://localhost:3000`).

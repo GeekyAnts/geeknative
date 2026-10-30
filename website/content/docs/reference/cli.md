@@ -50,6 +50,8 @@ npx geeknative gen        # or: make gen
 
 Validates every contract, writes the generated files that changed, and deletes generated files that are no longer produced (for example, after removing a locale). It lists the files it changed. Invalid contracts fail with a message naming the file and field. See [Contracts](/docs/reference/contracts/).
 
+Files built from `.env` (`AppSecrets.swift` and `AppSecrets.kt`) are always written, even by `check`, and are never compared, because they are not committed. If `.env` lacks a declared key, `gen` prints a warning.
+
 ## check
 
 ```sh
@@ -82,6 +84,7 @@ npx geeknative doctor [--fix]   # or: make doctor, make doctor FIX=1
 | simulator | An iPhone simulator is available | |
 | java | A JDK can start Gradle | |
 | android | An Android SDK is found (and `local.properties` is written) | |
+| secrets | Every secret in `contracts/config.json` has a value in `.env`. This is a warning, not a failure, and is skipped when none are declared. | Copies `.env.example` to `.env` if there is no `.env` |
 | platform | The Android API level the app compiles against (37) is installed | Accepts the SDK licenses and installs it with `sdkmanager` |
 
 It ends with the number of problems found and exits with 1 if there were any.

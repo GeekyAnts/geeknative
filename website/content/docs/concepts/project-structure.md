@@ -10,6 +10,8 @@ my-app/
 ├── PRODUCT.md                What the app is, who it's for, features, glossary
 ├── DESIGN.md                 Look and feel, what's shared and what's native, components
 ├── README.md
+├── .env                      Your secret values (git-ignored; created from .env.example)
+├── .env.example              Generated: lists the secrets declared in contracts/config.json
 ├── Makefile                  Includes .geeknative/framework.mk; add your own targets below it
 ├── package.json              npm workspaces (apps/web) and the geeknative dev dependency
 ├── contracts/
@@ -80,8 +82,8 @@ apps/web/src/
 
 | App | Generated |
 |---|---|
-| iOS | `App/Generated/` (Swift, `Localizable.xcstrings`, `Colors.xcassets`) and `Config/Identity.xcconfig` |
-| Android | `app/src/main/kotlin/app/generated/`, `res/values*/generated_*.xml` and `app/identity.properties` |
+| iOS | `App/Generated/` (Swift, `Localizable.xcstrings`, `Colors.xcassets`) and `Config/Identity.xcconfig`. `AppSecrets.swift` is git-ignored. |
+| Android | `app/src/main/kotlin/app/generated/`, `res/values*/generated_*.xml` and `app/identity.properties`. `AppSecrets.kt` is git-ignored. |
 | Web | `src/generated/` |
 
 See [File ownership](/docs/concepts/file-ownership/) for which files belong to you and which to the framework.
