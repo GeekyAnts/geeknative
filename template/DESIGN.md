@@ -62,7 +62,7 @@ How each platform builds the shared patterns. Add a row whenever a new pattern a
 
 | Pattern | iOS | Android | Web |
 |---|---|---|---|
-| Screen | Screen in a `NavigationStack`, with a large navigation title | `Scaffold` with a `TopAppBar`, both on the `background` token (Material's `surface` role is mapped to `background`; only cards use `surface`) | Page in the app shell (header and main), full window width with `px-lg` (`md:px-xl`) side padding |
+| Screen | Screen in a `NavigationStack`, with a large navigation title | `Scaffold` with a `TopAppBar`, both on the `background` token (Material's `surface` role is mapped to `background`; only cards use `surface`) | Page in the app shell: the header and page span the window with `px-lg` (`md:px-xl`) side padding, and the screen's content is a `Page`: a centered readable column (`width="readable"`, the default) for forms, settings, lists and detail screens, or the full width (`width="full"`) for content that uses it, like grids and side-by-side panes |
 | Screen title | Leading-aligned large title (the default; don't use `.navigationBarTitleDisplayMode(.inline)`) | `TopAppBar`, which is leading-aligned (not `CenterAlignedTopAppBar`) | `h1` at the start of the page, left-aligned |
 | Settings or form | `Form` with sections, on `background` with `surface` rows (`scrollContentBackground(.hidden)`) | Column with section headers | Sections in cards |
 | Single choice | Inline `Picker` (checkmarks) | Radio buttons | Radio group |
