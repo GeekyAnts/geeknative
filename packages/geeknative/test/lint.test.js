@@ -171,6 +171,17 @@ test('lint: centered screen titles are errors', () => {
   )
 })
 
+test('lint: a web screen that caps its width without centering it is an error', () => {
+  const root = cleanProject()
+  write(root, 'apps/web/src/features/order/EditorScreen.tsx', 'export function EditorScreen() {\n  return (\n    <div className="flex max-w-2xl flex-col gap-xl">\n      <p className="max-w-prose">{strings.orderTitle}</p>\n    </div>\n  )\n}')
+  write(root, 'apps/web/src/features/order/CenteredScreen.tsx', 'export function CenteredScreen() {\n  return (\n    <div className="mx-auto flex max-w-2xl flex-col">{x}</div>\n  )\n}')
+  write(root, 'apps/web/src/features/order/PageScreen.tsx', 'export function PageScreen() {\n  return (\n    <Page>\n      <div className="max-w-sm">{x}</div>\n    </Page>\n  )\n}')
+  assert.deepEqual(
+    lintFindings(root).filter((f) => f.rule === 'width').map((f) => `${f.file}:${f.line}`),
+    ['apps/web/src/features/order/EditorScreen.tsx:2'],
+  )
+})
+
 test('lint: a geeknative-ignore comment silences a line', () => {
   const root = cleanProject()
   write(root, 'apps/ios/App/Features/Order/Sheet.swift', '// A sheet keeps the system inline title. geeknative-ignore\n.navigationBarTitleDisplayMode(.inline)\nText("Debug") // geeknative-ignore')
