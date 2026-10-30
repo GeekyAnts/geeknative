@@ -165,3 +165,18 @@ test('lint: a platform can be linted on its own, without the specs', () => {
   const iosOnly = lintFindings(root, { platforms: ['ios'], specs: false })
   assert.deepEqual(iosOnly, [])
 })
+
+test('lint: uncommitted changes to only some apps are a warning', async () => {
+  const { execFileSync } = await import('node:child_process')
+  const root = cleanProject()
+  const git = (...args) => execFileSync('git', args, { cwd: root, stdio: 'ignore' })
+  git('init', '-q')
+  git('-c', 'user.email=t@example.com', '-c', 'user.name=t', 'add', '-A')
+  git('-c', 'user.email=t@example.com', '-c', 'user.name=t', 'commit', '-q', '-m', 'start')
+  assert.deepEqual(summary(root), [])
+
+  write(root, 'apps/ios/App/Features/Order/OrderScreen.swift', 'Text(Strings.orderTitle).accessibilityIdentifier("order.number")\n.accessibilityIdentifier("order.total")\n.accessibilityIdentifier("order.line.\\(id)")')
+  const platforms = lintFindings(root).filter((f) => f.rule === 'platforms')
+  assert.equal(platforms.length, 1)
+  assert.match(platforms[0].message, /touch ios but not android and web/)
+})
