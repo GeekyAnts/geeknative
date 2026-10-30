@@ -1,10 +1,11 @@
 // @ts-check
-import { copyFileSync, existsSync } from 'node:fs'
+import { copyFileSync, existsSync, readFileSync, statSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { readConfig, resolveSecrets } from '../codegen/config.js'
 import { readEnvFile } from '../lib/env.js'
 import { capture, runInherit, runLogged } from '../lib/exec.js'
 import { log } from '../lib/log.js'
+import { isLocalCheckout, packCheckout } from '../lib/project.js'
 import {
   ANDROID_COMPILE_SDK,
   findAndroidSdk,
@@ -15,6 +16,55 @@ import {
   xcodeMajorVersion,
 } from '../lib/toolchains.js'
 import { gen } from './gen.js'
+
+/**
+ * How a project depends on geeknative, from its package.json `devDependencies.geeknative`:
+ * "linked" to a folder (a checkout, which follows that checkout's branch), a "snapshot" tarball
+ * in the project, or a "registry" version range.
+ * @param {string | undefined} spec
+ * @param {string} root
+ * @returns {{ kind: 'linked' | 'snapshot' | 'registry' | 'missing', target?: string }}
+ */
+export function geeknativeSource(spec, root) {
+  if (!spec) return { kind: 'missing' }
+  if (!spec.startsWith('file:')) return { kind: 'registry', target: spec }
+  const target = path.resolve(root, spec.slice('file:'.length))
+  const isFolder = existsSync(target) && statSync(target).isDirectory()
+  return { kind: isFolder ? 'linked' : 'snapshot', target }
+}
+
+/**
+ * Warns when the project follows a geeknative checkout live, since switching that checkout's
+ * branch changes what gen, check and run do here. With `fix`, pins it to a snapshot.
+ * @param {string} root
+ * @param {boolean} fix
+ */
+async function checkGeeknativeSource(root, fix) {
+  const pkgFile = path.join(root, 'package.json')
+  if (!existsSync(pkgFile)) return
+  const pkg = JSON.parse(readFileSync(pkgFile, 'utf8'))
+  const source = geeknativeSource(pkg.devDependencies?.geeknative, root)
+  if (source.kind === 'registry') return log.ok('geeknative', `${source.target} from npm`)
+  if (source.kind === 'snapshot') return log.ok('geeknative', `pinned to ${path.relative(root, source.target ?? '')}`)
+  if (source.kind !== 'linked' || !source.target) return
+
+  const branch = capture('git', ['branch', '--show-current'], { cwd: source.target })
+  const commit = capture('git', ['rev-parse', '--short', 'HEAD'], { cwd: source.target })
+  const where = branch || commit ? ` (now ${branch || 'detached'}${commit ? ` at ${commit}` : ''})` : ''
+  if (!fix || !isLocalCheckout()) {
+    log.warn('geeknative', `linked to the checkout at ${source.target}${where}`)
+    log.detail('Switching that checkout to another branch changes what make gen, check and run do in this project.')
+    log.detail('Run `make doctor FIX=1` to pin this project to a snapshot of the checkout as it is now.')
+    return
+  }
+  const snapshot = packCheckout(path.join(root, '.geeknative'))
+  pkg.devDependencies.geeknative = `file:.geeknative/${snapshot.file}`
+  writeFileSync(pkgFile, `${JSON.stringify(pkg, null, 2)}\n`)
+  log.step('geeknative', `pinning to .geeknative/${snapshot.file}${where}, npm install…`)
+  if ((await runInherit('npm', ['install', '--no-audit', '--no-fund', '--loglevel=error'], { cwd: root })) === 0) {
+    log.ok('geeknative', `pinned to .geeknative/${snapshot.file}`)
+  } else log.fail('geeknative', 'npm install failed after pinning; run it again')
+}
 
 const MIN_XCODE = 26
 const MIN_NODE = 22
@@ -44,6 +94,8 @@ export async function doctor(root, { fix = false }) {
     if ((await runInherit('npm', ['install'], { cwd: root })) === 0) log.ok('deps', 'installed')
     else problem('deps', 'npm install failed')
   } else problem('deps', 'not installed', 'Run `npm install` (or `make doctor FIX=1`).')
+
+  await checkGeeknativeSource(root, fix)
 
   // Contracts
   try {
