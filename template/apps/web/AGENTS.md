@@ -38,6 +38,7 @@ Same names and responsibilities as the iOS and Android apps.
 | Navigation | A file in routes/ per screen; link with `<Link to="/notes">` |
 | Copy | `strings.notesEmptyTitle` (generated) |
 | Colors, spacing, radii, icon sizes, type | Tailwind token classes: `bg-primary`, `p-md`, `rounded-lg`, `size-icon-md`, `text-title` (the typeface comes with `font-sans`) |
+| Widths and sizes | `w-*`, `min-w-*` and `max-w-*` with a size name (`max-w-md`, `w-xl`) are Tailwind's container widths, for layout. For a spacing-sized width write `w-(--spacing-md)`. `size-*`, `h-*`, `p-*` and `gap-*` with a token name use the spacing tokens (`size-xs` is 4px). |
 | Motion and shadows | `motion-safe:transition duration-fast ease-standard`; a spring is `ease-snappy duration-snappy`; `shadow-low`. Never raw durations, curves or shadow values, and wrap motion in `motion-safe:`. |
 | Icons | `<AppIcons.settings className="size-icon-md" />` (generated) |
 | Config | `AppConfig.apiBaseUrl`, `environment` from `#/generated/config` (generated from contracts/config.json) |
