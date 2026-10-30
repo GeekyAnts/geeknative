@@ -4,7 +4,7 @@ import { readdirSync, existsSync } from 'node:fs'
 import { walk } from '../lib/fsutil.js'
 import { rel } from '../lib/project.js'
 import { appOutputs, readApp } from './app.js'
-import { readConfig } from './config.js'
+import { configOutputs, readConfig } from './config.js'
 import { iconOutputs, readIcons } from './icons.js'
 import { readStrings, stringOutputs } from './strings.js'
 import { readTokens, tokenOutputs } from './tokens.js'
@@ -17,13 +17,12 @@ import { OUT } from './util.js'
  */
 export function generate(root) {
   const app = readApp(root)
-  // Validated now so mistakes surface in `make gen`; generated code for it comes in a later change.
-  readConfig(root)
   return [
     ...appOutputs(app),
     ...tokenOutputs(readTokens(root)),
     ...stringOutputs(readStrings(root, app.defaultLocale), app.name),
     ...iconOutputs(readIcons(root)),
+    ...configOutputs(readConfig(root)),
   ]
 }
 
