@@ -46,3 +46,33 @@ export function readEnvFile(root) {
   const file = path.join(root, '.env')
   return existsSync(file) ? parseEnv(readFileSync(file, 'utf8')) : null
 }
+
+/**
+ * The entries of the project's .env that the real environment doesn't already set, for passing
+ * to a child process (the web dev server and build). The real environment wins, as in dotenv.
+ * @param {string} root
+ * @returns {Record<string, string>}
+ */
+export function dotenvForChild(root) {
+  /** @type {Record<string, string>} */
+  const entries = {}
+  for (const [key, value] of Object.entries(readEnvFile(root) ?? {})) {
+    if (process.env[key] === undefined) entries[key] = value
+  }
+  return entries
+}
+
+/**
+ * The environment `check` and `run` should build, from GEEKNATIVE_ENV. Undefined means "use the
+ * defaults": development for debug builds and production for release builds.
+ * @param {string[]} environments the names declared in contracts/config.json
+ * @returns {string | undefined}
+ */
+export function requestedEnvironment(environments) {
+  const requested = process.env.GEEKNATIVE_ENV
+  if (!requested) return undefined
+  if (!environments.includes(requested)) {
+    throw new CliError(`GEEKNATIVE_ENV is "${requested}". contracts/config.json declares: ${environments.join(', ')}.`)
+  }
+  return requested
+}
