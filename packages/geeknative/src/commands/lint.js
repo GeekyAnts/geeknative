@@ -1,6 +1,7 @@
 // @ts-check
 import { existsSync, readFileSync } from 'node:fs'
 import path from 'node:path'
+import { capture } from '../lib/exec.js'
 import { walk } from '../lib/fsutil.js'
 import { color, log } from '../lib/log.js'
 import { rel } from '../lib/project.js'
@@ -18,6 +19,8 @@ import { coverage, parityMarkdown, testedCriteria } from './parity.js'
  * Spec rules:
  * - status:   a platform still "planned" although its tests cover the feature's criteria
  * - parity:   spec/parity.md out of date
+ * - platforms: uncommitted changes touch some apps but not the others (a warning, as the
+ *   Claude Code Stop hook gives, for agents that run without the hooks)
  *
  * A `geeknative-ignore` comment on a line (or the line above) silences that line.
  *
@@ -42,7 +45,7 @@ export function lintFindings(root, { platforms = [...PLATFORMS], specs = true } 
   /** @type {Finding[]} */
   const findings = []
   for (const platform of platforms) findings.push(...lintPlatform(root, platform, features))
-  if (specs) findings.push(...lintSpecs(root, features))
+  if (specs) findings.push(...lintSpecs(root, features), ...lintChanges(root))
   return findings
 }
 
@@ -280,4 +283,31 @@ function lintSpecs(root, features) {
     }
   }
   return findings
+}
+
+/**
+ * Warns when the uncommitted changes implement something in some apps but not the others:
+ * requests apply to all three unless they're platform-specific (AGENTS.md section 1).
+ * @param {string} root
+ * @returns {Finding[]}
+ */
+function lintChanges(root) {
+  const tracked = capture('git', ['diff', '--name-only', '--relative', 'HEAD', '--', 'apps'], { cwd: root })
+  const untracked = capture('git', ['ls-files', '--others', '--exclude-standard', '--', 'apps'], { cwd: root })
+  if (tracked === null || untracked === null) return []
+  // Generated code and agent docs don't count as implementing a change.
+  const ignored = /(\/Generated\/|\/generated\/|\/generated_[^/]*\.xml$|Identity\.xcconfig$|identity\.properties$|AGENTS\.md$|CLAUDE\.md$)/
+  const changed = `${tracked}\n${untracked}`.split('\n').filter((file) => file.startsWith('apps/') && !ignored.test(file))
+  const touched = PLATFORMS.filter((p) => changed.some((file) => file.startsWith(`apps/${p}/`)))
+  if (touched.length === 0 || touched.length === PLATFORMS.length) return []
+  const missing = PLATFORMS.filter((p) => !touched.includes(p))
+  return [
+    {
+      rule: 'platforms',
+      level: 'warn',
+      file: 'apps/',
+      line: 0,
+      message: `uncommitted changes touch ${touched.join(' and ')} but not ${missing.join(' and ')}. Implement it there too, or note why it's platform-specific in the spec's Platform notes.`,
+    },
+  ]
 }
