@@ -28,6 +28,9 @@ test('progress: prints each xcodebuild phase once, as it starts', () => {
   progress.onLine('Testing started')
   progress.onLine("Test suite 'HomeTests' started on 'iPhone'")
   progress.onLine("Test case 'HomeTests/showsAppName()' passed on 'iPhone' (0.02 seconds)")
+  progress.onLine('✔ Test "AC-home-2: shows the welcome card" passed after 0.002 seconds.')
+  progress.onLine("Test Case '-[AppUITests testOpensSettings]' passed (4.1 seconds).")
+  progress.onLine('✔ Suite "Home" passed after 0.011 seconds.')
   advance(30)
   progress.stop()
   advance(30)
@@ -37,8 +40,16 @@ test('progress: prints each xcodebuild phase once, as it starts', () => {
     'still compiling… (45s)',
     'linking… (45s)',
     'running tests… (45s)',
-    'still running tests… (75s, 1 test passed so far)',
+    'still running tests… (75s, 3 tests passed so far)',
   ])
+})
+
+test('progress: phases only move forward, as Xcode builds the app and then its tests', () => {
+  const { progress, printed } = fakeProgress({ phases: XCODE_PHASES })
+  for (const line of ['SwiftCompile normal arm64 A.swift', 'Ld App', 'SwiftCompile normal arm64 ATests.swift', 'Ld AppTests', 'Testing started']) {
+    progress.onLine(line)
+  }
+  assert.deepEqual(printed, ['compiling… (0s)', 'linking… (0s)', 'running tests… (0s)'])
 })
 
 test('progress: the heartbeat says nothing before the first phase', () => {
