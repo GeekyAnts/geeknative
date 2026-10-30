@@ -14,6 +14,17 @@ Intentional differences between the apps, found while auditing them against each
 - AC-home-3 (Home opens Settings) is checked by hand, because the starter has no UI test harness (spec/features/home.md). `make parity` keeps showing it as untested.
 - The `home` icon is defined in contracts/icons.json for all three platforms and used by none. It stays as a ready-made icon for new features.
 
+Hand checks of the Settings behavior (spec/features/settings.md), run on 2026-10-30 on the iOS simulator, an Android emulator and headless Chrome. Not run means not checked yet, not failed.
+
+| Check | iOS | Android | Web |
+|---|---|---|---|
+| With System chosen, the app follows a device appearance change while it is open | Pass | Pass | Pass |
+| With Dark chosen and the device in light mode, a cold start has no flash of the light theme | Not run | Pass: every frame captured was dark, but capture started shortly after launch | Pass: the dark class is set when the document finishes parsing |
+| Choosing Dark applies to the whole screen at once, including system bars | Not run | Pass | Not run |
+| Back from Settings returns to Home with its state intact | Not run | Pass | Not run |
+
+Sheets and dialogs were not checked, because the starter has none.
+
 ## 2026-10-10: Starter app
 
 - The starter app has two screens, Home and Settings, implemented the same way on all three platforms as a reference for new features.
