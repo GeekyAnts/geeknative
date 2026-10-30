@@ -54,7 +54,7 @@ Follow Features/Settings as the reference implementation.
 - Prefer native components and behavior: `NavigationStack`, `Form`, `List`, toolbar items, sheets and swipe actions. Icons and the typeface come from the contracts (`AppIcon`, `AppTypography`), not from SF Symbols or `.system` fonts, so they match the other platforms. DESIGN.md says what else must match.
 - Support Dynamic Type, dark mode and VoiceOver: icon-only buttons need an accessibility label from Strings.
 - Give each screen a `#Preview` that uses `AppContainer.preview()` or in-memory repositories.
-- Name tests after acceptance criteria: `@Test("AC-notes-2: ...")`. A criterion marked (ui) needs a UI test in AppUITests/ that finds views by test ID and taps them; put its ID in the activity name: `XCTContext.runActivity(named: "AC-notes-2: ...")`. Mark UI test methods `@MainActor`.
+- Name tests after acceptance criteria: `@Test("AC-notes-2: ...")`. A criterion marked (ui) needs a UI test in AppUITests/ that finds views by test ID and taps them; put its ID in the activity name: `XCTContext.runActivity(named: "AC-notes-2: ...")`. Mark UI test methods `@MainActor`. On iOS 26 and later, a `.confirmationDialog` shows as a popover anchored to its button, without a Cancel button, and its actions can match twice: tap `app.buttons["<id>"].firstMatch`, and dismiss it by tapping outside the popover (`app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.1)).tap()`).
 
 ## Commands
 
