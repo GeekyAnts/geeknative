@@ -40,6 +40,7 @@ Same names and responsibilities as the Android and web apps.
 | Copy | `Strings.notesEmptyTitle` (generated) |
 | Colors, spacing, radii, type | `AppColors.primary`, `AppSpacing.md`, `AppRadius.lg`, `AppTypography.title` (generated) |
 | Icons | `Image(systemName: AppIcon.settings)` (generated) |
+| Config | `AppConfig.apiBaseUrl`, `AppEnvironment.current` (generated from contracts/config.json) |
 | Test IDs | `.accessibilityIdentifier("notes.addButton")` |
 
 Follow Features/Settings as the reference implementation.
@@ -63,6 +64,7 @@ Follow Features/Settings as the reference implementation.
 - Don't edit project.pbxproj to add files or folders. To change a build setting, edit Config/*.xcconfig.
 - Adding a Swift package changes the project file; ask the user first.
 - To run on a device, set `DEVELOPMENT_TEAM` in Config/App.xcconfig.
+- Debug builds use the `development` environment and Release builds use `production` (`APP_ENVIRONMENT` in Config/Debug.xcconfig and Release.xcconfig). To build another one: `xcodebuild APP_ENVIRONMENT=staging`.
 <!-- geeknative:end -->
 
 ## Project rules

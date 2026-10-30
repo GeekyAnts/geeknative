@@ -39,6 +39,7 @@ Same names and responsibilities as the iOS and Android apps.
 | Copy | `strings.notesEmptyTitle` (generated) |
 | Colors, spacing, radii, type | Tailwind token classes: `bg-primary`, `p-md`, `rounded-lg`, `text-title` |
 | Icons | `<AppIcons.settings className="size-6" />` (generated) |
+| Config | `AppConfig.apiBaseUrl`, `environment` from `#/generated/config` (generated from contracts/config.json) |
 | Test IDs | `data-testid="notes.addButton"` |
 
 Follow features/settings as the reference implementation.
