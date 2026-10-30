@@ -14,12 +14,14 @@ Each app has its own `AGENTS.md` with these conventions, for agents working in t
 | File | Contents |
 |---|---|
 | `Base.xcconfig` | Shared settings: deployment target, Swift version, concurrency |
-| `Debug.xcconfig`, `Release.xcconfig` | Per-configuration settings |
+| `Debug.xcconfig`, `Release.xcconfig` | Per-configuration settings, including the environment (`APP_ENVIRONMENT`) |
 | `App.xcconfig` | The app target: Info.plist keys, app icon, accent color. Set `DEVELOPMENT_TEAM` here to run on a device. |
 | `AppTests.xcconfig` | The unit test target |
 | `Identity.xcconfig` | Generated from `contracts/app.json` |
 
 **Patterns:** a screen is `struct NotesScreen: View`; it holds its `@Observable final class NotesViewModel` in `@State`; data goes through `protocol NotesRepository`; dependencies come from `@Environment(AppContainer.self)`. Navigation is one `NavigationStack` in `RootView`: add a case to `Route` and handle it in `navigationDestination`. Each screen has a `#Preview` using `AppContainer.preview()` or in-memory repositories.
+
+**Environment:** `APP_ENVIRONMENT` is `development` in Debug and `production` in Release. It becomes an `APP_ENV_<name>` compilation condition that the generated `AppEnvironment.current` reads. See [config.json](/docs/reference/contracts/#configjson).
 
 **Appearance:** `RootView` applies the chosen appearance to the windows themselves, so sheets and alerts follow it too.
 
@@ -32,6 +34,8 @@ Each app has its own `AGENTS.md` with these conventions, for agents working in t
 **Stack:** Kotlin and Jetpack Compose with Material 3, Android 7.0 (API 24) and later, compiled against API 37. Navigation 3, ViewModel with StateFlow, coroutines and DataStore. AGP 9 with built-in Kotlin. JUnit and kotlinx-coroutines-test for unit tests.
 
 **Build:** every dependency version is in `gradle/libs.versions.toml`. `app/build.gradle.kts` reads the application ID and version from `app/identity.properties`, generated from `contracts/app.json`. Gradle downloads JDK 21 for the build (`gradle/gradle-daemon-jvm.properties`), so any JDK 17 or later can start it.
+
+**Environment:** debug builds use `development` and release builds use `production`, through `BuildConfig.APP_ENVIRONMENT`. Pass `-PappEnvironment=staging` to Gradle to change it.
 
 **Package:** the Kotlin package is always `app`. The app's identity is its application ID, so renaming the app never moves code.
 
@@ -50,5 +54,7 @@ Each app has its own `AGENTS.md` with these conventions, for agents working in t
 **Patterns:** `NotesScreen` renders state from `useNotesViewModel()`, which reads data with TanStack Query and returns state and actions. Data goes through a `NotesRepository` interface. Dependencies come from router context: `useRouteContext({ from: '__root__' }).container`. Styling uses token classes (`bg-surface`, `p-lg`), not arbitrary values. For complex primitives (dialogs, menus, popovers), shadcn/ui fits: the tokens already map onto its CSS variables.
 
 **Server rendering:** code that uses browser APIs (localStorage, window) also runs safely on the server. Server functions and API routes are only for web-only concerns. The stored appearance is applied by a small script before the first paint, so there's no flash of the wrong theme.
+
+**Environment:** the generated `environment` comes from `VITE_APP_ENVIRONMENT`, or `development` when serving and `production` when built.
 
 **Commands:** `make check-web` (type-check, unit tests and a production build) and `make run-web` (dev server at `http://localhost:3000`).

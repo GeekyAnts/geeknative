@@ -3,6 +3,11 @@ title: Changelog
 description: Release notes for geeknative.
 ---
 
+## Unreleased
+
+- **Environments:** a new `contracts/config.json` declares environments and typed per-environment values, compiled into `AppConfig` and `AppEnvironment` on every platform. Debug builds use `development` and release builds use `production`.
+- **Upgrading a project:** add `contracts/config.json` (the starter has three environments and no values), set `APP_ENVIRONMENT` in `Config/Debug.xcconfig` and `Config/Release.xcconfig`, add the `appEnvironment` property and `buildConfig = true` to `app/build.gradle.kts`, then run `make gen`.
+
 ## 0.1.0 (2026-10-10)
 
 The first release.
