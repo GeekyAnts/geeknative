@@ -20,16 +20,17 @@ const TEST_FILE = {
  * Whether a test file drives the real UI (renders screens and interacts with them), as opposed
  * to testing values, view models or routes. Only these cover criteria marked "(ui)".
  * - iOS: XCUITest files in apps/ios/AppUITests.
- * - Android: instrumented tests, or Compose UI tests (on Robolectric) that create a compose rule.
- * - Web: end-to-end tests, or tests that render into a DOM (happy-dom or jsdom).
+ * - Android: instrumented tests, or Compose UI tests (on Robolectric) that find and act on nodes,
+ *   whether the compose rule is created in the file or in a shared helper.
+ * - Web: end-to-end tests, or tests that run in a DOM (happy-dom or jsdom), whether they render
+ *   directly or through a shared helper.
  */
 const UI_TEST = {
   ios: (/** @type {string} */ file) => /^apps\/ios\/AppUITests\//.test(file),
   android: (/** @type {string} */ file, /** @type {string} */ text) =>
-    /\/androidTest\//.test(file) || /\bcreate(Android)?ComposeRule\b/.test(text),
+    /\/androidTest\//.test(file) || /\bcreate(Android)?ComposeRule\b|\.onNodeWith\w+\(|\.onAllNodesWith\w+\(/.test(text),
   web: (/** @type {string} */ file, /** @type {string} */ text) =>
-    /^apps\/web\/e2e\//.test(file) ||
-    (/@vitest-environment\s+(happy-dom|jsdom)/.test(text) && /\b(createRoot|hydrateRoot|render)\(/.test(text)),
+    /^apps\/web\/e2e\//.test(file) || /@vitest-environment\s+(happy-dom|jsdom)/.test(text),
 }
 
 /** @typedef {import('../lib/specs.js').Feature} Feature */
