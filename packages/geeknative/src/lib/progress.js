@@ -62,7 +62,7 @@ function interval(callback, ms) {
 export const XCODE_PHASES = [
   { match: /^(SwiftDriver|SwiftCompile|CompileSwift|CompileC|CompileAssetCatalog|CompileXCStrings)\b/, phase: 'compiling' },
   { match: /^Ld\b/, phase: 'linking' },
-  { match: /^(Testing started|Test suite '.*' started)/, phase: 'running tests' },
+  { match: /^(Testing started|Test [Ss]uite '.*' started|◇ Test run started)/, phase: 'running tests' },
 ]
 
 /**
