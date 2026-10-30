@@ -54,7 +54,7 @@ Follow features/settings as the reference implementation.
 - Never import `generated/secrets.server` from a component: secrets are server-only and the module throws in the browser.
 - Code that uses browser APIs (localStorage, window) must also run safely during server rendering.
 - Use semantic HTML, give icon-only links and buttons an `aria-label` from strings, and keep focus visible.
-- For complex primitives (dialogs, menus, popovers), use shadcn/ui: the tokens already map onto its CSS variables.
+- For dialogs, use the native `<dialog>` element with `showModal()`: it's accessible, traps focus and needs no dependency. For primitives HTML doesn't cover well (menus, popovers, comboboxes), add shadcn/ui, which isn't installed by default: the tokens already map onto its CSS variables.
 - Name tests after acceptance criteria: `test('AC-notes-2: ...')`.
 
 ## Commands
