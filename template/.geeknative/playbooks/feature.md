@@ -6,7 +6,7 @@
 4. **Navigation.** If the feature adds a screen, add it to spec/navigation.md.
 5. **Contracts.** Add copy to `contracts/strings/<locale>.json` (every locale), icons to contracts/icons.json and any new design tokens to contracts/tokens.json. Run `make gen`.
 6. **Implement** on iOS, Android and web, each following its `apps/<platform>/AGENTS.md` and using the same names everywhere: `<Name>Screen`, `<Name>ViewModel`, `<Name>Repository`.
-7. **Test** each acceptance criterion on each platform where it can be tested at the unit level, with the AC ID in the test name. Criteria that need UI tests can wait, but list them in your report.
+7. **Test** each acceptance criterion on each platform, with the AC ID in the test name. A `(ui)` criterion needs a test that drives the real UI: an XCUITest in apps/ios/AppUITests, a Compose UI test on Android, a web test that renders into a DOM. `make parity` shows 🟡 for a `(ui)` criterion that only other tests name.
 8. **Verify** with `make check`, and fix until it passes. Then check by reading the code:
    - Every new string key and icon is used on all three platforms, or its single-platform use is written in the spec's Platform notes.
    - No hex colors, raw sizes or arbitrary Tailwind values outside generated files; no user-visible text outside contracts/.
