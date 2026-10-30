@@ -31,7 +31,7 @@ Same names and responsibilities as the iOS and Android apps.
 
 | Concept | Web |
 |---|---|
-| Screen | `NotesScreen` in features/notes/, rendered by routes/notes.tsx |
+| Screen | `NotesScreen` in features/notes/, rendered by routes/notes.tsx, with its content in `<Page>` (core/designsystem/Page.tsx): a centered readable column, or `<Page width="full">` for grids and side-by-side layouts. Never cap a screen's width without centering it. |
 | State and actions | `useNotesViewModel()`: reads data with TanStack Query, returns state and actions |
 | Data | `NotesRepository` interface, plus implementations such as `LocalStorageNotesRepository` |
 | Dependencies | `AppContainer`, in router context: `useRouteContext({ from: '__root__' }).container` |
