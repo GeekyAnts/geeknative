@@ -42,6 +42,7 @@ Same names and responsibilities as the iOS and web apps.
 | Navigation | Add a `Route` object and an `entry<Route.Notes>` in AppNavigation; push with `backStack.add(Route.Notes)` |
 | Copy | `stringResource(R.string.notes_empty_title)` (generated from contracts/strings) |
 | Colors, spacing, radii, icon sizes, type | `AppTheme.colors.primary`, `AppSpacing.md`, `AppRadius.lg`, `AppIconSize.md`, `AppTypography.title` (the typeface comes with it) |
+| Motion and shadows | `animationSpec = AppMotion.snappy()`, `AppMotion.standard(AppMotion.fast)`; `Modifier.shadow(AppElevation.low, shape)`. Never raw durations, easings or elevations. Compose follows the system's animation scale, so "Remove animations" turns motion off. |
 | Icons | `Icon(AppIcons.settings, contentDescription = ...)` (generated vector drawables; never `Icons.Filled.*`) |
 | Config | `AppConfig.apiBaseUrl`, `AppEnvironment.current` (generated from contracts/config.json) |
 | Secrets | `AppSecrets.mapsApiKey` (generated from .env, git-ignored; never commit values) |
