@@ -8,6 +8,7 @@ import { CliError, color, log } from '../lib/log.js'
 import { createProgress, GRADLE_PHASES, XCODE_PASSED, XCODE_PHASES } from '../lib/progress.js'
 import { findAndroidSdk, pickSimulator, writeLocalProperties } from '../lib/toolchains.js'
 import { gen } from './gen.js'
+import { lint } from './lint.js'
 
 export const PLATFORMS = ['ios', 'android', 'web']
 
@@ -33,6 +34,13 @@ export async function check(root, targets) {
     log.fail('contracts', /** @type {Error} */ (error).message)
     failed = true
   }
+
+  // The rules builds can't enforce (hardcoded text, test IDs, title alignment, stale specs). They
+  // run here so they hold even when the agent's hooks aren't loaded. A full check also checks the
+  // specs; a single platform's check only checks that app's code, so a platform agent isn't
+  // blocked by bookkeeping the lead does at the end.
+  const platforms = /** @type {import('./lint.js').Platform[]} */ (wanted.filter((t) => PLATFORMS.includes(t)))
+  if (platforms.length && !lint(root, { platforms, specs: everything })) failed = true
 
   // GEEKNATIVE_ENV picks which environment from contracts/config.json the apps are built for.
   // Unset, debug builds use development, as they do in Xcode and Android Studio.
