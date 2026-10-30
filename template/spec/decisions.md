@@ -19,7 +19,7 @@ Hand checks of the Settings behavior (spec/features/settings.md), run on 2026-10
 | Check | iOS | Android | Web |
 |---|---|---|---|
 | With System chosen, the app follows a device appearance change while it is open | Pass | Pass | Pass |
-| With Dark chosen and the device in light mode, a cold start has no flash of the light theme | Not run | Pass: every frame captured was dark, but capture started shortly after launch | Pass: the dark class is set when the document finishes parsing |
+| With Dark chosen and the device in light mode, a cold start has no flash of the light theme | Not run | Pass on Android 12 and later, splash screen included: the app registers the chosen appearance with the system (`UiModeManager.setApplicationNightMode`). Earlier versions have no API for it, so their splash follows the system. | Pass: the dark class is set when the document finishes parsing |
 | Choosing Dark applies to the whole screen at once, including system bars | Not run | Pass | Pass |
 | Back from Settings returns to Home with its state intact | Not run | Pass | Pass: browser back and the header home link both return to Home |
 | After a restart with Dark stored, the Settings screen shows Dark as selected | Pass | Pass | Pass, after a fix (see below) |
