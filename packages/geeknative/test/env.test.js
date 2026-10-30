@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { test } from 'node:test'
-import { parseEnv, readEnvFile } from '../src/lib/env.js'
+import { dotenvForChild, parseEnv, readEnvFile, requestedEnvironment } from '../src/lib/env.js'
 import { CliError } from '../src/lib/log.js'
 import { tempDir } from './helpers.js'
 
@@ -41,4 +41,41 @@ test('readEnvFile returns null when there is no .env', () => {
   assert.equal(readEnvFile(dir), null)
   writeFileSync(path.join(dir, '.env'), 'A=1\n')
   assert.deepEqual(readEnvFile(dir), { A: '1' })
+})
+
+/** Runs `body` with GEEKNATIVE_ENV (or any variable) set, restoring it afterwards. */
+function withEnv(name, value, body) {
+  const before = process.env[name]
+  if (value === undefined) delete process.env[name]
+  else process.env[name] = value
+  try {
+    body()
+  } finally {
+    if (before === undefined) delete process.env[name]
+    else process.env[name] = before
+  }
+}
+
+test('dotenvForChild passes .env entries but lets the real environment win', () => {
+  const dir = tempDir()
+  writeFileSync(path.join(dir, '.env'), 'GN_TEST_FROM_FILE=file\nGN_TEST_BOTH=file\n')
+  withEnv('GN_TEST_BOTH', 'shell', () => {
+    assert.deepEqual(dotenvForChild(dir), { GN_TEST_FROM_FILE: 'file' })
+  })
+  assert.deepEqual(dotenvForChild(tempDir()), {}, 'no .env, nothing to pass')
+})
+
+test('requestedEnvironment returns the declared environment, or undefined when unset', () => {
+  const declared = ['development', 'staging', 'production']
+  withEnv('GEEKNATIVE_ENV', undefined, () => assert.equal(requestedEnvironment(declared), undefined))
+  withEnv('GEEKNATIVE_ENV', 'staging', () => assert.equal(requestedEnvironment(declared), 'staging'))
+})
+
+test('requestedEnvironment rejects a name the contract does not declare', () => {
+  withEnv('GEEKNATIVE_ENV', 'qa', () => {
+    assert.throws(
+      () => requestedEnvironment(['development', 'production']),
+      (error) => error instanceof CliError && /GEEKNATIVE_ENV is "qa"\. contracts\/config\.json declares: development, production\./.test(error.message),
+    )
+  })
 })
