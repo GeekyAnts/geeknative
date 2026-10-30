@@ -1,5 +1,6 @@
 import { queryOptions, useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query'
 import { useRouteContext } from '@tanstack/react-router'
+import { useSyncExternalStore } from 'react'
 import { AppIdentity } from '#/generated/app'
 import { strings } from '#/generated/strings'
 import { appearanceLabel, appearances, type Appearance } from './Appearance'
@@ -27,11 +28,21 @@ export function useAppearance() {
   return useQuery(appearanceQuery(container.settingsRepository))
 }
 
+const subscribeToNothing = () => () => {}
+
+/** False while the page is rendering on the server and hydrating, true afterwards. */
+function useHydrated() {
+  return useSyncExternalStore(subscribeToNothing, () => true, () => false)
+}
+
 /** State and actions for the Settings screen. */
 export function useSettingsViewModel() {
   const { container } = useRouteContext({ from: '__root__' })
   const queryClient = useQueryClient()
-  const { data: appearance = 'system' } = useAppearance()
+  const { data } = useAppearance()
+  // The server has no localStorage, so it renders "system". Hydrating with the stored value instead
+  // would leave the server's checked radio in the page, so wait until hydration is done.
+  const appearance = useHydrated() ? (data ?? 'system') : 'system'
 
   return {
     appearance,
