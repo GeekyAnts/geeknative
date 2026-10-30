@@ -52,6 +52,17 @@ test('progress: phases only move forward, as Xcode builds the app and then its t
   assert.deepEqual(printed, ['compiling… (0s)', 'linking… (0s)', 'running tests… (0s)'])
 })
 
+test('progress: a cold Xcode build prepares modules first, and the preview stub is not linking', () => {
+  const { progress, printed } = fakeProgress({ phases: XCODE_PHASES })
+  for (const line of [
+    "Ld /path/App.app/__preview.dylib normal (in target 'App' from project 'App')",
+    'SwiftExplicitDependencyGeneratePcm arm64 /path/SwiftUI.pcm',
+    "SwiftDriver App normal arm64 com.apple.xcode.tools.swift.compiler (in target 'App')",
+    "Ld /path/App.app/App.debug.dylib normal (in target 'App')",
+  ]) progress.onLine(line)
+  assert.deepEqual(printed, ['preparing modules… (0s)', 'compiling… (0s)', 'linking… (0s)'])
+})
+
 test('progress: tests start in any of the forms xcodebuild prints', () => {
   for (const line of ["Test Suite 'All tests' started at 2026-10-30", '◇ Test run started.', "Test suite 'HomeTests' started on 'iPhone'", 'Testing started']) {
     const { progress, printed } = fakeProgress({ phases: XCODE_PHASES })
