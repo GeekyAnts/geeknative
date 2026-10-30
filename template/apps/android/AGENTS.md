@@ -44,6 +44,7 @@ Same names and responsibilities as the iOS and web apps.
 | Colors, spacing, radii, type | `AppTheme.colors.primary`, `AppSpacing.md`, `AppRadius.lg`, `AppTypography.title` |
 | Icons | `Icon(AppIcons.settings, contentDescription = ...)` (generated) |
 | Config | `AppConfig.apiBaseUrl`, `AppEnvironment.current` (generated from contracts/config.json) |
+| Secrets | `AppSecrets.mapsApiKey` (generated from .env, git-ignored; never commit values) |
 | Test IDs | `Modifier.testTag("notes.addButton")` |
 
 Follow features/settings as the reference implementation.

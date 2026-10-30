@@ -40,12 +40,13 @@ Before changing anything, decide what kind of request it is. State it as the fir
 | Decisions and assumptions, dated | spec/decisions.md |
 | App name, ID and version | contracts/app.json |
 | Backend URLs, feature flags and other per-environment settings | contracts/config.json |
+| Secret keys (names only; values live in .env and are never committed) | contracts/config.json `secrets` |
 | Colors, spacing, radii and type | contracts/tokens.json |
 | All user-facing text | `contracts/strings/<locale>.json` |
 | Icons (SF Symbols, Material, Lucide) | contracts/icons.json |
 | Which platform has what | feature front matter → `make parity` → spec/parity.md |
 
-`make gen` compiles contracts/ into each app (`Generated/`, `generated/` including `AppConfig`, `generated_*.xml`, `Identity.xcconfig`, `identity.properties`). Never edit generated files: change the contract and regenerate.
+`make gen` compiles contracts/ into each app (`Generated/`, `generated/` including `AppConfig`, `generated_*.xml`, `Identity.xcconfig`, `identity.properties`, `.env.example`). `AppSecrets.swift` and `AppSecrets.kt` are built from `.env` and git-ignored. Never edit generated files: change the contract and regenerate.
 
 ## 4. The loop
 
