@@ -6,6 +6,7 @@ import { readConfig } from '../codegen/config.js'
 import { dotenvForChild, requestedEnvironment } from '../lib/env.js'
 import { capture, runInherit, runLogged } from '../lib/exec.js'
 import { CliError, log } from '../lib/log.js'
+import { createProgress, GRADLE_PHASES, XCODE_PHASES } from '../lib/progress.js'
 import { adb, emulator, findAndroidSdk, pickSimulator, writeLocalProperties } from '../lib/toolchains.js'
 import { gen } from './gen.js'
 
@@ -49,11 +50,13 @@ async function runIos(root, environment) {
   capture('open', ['-a', 'Simulator'])
 
   log.step('ios', 'building…')
+  const progress = createProgress({ phases: XCODE_PHASES })
   const build = await runLogged(
     'xcodebuild',
-    ['build', '-project', 'App.xcodeproj', '-scheme', 'App', '-destination', `id=${simulator.udid}`, '-derivedDataPath', '.build/DerivedData', '-quiet', ...(environment ? [`APP_ENVIRONMENT=${environment}`] : [])],
-    { cwd: path.join(root, 'apps', 'ios'), logFile },
+    ['build', '-project', 'App.xcodeproj', '-scheme', 'App', '-destination', `id=${simulator.udid}`, '-derivedDataPath', '.build/DerivedData', ...(environment ? [`APP_ENVIRONMENT=${environment}`] : [])],
+    { cwd: path.join(root, 'apps', 'ios'), logFile, onLine: progress.onLine },
   )
+  progress.stop()
   if (build.code !== 0) throw new CliError(`Build failed. Run \`make check-ios\` for details (log: ${path.relative(root, logFile)}).`)
 
   const app = path.join(root, 'apps', 'ios', '.build', 'DerivedData', 'Build', 'Products', 'Debug-iphonesimulator', 'App.app')
@@ -87,10 +90,13 @@ async function runAndroid(root, environment) {
 
   log.step('android', 'building and installing…')
   const logFile = path.join(root, '.geeknative', 'logs', 'android-run.log')
+  const progress = createProgress({ phases: GRADLE_PHASES })
   const install = await runLogged('./gradlew', [':app:installDebug', '--console=plain', ...(environment ? [`-PappEnvironment=${environment}`] : [])], {
     cwd: path.join(root, 'apps', 'android'),
     logFile,
+    onLine: progress.onLine,
   })
+  progress.stop()
   if (install.code !== 0) throw new CliError(`Install failed. Run \`make check-android\` for details (log: ${path.relative(root, logFile)}).`)
   capture(adbPath, ['shell', 'am', 'start', '-n', `${id}/app.MainActivity`])
   log.ok('android', `running ${id}`)
