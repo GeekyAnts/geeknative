@@ -4,6 +4,7 @@ import path from 'node:path'
 import { parseFont } from '../lib/fontfile.js'
 import { readJson } from '../lib/fsutil.js'
 import { CliError } from '../lib/log.js'
+import { cssMotion, kotlinElevation, kotlinMotion, kotlinMotionImports, readElevation, readMotion, swiftElevation, swiftMotion } from './motion.js'
 import { assertIdentifier, banner, hex2, kebab, OUT, parseHex, swiftString, xcodeJson } from './util.js'
 
 const SOURCE = 'contracts/tokens.json'
@@ -115,6 +116,8 @@ const SHADCN_ALIASES = {
  *   icon: Record<string, number>,
  *   typography: Record<string, TextToken>,
  *   font: FontSpec,
+ *   motion: import('./motion.js').Motion,
+ *   elevation: Record<string, import('./motion.js').Shadow>,
  * }} Tokens
  * @typedef {{ path: string, content: string | Buffer }} Output
  */
@@ -177,7 +180,10 @@ export function readTokens(root) {
     }
   }
 
-  return { colors, spacing, radius, icon, typography, font }
+  const motion = readMotion(raw.motion)
+  const elevation = readElevation(raw.elevation, new Set(Object.keys(colors)))
+
+  return { colors, spacing, radius, icon, typography, font, motion, elevation }
 }
 
 /**
@@ -355,7 +361,7 @@ nonisolated enum AppFonts {
         }
     }
 }
-
+${swiftMotion(tokens.motion)}${swiftElevation(tokens.elevation)}
 private extension Color {
     nonisolated init(light: UInt32, dark: UInt32) {
         self.init(uiColor: UIColor { traits in
@@ -429,6 +435,8 @@ function kotlin(tokens) {
     )
     .join('\n')
   const fontImports = faces.length ? '\nimport androidx.compose.ui.text.font.Font\nimport androidx.compose.ui.text.font.FontFamily' : ''
+  const motionImports = kotlinMotionImports(tokens.motion).map((name) => `import ${name}\n`).join('')
+  const dpImport = Object.keys(tokens.elevation).length ? 'import androidx.compose.ui.unit.Dp\n' : ''
   const fontFamily = faces.length
     ? `/** The shared typeface, ${tokens.font.family}, from contracts/fonts. */
 val AppFontFamily = FontFamily(
@@ -455,7 +463,7 @@ ${faces.map(([weight, face]) => `    Font(R.font.${androidFontName(face.file)}, 
   return `// ${banner(SOURCE)}
 package app.generated
 
-import androidx.compose.foundation.shape.RoundedCornerShape
+${motionImports}import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
@@ -465,7 +473,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle${fontImports}
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
+${dpImport}import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp${faces.length ? '\nimport app.R' : ''}
 
 /** Colors for one appearance (light or dark). In composables, read the current set with \`AppTheme.colors\`. */
@@ -517,7 +525,7 @@ ${slots}
 val AppShapes = Shapes(
 ${shapes}
 )
-`
+${kotlinMotion(tokens.motion)}${kotlinElevation(tokens.elevation)}`
 }
 
 /** Window background and other XML-side colors, with a night variant. @param {Tokens} tokens @param {'light' | 'dark'} mode */
@@ -581,6 +589,7 @@ function css(tokens) {
   const iconSizes = Object.entries(tokens.icon)
     .map(([name, value]) => `  --spacing-icon-${kebab(name)}: ${value}px;`)
     .join('\n')
+  const motion = cssMotion(tokens.motion, tokens.elevation)
   const systemStack = "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
   const faces = faceEntries(tokens.font)
   const family = tokens.font.family.replace(/'/g, "\\'")
@@ -617,7 +626,7 @@ ${numbers(tokens.radius, 'radius')}
 ${iconSizes}
 
 ${type}
-
+${motion ? `\n${motion}\n` : ''}
   --font-sans: ${faces.length ? `'${family}', ` : ''}${systemStack};
 }
 
