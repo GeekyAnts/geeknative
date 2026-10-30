@@ -107,7 +107,9 @@ function lintPlatform(root, platform, features) {
       if (!ignored(line)) findings.push({ rule, level, file: relative, line, message })
     }
 
-    for (const literal of TEXT_RULES[platform](text)) {
+    // The web rules look for JSX, which only .tsx files can hold: in .ts, `<A>, b: B<C>` is a type.
+    const literals = platform === 'web' && !relative.endsWith('.tsx') ? [] : TEXT_RULES[platform](text)
+    for (const literal of literals) {
       const problem = textProblem(literal.value, platform)
       if (problem) report('text', 'error', literal.index, `${problem}: ${JSON.stringify(literal.value)}. Use a key from contracts/strings.`)
     }
