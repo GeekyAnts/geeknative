@@ -15,6 +15,7 @@ my-app/
 ├── contracts/
 │   ├── app.json              Name, ID, version, build and default locale
 │   ├── tokens.json           Colors (light and dark), spacing, radii, type
+│   ├── config.json           Environments and their per-environment values
 │   ├── strings/en.json       All user-facing copy (one file per locale)
 │   └── icons.json            Each icon's name on iOS, Android and web
 ├── spec/

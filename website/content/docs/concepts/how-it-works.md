@@ -27,6 +27,7 @@ These are written for agents and people alike. When an implementation reveals so
 |---|---|
 | App name, ID and version | `contracts/app.json` |
 | Colors, spacing, radii and type | `contracts/tokens.json` |
+| Backend URLs and other per-environment settings | `contracts/config.json` |
 | All user-facing text | `contracts/strings/<locale>.json` |
 | Icons (SF Symbols, Material, Lucide) | `contracts/icons.json` |
 

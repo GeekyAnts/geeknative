@@ -120,13 +120,64 @@ Files: `App/Generated/Localizable.xcstrings` and `Strings.swift` on iOS; `res/va
 
 In code: `Image(systemName: AppIcon.settings)` on iOS, `Icon(AppIcons.settings, contentDescription = ...)` on Android, and `<AppIcons.settings className="size-6" />` on web.
 
+## config.json
+
+Settings that differ per environment, like a backend URL or a feature flag. Every environment's values are compiled into each app, and the build picks one.
+
+```json
+{
+  "environments": ["development", "staging", "production"],
+  "values": {
+    "apiBaseUrl": {
+      "type": "url",
+      "description": "Base URL of the backend API.",
+      "development": "http://localhost:8080",
+      "staging": "https://staging.example.com",
+      "production": "https://api.example.com"
+    },
+    "betaFeatures": { "type": "boolean", "development": true, "staging": true, "production": false }
+  }
+}
+```
+
+| Field | Rule |
+|---|---|
+| `environments` | A list of names. It must include `development` and `production`, which debug and release builds use by default. |
+| `values` | Named settings. Names follow the same rules as token names. |
+| `type` | `string`, `url` (absolute, like `https://api.example.com`), `boolean` or `int` |
+| `description` | Optional. Becomes a doc comment on every platform. |
+| One key per environment | Required for every value. There is no fallback between environments. |
+
+The starter project declares the three environments above and no values, because it has no backend yet.
+
+### Generated
+
+| Value | iOS | Android | Web |
+|---|---|---|---|
+| Current environment | `AppEnvironment.current` | `AppEnvironment.current` | `environment` |
+| `apiBaseUrl` | `AppConfig.apiBaseUrl` (a `URL`) | `AppConfig.apiBaseUrl` | `AppConfig.apiBaseUrl` |
+
+Types map to `URL`, `String`, `Bool` and `Int` on iOS, `String`, `Boolean` and `Int` on Android, and `string`, `boolean` and `number` on the web.
+
+### Choosing the environment
+
+Debug builds use `development` and release builds use `production`. To build another environment:
+
+| Platform | How |
+|---|---|
+| iOS | `APP_ENVIRONMENT` in `Config/Debug.xcconfig` and `Config/Release.xcconfig`. Override with `xcodebuild APP_ENVIRONMENT=staging`. |
+| Android | `./gradlew -PappEnvironment=staging`. The value becomes `BuildConfig.APP_ENVIRONMENT`. |
+| Web | The `VITE_APP_ENVIRONMENT` environment variable. Without it, the dev server uses `development` and a build uses `production`. |
+
+An unknown environment name fails when the app starts, with a message listing the valid names.
+
 ## All generated files
 
 | Platform | Files |
 |---|---|
-| iOS | `apps/ios/App/Generated/`: `AppIdentity.swift`, `Tokens.swift`, `Strings.swift`, `Icons.swift`, `Localizable.xcstrings`, `Colors.xcassets` (accent color); `apps/ios/Config/Identity.xcconfig` |
-| Android | `apps/android/app/src/main/kotlin/app/generated/`: `AppIdentity.kt`, `Tokens.kt`, `Icons.kt`; `res/values/generated_colors.xml`, `res/values-night/generated_colors.xml`, `res/values*/generated_strings.xml`; `apps/android/app/identity.properties` |
-| Web | `apps/web/src/generated/`: `app.ts`, `tokens.css`, `strings.ts`, `icons.ts` |
+| iOS | `apps/ios/App/Generated/`: `AppIdentity.swift`, `AppConfig.swift`, `Tokens.swift`, `Strings.swift`, `Icons.swift`, `Localizable.xcstrings`, `Colors.xcassets` (accent color); `apps/ios/Config/Identity.xcconfig` |
+| Android | `apps/android/app/src/main/kotlin/app/generated/`: `AppIdentity.kt`, `AppConfig.kt`, `Tokens.kt`, `Icons.kt`; `res/values/generated_colors.xml`, `res/values-night/generated_colors.xml`, `res/values*/generated_strings.xml`; `apps/android/app/identity.properties` |
+| Web | `apps/web/src/generated/`: `app.ts`, `config.ts`, `tokens.css`, `strings.ts`, `icons.ts` |
 
 ## Validation errors
 
@@ -135,5 +186,6 @@ Problems are reported with the file and field, so an agent can fix them directly
 ```text
 ✖ contracts/tokens.json color.primary.light must be a hex color like "#4F46E5" or "#4F46E5CC" (got "#4F46E").
 ✖ contracts/strings/fr.json "settings.about.version" must use the same placeholders and plural shape as en.json.
+✖ contracts/config.json values.apiBaseUrl is missing a value for "staging". Every value needs every environment.
 ✖ contracts/icons.json "star" needs "android": a Material icon like "Icons.Filled.Settings" or "Icons.AutoMirrored.Filled.ArrowBack".
 ```
