@@ -29,6 +29,7 @@ struct SettingsScreen: View {
                     .accessibilityIdentifier("settings.version")
             }
         }
+        .font(AppTypography.body)
         .navigationTitle(Strings.settingsTitle)
     }
 }

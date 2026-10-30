@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { test } from 'node:test'
 import { generate, generateAll } from '../src/codegen/index.js'
@@ -138,7 +138,8 @@ test('tokens: colors, spacing, radii and type on every platform', () => {
   const swift = outputOf(outputs, 'Tokens.swift')
   assert.match(swift, /static let primary = Color\(light: 0x4F46E5FF, dark: 0xA5B4FCFF\)/)
   assert.match(swift, /enum AppSpacing \{[\s\S]*static let md: CGFloat = 12/)
-  assert.match(swift, /static let title: Font = \.title3\.weight\(\.semibold\)/)
+  assert.match(swift, /enum AppIconSize \{[\s\S]*static let md: CGFloat = 24/)
+  assert.match(swift, /static let title: Font = \.custom\("Inter-SemiBold", size: 20, relativeTo: \.title3\)/)
 
   const kotlin = outputOf(outputs, 'Tokens.kt')
   assert.match(kotlin, /val LightAppColors = AppColorTokens\([\s\S]*primary = Color\(0xFF4F46E5\)/)
@@ -146,7 +147,8 @@ test('tokens: colors, spacing, radii and type on every platform', () => {
   assert.match(kotlin, /^\s+surface = background,$/m, 'Material surface follows the background token')
   assert.match(kotlin, /^\s+surfaceContainer = surface,$/m)
   assert.match(kotlin, /val md = 12\.dp/)
-  assert.match(kotlin, /val title = TextStyle\(fontWeight = FontWeight\.SemiBold, fontSize = 20\.sp, lineHeight = 26\.sp\)/)
+  assert.match(kotlin, /object AppIconSize \{[\s\S]*val md = 24\.dp/)
+  assert.match(kotlin, /val title = TextStyle\(fontFamily = AppFontFamily, fontWeight = FontWeight\.SemiBold, fontSize = 20\.sp, lineHeight = 26\.sp\)/)
   assert.match(kotlin, /titleLarge = AppTypography\.title,/)
 
   const css = outputOf(outputs, 'tokens.css')
@@ -154,6 +156,7 @@ test('tokens: colors, spacing, radii and type on every platform', () => {
   assert.match(css, /\.dark \{[\s\S]*--color-primary: #a5b4fc;/)
   assert.match(css, /--color-on-surface-variant: #566074;/)
   assert.match(css, /--spacing-md: 12px;/)
+  assert.match(css, /--spacing-icon-md: 24px;/, 'icon sizes are spacing values, so size-icon-md works')
   assert.match(css, /--radius-full: calc\(infinity \* 1px\);/)
   assert.match(css, /--text-title: 1\.25rem;/)
   assert.match(css, /--color-foreground: var\(--color-on-background\);/, 'shadcn/ui aliases')
@@ -164,6 +167,48 @@ test('tokens: colors, spacing, radii and type on every platform', () => {
   const accent = JSON.parse(outputOf(outputs, 'AccentColor.colorset/Contents.json'))
   assert.equal(accent.colors[0].color.components.red, '0x4F')
   assert.equal(accent.colors[1].appearances[0].value, 'dark')
+})
+
+test('fonts: the shared typeface reaches every platform from the same files', () => {
+  const outputs = generate(TEMPLATE)
+
+  const swift = outputOf(outputs, 'Tokens.swift')
+  assert.match(swift, /static let body: Font = \.custom\("Inter-Regular", size: 16, relativeTo: \.body\)/)
+  assert.match(swift, /enum AppFonts \{[\s\S]*"Inter-Regular\.ttf",\n\s+"Inter-Medium\.ttf",[\s\S]*CTFontManagerRegisterFontsForURL\(url as CFURL, \.process, nil\)/)
+
+  const kotlin = outputOf(outputs, 'Tokens.kt')
+  assert.match(kotlin, /^import app\.R$/m)
+  assert.match(kotlin, /val AppFontFamily = FontFamily\(\n\s+Font\(R\.font\.generated_inter_regular, FontWeight\.Normal\),\n\s+Font\(R\.font\.generated_inter_medium, FontWeight\.Medium\),/)
+
+  const css = outputOf(outputs, 'tokens.css')
+  assert.match(css, /@font-face \{\n  font-family: 'Inter';\n  font-style: normal;\n  font-weight: 600;\n  font-display: swap;\n  src: url\('\.\/fonts\/Inter-SemiBold\.ttf'\) format\('truetype'\);\n\}/)
+  assert.match(css, /--font-sans: 'Inter', ui-sans-serif, system-ui/)
+
+  const regular = readFileSync(path.join(TEMPLATE, 'contracts', 'fonts', 'Inter-Regular.ttf'))
+  for (const suffix of ['App/Generated/Fonts/Inter-Regular.ttf', 'res/font/generated_inter_regular.ttf', 'web/src/generated/fonts/Inter-Regular.ttf']) {
+    const output = outputs.find((o) => o.path.endsWith(suffix))
+    assert.ok(output && Buffer.isBuffer(output.content) && output.content.equals(regular), `${suffix} is the file from contracts/fonts`)
+  }
+})
+
+test('fonts: with the system family each platform keeps its own font, sized by Dynamic Type on iOS', () => {
+  const dir = tempProject()
+  editJson(path.join(dir, 'contracts', 'tokens.json'), (tokens) => {
+    tokens.font = { family: 'system' }
+    tokens.typography.body.size = 17 // Dynamic Type's body
+    tokens.typography.label.size = 15 // and subheadline
+  })
+  const outputs = generate(dir)
+  const swift = outputOf(outputs, 'Tokens.swift')
+  assert.match(swift, /static let title: Font = \.title3\.weight\(\.semibold\)/)
+  assert.match(swift, /static let files: \[String\] = \[\]/)
+  const kotlin = outputOf(outputs, 'Tokens.kt')
+  assert.doesNotMatch(kotlin, /AppFontFamily|import app\.R/)
+  assert.match(kotlin, /val title = TextStyle\(fontWeight = FontWeight\.SemiBold, fontSize = 20\.sp/)
+  const css = outputOf(outputs, 'tokens.css')
+  assert.doesNotMatch(css, /@font-face/)
+  assert.match(css, /--font-sans: ui-sans-serif/)
+  assert.ok(!outputs.some((o) => o.path.endsWith('.ttf')), 'no font files are copied')
 })
 
 test('tokens: a color without a dark value uses its light value in dark mode', () => {
@@ -323,6 +368,7 @@ test('secrets: a .env missing one of several keys names only that key', () => {
 test('every generated file says it is generated and where it comes from', () => {
   for (const output of generate(TEMPLATE)) {
     if (output.path.endsWith('.json') || output.path.endsWith('.xcstrings')) continue // JSON has no comments
+    if (Buffer.isBuffer(output.content)) continue // copied font files
     assert.match(String(output.content), /GENERATED by geeknative from contracts\//, output.path)
   }
 })

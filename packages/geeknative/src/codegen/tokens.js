@@ -1,8 +1,10 @@
 // @ts-check
+import { existsSync, readFileSync } from 'node:fs'
 import path from 'node:path'
+import { parseFont } from '../lib/fontfile.js'
 import { readJson } from '../lib/fsutil.js'
 import { CliError } from '../lib/log.js'
-import { assertIdentifier, banner, hex2, kebab, OUT, parseHex, xcodeJson } from './util.js'
+import { assertIdentifier, banner, hex2, kebab, OUT, parseHex, swiftString, xcodeJson } from './util.js'
 
 const SOURCE = 'contracts/tokens.json'
 
@@ -21,9 +23,11 @@ const REQUIRED_COLORS = [
   'onError',
 ]
 
-const IOS_TEXT_STYLES = new Set([
-  'largeTitle', 'title', 'title2', 'title3', 'headline', 'subheadline', 'body', 'callout', 'footnote', 'caption', 'caption2',
-])
+/** Dynamic Type styles and their point size at the default (Large) text size. */
+const IOS_TEXT_STYLE_SIZES = {
+  largeTitle: 34, title: 28, title2: 22, title3: 20, headline: 17, subheadline: 15, body: 17, callout: 16, footnote: 13, caption: 12, caption2: 11,
+}
+const IOS_TEXT_STYLES = new Set(Object.keys(IOS_TEXT_STYLE_SIZES))
 
 const M3_TEXT_SLOTS = new Set([
   'displayLarge', 'displayMedium', 'displaySmall', 'headlineLarge', 'headlineMedium', 'headlineSmall',
@@ -102,11 +106,15 @@ const SHADCN_ALIASES = {
  * @typedef {[number, number, number, number]} Rgba
  * @typedef {{ light: Rgba, dark: Rgba }} ColorToken
  * @typedef {{ size: number, lineHeight: number, weight: number, ios: string, android: string }} TextToken
+ * @typedef {{ file: string, postScriptName: string, data: Buffer, web: string, webData: Buffer }} Face one weight of the font
+ * @typedef {{ family: 'system' } | { family: string, faces: Record<number, Face> }} FontSpec
  * @typedef {{
  *   colors: Record<string, ColorToken>,
  *   spacing: Record<string, number>,
  *   radius: Record<string, number>,
+ *   icon: Record<string, number>,
  *   typography: Record<string, TextToken>,
+ *   font: FontSpec,
  * }} Tokens
  * @typedef {{ path: string, content: string | Buffer }} Output
  */
@@ -131,6 +139,7 @@ export function readTokens(root) {
 
   const spacing = readNumbers(raw.spacing, 'spacing')
   const radius = readNumbers(raw.radius, 'radius')
+  const icon = readNumbers(raw.icon, 'icon')
 
   /** @type {Record<string, TextToken>} */
   const typography = {}
@@ -152,15 +161,101 @@ export function readTokens(root) {
     if (!typography[name]) throw new CliError(`${SOURCE} typography needs a "${name}" style.`)
   }
 
-  const family = raw.font?.family ?? 'system'
-  if (family !== 'system') {
-    throw new CliError(
-      `${SOURCE} font.family "${family}" isn't supported yet: codegen only handles "system" fonts. Keep "system" for now.`,
-    )
+  const font = readFont(root, raw.font, typography)
+  if (font.family === 'system') {
+    // Without a shared font, iOS text takes its size from the Dynamic Type style, so the contract
+    // must agree with it or the three apps drift apart.
+    for (const [name, t] of Object.entries(typography)) {
+      const expected = IOS_TEXT_STYLE_SIZES[/** @type {keyof typeof IOS_TEXT_STYLE_SIZES} */ (t.ios)]
+      if (t.size !== expected) {
+        const alternative = Object.entries(IOS_TEXT_STYLE_SIZES).find(([, size]) => size === t.size)?.[0]
+        throw new CliError(
+          `${SOURCE} typography.${name} has size ${t.size}, but its iOS style "${t.ios}" is ${expected}pt: with the system font, iOS sizes come from Dynamic Type. ` +
+            `Use ${expected}${alternative ? `, or map it to "${alternative}" (${t.size}pt)` : ''}, or set a shared font family.`,
+        )
+      }
+    }
   }
 
-  return { colors, spacing, radius, typography }
+  return { colors, spacing, radius, icon, typography, font }
 }
+
+/**
+ * The shared typeface: "system" for each platform's own font, or a family whose files sit in
+ * contracts/fonts, one per weight. Every weight the type scale uses must have a file, so no
+ * platform silently falls back to another face.
+ * @param {string} root
+ * @param {any} raw
+ * @param {Record<string, TextToken>} typography
+ * @returns {FontSpec}
+ */
+function readFont(root, raw, typography) {
+  const family = raw?.family ?? 'system'
+  if (typeof family !== 'string' || !family.trim()) {
+    throw new CliError(`${SOURCE} font.family must be a font family name like "Inter", or "system".`)
+  }
+  if (family === 'system') {
+    if (raw?.files !== undefined || raw?.web !== undefined) {
+      throw new CliError(`${SOURCE} font.files only applies to a shared family. Remove it, or set font.family to the family those files hold.`)
+    }
+    return { family }
+  }
+  const hint = `Run \`make font FAMILY="${family}"\` to download the files and fill this in.`
+  if (!raw.files || typeof raw.files !== 'object' || Array.isArray(raw.files) || !Object.keys(raw.files).length) {
+    throw new CliError(`${SOURCE} font "${family}" needs "files": a map from weight to a file in contracts/fonts/, like { "400": "Inter-Regular.ttf" }. ${hint}`)
+  }
+  if (raw.web !== undefined && (!raw.web || typeof raw.web !== 'object' || Array.isArray(raw.web))) {
+    throw new CliError(`${SOURCE} font.web must be a map from weight to a web font file, like { "400": "Inter-Regular.woff2" }.`)
+  }
+  /** @type {Record<number, Face>} */
+  const faces = {}
+  for (const [key, file] of Object.entries(raw.files)) {
+    const weight = Number(key)
+    if (!IOS_WEIGHTS[weight]) throw new CliError(`${SOURCE} font.files has a weight "${key}": weights are 100, 200, ... 900.`)
+    if (typeof file !== 'string' || !/^[\w.-]+\.(ttf|otf)$/i.test(file)) {
+      throw new CliError(`${SOURCE} font.files["${key}"] must name a .ttf or .otf file in contracts/fonts/.`)
+    }
+    const where = `contracts/fonts/${file}`
+    const full = path.join(root, 'contracts', 'fonts', file)
+    if (!existsSync(full)) throw new CliError(`${where} is missing (font.files["${key}"]). ${hint}`)
+    const data = readFileSync(full)
+    const info = parseFont(data, where)
+    if (info.family !== family) throw new CliError(`${where} is "${info.family}", but font.family is "${family}".`)
+    if (info.weight !== weight) throw new CliError(`${where} has weight ${info.weight}, but font.files lists it under "${key}".`)
+
+    let web = file
+    let webData = data
+    const override = raw.web?.[key]
+    if (override !== undefined) {
+      if (typeof override !== 'string' || !/^[\w.-]+\.(woff2|woff|ttf|otf)$/i.test(override)) {
+        throw new CliError(`${SOURCE} font.web["${key}"] must name a .woff2, .woff, .ttf or .otf file in contracts/fonts/.`)
+      }
+      const webFile = path.join(root, 'contracts', 'fonts', override)
+      if (!existsSync(webFile)) throw new CliError(`contracts/fonts/${override} is missing (font.web["${key}"]).`)
+      web = override
+      webData = readFileSync(webFile)
+    }
+    faces[weight] = { file, postScriptName: info.postScriptName, data, web, webData }
+  }
+  for (const key of Object.keys(raw.web ?? {})) {
+    if (!raw.files[key]) throw new CliError(`${SOURCE} font.web["${key}"] has no matching entry in font.files.`)
+  }
+  const missing = [...new Set(Object.values(typography).map((t) => t.weight))].filter((w) => !faces[w]).sort()
+  if (missing.length) {
+    throw new CliError(
+      `${SOURCE} font "${family}" has no file for weight${missing.length > 1 ? 's' : ''} ${missing.join(', ')}, which typography uses. ` +
+        `Add ${missing.map((w) => `"${w}"`).join(', ')} to font.files. ${hint}`,
+    )
+  }
+  return { family, faces }
+}
+
+/** "Inter-Regular.ttf" → "generated_inter_regular" (an Android resource name). @param {string} file */
+const androidFontName = (file) => `generated_${file.replace(/\.[^.]+$/, '').replace(/[^A-Za-z0-9]+/g, '_').replace(/_+$/, '').toLowerCase()}`
+
+/** @param {FontSpec} font @returns {[number, Face][]} weights in ascending order */
+const faceEntries = (font) =>
+  font.family === 'system' ? [] : Object.entries(font.faces).map(([w, f]) => /** @type {[number, Face]} */ ([Number(w), f])).sort(([a], [b]) => a - b)
 
 /** @param {unknown} group @param {string} label */
 function readNumbers(group, label) {
@@ -176,6 +271,12 @@ function readNumbers(group, label) {
 
 /** @param {Tokens} tokens @returns {Output[]} */
 export function tokenOutputs(tokens) {
+  /** @type {Output[]} */
+  const fonts = faceEntries(tokens.font).flatMap(([, face]) => [
+    { path: `${OUT.iosGenerated}/Fonts/${face.file}`, content: face.data },
+    { path: `${OUT.androidRes}/font/${androidFontName(face.file)}${path.extname(face.file).toLowerCase()}`, content: face.data },
+    { path: `${OUT.webGenerated}/fonts/${face.web}`, content: face.webData },
+  ])
   return [
     { path: `${OUT.iosGenerated}/Tokens.swift`, content: swift(tokens) },
     ...accentColorSet(tokens),
@@ -183,6 +284,7 @@ export function tokenOutputs(tokens) {
     { path: `${OUT.androidRes}/values/generated_colors.xml`, content: androidColorResources(tokens, 'light') },
     { path: `${OUT.androidRes}/values-night/generated_colors.xml`, content: androidColorResources(tokens, 'dark') },
     { path: `${OUT.webGenerated}/tokens.css`, content: css(tokens) },
+    ...fonts,
   ]
 }
 
@@ -198,11 +300,22 @@ function swift(tokens) {
     .join('\n')
   const numbers = (/** @type {Record<string, number>} */ group) =>
     Object.entries(group).map(([name, value]) => `    static let ${name}: CGFloat = ${value}`).join('\n')
+  const font = tokens.font
   const type = Object.entries(tokens.typography)
-    .map(([name, t]) => `    static let ${name}: Font = .${t.ios}.weight(.${IOS_WEIGHTS[t.weight]})`)
+    .map(([name, t]) =>
+      font.family === 'system'
+        ? `    static let ${name}: Font = .${t.ios}.weight(.${IOS_WEIGHTS[t.weight]})`
+        : `    static let ${name}: Font = .custom(${swiftString(font.faces[t.weight].postScriptName)}, size: ${t.size}, relativeTo: .${t.ios})`,
+    )
     .join('\n')
+  const typeDoc =
+    font.family === 'system'
+      ? '/// Text styles. Each maps to a Dynamic Type style, so it follows the user\'s text size setting.'
+      : `/// Text styles in ${font.family}, the shared typeface. Each scales with its Dynamic Type style, so it follows the user's text size setting.`
+  const files = faceEntries(font).map(([, face]) => `        ${swiftString(face.file)},`)
 
   return `// ${banner(SOURCE)}
+import CoreText
 import SwiftUI
 import UIKit
 
@@ -221,9 +334,26 @@ nonisolated enum AppRadius {
 ${numbers(tokens.radius)}
 }
 
-/// Text styles. Each maps to a Dynamic Type style, so it follows the user's text size setting.
+/// Icon sizes, in points.
+nonisolated enum AppIconSize {
+${numbers(tokens.icon)}
+}
+
+${typeDoc}
 nonisolated enum AppTypography {
 ${type}
+}
+
+/// The shared typeface's files, bundled from contracts/fonts. AppMain registers them at launch.
+nonisolated enum AppFonts {
+    static let files: [String] = [${files.length ? `\n${files.join('\n')}\n    ` : ''}]
+
+    static func register() {
+        for file in files {
+            guard let url = Bundle.main.url(forResource: file, withExtension: nil) else { continue }
+            CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
+        }
+    }
 }
 
 private extension Color {
@@ -290,12 +420,23 @@ function kotlin(tokens) {
     .join('\n')
   const numbers = (/** @type {Record<string, number>} */ group) =>
     Object.entries(group).map(([name, value]) => `    val ${name} = ${value}.dp`).join('\n')
+  const faces = faceEntries(tokens.font)
+  const family = faces.length ? 'fontFamily = AppFontFamily, ' : ''
   const styles = Object.entries(tokens.typography)
     .map(
       ([name, t]) =>
-        `    val ${name} = TextStyle(fontWeight = FontWeight.${KOTLIN_WEIGHTS[t.weight]}, fontSize = ${t.size}.sp, lineHeight = ${t.lineHeight}.sp)`,
+        `    val ${name} = TextStyle(${family}fontWeight = FontWeight.${KOTLIN_WEIGHTS[t.weight]}, fontSize = ${t.size}.sp, lineHeight = ${t.lineHeight}.sp)`,
     )
     .join('\n')
+  const fontImports = faces.length ? '\nimport androidx.compose.ui.text.font.Font\nimport androidx.compose.ui.text.font.FontFamily' : ''
+  const fontFamily = faces.length
+    ? `/** The shared typeface, ${tokens.font.family}, from contracts/fonts. */
+val AppFontFamily = FontFamily(
+${faces.map(([weight, face]) => `    Font(R.font.${androidFontName(face.file)}, FontWeight.${KOTLIN_WEIGHTS[weight]}),`).join('\n')}
+)
+
+`
+    : ''
   const slots = Object.entries(tokens.typography)
     .map(([name, t]) => `    ${t.android} = AppTypography.${name},`)
     .join('\n')
@@ -322,10 +463,10 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.TextStyle${fontImports}
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.sp${faces.length ? '\nimport app.R' : ''}
 
 /** Colors for one appearance (light or dark). In composables, read the current set with \`AppTheme.colors\`. */
 @Immutable
@@ -357,7 +498,12 @@ object AppRadius {
 ${numbers(tokens.radius)}
 }
 
-/** Text styles, in sp so they follow the user's font size setting. */
+/** Icon sizes. */
+object AppIconSize {
+${numbers(tokens.icon)}
+}
+
+${fontFamily}/** Text styles, in sp so they follow the user's font size setting. */
 object AppTypography {
 ${styles}
 }
@@ -395,6 +541,9 @@ const cssColor = ([r, g, b, a]) => `#${hex2(r)}${hex2(g)}${hex2(b)}${a === 255 ?
 /** @param {number} px */
 const rem = (px) => `${Number((px / 16).toFixed(4))}rem`
 
+/** @type {Record<string, string>} */
+const CSS_FONT_FORMATS = { '.woff2': 'woff2', '.woff': 'woff', '.ttf': 'truetype', '.otf': 'opentype' }
+
 /** @param {Tokens} tokens */
 function css(tokens) {
   const colorVars = (/** @type {'light' | 'dark'} */ mode, /** @type {string} */ indent) =>
@@ -419,11 +568,29 @@ function css(tokens) {
       ].join('\n'),
     )
     .join('\n')
+  const iconSizes = Object.entries(tokens.icon)
+    .map(([name, value]) => `  --spacing-icon-${kebab(name)}: ${value}px;`)
+    .join('\n')
+  const systemStack = "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+  const faces = faceEntries(tokens.font)
+  const family = tokens.font.family.replace(/'/g, "\\'")
+  const fontFaces = faces
+    .map(
+      ([weight, face]) => `@font-face {
+  font-family: '${family}';
+  font-style: normal;
+  font-weight: ${weight};
+  font-display: swap;
+  src: url('./fonts/${face.web}') format('${CSS_FONT_FORMATS[path.extname(face.web).toLowerCase()]}');
+}
+`,
+    )
+    .join('\n')
 
   return `/* ${banner(SOURCE)} */
-
+${fontFaces ? `\n/* The shared typeface, ${tokens.font.family}, from contracts/fonts. */\n${fontFaces}` : ''}
 /*
- * Tailwind theme: bg-primary, text-on-surface, p-md, gap-lg, rounded-lg, text-title, ...
+ * Tailwind theme: bg-primary, text-on-surface, p-md, gap-lg, rounded-lg, text-title, size-icon-md, ...
  * Dark values apply when <html> has the "dark" class (see AppearanceEffect).
  */
 @theme {
@@ -436,9 +603,12 @@ ${numbers(tokens.spacing, 'spacing')}
 
 ${numbers(tokens.radius, 'radius')}
 
+  /* icon sizes: size-icon-md, w-icon-lg, ... */
+${iconSizes}
+
 ${type}
 
-  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-sans: ${faces.length ? `'${family}', ` : ''}${systemStack};
 }
 
 .dark {

@@ -60,7 +60,7 @@ function AppShell() {
             data-testid="home.openSettings"
             className="rounded-full p-sm text-on-surface-variant hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-primary"
           >
-            <AppIcons.settings aria-hidden className="size-6" />
+            <AppIcons.settings aria-hidden className="size-icon-md" />
           </Link>
         </nav>
       </header>
