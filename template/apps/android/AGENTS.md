@@ -40,7 +40,7 @@ Same names and responsibilities as the iOS and web apps.
 | Data | `interface NotesRepository`, plus implementations such as `DataStoreNotesRepository` and `InMemoryNotesRepository` |
 | Dependencies | `AppContainer` from `LocalAppContainer.current`; ViewModels are created with `viewModel { NotesViewModel(container.notesRepository) }` |
 | Navigation | Add a `Route` object and an `entry<Route.Notes>` in AppNavigation; push with `backStack.add(Route.Notes)` |
-| Copy | `stringResource(R.string.notes_empty_title)` (generated from contracts/strings) |
+| Copy | `stringResource(R.string.notes_empty_title)` (generated from contracts/strings); plurals with `AppPlurals.notesCount(count)`, never `pluralStringResource` directly, so a `zero` form works as on iOS and web |
 | Colors, spacing, radii, icon sizes, type | `AppTheme.colors.primary`, `AppSpacing.md`, `AppRadius.lg`, `AppIconSize.md`, `AppTypography.title` (the typeface comes with it) |
 | Motion and shadows | `animationSpec = AppMotion.snappy()`, `AppMotion.standard(AppMotion.fast)`; `Modifier.shadow(AppElevation.low, shape)`. Never raw durations, easings or elevations. Compose follows the system's animation scale, so "Remove animations" turns motion off. |
 | Icons | `Icon(AppIcons.settings, contentDescription = ...)` (generated vector drawables; never `Icons.Filled.*`) |
