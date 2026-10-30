@@ -169,6 +169,18 @@ test('tokens: colors, spacing, radii and type on every platform', () => {
   assert.equal(accent.colors[1].appearances[0].value, 'dark')
 })
 
+test('tokens: spacing names never shrink Tailwind width utilities like max-w-md', () => {
+  const css = outputOf(generate(TEMPLATE), 'tokens.css')
+  // Tailwind looks up max-w-md in --max-width-* before --spacing-*, so these keep it a container width.
+  for (const name of ['xs', 'sm', 'md', 'lg', 'xl']) {
+    for (const prefix of ['width', 'min-width', 'max-width']) {
+      assert.match(css, new RegExp(`--${prefix}-${name}: var\\(--container-${name}\\);`))
+    }
+  }
+  assert.doesNotMatch(css, /--max-width-xxl/, 'names Tailwind has no container for are left alone')
+  assert.match(css, /--spacing-md: 12px;/, 'padding and gaps still use the spacing tokens')
+})
+
 test('fonts: the shared typeface reaches every platform from the same files', () => {
   const outputs = generate(TEMPLATE)
 
