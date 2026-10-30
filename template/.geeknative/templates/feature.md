@@ -27,10 +27,10 @@ Business rules, validation, limits and edge cases. For stored data: the keys, va
 
 ## Acceptance criteria
 
-Testable and platform-neutral. Each platform's tests put these IDs in their names.
+Testable and platform-neutral. Each platform's tests put these IDs in their names. Mark a criterion `(ui)` when it's about what the user sees or taps (a button opens a screen, an empty state shows): only a test that drives the real UI covers it, not one that checks a view model or route.
 
 - AC-feature-id-1: ...
-- AC-feature-id-2: ...
+- AC-feature-id-2 (ui): ...
 
 ## Copy
 
