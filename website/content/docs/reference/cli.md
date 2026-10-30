@@ -118,22 +118,24 @@ Writes `spec/parity.md` from the feature specs and the tests, and prints each fe
 ## lint
 
 ```sh
-npx geeknative lint   # or: make lint (make check runs it too)
+npx geeknative lint [ios | android | web ...]   # or: make lint (make check runs it too)
 ```
+
+With no arguments it checks every app's code and the specs. Name apps to check only their code, as `make check-<platform>` does.
 
 Finds what builds and tests can't: places where the code breaks a rule from AGENTS.md or DESIGN.md, and spec bookkeeping nobody updated. Errors make the exit code 1.
 
 | Rule | Level | Finds |
 |---|---|---|
 | `text` | Error | User-facing text written in code instead of `contracts/strings`: `Text("Total")`, `Button("…")`, `.navigationTitle("…")` and `.accessibilityLabel("…")` on iOS; `Text("…")` and `contentDescription = "…"` on Android; text between JSX tags, string children and `aria-label`, `placeholder`, `title` and `alt` attributes on the web. Text composed around values counts too (`"\(name) × \(count)"`); a value alone (`"\(count)"`) and emoji don't. |
-| `test-id` | Error | A test ID in app code (`accessibilityIdentifier`, `testTag`, `data-testid`) that no spec lists in its "Test IDs" section. `<placeholder>` parts of a listed ID match any value. |
+| `test-id` | Error | A test ID in app code that no spec lists in its "Test IDs" section: set directly (`accessibilityIdentifier`, `testTag`, `data-testid`) or passed to a helper (`testID:` on iOS, `testTag =` on Android, `testId=` on the web). `<placeholder>` parts of a listed ID match any value. |
 | `test-id` | Warning | A listed test ID that an app whose status is `done` never uses |
 | `title` | Error | A centered screen title: `.navigationBarTitleDisplayMode(.inline)` on iOS, `CenterAlignedTopAppBar` on Android. Titles are leading-aligned on every platform. |
-| `status` | Error | A platform still `planned` although its tests name the feature's criteria. A warning for `in-progress` with every criterion covered. |
+| `status` | Error | A platform still `planned` although its tests name the feature's criteria. A warning for `in-progress` with every criterion covered. Fixed in `spec/` by whoever owns the specs. |
 | `parity` | Error | `spec/parity.md` doesn't match the specs and tests. Run `make parity`. |
 | `platforms` | Warning | Uncommitted changes touch some apps but not the others, the same reminder the Claude Code stop hook gives |
 
-It skips generated code, tests, iOS `#Preview` blocks and Android `@Preview` functions. To keep a line on purpose (a sheet with the system's inline title, say), add a comment containing `geeknative-ignore` to it or to the line above.
+It skips generated code, tests, and the body of each iOS `#Preview` block and Android `@Preview` function (code around them is still checked). The web text rules look at `.tsx` files only. To keep a line on purpose (a sheet with the system's inline title, say), add a comment containing `geeknative-ignore` to it or to the line above.
 
 ## run
 
