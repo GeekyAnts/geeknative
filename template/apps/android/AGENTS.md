@@ -16,7 +16,8 @@ Read the root AGENTS.md first. This file covers how the Android app is built.
 ```
 apps/android/
   gradle/libs.versions.toml      All dependency versions
-  app/build.gradle.kts           Reads app/identity.properties (generated) for the app ID and version
+  app/build.gradle.kts           Reads app/identity.properties (generated) for the app ID and version, and sets the
+                                 environment (development for debug, production for release; `-PappEnvironment=staging`)
   app/src/main/kotlin/app/
     App.kt, MainActivity.kt      Creates AppContainer; applies the theme and appearance
     core/                        AppContainer, navigation/ (Route, AppNavigation), designsystem/ (AppTheme, AppCard)
@@ -42,6 +43,7 @@ Same names and responsibilities as the iOS and web apps.
 | Copy | `stringResource(R.string.notes_empty_title)` (generated from contracts/strings) |
 | Colors, spacing, radii, type | `AppTheme.colors.primary`, `AppSpacing.md`, `AppRadius.lg`, `AppTypography.title` |
 | Icons | `Icon(AppIcons.settings, contentDescription = ...)` (generated) |
+| Config | `AppConfig.apiBaseUrl`, `AppEnvironment.current` (generated from contracts/config.json) |
 | Test IDs | `Modifier.testTag("notes.addButton")` |
 
 Follow features/settings as the reference implementation.

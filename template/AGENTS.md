@@ -22,7 +22,7 @@ Before changing anything, decide what kind of request it is. State it as the fir
 | changes wording only                                | Copy              | contracts/strings/*.json, then `make gen`                | none                                        |
 | reports something broken                            | Bug               | the spec, only if it was silent or wrong                 | .geeknative/playbooks/bug.md                |
 | names one platform                                  | Platform-specific | the feature's "Platform notes", if users can see it      | .geeknative/playbooks/platform-specific.md  |
-| is about tooling, dependencies, builds or refactoring | Engineering     | nothing                                                  | .geeknative/playbooks/engineering.md        |
+| is about tooling, dependencies, builds, environments or refactoring | Engineering     | nothing                                                  | .geeknative/playbooks/engineering.md        |
 | asks a question                                     | Question          | nothing: answer it, don't edit files                     | none                                        |
 
 - A request can be several types at once (a feature usually adds copy too).
@@ -39,12 +39,13 @@ Before changing anything, decide what kind of request it is. State it as the fir
 | Screens and routes | spec/navigation.md |
 | Decisions and assumptions, dated | spec/decisions.md |
 | App name, ID and version | contracts/app.json |
+| Backend URLs, feature flags and other per-environment settings | contracts/config.json |
 | Colors, spacing, radii and type | contracts/tokens.json |
 | All user-facing text | `contracts/strings/<locale>.json` |
 | Icons (SF Symbols, Material, Lucide) | contracts/icons.json |
 | Which platform has what | feature front matter → `make parity` → spec/parity.md |
 
-`make gen` compiles contracts/ into each app (`Generated/`, `generated/`, `generated_*.xml`, `Identity.xcconfig`, `identity.properties`). Never edit generated files: change the contract and regenerate.
+`make gen` compiles contracts/ into each app (`Generated/`, `generated/` including `AppConfig`, `generated_*.xml`, `Identity.xcconfig`, `identity.properties`). Never edit generated files: change the contract and regenerate.
 
 ## 4. The loop
 
@@ -66,7 +67,7 @@ Before changing anything, decide what kind of request it is. State it as the fir
 - **Native, not identical.** Features, flows, data, copy and brand match. Navigation chrome, controls, gestures and system conventions follow each platform. DESIGN.md says which is which.
 - **One feature at a time.** Finish a feature on every platform before starting the next.
 - **Spec changes ripple.** If building one platform changes the spec, recheck the platforms you already did.
-- **No backend yet.** Features read and write through a repository interface with local implementations. When a backend arrives, only the repositories change.
+- **No backend yet.** Features read and write through a repository interface with local implementations. When a backend arrives, only the repositories change. Put its URLs in contracts/config.json, one per environment.
 
 ## 6. Ask or assume
 
