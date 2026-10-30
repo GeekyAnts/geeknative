@@ -67,6 +67,8 @@ Always validates the contracts first and fails if generated files are out of dat
 | `web` | `npm run check` in `apps/web`: route generation and `tsc`, then Vitest, then a production build. Needs `npm install` first. |
 | `contracts` | Only the contract validation. |
 
+To build another environment, set `GEEKNATIVE_ENV` (or pass `ENV=staging` to `make`). iOS gets `APP_ENVIRONMENT=<name>`, Android gets `-PappEnvironment=<name>`, and the web build gets `VITE_APP_ENVIRONMENT=<name>`. A name `config.json` doesn't declare is an error. The web build also gets the values in `.env`, so server code can read `process.env`.
+
 The simulator is the one named in `GEEKNATIVE_IOS_SIMULATOR` (a name or UDID) if set, otherwise a booted iPhone, otherwise an iPhone on the newest iOS runtime.
 
 ## doctor
@@ -107,7 +109,9 @@ npx geeknative run ios | android | web   # or: make run-ios, make run-android, m
 |---|---|
 | `ios` | Boots the chosen simulator if needed, opens Simulator, builds, installs and launches the app by its bundle ID. |
 | `android` | Uses a connected device or running emulator. If there's none, it starts the first emulator from `emulator -list-avds` and waits for it to boot. Then `./gradlew :app:installDebug` and launches `app.MainActivity`. |
-| `web` | Starts the TanStack Start dev server at `http://localhost:3000`. |
+| `web` | Starts the TanStack Start dev server at `http://localhost:3000`, with the values in `.env` available to server code. |
+
+`run` runs `gen` first, so a launch never uses stale generated code or an old `.env`. It takes `GEEKNATIVE_ENV` the same way `check` does.
 
 ## make targets
 
@@ -124,12 +128,15 @@ The project's Makefile includes `.geeknative/framework.mk`:
 | `make parity` | `geeknative parity` |
 | `make run-ios`, `run-android`, `run-web` | `geeknative run <platform>` |
 
+Add `ENV=<name>` to a `check` or `run` target to set `GEEKNATIVE_ENV` for it, for example `make check-ios ENV=staging`.
+
 Add your own targets to the root Makefile, below the `include` line.
 
 ## Environment variables
 
 | Variable | Effect |
 |---|---|
+| `GEEKNATIVE_ENV` | The environment `check` and `run` build: a name from `contracts/config.json`. Unset, debug builds use `development`. |
 | `GEEKNATIVE_IOS_SIMULATOR` | The simulator to build, test and run on (name or UDID) |
 | `NO_COLOR` | Turns off colored output |
 | `ANDROID_HOME`, `ANDROID_SDK_ROOT` | Where to find the Android SDK |
