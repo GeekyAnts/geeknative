@@ -70,6 +70,66 @@ nonisolated enum AppFonts {
     }
 }
 
+/// Motion, the same on every platform: durations in seconds, easing curves and springs.
+/// Respect Reduce Motion: `withAnimation(AppMotion.reduced(AppMotion.snappy, reduceMotion))`, with
+/// `reduceMotion` from `@Environment(\.accessibilityReduceMotion)`.
+nonisolated enum AppMotion {
+    /// 150 ms
+    static let fast: Double = 0.15
+
+    /// 250 ms
+    static let normal: Double = 0.25
+
+    /// 350 ms
+    static let slow: Double = 0.35
+
+    /// cubic-bezier(0.2, 0, 0, 1)
+    static func standard(_ duration: Double = normal) -> Animation {
+        .timingCurve(0.2, 0, 0, 1, duration: duration)
+    }
+
+    /// cubic-bezier(0, 0, 0, 1)
+    static func decelerate(_ duration: Double = normal) -> Animation {
+        .timingCurve(0, 0, 0, 1, duration: duration)
+    }
+
+    /// cubic-bezier(0.3, 0, 1, 1)
+    static func accelerate(_ duration: Double = normal) -> Animation {
+        .timingCurve(0.3, 0, 1, 1, duration: duration)
+    }
+
+    /// A spring: 300 ms, bounce 0.15
+    static let snappy: Animation = .spring(duration: 0.3, bounce: 0.15)
+
+    /// A spring: 400 ms, bounce 0.3
+    static let bouncy: Animation = .spring(duration: 0.4, bounce: 0.3)
+
+    /// `animation`, or none when the user has turned on Reduce Motion.
+    static func reduced(_ animation: Animation, _ reduceMotion: Bool) -> Animation? {
+        reduceMotion ? nil : animation
+    }
+}
+
+/// A shadow from the elevation tokens. Apply it with `.shadow(AppElevation.low)`.
+nonisolated struct AppShadow: Sendable {
+    let color: Color
+    let radius: CGFloat
+    let y: CGFloat
+}
+
+/// Shadows, for things that float above the content.
+nonisolated enum AppElevation {
+    static let low = AppShadow(color: Color.black.opacity(0.12), radius: 1.5, y: 1)
+    static let high = AppShadow(color: Color.black.opacity(0.16), radius: 12, y: 8)
+}
+
+extension View {
+    /// Draws one of the elevation tokens' shadows.
+    func shadow(_ shadow: AppShadow) -> some View {
+        self.shadow(color: shadow.color, radius: shadow.radius, x: 0, y: shadow.y)
+    }
+}
+
 private extension Color {
     nonisolated init(light: UInt32, dark: UInt32) {
         self.init(uiColor: UIColor { traits in
