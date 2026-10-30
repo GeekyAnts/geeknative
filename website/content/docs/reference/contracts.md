@@ -38,6 +38,15 @@ In code: `AppIdentity.name` and `AppIdentity.version` (iOS), `AppIdentity.NAME` 
   "spacing": { "xs": 4, "sm": 8, "md": 12, "lg": 16, "xl": 24, "xxl": 32 },
   "radius": { "sm": 6, "md": 10, "lg": 16, "full": 9999 },
   "icon": { "sm": 16, "md": 24, "lg": 32 },
+  "motion": {
+    "duration": { "fast": 150, "normal": 250 },
+    "easing": { "standard": [0.2, 0, 0, 1] },
+    "spring": { "snappy": { "duration": 300, "bounce": 0.15 } }
+  },
+  "elevation": {
+    "low": { "y": 1, "blur": 3, "opacity": 0.12 },
+    "brand": { "y": 8, "blur": 24, "opacity": 0.3, "color": "primary" }
+  },
   "typography": {
     "title": { "size": 20, "lineHeight": 26, "weight": 600, "ios": "title3", "android": "titleLarge" }
   },
@@ -65,6 +74,16 @@ In code: `AppIdentity.name` and `AppIdentity.version` (iOS), `AppIdentity.NAME` 
 
 A `body` style is required. Every platform uses `size`; `lineHeight` applies on Android and web. On iOS the style scales relative to its Dynamic Type style, so text follows the user's text size setting.
 
+**Motion** is optional. Names must be unique across its three groups.
+
+| Group | Rule |
+|---|---|
+| `duration` | Positive numbers of milliseconds |
+| `easing` | Four cubic-bezier numbers `[x1, y1, x2, y2]`, with x values from 0 to 1 |
+| `spring` | `duration` in milliseconds and `bounce` from 0 up to (not including) 1, as SwiftUI defines them. Android gets the same spring as a damping ratio of `1 - bounce` and a stiffness of `(2π / duration)²`. The web gets a CSS `linear()` curve sampled from it, with the time the spring takes to settle as its duration. |
+
+**Elevation** is optional: one shadow per name, with `y` (offset), `blur`, `opacity` (0 to 1) and an optional `color` naming a color token (black if left out). A tinted shadow follows dark mode.
+
 **Font** is the typeface all three apps share:
 
 | Field | Rule |
@@ -84,6 +103,8 @@ A `body` style is required. Every platform uses `size`; `lineHeight` applies on 
 | Radius | `AppRadius.lg` | `AppRadius.lg`, and Material 3 shapes | `--radius-lg`: `rounded-lg` |
 | Icon sizes | `AppIconSize.md` | `AppIconSize.md` | `--spacing-icon-md`: `size-icon-md` |
 | Type | `AppTypography.title`, as `Font.custom("Inter-SemiBold", size: 20, relativeTo: .title3)` | `AppTypography.title`, with `fontFamily = AppFontFamily`, and Material 3 typography | `--text-title`: `text-title` |
+| Motion | `AppMotion.fast` (seconds), `AppMotion.standard(_:)` and `AppMotion.snappy` (`Animation`), and `AppMotion.reduced(_:_:)` for Reduce Motion | `AppMotion.fast` (ms), `AppMotion.standard<T>()` (`tween`), `AppMotion.standardEasing` and `AppMotion.snappy<T>()` (`spring`) | `--transition-duration-fast`, `--ease-standard`, `--ease-snappy`: `duration-fast`, `ease-standard`, `ease-snappy duration-snappy` |
+| Elevation | `.shadow(AppElevation.low)` | `Modifier.shadow(AppElevation.low, shape)` (in the template's `AppTheme.kt`) | `--shadow-low`: `shadow-low` |
 | Font | The files in `App/Generated/Fonts/`, registered at launch by `AppFonts.register()` (called from `AppMain`) | The files as `res/font/generated_*` resources behind `AppFontFamily` | The files in `src/generated/fonts/`, with one `@font-face` per weight and `--font-sans` set to the family |
 
 With `"family": "system"`, `AppTypography.title` is `.title3.weight(.semibold)` on iOS, Android styles have no `fontFamily`, and `--font-sans` is the system stack.
