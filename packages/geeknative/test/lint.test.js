@@ -108,6 +108,20 @@ test('lint: TypeScript generics in .ts files are not mistaken for JSX text', () 
   assert.deepEqual(summary(root), [])
 })
 
+test('lint: only preview blocks are skipped, not the code after them', () => {
+  const root = cleanProject()
+  write(
+    root,
+    'apps/android/app/src/main/kotlin/app/features/order/Summary.kt',
+    '@Preview\n@Composable\nprivate fun SummaryPreview() {\n    AppTheme(darkTheme = false) { Text("Sample") }\n}\n\n@Composable\nfun Footer() {\n    Text("Thanks for ordering")\n}\n',
+  )
+  write(root, 'apps/ios/App/Features/Order/Summary.swift', '#Preview("Light") {\n    Text("Sample")\n}\n\nstruct Footer: View {\n    var body: some View { Text("Thanks") }\n}\n')
+  assert.deepEqual(
+    lintFindings(root).filter((f) => f.rule === 'text').map((f) => `${f.file}:${f.line}`),
+    ['apps/ios/App/Features/Order/Summary.swift:6', 'apps/android/app/src/main/kotlin/app/features/order/Summary.kt:9'],
+  )
+})
+
 test('lint: text rules tell words and composed text from values and decoration', () => {
   assert.equal(textProblem('Continue', 'ios'), 'hardcoded text')
   assert.equal(textProblem('\\(name) × \\(count)', 'ios'), 'text composed in code')
