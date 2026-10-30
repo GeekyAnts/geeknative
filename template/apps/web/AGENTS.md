@@ -48,6 +48,7 @@ Follow features/settings as the reference implementation.
 ## Rules
 
 - Never hardcode user-facing text, colors or spacing. Add them to contracts/ and run `make gen`. Use token classes (`bg-surface`, `p-lg`), not arbitrary values (`bg-[#fff]`, `p-[13px]`).
+- The browser tab title is web chrome, like the iOS navigation bar: build it in a route's `head` from the screen's title string and `AppIdentity.name` (`${strings.notesTitle} · ${AppIdentity.name}`). Its separator is exempt from the no-literal-text rule. All other user-visible text still comes from contracts/.
 - Server functions and API routes are only for web-only concerns (rendering, cookies, SEO). Logic the mobile apps need too goes through repositories, so a future backend can serve all three apps.
 - Never import `generated/secrets.server` from a component: secrets are server-only and the module throws in the browser.
 - Code that uses browser APIs (localStorage, window) must also run safely during server rendering.
