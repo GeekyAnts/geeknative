@@ -18,7 +18,7 @@ _Not described yet. Describe the look you want (for example "calm and minimal" o
 | Colors, spacing, radii, icon sizes and type scale (contracts/tokens.json) | Gestures, haptics and transitions |
 | The typeface (contracts/tokens.json `font`, files in contracts/fonts) | The font of navigation bars and system controls |
 | Icons: the same drawing from one family (contracts/icons.json) | The system back chevron on iOS and other chrome icons |
-| Screen structure and content order | Sheets, dialogs and menus |
+| Screen structure and content order, including title alignment (leading on every platform) | Sheets, dialogs and menus |
 | Accessibility labels and test IDs | |
 
 ## Tokens
@@ -55,7 +55,8 @@ How each platform builds the shared patterns. Add a row whenever a new pattern a
 
 | Pattern | iOS | Android | Web |
 |---|---|---|---|
-| Screen | Screen in a `NavigationStack`, with a navigation title | `Scaffold` with a `TopAppBar`, both on the `background` token (Material's `surface` role is mapped to `background`; only cards use `surface`) | Page in the app shell (header and main) |
+| Screen | Screen in a `NavigationStack`, with a large navigation title | `Scaffold` with a `TopAppBar`, both on the `background` token (Material's `surface` role is mapped to `background`; only cards use `surface`) | Page in the app shell (header and main), full window width with `px-lg` (`md:px-xl`) side padding |
+| Screen title | Leading-aligned large title (the default; don't use `.navigationBarTitleDisplayMode(.inline)`) | `TopAppBar`, which is leading-aligned (not `CenterAlignedTopAppBar`) | `h1` at the start of the page, left-aligned |
 | Settings or form | `Form` with sections, on `background` with `surface` rows (`scrollContentBackground(.hidden)`) | Column with section headers | Sections in cards |
 | Single choice | Inline `Picker` (checkmarks) | Radio buttons | Radio group |
 | Card | `AppColors.surface` fill, `AppRadius.lg` corners | `Surface` in `AppTheme.colors.surface`, `AppRadius.lg` corners | `bg-surface rounded-lg` |
