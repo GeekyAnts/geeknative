@@ -16,6 +16,7 @@ import { coverage, parityMarkdown, testedCriteria } from './parity.js'
  * - text:     user-facing text written in code instead of contracts/strings
  * - test-id:  a test ID in code that no spec lists (and, as a warning, a spec's ID a done platform never uses)
  * - title:    a centered screen title (DESIGN.md: titles are leading-aligned on every platform)
+ * - width:    a web screen that caps its width without centering it (DESIGN.md: Screen)
  * Spec rules:
  * - status:   a platform still "planned" although its tests cover the feature's criteria
  * - parity:   spec/parity.md out of date
@@ -61,8 +62,8 @@ export function lint(root, options = {}) {
   const platforms = options.platforms ?? [...PLATFORMS]
   const specs = options.specs ?? true
   if (!findings.length) {
-    if (specs) log.ok('lint', 'no hardcoded text, unknown test IDs, centered titles or stale specs')
-    else log.ok('lint', `no hardcoded text, unknown test IDs or centered titles in ${platforms.join(', ')} ${color.dim('(specs are checked by make check and make lint)')}`)
+    if (specs) log.ok('lint', 'no hardcoded text, unknown test IDs, centered titles, uncentered screens or stale specs')
+    else log.ok('lint', `no hardcoded text, unknown test IDs, centered titles or uncentered screens in ${platforms.join(', ')} ${color.dim('(specs are checked by make check and make lint)')}`)
     return true
   }
   const summary = [errors.length && `${errors.length} error${errors.length > 1 ? 's' : ''}`, warnings.length && `${warnings.length} warning${warnings.length > 1 ? 's' : ''}`]
@@ -127,6 +128,15 @@ function lintPlatform(root, platform, features) {
       used.push(id)
       if (!specIds.some((s) => idMatches(id, s.pattern))) {
         report('test-id', 'error', index, `test ID "${id}" isn't listed in any spec's "Test IDs" section. Add it to the feature's spec, or use a listed ID.`)
+      }
+    }
+    if (platform === 'web' && /Screen\.tsx$/.test(relative)) {
+      // Only the element a screen returns: a capped paragraph inside a card is fine.
+      for (const match of text.matchAll(/return \(\s*<[A-Za-z][\w.]*[^>]*?className=(?:"([^"]*)"|\{`([^`]*)`\})/g)) {
+        const classes = match[1] ?? match[2] ?? ''
+        if (/(^|\s)max-w-(?!none\b|full\b|screen\b)/.test(classes) && !/(^|\s)mx-auto(\s|$)/.test(classes)) {
+          report('width', 'error', match.index ?? 0, "caps the screen's width without centering it, so it hugs the left edge on wide windows. Wrap the screen in <Page> (core/designsystem/Page.tsx), or add mx-auto.")
+        }
       }
     }
     for (const match of text.matchAll(CENTERED_TITLE[platform])) {
