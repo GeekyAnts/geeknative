@@ -1,4 +1,5 @@
 import { AppCard } from '#/core/designsystem/AppCard'
+import { Page } from '#/core/designsystem/Page'
 import { strings } from '#/generated/strings'
 import { useSettingsViewModel } from './useSettingsViewModel'
 
@@ -6,7 +7,7 @@ export function SettingsScreen() {
   const viewModel = useSettingsViewModel()
 
   return (
-    <div className="flex flex-col gap-xl">
+    <Page>
       <h1 className="text-display">{strings.settingsTitle}</h1>
 
       <AppCard>
@@ -39,6 +40,6 @@ export function SettingsScreen() {
           {viewModel.versionText}
         </p>
       </AppCard>
-    </div>
+    </Page>
   )
 }
