@@ -28,7 +28,7 @@ The starter Settings screen (appearance and app version) is built the same way o
 |---|---|---|---|
 | Screen | `SettingsScreen.swift` | `SettingsScreen.kt` | `SettingsScreen.tsx` |
 | State | `SettingsViewModel.swift` | `SettingsViewModel.kt` | `useSettingsViewModel.ts` |
-| Data | `SettingsRepository.swift` (`UserDefaultsSettingsRepository`, `InMemorySettingsRepository`) | `SettingsRepository.kt` (`DataStoreSettingsRepository`, `InMemorySettingsRepository`) | `SettingsRepository.ts`, `LocalStorageSettingsRepository.ts` |
+| Data | `SettingsRepository.swift` (`UserDefaultsSettingsRepository`, `InMemorySettingsRepository`) | `SettingsRepository.kt` (`DataStoreSettingsRepository`, `InMemorySettingsRepository`) | `SettingsRepository.ts`, `LocalStorageSettingsRepository.ts`, `InMemorySettingsRepository.ts` |
 | Model | `Appearance.swift` | `Appearance.kt` | `Appearance.ts` |
 | Tests | `AppTests/SettingsTests.swift` | `SettingsTest.kt` | `settings.test.ts` |
 
