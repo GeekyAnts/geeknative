@@ -37,3 +37,9 @@ The first screen. It names the app, welcomes the user and leads to Settings. It'
 ## Test IDs
 
 - `home.openSettings`: the Settings entry point.
+
+## Assumptions and open questions
+
+- Android and web test all three criteria on the rendered screen: Android with Compose UI tests on Robolectric, web by rendering into happy-dom. Both tap the gear and check that Settings opens.
+- iOS tests AC-home-1 and AC-home-2 only at the value level (the name and strings exist, and Home builds). SwiftUI exposes no accessibility tree to unit tests, so reading the screen or tapping the gear needs a UI test target, which the template leaves out on purpose. `make parity` shows AC-home-3 as untested on iOS.
+- Manual check for AC-home-3 on iOS: open Home, tap the gear (`home.openSettings`), and confirm Settings opens; then go back and confirm Home is intact.

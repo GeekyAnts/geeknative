@@ -7,5 +7,10 @@
 5. **Contracts.** Add copy to `contracts/strings/<locale>.json` (every locale), icons to contracts/icons.json and any new design tokens to contracts/tokens.json. Run `make gen`.
 6. **Implement** on iOS, Android and web, each following its `apps/<platform>/AGENTS.md` and using the same names everywhere: `<Name>Screen`, `<Name>ViewModel`, `<Name>Repository`.
 7. **Test** each acceptance criterion on each platform where it can be tested at the unit level, with the AC ID in the test name. Criteria that need UI tests can wait, but list them in your report.
-8. **Verify** with `make check`, and fix until it passes.
+8. **Verify** with `make check`, and fix until it passes. Then check by reading the code:
+   - Every new string key and icon is used on all three platforms, or its single-platform use is written in the spec's Platform notes.
+   - No hex colors, raw sizes or arbitrary Tailwind values outside generated files; no user-visible text outside contracts/.
+   - `<Name>Screen`, `<Name>ViewModel` (`use<Name>ViewModel` on web) and `<Name>Repository`, test IDs, storage keys, stored values and fallbacks match across the apps.
+   - Icon-only controls have a label from strings, and touch targets meet 44 pt (iOS), 48 dp (Android) and 44 px (web).
+   - Every intentional platform difference is written in DESIGN.md or the spec's Platform notes.
 9. **Record.** Set each platform's status in the spec's front matter (`done`, `in-progress`, `planned`, or `n/a` for a feature that's not on that platform). Run `make parity`. Add new features to PRODUCT.md's feature list.

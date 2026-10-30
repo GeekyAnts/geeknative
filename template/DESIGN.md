@@ -55,8 +55,8 @@ How each platform builds the shared patterns. Add a row whenever a new pattern a
 
 | Pattern | iOS | Android | Web |
 |---|---|---|---|
-| Screen | Screen in a `NavigationStack`, with a navigation title | `Scaffold` with a `TopAppBar` | Page in the app shell (header and main) |
-| Settings or form | `Form` with sections | Column with section headers | Sections in cards |
+| Screen | Screen in a `NavigationStack`, with a navigation title | `Scaffold` with a `TopAppBar`, both on the `background` token (Material's `surface` role is mapped to `background`; only cards use `surface`) | Page in the app shell (header and main) |
+| Settings or form | `Form` with sections, on `background` with `surface` rows (`scrollContentBackground(.hidden)`) | Column with section headers | Sections in cards |
 | Single choice | Inline `Picker` (checkmarks) | Radio buttons | Radio group |
 | Card | `AppColors.surface` fill, `AppRadius.lg` corners | `Surface` in `AppTheme.colors.surface`, `AppRadius.lg` corners | `bg-surface rounded-lg` |
 | Primary action | `.borderedProminent` button | `Button` | `button` with `bg-primary text-on-primary` |
@@ -66,5 +66,5 @@ How each platform builds the shared patterns. Add a row whenever a new pattern a
 
 - Support Dynamic Type (iOS), font scaling (Android) and browser zoom (web).
 - Every icon-only button has a label from contracts/strings.
-- Touch targets are at least 44 pt on iOS and 48 dp on Android.
+- Touch targets are at least 44 pt on iOS and 48 dp on Android. On web, aim for 44 px or more (WCAG 2.5.8 requires 24 px at least), as the header link and the radio rows do.
 - Text meets WCAG AA contrast (4.5:1 for body text) in light and dark mode.
