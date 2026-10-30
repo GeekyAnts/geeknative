@@ -5,6 +5,7 @@ import { readConfig } from '../codegen/config.js'
 import { dotenvForChild, requestedEnvironment } from '../lib/env.js'
 import { runLogged } from '../lib/exec.js'
 import { CliError, color, log } from '../lib/log.js'
+import { createProgress, GRADLE_PHASES, XCODE_PASSED, XCODE_PHASES } from '../lib/progress.js'
 import { findAndroidSdk, pickSimulator, writeLocalProperties } from '../lib/toolchains.js'
 import { gen } from './gen.js'
 
@@ -82,6 +83,7 @@ const CHECKS = {
     if (!simulator) return fail('no iPhone simulator found; run `make doctor`', [], root, logFile)
     const firstBuild = !existsSync(path.join(root, 'apps', 'ios', '.build'))
     log.step('ios', `building and testing on ${simulator.name} (${simulator.runtime})…${firstBuild ? ' (first build: allow a few minutes)' : ''}`)
+    const progress = createProgress({ phases: XCODE_PHASES, passed: XCODE_PASSED })
     const { code, lines } = await runLogged(
       'xcodebuild',
       [
@@ -90,13 +92,17 @@ const CHECKS = {
         '-scheme', 'App',
         '-destination', `id=${simulator.udid}`,
         '-derivedDataPath', '.build/DerivedData',
-        '-quiet',
+        // Parallel testing clones and boots a fresh copy of the simulator on every run, which
+        // costs minutes; the suite is small enough to run on the simulator itself.
+        '-parallel-testing-enabled', 'NO',
         // A build setting on the command line overrides APP_ENVIRONMENT in Config/Debug.xcconfig.
         ...(environment ? [`APP_ENVIRONMENT=${environment}`] : []),
       ],
-      { cwd: path.join(root, 'apps', 'ios'), logFile },
+      // Not -quiet: the progress lines come from xcodebuild's full output (which also goes to the log).
+      { cwd: path.join(root, 'apps', 'ios'), logFile, onLine: progress.onLine },
     )
-    const passed = lines.filter((l) => /^Test case '.*' passed/.test(l)).length
+    progress.stop()
+    const passed = lines.filter((l) => XCODE_PASSED.test(l)).length
     if (code === 0) return { ok: true, summary: `build and ${passed} tests passed`, details: [], log: shown(root, logFile) }
     const details = unique(
       lines.filter((l) => /(error:|✘|failed|\*\* (BUILD|TEST) FAILED)/.test(l) && !/^\s*$/.test(l)).map((l) => l.trim()),
@@ -111,6 +117,7 @@ const CHECKS = {
     if (!existsSync(path.join(root, 'apps', 'android', 'local.properties'))) writeLocalProperties(root, sdk)
     const firstBuild = !existsSync(path.join(root, 'apps', 'android', 'app', 'build'))
     log.step('android', `building and running unit tests…${firstBuild ? ' (the first build downloads Gradle, JDK 21 and dependencies: allow several minutes)' : ''}`)
+    const progress = createProgress({ phases: GRADLE_PHASES })
     const { code, lines } = await runLogged(
       './gradlew',
       [
@@ -120,8 +127,9 @@ const CHECKS = {
         '--warning-mode=summary',
         ...(environment ? [`-PappEnvironment=${environment}`] : []),
       ],
-      { cwd: path.join(root, 'apps', 'android'), logFile },
+      { cwd: path.join(root, 'apps', 'android'), logFile, onLine: progress.onLine },
     )
+    progress.stop()
     if (code === 0) {
       const tests = junitCount(path.join(root, 'apps', 'android', 'app', 'build', 'test-results', 'testDebugUnitTest'))
       return { ok: true, summary: `build and ${tests} unit tests passed`, details: [], log: shown(root, logFile) }
