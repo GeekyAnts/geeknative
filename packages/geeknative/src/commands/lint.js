@@ -140,12 +140,33 @@ function lintPlatform(root, platform, features) {
   return findings
 }
 
-/** Drops #Preview blocks (iOS) and @Preview functions (Android), which may show sample text. @param {string} text @param {Platform} platform */
-function withoutPreviews(text, platform) {
-  const marker = platform === 'ios' ? /^#Preview\b/m : platform === 'android' ? /^@Preview\b/m : null
-  const at = marker ? text.search(marker) : -1
-  // Keep the line count, so line numbers stay right.
-  return at === -1 ? text : text.slice(0, at) + text.slice(at).replace(/[^\n]/g, ' ')
+/**
+ * Blanks out iOS #Preview blocks and Android @Preview functions, which may show sample text,
+ * from the marker to the brace that closes its body. Code before and after is still checked,
+ * and line numbers stay the same.
+ * @param {string} text
+ * @param {Platform} platform
+ */
+export function withoutPreviews(text, platform) {
+  const marker = platform === 'ios' ? /^#Preview\b/gm : platform === 'android' ? /^@Preview\b/gm : null
+  if (!marker) return text
+  let result = text
+  for (const match of text.matchAll(marker)) {
+    const start = match.index ?? 0
+    const open = text.indexOf('{', start)
+    if (open === -1) continue
+    let depth = 0
+    let end = text.length - 1
+    for (let i = open; i < text.length; i++) {
+      if (text[i] === '{') depth++
+      else if (text[i] === '}' && --depth === 0) {
+        end = i
+        break
+      }
+    }
+    result = result.slice(0, start) + result.slice(start, end + 1).replace(/[^\n]/g, ' ') + result.slice(end + 1)
+  }
+  return result
 }
 
 /** @param {string} text @param {number} index */
