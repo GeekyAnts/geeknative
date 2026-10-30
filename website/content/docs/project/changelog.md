@@ -10,6 +10,15 @@ description: Release notes for geeknative.
 - **CLI:** `GEEKNATIVE_ENV` (or `ENV=staging` with `make`) makes `check` and `run` build a chosen environment. `run` now regenerates first, and the Claude Code after-edit hook also regenerates when `.env` changes.
 - **Upgrading a project:** add `contracts/config.json` (the starter has three environments and no values), set `APP_ENVIRONMENT` in `Config/Debug.xcconfig` and `Config/Release.xcconfig`, add the `appEnvironment` property and `buildConfig = true` to `app/build.gradle.kts`, add the two `AppSecrets` paths to `.gitignore`, then run `make gen`.
 
+- **Consistency audit:**
+  - The feature playbook's Verify step now has a checklist: string keys and icons used on every platform, no raw colors or sizes, matching names and IDs, labels, touch targets, and documented platform differences.
+  - `apps/web/AGENTS.md` says the browser tab title is web chrome, so its separator is exempt from the no-literal-text rule.
+  - Home now has tests for AC-home-1 and AC-home-2 on iOS and Android. They check that the app name and strings exist and that Home builds, but they can't read the text on screen. AC-home-3 (the Settings entry point) is still untested on every platform, because it needs a UI test harness. It is recorded as UI-test-only in the Home spec, and `make parity` keeps showing it as untested.
+  - On web, the header Settings link and the appearance rows are now 48 px tall (they were 40 px), and the web Settings feature has an `InMemorySettingsRepository`, like iOS and Android.
+  - DESIGN.md records that the iOS Settings `Form` uses the system grouped background.
+- **Known gaps:** raw sizes in app code (`48.dp` on Android, `size-4` and `size-6` on web) and the unused `home` icon are not fixed yet.
+- **Applying the audit changes to an existing project:** `geeknative upgrade` is not built yet, so copy them by hand. The playbook and the managed block in `apps/web/AGENTS.md` are framework files. The touch targets, the in-memory repository, the Home tests, DESIGN.md and the Home spec belong to your project. If `make check-web` fails with a type error in `router.tsx` (two copies of `@tanstack/query-core`), set `@tanstack/react-query` to `5.105.0` in `apps/web/package.json` and reinstall.
+
 ## 0.1.0 (2026-10-10)
 
 The first release.
