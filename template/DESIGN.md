@@ -61,5 +61,5 @@ How each platform builds the shared patterns. Add a row whenever a new pattern a
 
 - Support Dynamic Type (iOS), font scaling (Android) and browser zoom (web).
 - Every icon-only button has a label from contracts/strings.
-- Touch targets are at least 44 pt on iOS and 48 dp on Android.
+- Touch targets are at least 44 pt on iOS and 48 dp on Android. On web, aim for 44 px or more (WCAG 2.5.8 requires 24 px at least), as the header link and the radio rows do.
 - Text meets WCAG AA contrast (4.5:1 for body text) in light and dark mode.
