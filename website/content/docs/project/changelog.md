@@ -53,6 +53,14 @@ description: Release notes for geeknative.
     - iOS Settings tests that clean up their UserDefaults suites;
     - the web docs recommend the native `<dialog>`;
     - the Android docs explain zeroing Material's own elevation under token shadows.
+- **More fixes from the Meetly test:**
+  - **Android splash in Dark mode:** the app registers the chosen appearance with the system (`UiModeManager.setApplicationNightMode`, Android 12+), so a cold start's splash screen is in it too.
+  - **`make run-android`** reports "running" only once the app is on screen, with how long it took.
+  - **Lint:** a web screen that caps its width without centering it is an error. `make lint-ios`, `lint-android` and `lint-web` lint one app.
+  - **Docs:**
+    - the web AGENTS.md explains which width and size classes use the spacing tokens, and to restart `vite preview` after a build;
+    - the iOS AGENTS.md covers confirmation dialogs in iOS 26+ UI tests;
+    - the feature playbook says to add strings for picker and dialog buttons.
 - **Applying these to an existing project:** run `make doctor FIX=1` from a checkout to pin the CLI, then `make gen` (new `tokens.css` mappings) and `make parity`, and fix what `make lint` reports. The motion and elevation tokens, the full-width web shell, the iOS UI test target and the Android test setting belong to your project: copy them from the template if you want them.
 
 ## 0.1.0 (2026-10-10)
