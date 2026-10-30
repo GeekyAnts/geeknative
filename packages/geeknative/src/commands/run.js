@@ -98,8 +98,11 @@ async function runAndroid(root, environment) {
   })
   progress.stop()
   if (install.code !== 0) throw new CliError(`Install failed. Run \`make check-android\` for details (log: ${path.relative(root, logFile)}).`)
-  capture(adbPath, ['shell', 'am', 'start', '-n', `${id}/app.MainActivity`])
-  log.ok('android', `running ${id}`)
+  // -W waits until the app has drawn its first frame, so "running" means it's on screen.
+  const launch = capture(adbPath, ['shell', 'am', 'start', '-W', '-n', `${id}/app.MainActivity`], { timeout: 120_000 })
+  if (launch === null || /Error|Status: (?!ok)/.test(launch)) throw new CliError(`Could not launch ${id}.${launch ? `\n${launch}` : ''}`)
+  const shown = launch.match(/TotalTime: (\d+)/)?.[1]
+  log.ok('android', `running ${id}${shown ? ` (on screen after ${(Number(shown) / 1000).toFixed(1)}s)` : ''}`)
 }
 
 /** @param {string} adbPath */
