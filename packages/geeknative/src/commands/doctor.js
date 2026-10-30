@@ -1,6 +1,8 @@
 // @ts-check
-import { existsSync } from 'node:fs'
+import { copyFileSync, existsSync } from 'node:fs'
 import path from 'node:path'
+import { readConfig, resolveSecrets } from '../codegen/config.js'
+import { readEnvFile } from '../lib/env.js'
 import { capture, runInherit, runLogged } from '../lib/exec.js'
 import { log } from '../lib/log.js'
 import {
@@ -49,6 +51,9 @@ export async function doctor(root, { fix = false }) {
   } catch (error) {
     problem('contracts', /** @type {Error} */ (error).message)
   }
+
+  // Secrets: warnings only, so CI and fresh clones without secrets still pass.
+  checkSecrets(root, fix)
 
   // iOS
   if (process.platform !== 'darwin') {
@@ -105,4 +110,31 @@ function compilePlatformPackage(sdk) {
   const listing = capture(sdkManager(sdk), [`--sdk_root=${sdk}`, '--list'], { timeout: 120_000 }) ?? ''
   const exact = `platforms;android-${ANDROID_COMPILE_SDK}.0`
   return listing.includes(exact) ? exact : `platforms;android-${ANDROID_COMPILE_SDK}`
+}
+
+/**
+ * Warns when a secret declared in contracts/config.json has no value in .env. Skipped when none
+ * are declared, or when the contracts are invalid (the contracts step already reported that).
+ * @param {string} root
+ * @param {boolean} fix copy .env.example to .env when there is no .env
+ */
+function checkSecrets(root, fix) {
+  let config
+  try {
+    config = readConfig(root)
+  } catch {
+    return
+  }
+  const declared = Object.keys(config.secrets).length
+  if (!declared) return
+
+  const example = path.join(root, '.env.example')
+  if (fix && !existsSync(path.join(root, '.env')) && existsSync(example)) {
+    copyFileSync(example, path.join(root, '.env'))
+    log.step('secrets', 'created .env from .env.example')
+  }
+  const { warnings } = resolveSecrets(config, readEnvFile(root))
+  if (!warnings.length) return log.ok('secrets', `${declared} key${declared === 1 ? '' : 's'} set in .env`)
+  for (const warning of warnings) log.warn('secrets', warning)
+  log.detail('Fill in .env, then run `make gen` to update the mobile apps.')
 }
