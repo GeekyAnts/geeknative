@@ -2,9 +2,12 @@
 import { spawn } from 'node:child_process'
 import path from 'node:path'
 import { readApp } from '../codegen/app.js'
+import { readConfig } from '../codegen/config.js'
+import { dotenvForChild, requestedEnvironment } from '../lib/env.js'
 import { capture, runInherit, runLogged } from '../lib/exec.js'
 import { CliError, log } from '../lib/log.js'
 import { adb, emulator, findAndroidSdk, pickSimulator, writeLocalProperties } from '../lib/toolchains.js'
+import { gen } from './gen.js'
 
 /**
  * Builds and launches one app: on a simulator, an emulator or device, or the web dev server.
@@ -12,19 +15,28 @@ import { adb, emulator, findAndroidSdk, pickSimulator, writeLocalProperties } fr
  * @param {string} platform
  */
 export async function run(root, platform) {
-  if (platform === 'web') return runWeb(root)
-  if (platform === 'ios') return runIos(root)
-  if (platform === 'android') return runAndroid(root)
-  throw new CliError('Usage: geeknative run <ios|android|web>')
+  if (!['web', 'ios', 'android'].includes(platform)) throw new CliError('Usage: geeknative run <ios|android|web>')
+  // Regenerate first, so a launch never uses stale code or an old .env (AppSecrets).
+  gen(root, { quiet: true })
+  // GEEKNATIVE_ENV picks the environment from contracts/config.json; unset means development.
+  const environment = requestedEnvironment(readConfig(root).environments)
+  if (environment) log.step('config', `running the ${environment} environment`)
+  if (platform === 'web') return runWeb(root, environment)
+  if (platform === 'ios') return runIos(root, environment)
+  return runAndroid(root, environment)
 }
 
-/** @param {string} root */
-async function runWeb(root) {
-  process.exitCode = await runInherit('npm', ['run', 'dev', '--workspace', 'apps/web'], { cwd: root })
+/** @param {string} root @param {string} [environment] */
+async function runWeb(root, environment) {
+  process.exitCode = await runInherit('npm', ['run', 'dev', '--workspace', 'apps/web'], {
+    cwd: root,
+    // .env is passed along so server code that reads process.env (AppSecrets) works locally.
+    env: { ...dotenvForChild(root), ...(environment ? { VITE_APP_ENVIRONMENT: environment } : {}) },
+  })
 }
 
-/** @param {string} root */
-async function runIos(root) {
+/** @param {string} root @param {string} [environment] */
+async function runIos(root, environment) {
   const simulator = pickSimulator()
   if (!simulator) throw new CliError('No iPhone simulator found. Run `make doctor`.')
   const { id } = readApp(root)
@@ -39,7 +51,7 @@ async function runIos(root) {
   log.step('ios', 'building…')
   const build = await runLogged(
     'xcodebuild',
-    ['build', '-project', 'App.xcodeproj', '-scheme', 'App', '-destination', `id=${simulator.udid}`, '-derivedDataPath', '.build/DerivedData', '-quiet'],
+    ['build', '-project', 'App.xcodeproj', '-scheme', 'App', '-destination', `id=${simulator.udid}`, '-derivedDataPath', '.build/DerivedData', '-quiet', ...(environment ? [`APP_ENVIRONMENT=${environment}`] : [])],
     { cwd: path.join(root, 'apps', 'ios'), logFile },
   )
   if (build.code !== 0) throw new CliError(`Build failed. Run \`make check-ios\` for details (log: ${path.relative(root, logFile)}).`)
@@ -50,8 +62,8 @@ async function runIos(root) {
   log.ok('ios', `running on ${simulator.name} (${simulator.runtime})`)
 }
 
-/** @param {string} root */
-async function runAndroid(root) {
+/** @param {string} root @param {string} [environment] */
+async function runAndroid(root, environment) {
   const sdk = findAndroidSdk(root)
   if (!sdk) throw new CliError('Android SDK not found. Run `make doctor`.')
   writeLocalProperties(root, sdk)
@@ -75,7 +87,7 @@ async function runAndroid(root) {
 
   log.step('android', 'building and installing…')
   const logFile = path.join(root, '.geeknative', 'logs', 'android-run.log')
-  const install = await runLogged('./gradlew', [':app:installDebug', '--console=plain'], {
+  const install = await runLogged('./gradlew', [':app:installDebug', '--console=plain', ...(environment ? [`-PappEnvironment=${environment}`] : [])], {
     cwd: path.join(root, 'apps', 'android'),
     logFile,
   })
