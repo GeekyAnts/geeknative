@@ -166,6 +166,7 @@ The project's Makefile includes `.geeknative/framework.mk`:
 | `make check-ios`, `check-android`, `check-web` | `geeknative check <platform>` |
 | `make parity` | `geeknative parity` |
 | `make lint` | `geeknative lint` |
+| `make lint-ios`, `lint-android`, `lint-web` | `geeknative lint <platform>` |
 | `make run-ios`, `run-android`, `run-web` | `geeknative run <platform>` |
 
 Add `ENV=<name>` to a `check` or `run` target to set `GEEKNATIVE_ENV` for it, for example `make check-ios ENV=staging`.
