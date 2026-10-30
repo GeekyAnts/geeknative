@@ -20,10 +20,13 @@ Hand checks of the Settings behavior (spec/features/settings.md), run on 2026-10
 |---|---|---|---|
 | With System chosen, the app follows a device appearance change while it is open | Pass | Pass | Pass |
 | With Dark chosen and the device in light mode, a cold start has no flash of the light theme | Not run | Pass: every frame captured was dark, but capture started shortly after launch | Pass: the dark class is set when the document finishes parsing |
-| Choosing Dark applies to the whole screen at once, including system bars | Not run | Pass | Not run |
-| Back from Settings returns to Home with its state intact | Not run | Pass | Not run |
+| Choosing Dark applies to the whole screen at once, including system bars | Not run | Pass | Pass |
+| Back from Settings returns to Home with its state intact | Not run | Pass | Pass: browser back and the header home link both return to Home |
+| After a restart with Dark stored, the Settings screen shows Dark as selected | Pass | Pass | Pass, after a fix (see below) |
 
 Sheets and dialogs were not checked, because the starter has none.
+
+Found by that check: on web, opening `/settings` directly with Dark stored showed a dark page but System as the selected choice. The server renders without localStorage, so the first client render disagreed with the server's HTML and React left the server's checked radio in place. The Settings view model now renders "system" until hydration is done, then the stored value. iOS and Android were not affected.
 
 ## 2026-10-10: Starter app
 
