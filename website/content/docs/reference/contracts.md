@@ -127,7 +127,7 @@ One JSON file per locale: `contracts/strings/en.json`, `contracts/strings/fr.jso
 |---|---|
 | Keys | Dot-separated camelCase words: `settings.appearance.title`. Two keys can't map to the same name. `app.name` isn't allowed (the name comes from `app.json`). |
 | Placeholders | `{name}` is a string, `{name:int}` an integer. |
-| Plurals | An object with `zero`, `one`, `two`, `few`, `many` and `other` forms. `other` is required, and the only placeholder allowed is `{count}`. |
+| Plurals | An object with `zero`, `one`, `two`, `few`, `many` and `other` forms. `other` is required, and the only placeholder allowed is `{count}`. A `zero` form is used for a count of 0 in every language on every platform, even where the language's plural rules have no zero category (English): iOS does this itself, and the generated web and Android code (`AppPlurals`) do it too. |
 | Translations | Must use the same placeholders and plural shape as the source, and can't add keys the source doesn't have. Missing keys fall back to the source. |
 
 ### Generated
@@ -136,7 +136,7 @@ One JSON file per locale: `contracts/strings/en.json`, `contracts/strings/fr.jso
 |---|---|---|---|
 | `settings.title` | `Strings.settingsTitle` | `stringResource(R.string.settings_title)` | `strings.settingsTitle` |
 | `settings.about.version` | `Strings.settingsAboutVersion(version:build:)` | `stringResource(R.string.settings_about_version, version, build)` | `strings.settingsAboutVersion({ version, build })` |
-| `notes.count` | `Strings.notesCount(count:)` | `pluralStringResource(R.plurals.notes_count, count, count)` | `strings.notesCount(count)` |
+| `notes.count` | `Strings.notesCount(count:)` | `AppPlurals.notesCount(count)` (or `AppPlurals.notesCount(resources, count)` outside composables) | `strings.notesCount(count)` |
 
 Files: `App/Generated/Localizable.xcstrings` and `Strings.swift` on iOS; `res/values/generated_strings.xml` (plus `values-fr`, `values-pt-rBR`, `values-b+zh+Hans` and so on) on Android, which also gets `app_name`; `src/generated/strings.ts` on web, with `setLocale()`.
 
