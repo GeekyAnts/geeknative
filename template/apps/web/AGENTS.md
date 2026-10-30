@@ -7,7 +7,7 @@ Read the root AGENTS.md first. This file covers how the web app is built.
 
 - React 19 and TanStack Start (server rendering), with TanStack Router file routes and TanStack Query.
 - Tailwind CSS v4 with the generated design tokens, and Lucide icons.
-- TypeScript (strict), Vite, Vitest.
+- TypeScript (strict), Vite, Vitest. Tests run in Node; a test that renders into a DOM starts with `// @vitest-environment happy-dom` and renders with `react-dom/client` inside `act` (see features/home/homeEntry.test.tsx).
 - Supports Safari 16.4+, Chrome 111+ and Firefox 128+ (Tailwind v4's minimum).
 
 ## Layout

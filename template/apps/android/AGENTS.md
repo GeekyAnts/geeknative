@@ -9,7 +9,7 @@ Read the root AGENTS.md first. This file covers how the Android app is built.
 - Navigation 3, ViewModel with StateFlow, Kotlin coroutines, DataStore.
 - Dependencies are wired by hand in `AppContainer`: no DI framework.
 - AGP 9 with built-in Kotlin. Gradle downloads JDK 21 for the build (gradle/gradle-daemon-jvm.properties).
-- JUnit and kotlinx-coroutines-test for unit tests.
+- JUnit and kotlinx-coroutines-test for unit tests; Compose UI tests run on the JVM with Robolectric (`@RunWith(RobolectricTestRunner::class)`), so `make check-android` needs no emulator.
 
 ## Layout
 
