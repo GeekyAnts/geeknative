@@ -102,6 +102,12 @@ test('lint: user-facing text in code is an error on every platform', () => {
   ])
 })
 
+test('lint: TypeScript generics in .ts files are not mistaken for JSX text', () => {
+  const root = cleanProject()
+  write(root, 'apps/web/src/features/order/Order.ts', 'export const same = (a: Pick<Order, "id">, b: Pick<Order, "id">) => a.id === b.id')
+  assert.deepEqual(summary(root), [])
+})
+
 test('lint: text rules tell words and composed text from values and decoration', () => {
   assert.equal(textProblem('Continue', 'ios'), 'hardcoded text')
   assert.equal(textProblem('\\(name) × \\(count)', 'ios'), 'text composed in code')
