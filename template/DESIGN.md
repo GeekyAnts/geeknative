@@ -33,6 +33,9 @@ Defined in contracts/tokens.json and compiled into each app by `make gen`.
 | Radius `lg` | `AppRadius.lg` | `AppRadius.lg` | `rounded-lg` |
 | Icon size `md` | `AppIconSize.md` | `AppIconSize.md` | `size-icon-md` |
 | Type `title` | `AppTypography.title` | `AppTypography.title` | `text-title` |
+| Motion `snappy` (a spring) | `AppMotion.snappy` | `AppMotion.snappy()` | `ease-snappy duration-snappy` |
+| Motion `standard` curve, `fast` duration | `AppMotion.standard(AppMotion.fast)` | `AppMotion.standard(AppMotion.fast)` | `ease-standard duration-fast` |
+| Elevation `low` | `.shadow(AppElevation.low)` | `Modifier.shadow(AppElevation.low, shape)` | `shadow-low` |
 
 **Color roles.** Every color has a light and a dark value. Add new colors by role (what they're for), not by hue.
 
@@ -44,6 +47,10 @@ Defined in contracts/tokens.json and compiled into each app by `make gen`.
 - `error` / `onError`: errors and destructive actions.
 
 **Type roles.** `display`, `headline`, `title`, `body`, `label`, `caption`. Each has a size, line height and weight that every app uses. On iOS each role also names the Dynamic Type style it scales with; on Android sizes are sp and on web rem, so text follows the user's text size setting everywhere. Line height applies on Android and web (SwiftUI text takes its line spacing from the font).
+
+**Motion.** Durations, easing curves and springs live in contracts/tokens.json `motion`, so an animation takes the same time and feels the same on every platform. Use a spring for things the user moves or toggles, `standard` for things that change on their own, `decelerate` for things that enter and `accelerate` for things that leave. Every animation respects the system's reduce-motion setting: iOS passes it through `AppMotion.reduced(_:_:)`, Android follows the system animation scale, and web wraps motion in `motion-safe:`. Which transitions a screen uses (push, sheet, fade) stays native.
+
+**Elevation.** Shadows live in contracts/tokens.json `elevation`. Use them only for things that float above the content (a bottom bar, a floating button, a dragged card). A shadow can be tinted with a color token (`"color": "primary"`), so it follows dark mode.
 
 **Typeface.** One font family for all three apps: `font.family` in contracts/tokens.json, with one file per weight in contracts/fonts. The starter uses Inter. To switch, run `make font FAMILY="Open Sans"` (any Google Fonts family) or `make font FAMILY=system` for each platform's own font; for a font that isn't on Google Fonts, put its .ttf files in contracts/fonts and list them under `font.files`. Every weight the type scale uses must have a file. Navigation bar titles and system controls keep the platform font. With `system`, iOS text sizes come from Dynamic Type, so each role's size must match its iOS style (`make gen` says so if not).
 
