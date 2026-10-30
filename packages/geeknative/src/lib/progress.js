@@ -6,6 +6,7 @@ import { log } from './log.js'
  * @typedef {{
  *   phases: Phase[],
  *   passed?: RegExp,
+ *   started?: RegExp, a test starting; its first set capture group is the test's name
  *   heartbeat?: number,
  *   now?: () => number,
  *   print?: (message: string) => void,
@@ -19,23 +20,31 @@ import { log } from './log.js'
  * multi-minute check never looks stuck. Full output still goes to the log file.
  * @param {ProgressOptions} options
  */
-export function createProgress({ phases, passed, heartbeat = 30_000, now = Date.now, print = log.detail, schedule = interval }) {
-  const started = now()
+export function createProgress({ phases, passed, started, heartbeat = 30_000, now = Date.now, print = log.detail, schedule = interval }) {
+  const begun = now()
   /** @type {string | null} */
   let current = null
   let reached = -1
   let tests = 0
-  const elapsed = () => `${Math.round((now() - started) / 1000)}s`
+  /** @type {string | null} the test running now, named in the heartbeat so a slow UI test doesn't look like a hang */
+  let running = null
+  const elapsed = () => `${Math.round((now() - begun) / 1000)}s`
   const testsSoFar = () => (passed && tests ? `, ${tests} test${tests === 1 ? '' : 's'} passed so far` : '')
 
   const timer = schedule(() => {
-    if (current) print(`still ${current}… (${elapsed()}${testsSoFar()})`)
+    if (current) print(`still ${current}… (${elapsed()}${testsSoFar()}${running ? `, now: ${running}` : ''})`)
   }, heartbeat)
 
   return {
     /** @param {string} line */
     onLine(line) {
-      if (passed?.test(line)) tests++
+      if (passed?.test(line)) {
+        tests++
+        running = null
+      }
+      const match = started && line.match(started)
+      const name = match && (match[1] ?? match[2])
+      if (name) running = name
       // Phases only move forward: Xcode builds the app and then the test bundle, which would
       // otherwise flip between compiling and linking.
       const index = phases.findIndex((p) => p.match.test(line))
@@ -73,6 +82,9 @@ export const XCODE_PHASES = [
  * (`Test Case '...' passed`, or `Test case '...' passed` when tests run in parallel).
  */
 export const XCODE_PASSED = /^(✔ Test ".*" passed|Test [Cc]ase '.*' passed)/
+
+/** A test starting: Swift Testing (`◇ Test "name" started.`) or XCTest (`Test Case '-[Class test]' started.`). */
+export const XCODE_STARTED = /^(?:◇ Test "(.*)" started|Test Case '-\[(?:\S+ )?(\S+)\]' started)/
 
 /** Phases of the Gradle tasks `make check-android` runs, from `--console=plain` output. */
 export const GRADLE_PHASES = [
