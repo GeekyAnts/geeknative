@@ -10,9 +10,12 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.R
 
 /** Colors for one appearance (light or dark). In composables, read the current set with `AppTheme.colors`. */
 @Immutable
@@ -114,14 +117,29 @@ object AppRadius {
     val full = 9999.dp
 }
 
+/** Icon sizes. */
+object AppIconSize {
+    val sm = 16.dp
+    val md = 24.dp
+    val lg = 32.dp
+}
+
+/** The shared typeface, Inter, from contracts/fonts. */
+val AppFontFamily = FontFamily(
+    Font(R.font.generated_inter_regular, FontWeight.Normal),
+    Font(R.font.generated_inter_medium, FontWeight.Medium),
+    Font(R.font.generated_inter_semibold, FontWeight.SemiBold),
+    Font(R.font.generated_inter_bold, FontWeight.Bold),
+)
+
 /** Text styles, in sp so they follow the user's font size setting. */
 object AppTypography {
-    val display = TextStyle(fontWeight = FontWeight.Bold, fontSize = 34.sp, lineHeight = 41.sp)
-    val headline = TextStyle(fontWeight = FontWeight.Bold, fontSize = 28.sp, lineHeight = 34.sp)
-    val title = TextStyle(fontWeight = FontWeight.SemiBold, fontSize = 20.sp, lineHeight = 26.sp)
-    val body = TextStyle(fontWeight = FontWeight.Normal, fontSize = 16.sp, lineHeight = 24.sp)
-    val label = TextStyle(fontWeight = FontWeight.Medium, fontSize = 14.sp, lineHeight = 20.sp)
-    val caption = TextStyle(fontWeight = FontWeight.Normal, fontSize = 12.sp, lineHeight = 16.sp)
+    val display = TextStyle(fontFamily = AppFontFamily, fontWeight = FontWeight.Bold, fontSize = 34.sp, lineHeight = 41.sp)
+    val headline = TextStyle(fontFamily = AppFontFamily, fontWeight = FontWeight.Bold, fontSize = 28.sp, lineHeight = 34.sp)
+    val title = TextStyle(fontFamily = AppFontFamily, fontWeight = FontWeight.SemiBold, fontSize = 20.sp, lineHeight = 26.sp)
+    val body = TextStyle(fontFamily = AppFontFamily, fontWeight = FontWeight.Normal, fontSize = 16.sp, lineHeight = 24.sp)
+    val label = TextStyle(fontFamily = AppFontFamily, fontWeight = FontWeight.Medium, fontSize = 14.sp, lineHeight = 20.sp)
+    val caption = TextStyle(fontFamily = AppFontFamily, fontWeight = FontWeight.Normal, fontSize = 12.sp, lineHeight = 16.sp)
 }
 
 /** The text styles mapped onto Material 3 type roles, so stock components use them. */

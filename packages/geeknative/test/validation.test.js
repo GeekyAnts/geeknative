@@ -37,9 +37,34 @@ const cases = [
     /"android" must be a Material 3 type style/,
   ],
   [
-    'a custom font family',
-    (c) => editJson(path.join(c, 'tokens.json'), (t) => (t.font.family = 'Inter')),
-    /isn't supported yet/,
+    'a font file that is missing',
+    (c) => editJson(path.join(c, 'tokens.json'), (t) => (t.font.files['400'] = 'Inter-Thin.ttf')),
+    /contracts\/fonts\/Inter-Thin\.ttf is missing \(font\.files\["400"\]\)/,
+  ],
+  [
+    'a font file listed under the wrong weight',
+    (c) => editJson(path.join(c, 'tokens.json'), (t) => (t.font.files['500'] = 'Inter-Regular.ttf')),
+    /Inter-Regular\.ttf has weight 400, but font\.files lists it under "500"/,
+  ],
+  [
+    'a font family that does not match its files',
+    (c) => editJson(path.join(c, 'tokens.json'), (t) => (t.font.family = 'Roboto')),
+    /Inter-Regular\.ttf is "Inter", but font\.family is "Roboto"/,
+  ],
+  [
+    'a type weight with no font file',
+    (c) => editJson(path.join(c, 'tokens.json'), (t) => delete t.font.files['600']),
+    /no file for weight 600, which typography uses/,
+  ],
+  [
+    'font files with the system family',
+    (c) => editJson(path.join(c, 'tokens.json'), (t) => (t.font = { family: 'system', files: { 400: 'Inter-Regular.ttf' } })),
+    /font\.files only applies to a shared family/,
+  ],
+  [
+    'a type size that disagrees with its Dynamic Type style under the system font',
+    (c) => editJson(path.join(c, 'tokens.json'), (t) => (t.font = { family: 'system' })),
+    /typography\.body has size 16, but its iOS style "body" is 17pt/,
   ],
   [
     'a badly formed string key',
