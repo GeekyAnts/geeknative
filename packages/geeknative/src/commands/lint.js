@@ -52,14 +52,17 @@ export function lintFindings(root, { platforms = [...PLATFORMS], specs = true } 
 /**
  * Runs the lint and prints its findings. Returns false when there are errors.
  * @param {string} root
- * @param {{ platforms?: Platform[], specs?: boolean, quiet?: boolean }} [options]
+ * @param {{ platforms?: Platform[], specs?: boolean }} [options]
  */
 export function lint(root, options = {}) {
   const findings = lintFindings(root, options)
   const errors = findings.filter((f) => f.level === 'error')
   const warnings = findings.filter((f) => f.level === 'warn')
+  const platforms = options.platforms ?? [...PLATFORMS]
+  const specs = options.specs ?? true
   if (!findings.length) {
-    log.ok('lint', 'no hardcoded text, unknown test IDs, centered titles or stale specs')
+    if (specs) log.ok('lint', 'no hardcoded text, unknown test IDs, centered titles or stale specs')
+    else log.ok('lint', `no hardcoded text, unknown test IDs or centered titles in ${platforms.join(', ')} ${color.dim('(specs are checked by make check and make lint)')}`)
     return true
   }
   const summary = [errors.length && `${errors.length} error${errors.length > 1 ? 's' : ''}`, warnings.length && `${warnings.length} warning${warnings.length > 1 ? 's' : ''}`]
@@ -69,8 +72,14 @@ export function lint(root, options = {}) {
   for (const f of [...errors, ...warnings]) {
     log.detail(`${f.level === 'error' ? color.red('✖') : color.yellow('!')} ${f.file}${f.line ? `:${f.line}` : ''} ${color.dim(`[${f.rule}]`)} ${f.message}`)
   }
+  if (findings.some((f) => SPEC_RULES.has(f.rule))) {
+    log.detail(color.dim('status and parity findings are fixed in spec/ by whoever owns the specs (the lead), not in app code: `make check-<platform>` checks only the code.'))
+  }
   return errors.length === 0
 }
+
+/** Rules about the specs rather than any app's code. */
+const SPEC_RULES = new Set(['status', 'parity'])
 
 // ---------- Code ----------
 
