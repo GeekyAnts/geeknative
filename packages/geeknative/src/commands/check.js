@@ -5,7 +5,7 @@ import { readConfig } from '../codegen/config.js'
 import { dotenvForChild, requestedEnvironment } from '../lib/env.js'
 import { runLogged } from '../lib/exec.js'
 import { CliError, color, log } from '../lib/log.js'
-import { createProgress, GRADLE_PHASES, XCODE_PASSED, XCODE_PHASES } from '../lib/progress.js'
+import { createProgress, GRADLE_PHASES, XCODE_PASSED, XCODE_PHASES, XCODE_STARTED } from '../lib/progress.js'
 import { findAndroidSdk, pickSimulator, writeLocalProperties } from '../lib/toolchains.js'
 import { gen } from './gen.js'
 import { lint } from './lint.js'
@@ -91,7 +91,7 @@ const CHECKS = {
     if (!simulator) return fail('no iPhone simulator found; run `make doctor`', [], root, logFile)
     const firstBuild = !existsSync(path.join(root, 'apps', 'ios', '.build'))
     log.step('ios', `building and testing on ${simulator.name} (${simulator.runtime})…${firstBuild ? ' (first build: allow a few minutes)' : ''}`)
-    const progress = createProgress({ phases: XCODE_PHASES, passed: XCODE_PASSED })
+    const progress = createProgress({ phases: XCODE_PHASES, passed: XCODE_PASSED, started: XCODE_STARTED })
     const { code, lines } = await runLogged(
       'xcodebuild',
       [
