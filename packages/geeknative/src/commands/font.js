@@ -11,9 +11,9 @@ const SOURCE = 'contracts/tokens.json'
 /** @type {Record<number, string>} */
 const WEIGHT_NAMES = { 100: 'Thin', 200: 'ExtraLight', 300: 'Light', 400: 'Regular', 500: 'Medium', 600: 'SemiBold', 700: 'Bold', 800: 'ExtraBold', 900: 'Black' }
 
-// Google Fonts serves one complete TrueType file per weight to browsers that predate WOFF2, which
-// is the file every platform can use.
-const LEGACY_BROWSER = 'Mozilla/5.0 (Windows NT 6.1; rv:40.0) Gecko/20100101 Firefox/40.0'
+// Google Fonts picks the file format from the user agent: a browser it knows gets WOFF2, anything
+// else gets one complete TrueType file per weight, which is the file every platform can use.
+const USER_AGENT = 'geeknative'
 const GOOGLE_FONTS_REPO = 'https://raw.githubusercontent.com/google/fonts/main'
 const LICENSES = [
   ['ofl', 'OFL.txt'],
@@ -100,7 +100,7 @@ async function fetchOk(fetchImpl, url, init) {
 /** @param {typeof fetch} fetchImpl @param {string} family @param {number[]} weights */
 async function fetchCss(fetchImpl, family, weights) {
   const url = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family).replace(/%20/g, '+')}:wght@${weights.join(';')}`
-  const response = await fetchImpl(url, { headers: { 'User-Agent': LEGACY_BROWSER } })
+  const response = await fetchImpl(url, { headers: { 'User-Agent': USER_AGENT } })
   if (response.status === 400) {
     throw new CliError(
       `"${family}" is not on Google Fonts, or not with weights ${weights.join(', ')}. Check the name at https://fonts.google.com, ` +
@@ -108,7 +108,11 @@ async function fetchCss(fetchImpl, family, weights) {
     )
   }
   if (!response.ok) throw new CliError(`Google Fonts answered ${response.status} for ${url}.`)
-  return response.text()
+  const css = await response.text()
+  if (!css.includes("format('truetype')")) {
+    throw new CliError(`Google Fonts didn't offer TrueType files for ${family}. Download its .ttf files from ${specimen(family)} into contracts/fonts and list them under font.files.`)
+  }
+  return css
 }
 
 /** The license text from the google/fonts repository, or null. @param {typeof fetch} fetchImpl @param {string} family */

@@ -21,7 +21,7 @@ function fakeGoogleFonts() {
     const url = String(input)
     calls.push(url)
     if (url.startsWith('https://fonts.googleapis.com/css2?family=Inter:wght@')) {
-      assert.match(String(new Headers(init?.headers).get('user-agent')), /Windows NT 6\.1/, 'asks as a legacy browser to get TrueType files')
+      assert.equal(new Headers(init?.headers).get('user-agent'), 'geeknative', 'an unknown user agent gets TrueType files')
       const css = url
         .split('wght@')[1]
         .split(';')
