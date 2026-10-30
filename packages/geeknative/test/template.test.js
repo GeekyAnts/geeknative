@@ -75,3 +75,18 @@ test('the same storage key and values are used on every platform', () => {
     for (const value of ['system', 'light', 'dark']) assert.match(source, new RegExp(`\\b${value}\\b`))
   }
 })
+
+test('build defaults name environments that contracts/config.json declares', () => {
+  const { environments } = readJson(path.join(TEMPLATE, 'contracts', 'config.json'))
+  const read = (/** @type {string} */ file) => readFileSync(path.join(TEMPLATE, file), 'utf8')
+  const gradle = read('apps/android/app/build.gradle.kts')
+  // Debug builds use development and release builds use production, on every platform.
+  for (const [env, xcconfig, fallback] of [
+    ['development', 'Debug', 'development'],
+    ['production', 'Release', 'production'],
+  ]) {
+    assert.ok(environments.includes(env), `config.json declares ${env}`)
+    assert.match(read(`apps/ios/Config/${xcconfig}.xcconfig`), new RegExp(`^APP_ENVIRONMENT = ${env}$`, 'm'))
+    assert.ok(gradle.includes(`getOrElse("${fallback}")`), `Android ${xcconfig} defaults to ${env}`)
+  }
+})

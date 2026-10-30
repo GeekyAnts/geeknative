@@ -11,6 +11,10 @@ val identity = Properties().apply {
     load(providers.fileContents(layout.projectDirectory.file("identity.properties")).asText.get().reader())
 }
 
+// The environment from contracts/config.json this build targets: development for debug builds,
+// production for release builds. Override with: ./gradlew -PappEnvironment=staging
+val appEnvironment = providers.gradleProperty("appEnvironment")
+
 android {
     // The Kotlin package stays "app" in every project; the app's identity is applicationId.
     namespace = "app"
@@ -27,8 +31,12 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "APP_ENVIRONMENT", "\"${appEnvironment.getOrElse("development")}\"")
+        }
         release {
             isMinifyEnabled = false
+            buildConfigField("String", "APP_ENVIRONMENT", "\"${appEnvironment.getOrElse("production")}\"")
         }
     }
 
@@ -39,6 +47,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true // for BuildConfig.APP_ENVIRONMENT, read by the generated AppEnvironment
     }
 
     testOptions {
