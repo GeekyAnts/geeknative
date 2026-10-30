@@ -51,7 +51,9 @@ android {
     }
 
     testOptions {
-        unitTests.isReturnDefaultValues = true
+        // Off, so a unit test that calls an Android API without Robolectric fails loudly instead of
+        // getting silent defaults (null, 0, false) from stubs like org.json. Use Robolectric for those tests.
+        unitTests.isReturnDefaultValues = false
         unitTests.isIncludeAndroidResources = true // for Robolectric UI tests
     }
 }
