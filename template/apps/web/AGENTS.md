@@ -6,8 +6,8 @@ Read the root AGENTS.md first. This file covers how the web app is built.
 ## Stack
 
 - React 19 and TanStack Start (server rendering), with TanStack Router file routes and TanStack Query.
-- Tailwind CSS v4 with the generated design tokens, typeface and icons (no icon library: `generated/icons.tsx` holds the drawings).
-- TypeScript (strict), Vite, Vitest.
+- Tailwind CSS v4 with the generated design tokens, and Lucide icons.
+- TypeScript (strict), Vite, Vitest. Tests run in Node; a test that renders into a DOM starts with `// @vitest-environment happy-dom` and renders with `react-dom/client` inside `act` (see features/home/homeEntry.test.tsx).
 - Supports Safari 16.4+, Chrome 111+ and Firefox 128+ (Tailwind v4's minimum).
 
 ## Layout
@@ -48,6 +48,7 @@ Follow features/settings as the reference implementation.
 ## Rules
 
 - Never hardcode user-facing text, colors or spacing. Add them to contracts/ and run `make gen`. Use token classes (`bg-surface`, `p-lg`), not arbitrary values (`bg-[#fff]`, `p-[13px]`).
+- The browser tab title is web chrome, like the iOS navigation bar: build it in a route's `head` from the screen's title string and `AppIdentity.name` (`${strings.notesTitle} · ${AppIdentity.name}`). Its separator is exempt from the no-literal-text rule. All other user-visible text still comes from contracts/.
 - Server functions and API routes are only for web-only concerns (rendering, cookies, SEO). Logic the mobile apps need too goes through repositories, so a future backend can serve all three apps.
 - Never import `generated/secrets.server` from a component: secrets are server-only and the module throws in the browser.
 - Code that uses browser APIs (localStorage, window) must also run safely during server rendering.
