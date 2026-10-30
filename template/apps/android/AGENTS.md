@@ -8,6 +8,7 @@ Read the root AGENTS.md first. This file covers how the Android app is built.
 - Kotlin and Jetpack Compose with Material 3, Android 7.0 (API 24) and later (Navigation 3's minimum). Compiles against API 37.
 - Navigation 3, ViewModel with StateFlow, Kotlin coroutines, DataStore.
 - Dependencies are wired by hand in `AppContainer`: no DI framework.
+- Core library desugaring is on, so `java.time` (LocalDate, LocalTime, ...) works down to API 24.
 - AGP 9 with built-in Kotlin. Gradle downloads JDK 21 for the build (gradle/gradle-daemon-jvm.properties).
 - JUnit and kotlinx-coroutines-test for unit tests; Compose UI tests run on the JVM with Robolectric (`@RunWith(RobolectricTestRunner::class)`), so `make check-android` needs no emulator. Plain unit tests have no Android APIs: calling one (`org.json`, `android.util.Log`, ...) throws rather than returning a default, so test such code with Robolectric or use a JVM library such as kotlinx-serialization-json.
 
