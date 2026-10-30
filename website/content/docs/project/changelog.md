@@ -35,6 +35,24 @@ description: Release notes for geeknative.
   - **`geeknative lint`** (and `make lint`, run by `make check`): fails on user-facing text in code, test IDs no spec lists, centered titles, a `planned` status with passing tests and a stale `spec/parity.md`, and warns about spec test IDs a finished app never uses and changes to only some apps.
   - **Pinned CLI:** a project created from a geeknative checkout is pinned to a snapshot of it (`.geeknative/geeknative-<version>-<commit>.tgz`) instead of a symlink that followed whatever branch the checkout had open. `create --link` keeps the old behavior for working on geeknative. `make doctor` says where the CLI comes from, and `make doctor FIX=1` pins a linked project.
   - **Outside the project folder:** AGENTS.md and the Claude Code guide explain that the hooks and platform agents only load when a session starts in the project folder, and `make check` now enforces what the hooks did.
+- **Fixes from building a second app (Meetly, a meeting calendar):**
+  - **Plural `zero` forms** are used for a count of 0 on every platform. iOS did this already; the web's `plural()` now does, and Android gets a generated `AppPlurals` (use it instead of `pluralStringResource`). Before, "No meetings" on iOS was "0 meetings" on Android and the web.
+  - **Android `java.time`:** the template enables core library desugaring, so date and time code works on API 24 and 25.
+  - **Web content width:** a `Page` component centers a screen's content in a readable column (or uses the full width with `width="full"`), and the template's Home and Settings use it. Forms no longer stretch across the window or hug its left edge.
+  - **Parity** counts UI tests that render through a shared helper (web tests in happy-dom or jsdom, Android tests that find Compose nodes).
+  - **Lint:**
+    - the web text rules apply to `.tsx` only, so TypeScript generics are no longer flagged;
+    - only preview blocks are skipped, not the code after them;
+    - test IDs passed to helper components are checked;
+    - test-only changes don't count as one-platform work;
+    - `lint ios`, `lint android` and `lint web` check one app's code;
+    - a platform check says it skipped the specs, and spec findings say they belong to the lead.
+  - **Progress:** the heartbeat names the test that's running, so slow iOS UI tests don't look like a hang.
+  - **Template:**
+    - a shared `renderApp` helper for web UI tests;
+    - iOS Settings tests that clean up their UserDefaults suites;
+    - the web docs recommend the native `<dialog>`;
+    - the Android docs explain zeroing Material's own elevation under token shadows.
 - **Applying these to an existing project:** run `make doctor FIX=1` from a checkout to pin the CLI, then `make gen` (new `tokens.css` mappings) and `make parity`, and fix what `make lint` reports. The motion and elevation tokens, the full-width web shell, the iOS UI test target and the Android test setting belong to your project: copy them from the template if you want them.
 
 ## 0.1.0 (2026-10-10)
