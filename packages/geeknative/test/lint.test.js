@@ -145,6 +145,16 @@ test('lint: a test ID no spec lists is an error, and a listed one a done app nev
   assert.match(findings[1].message, /"order\.line\.<productId>" isn't used in the web app/)
 })
 
+test('lint: test IDs passed to helper components are checked too', () => {
+  const root = cleanProject()
+  write(root, 'apps/ios/App/Features/Order/Row.swift', 'SummaryRow(title: Strings.orderTotal, testID: "order.grandTotal")\nlet zone = TimeZone(identifier: "UTC")')
+  write(root, 'apps/android/app/src/main/kotlin/app/features/order/Row.kt', 'SummaryRow(label = stringResource(R.string.order_total), testTag = "order.grandTotal")')
+  write(root, 'apps/web/src/features/order/Row.tsx', '<SummaryRow label={strings.orderTotal} testId="order.grandTotal" />')
+  const unknown = lintFindings(root).filter((f) => f.rule === 'test-id' && f.level === 'error')
+  assert.equal(unknown.length, 3)
+  for (const f of unknown) assert.match(f.message, /"order\.grandTotal" isn't listed/)
+})
+
 test('lint: a fully dynamic prefix still matches a listed ID', () => {
   const root = cleanProject()
   write(root, 'apps/android/app/src/main/kotlin/app/features/order/Stepper.kt', 'Modifier.testTag("$prefix.total")')
