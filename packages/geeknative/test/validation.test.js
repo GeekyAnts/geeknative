@@ -1,6 +1,6 @@
 // Contract mistakes must fail with a message an agent can act on.
 import assert from 'node:assert/strict'
-import { renameSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdirSync, renameSync, rmSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { test } from 'node:test'
 import { generate } from '../src/codegen/index.js'
@@ -82,14 +82,33 @@ const cases = [
     /strings\/en\.json is missing/,
   ],
   [
-    'an icon with an invalid Material name',
-    (c) => editJson(path.join(c, 'icons.json'), (i) => (i.star = { ios: 'star', android: 'Star', web: 'Star' })),
-    /"star" needs "android"/,
+    'an icon that is not in the Lucide catalog',
+    (c) => editJson(path.join(c, 'icons.json'), (i) => (i.star = 'sparkly-star')),
+    /"sparkly-star" is not a Lucide icon/,
   ],
   [
-    'an icon missing its web name',
-    (c) => editJson(path.join(c, 'icons.json'), (i) => (i.star = { ios: 'star', android: 'Icons.Filled.Star' })),
-    /"star" needs "web"/,
+    'an icon family geeknative does not ship',
+    (c) => editJson(path.join(c, 'icons.json'), (i) => (i.$family = 'material')),
+    /"\$family" must be "lucide"/,
+  ],
+  [
+    'an icon with both a catalog name and an SVG file',
+    (c) => editJson(path.join(c, 'icons.json'), (i) => (i.star = { icon: 'star', svg: 'star.svg' })),
+    /"star" must be a lucide icon name/,
+  ],
+  [
+    'an icon whose SVG file is missing',
+    (c) => editJson(path.join(c, 'icons.json'), (i) => (i.logo = { svg: 'logo.svg' })),
+    /contracts\/icons\/logo\.svg is missing/,
+  ],
+  [
+    'an icon SVG with features icons can\'t use',
+    (c) => {
+      mkdirSync(path.join(c, 'icons'))
+      writeFileSync(path.join(c, 'icons', 'logo.svg'), '<svg viewBox="0 0 24 24"><defs/><path d="M0 0h1"/></svg>')
+      editJson(path.join(c, 'icons.json'), (i) => (i.logo = { svg: 'logo.svg' }))
+    },
+    /contracts\/icons\/logo\.svg uses <defs>/,
   ],
   [
     'an app ID that is not reverse-DNS',

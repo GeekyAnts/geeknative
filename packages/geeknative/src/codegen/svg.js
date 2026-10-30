@@ -202,12 +202,13 @@ function overrides(p, color) {
 /**
  * A normalized SVG document, used for the Xcode asset catalog (which renders it as a template image).
  * @param {Shape} shape
+ * @param {string} banner
  */
-export function svgDocument(shape) {
+export function svgDocument(shape, banner) {
   const black = '#000000'
   const body = shape.paths.map((p) => `  <path d="${p.d}"${overrides(p, black)}/>`).join('\n')
   return (
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${shape.size}" height="${shape.size}" viewBox="0 0 ${shape.size} ${shape.size}"` +
+    `<!-- ${banner} -->\n<svg xmlns="http://www.w3.org/2000/svg" width="${shape.size}" height="${shape.size}" viewBox="0 0 ${shape.size} ${shape.size}"` +
     ` fill="none" stroke="${black}" stroke-width="${num(shape.strokeWidth)}" stroke-linecap="round" stroke-linejoin="round">\n${body}\n</svg>\n`
   )
 }

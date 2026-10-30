@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { writeFileSync } from 'node:fs'
+import { mkdirSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { test } from 'node:test'
 import { generate, generateAll } from '../src/codegen/index.js'
@@ -19,6 +19,7 @@ test('every app gets its generated files', () => {
     'apps/ios/App/Generated/Strings.swift',
     'apps/ios/App/Generated/Localizable.xcstrings',
     'apps/ios/App/Generated/Icons.swift',
+    'apps/ios/App/Generated/Icons.xcassets/icon/settings.imageset/settings.svg',
     'apps/ios/App/Generated/AppConfig.swift',
     'apps/ios/App/Generated/Colors.xcassets/AccentColor.colorset/Contents.json',
     'apps/android/app/identity.properties',
@@ -29,10 +30,11 @@ test('every app gets its generated files', () => {
     'apps/android/app/src/main/res/values/generated_strings.xml',
     'apps/android/app/src/main/res/values/generated_colors.xml',
     'apps/android/app/src/main/res/values-night/generated_colors.xml',
+    'apps/android/app/src/main/res/drawable/generated_icon_settings.xml',
     'apps/web/src/generated/app.ts',
     'apps/web/src/generated/tokens.css',
     'apps/web/src/generated/strings.ts',
-    'apps/web/src/generated/icons.ts',
+    'apps/web/src/generated/icons.tsx',
     'apps/web/src/generated/config.ts',
   ]) {
     assert.ok(paths.includes(expected), `missing ${expected}`)
@@ -174,16 +176,49 @@ test('tokens: a color without a dark value uses its light value in dark mode', (
   assert.match(outputOf(outputs, 'Tokens.kt'), /val success: Color,/)
 })
 
-test('icons: SF Symbols, Material icons and Lucide', () => {
+test('icons: one Lucide drawing reaches every platform', () => {
   const outputs = generate(TEMPLATE)
-  assert.match(outputOf(outputs, 'Icons.swift'), /static let settings = "gearshape"/)
+  const gear = 'M9 12a3 3 0 1 0 6 0a3 3 0 1 0 -6 0' // the circle in Lucide's "settings", as a path
+
+  assert.match(outputOf(outputs, 'Icons.swift'), /static let settings = ImageResource\(name: "icon\/settings", bundle: \.main\)/)
+  assert.match(outputOf(outputs, 'icon/settings.imageset/settings.svg'), new RegExp(`stroke="#000000" stroke-width="2"[\\s\\S]*<path d="${gear}"/>`))
+  const imageset = JSON.parse(outputOf(outputs, 'icon/back.imageset/Contents.json'))
+  assert.equal(imageset.properties['template-rendering-intent'], 'template')
+  assert.equal(imageset.properties['preserves-vector-representation'], true)
+  assert.equal(imageset.images[0]['language-direction'], 'left-to-right', 'back flips in right-to-left layouts')
+  assert.equal(JSON.parse(outputOf(outputs, 'Icons.xcassets/icon/Contents.json')).properties['provides-namespace'], true)
+
   const kotlin = outputOf(outputs, 'Icons.kt')
-  assert.match(kotlin, /import androidx\.compose\.material\.icons\.automirrored\.filled\.ArrowBack/)
-  assert.match(kotlin, /import androidx\.compose\.material\.icons\.filled\.Settings/)
-  assert.match(kotlin, /val back: ImageVector get\(\) = Icons\.AutoMirrored\.Filled\.ArrowBack/)
-  const ts = outputOf(outputs, 'generated/icons.ts')
-  assert.match(ts, /import \{ ArrowLeft, House, Settings \} from 'lucide-react'/)
-  assert.match(ts, /settings: Settings,/)
+  assert.match(kotlin, /import app\.R/)
+  assert.match(kotlin, /val settings: ImageVector\n\s+@Composable get\(\) = ImageVector\.vectorResource\(R\.drawable\.generated_icon_settings\)/)
+  assert.doesNotMatch(kotlin, /material\.icons/)
+  const back = outputOf(outputs, 'drawable/generated_icon_back.xml')
+  assert.match(back, /android:autoMirrored="true"/)
+  assert.match(back, /android:strokeColor="#FF000000" android:strokeWidth="2" android:strokeLineCap="round"/)
+  assert.doesNotMatch(outputOf(outputs, 'drawable/generated_icon_settings.xml'), /autoMirrored/)
+  assert.match(outputOf(outputs, 'drawable/generated_icon_settings.xml'), new RegExp(`android:pathData="${gear}"`))
+
+  const tsx = outputOf(outputs, 'generated/icons.tsx')
+  assert.doesNotMatch(tsx, /lucide-react/)
+  assert.match(tsx, /settings: \(props: IconProps\) => \(\n\s+<Icon box=\{24\} line=\{2\} \{\.\.\.props\}>/)
+  assert.match(tsx, /back: \(props: IconProps\) => \(\n\s+<Icon box=\{24\} line=\{2\} mirrored \{\.\.\.props\}>/)
+  assert.match(tsx, new RegExp(`<path d="${gear}" />`))
+})
+
+test('icons: a custom SVG in contracts/icons is drawn like any other icon', () => {
+  const dir = tempProject()
+  mkdirSync(path.join(dir, 'contracts', 'icons'))
+  writeFileSync(
+    path.join(dir, 'contracts', 'icons', 'logo.svg'),
+    '<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" rx="8"/></svg>',
+  )
+  editJson(path.join(dir, 'contracts', 'icons.json'), (icons) => {
+    icons.logo = { svg: 'logo.svg' }
+  })
+  const outputs = generate(dir)
+  assert.match(outputOf(outputs, 'icon/logo.imageset/logo.svg'), /viewBox="0 0 48 48"[\s\S]*<path d="M8 0h32a8 8 0 0 1 8 8[^"]*" fill="#000000" stroke="none"\/>/)
+  assert.match(outputOf(outputs, 'drawable/generated_icon_logo.xml'), /android:viewportWidth="48"[\s\S]*android:fillColor="#FF000000" \/>/)
+  assert.match(outputOf(outputs, 'generated/icons.tsx'), /logo: \(props: IconProps\) => \(\n\s+<Icon box=\{48\} line=\{2\}/)
 })
 
 test('config: environments and typed values reach every platform', () => {
