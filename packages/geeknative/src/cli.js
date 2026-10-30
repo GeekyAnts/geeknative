@@ -15,6 +15,7 @@ const HELP = `${color.bold('geeknative')}: one prompt, three native apps (SwiftU
 Usage: geeknative <command>
 
   create <folder>      Create a project. Options: --name "My App" --id com.acme.myapp --no-install --no-git
+                       (from a geeknative checkout, --link follows the checkout instead of pinning a snapshot)
   gen                  Regenerate platform code from contracts/
   font <family>        Switch the shared typeface: a Google Fonts family ("Open Sans") or system
   check [targets]      Verify contracts, then build and test. Targets: all (default), contracts, ios, android, web
@@ -34,6 +35,7 @@ export async function main(argv) {
       id: { type: 'string' },
       'no-install': { type: 'boolean' },
       'no-git': { type: 'boolean' },
+      link: { type: 'boolean' },
       fix: { type: 'boolean' },
       help: { type: 'boolean', short: 'h' },
       version: { type: 'boolean', short: 'v' },
@@ -46,7 +48,7 @@ export async function main(argv) {
 
   switch (command) {
     case 'create':
-      return create(rest[0], { name: values.name, id: values.id, install: !values['no-install'], git: !values['no-git'] })
+      return create(rest[0], { name: values.name, id: values.id, install: !values['no-install'], git: !values['no-git'], link: values.link })
     case 'gen':
       return void gen(findProjectRoot())
     case 'font':
