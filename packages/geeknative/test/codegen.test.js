@@ -132,6 +132,40 @@ test('strings: plurals and extra locales', () => {
   assert.match(ts, /export const locales = \["en","fr","pt-BR","zh-Hans"\] as const/)
 })
 
+test('strings: a zero form is used for a count of 0 on every platform, even in English', async () => {
+  const dir = tempProject()
+  editJson(path.join(dir, 'contracts', 'strings', 'en.json'), (en) => {
+    en['events.count'] = { zero: 'No events', one: '{count} event', other: '{count} events' }
+    en['notes.count'] = { one: '{count} note', other: '{count} notes' }
+  })
+  const outputs = generate(dir)
+
+  // Android: <plurals> ignores "zero" in English, so AppPlurals picks a separate string for 0.
+  const xml = outputOf(outputs, 'values/generated_strings.xml')
+  assert.match(xml, /<string name="events_count_zero">No events<\/string>/)
+  assert.doesNotMatch(xml, /notes_count_zero/, 'only plurals with a zero form get one')
+  const kotlin = outputOf(outputs, 'AppPlurals.kt')
+  assert.match(kotlin, /fun eventsCount\(count: Int\): String =\n\s+if \(count == 0\) stringResource\(R\.string\.events_count_zero, count\)/)
+  assert.match(kotlin, /fun notesCount\(count: Int\): String = pluralStringResource\(R\.plurals\.notes_count, count, count\)/)
+
+  // Web: Intl.PluralRules has no zero category in English, so plural() checks for 0 itself.
+  const file = path.join(dir, 'strings.ts')
+  writeFileSync(file, outputOf(outputs, 'generated/strings.ts'))
+  const { strings } = await import(file)
+  assert.equal(strings.eventsCount(0), 'No events')
+  assert.equal(strings.eventsCount(1), '1 event')
+  assert.equal(strings.eventsCount(2), '2 events')
+  assert.equal(strings.notesCount(0), '0 notes')
+
+  // iOS: the string catalog already uses "zero" for 0 in every language.
+  const catalog = JSON.parse(outputOf(outputs, 'Localizable.xcstrings'))
+  assert.equal(catalog.strings['events.count'].localizations.en.variations.plural.zero.stringUnit.value, 'No events')
+})
+
+test('strings: without plurals, no AppPlurals.kt is generated', () => {
+  assert.ok(!generate(TEMPLATE).some((o) => o.path.endsWith('AppPlurals.kt')))
+})
+
 test('tokens: colors, spacing, radii and type on every platform', () => {
   const outputs = generate(TEMPLATE)
 
