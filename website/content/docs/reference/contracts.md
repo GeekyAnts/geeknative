@@ -171,13 +171,42 @@ Debug builds use `development` and release builds use `production`. To build ano
 
 An unknown environment name fails when the app starts, with a message listing the valid names.
 
+### Secrets
+
+Secrets are declared by name. Their values never go in `contracts/`.
+
+```json
+{
+  "secrets": {
+    "mapsApiKey": { "type": "string", "description": "Google Maps SDK key" }
+  }
+}
+```
+
+A secret's name becomes a key in `.env` at the project root: `mapsApiKey` is `MAPS_API_KEY`. `type` must be `"string"`. A secret with a `value` field is rejected, so a real key can't be committed by mistake. There is one value per key, not one per environment.
+
+`make gen` reads `.env` and generates:
+
+| Platform | Generated | Committed |
+|---|---|---|
+| iOS | `AppSecrets.mapsApiKey`, with the value written into `App/Generated/AppSecrets.swift` | No, it is git-ignored |
+| Android | `AppSecrets.mapsApiKey`, with the value written into `generated/AppSecrets.kt` | No, it is git-ignored |
+| Web | `AppSecrets.mapsApiKey` from `src/generated/secrets.server.ts`, which reads `process.env.MAPS_API_KEY` on the server | Yes, it holds names only |
+
+The web module throws if it runs in the browser. Use it only in server functions and API routes.
+
+`make gen` also writes `.env.example`, which lists every key and is committed. Copy it to `.env` and fill it in. If `.env` is missing a key, the value is empty and `make gen` prints a warning, so a fresh clone still builds. `make doctor` reports the same thing.
+
+Mobile apps embed the values they are built with, so treat the built app as readable by anyone who has it. Keep keys that must stay private on a server.
+
 ## All generated files
 
 | Platform | Files |
 |---|---|
-| iOS | `apps/ios/App/Generated/`: `AppIdentity.swift`, `AppConfig.swift`, `Tokens.swift`, `Strings.swift`, `Icons.swift`, `Localizable.xcstrings`, `Colors.xcassets` (accent color); `apps/ios/Config/Identity.xcconfig` |
-| Android | `apps/android/app/src/main/kotlin/app/generated/`: `AppIdentity.kt`, `AppConfig.kt`, `Tokens.kt`, `Icons.kt`; `res/values/generated_colors.xml`, `res/values-night/generated_colors.xml`, `res/values*/generated_strings.xml`; `apps/android/app/identity.properties` |
-| Web | `apps/web/src/generated/`: `app.ts`, `config.ts`, `tokens.css`, `strings.ts`, `icons.ts` |
+| iOS | `apps/ios/App/Generated/`: `AppIdentity.swift`, `AppConfig.swift`, `AppSecrets.swift` (only with secrets), `Tokens.swift`, `Strings.swift`, `Icons.swift`, `Localizable.xcstrings`, `Colors.xcassets` (accent color); `apps/ios/Config/Identity.xcconfig` |
+| Project root | `.env.example` (only with secrets) |
+| Android | `apps/android/app/src/main/kotlin/app/generated/`: `AppIdentity.kt`, `AppConfig.kt`, `AppSecrets.kt` (only with secrets), `Tokens.kt`, `Icons.kt`; `res/values/generated_colors.xml`, `res/values-night/generated_colors.xml`, `res/values*/generated_strings.xml`; `apps/android/app/identity.properties` |
+| Web | `apps/web/src/generated/`: `app.ts`, `config.ts`, `secrets.server.ts` (only with secrets), `tokens.css`, `strings.ts`, `icons.ts` |
 
 ## Validation errors
 
@@ -187,5 +216,6 @@ Problems are reported with the file and field, so an agent can fix them directly
 ✖ contracts/tokens.json color.primary.light must be a hex color like "#4F46E5" or "#4F46E5CC" (got "#4F46E").
 ✖ contracts/strings/fr.json "settings.about.version" must use the same placeholders and plural shape as en.json.
 ✖ contracts/config.json values.apiBaseUrl is missing a value for "staging". Every value needs every environment.
+✖ contracts/config.json secrets.mapsApiKey has "value". Secrets are names only: put the value in .env as MAPS_API_KEY.
 ✖ contracts/icons.json "star" needs "android": a Material icon like "Icons.Filled.Settings" or "Icons.AutoMirrored.Filled.ArrowBack".
 ```
