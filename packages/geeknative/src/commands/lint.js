@@ -225,18 +225,19 @@ function collect(text, patterns) {
 
 /** Test IDs set in code, with "*" for interpolated parts. @type {Record<Platform, (text: string) => { id: string, index: number }[]>} */
 const TEST_IDS = {
+  // The modifier itself, or a helper's argument that passes an ID on to it (`testID: "..."`).
   ios: (text) =>
-    [...text.matchAll(new RegExp(`\\.accessibilityIdentifier\\(\\s*${SWIFT_STRING}`, 'g'))].map((m) => ({
+    [...text.matchAll(new RegExp(`(?:\\.accessibilityIdentifier\\(|\\b(?:testID|testId):)\\s*${SWIFT_STRING}`, 'g'))].map((m) => ({
       id: m[1].replace(/\\\((?:[^()]|\([^()]*\))*\)/g, '*'),
       index: m.index ?? 0,
     })),
   android: (text) =>
-    [...text.matchAll(new RegExp(`\\btestTag\\(\\s*${KOTLIN_STRING}`, 'g'))].map((m) => ({
+    [...text.matchAll(new RegExp(`(?:\\btestTag\\(|\\b(?:testTag|testId)\\s*=)\\s*${KOTLIN_STRING}`, 'g'))].map((m) => ({
       id: m[1].replace(/\$\{[^}]*\}|\$[A-Za-z_]\w*/g, '*'),
       index: m.index ?? 0,
     })),
   web: (text) =>
-    [...text.matchAll(/data-testid=(?:"([^"]*)"|'([^']*)'|\{\s*`([^`]*)`\s*\}|\{\s*['"]([^'"]*)['"]\s*\})/g)].map((m) => ({
+    [...text.matchAll(/\b(?:data-testid|testId|testID)=(?:"([^"]*)"|'([^']*)'|\{\s*`([^`]*)`\s*\}|\{\s*['"]([^'"]*)['"]\s*\})/g)].map((m) => ({
       id: (m.slice(1).find((g) => g !== undefined) ?? '').replace(/\$\{[^}]*\}/g, '*'),
       index: m.index ?? 0,
     })),
