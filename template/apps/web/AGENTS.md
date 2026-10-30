@@ -61,6 +61,7 @@ Follow features/settings as the reference implementation.
 
 - `make check-web`: type-check, unit tests and a production build. Full log: .geeknative/logs/web.log.
 - `make run-web`: dev server at http://localhost:3000.
+- To look at a production build: `npx vite build`, then (re)start `npx vite preview` in apps/web. A running preview server keeps serving the previous build's files, so restart it after every build.
 <!-- geeknative:end -->
 
 ## Project rules
