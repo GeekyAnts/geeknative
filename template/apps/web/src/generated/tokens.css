@@ -76,6 +76,23 @@
   --spacing-xl: 24px;
   --spacing-xxl: 32px;
 
+  /* w-md, max-w-md, ... stay Tailwind's container widths; use w-(--spacing-md) for a spacing-sized width */
+  --width-xs: var(--container-xs);
+  --min-width-xs: var(--container-xs);
+  --max-width-xs: var(--container-xs);
+  --width-sm: var(--container-sm);
+  --min-width-sm: var(--container-sm);
+  --max-width-sm: var(--container-sm);
+  --width-md: var(--container-md);
+  --min-width-md: var(--container-md);
+  --max-width-md: var(--container-md);
+  --width-lg: var(--container-lg);
+  --min-width-lg: var(--container-lg);
+  --max-width-lg: var(--container-lg);
+  --width-xl: var(--container-xl);
+  --min-width-xl: var(--container-xl);
+  --max-width-xl: var(--container-xl);
+
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 16px;
