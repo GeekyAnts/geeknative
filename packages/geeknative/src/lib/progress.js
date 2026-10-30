@@ -60,8 +60,11 @@ function interval(callback, ms) {
 
 /** Phases of `xcodebuild build` and `xcodebuild test`, from its plain (non -quiet) output. */
 export const XCODE_PHASES = [
+  // A cold build first precompiles the system modules it imports, which takes a while.
+  { match: /^(SwiftExplicitDependency\w*|ScanDependencies|PrecompileModule)\b/, phase: 'preparing modules' },
   { match: /^(SwiftDriver|SwiftCompile|CompileSwift|CompileC|CompileAssetCatalog|CompileXCStrings)\b/, phase: 'compiling' },
-  { match: /^Ld\b/, phase: 'linking' },
+  // Not the tiny __preview.dylib stub Xcode links before compiling anything.
+  { match: /^Ld (?!.*__preview\.dylib)/, phase: 'linking' },
   { match: /^(Testing started|Test [Ss]uite '.*' started|◇ Test run started)/, phase: 'running tests' },
 ]
 
