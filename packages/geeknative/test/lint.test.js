@@ -205,6 +205,10 @@ test('lint: uncommitted changes to only some apps are a warning', async () => {
   git('-c', 'user.email=t@example.com', '-c', 'user.name=t', 'commit', '-q', '-m', 'start')
   assert.deepEqual(summary(root), [])
 
+  write(root, 'apps/web/src/features/order/order.test.tsx', "test('AC-order-1: shows the number, more carefully', () => {})")
+  write(root, 'apps/ios/AppUITests/OrderUITests.swift', '// AC-order-1')
+  assert.deepEqual(summary(root), [], 'changes to tests alone are not a feature the other apps miss')
+
   write(root, 'apps/ios/App/Features/Order/OrderScreen.swift', 'Text(Strings.orderTitle).accessibilityIdentifier("order.number")\n.accessibilityIdentifier("order.total")\n.accessibilityIdentifier("order.line.\\(id)")')
   const platforms = lintFindings(root).filter((f) => f.rule === 'platforms')
   assert.equal(platforms.length, 1)
