@@ -52,7 +52,7 @@ How each platform builds the shared patterns. Add a row whenever a new pattern a
 | Pattern | iOS | Android | Web |
 |---|---|---|---|
 | Screen | Screen in a `NavigationStack`, with a navigation title | `Scaffold` with a `TopAppBar`, both on the `background` token (Material's `surface` role is mapped to `background`; only cards use `surface`) | Page in the app shell (header and main) |
-| Settings or form | `Form` with sections, on the system grouped background (not `background` or `surface`) | Column with section headers | Sections in cards |
+| Settings or form | `Form` with sections, on `background` with `surface` rows (`scrollContentBackground(.hidden)`) | Column with section headers | Sections in cards |
 | Single choice | Inline `Picker` (checkmarks) | Radio buttons | Radio group |
 | Card | `AppColors.surface` fill, `AppRadius.lg` corners | `Surface` in `AppTheme.colors.surface`, `AppRadius.lg` corners | `bg-surface rounded-lg` |
 | Primary action | `.borderedProminent` button | `Button` | `button` with `bg-primary text-on-primary` |
