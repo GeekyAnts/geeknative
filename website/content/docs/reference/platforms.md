@@ -9,7 +9,7 @@ Each app has its own `AGENTS.md` with these conventions, for agents working in t
 
 **Stack:** SwiftUI and Observation (`@Observable`), iOS 17 and later. Swift 6 language mode, with code isolated to the main actor by default: background work is marked `nonisolated` or `@concurrent` explicitly. Swift Testing for tests. No third-party dependencies.
 
-**Project:** `apps/ios/App.xcodeproj` uses synchronized folders for `App/` and `AppTests/`, so new files are picked up without editing `project.pbxproj`. Build settings live in `Config/*.xcconfig`:
+**Project:** `apps/ios/App.xcodeproj` uses synchronized folders for `App/`, `AppTests/` and `AppUITests/`, so new files are picked up without editing `project.pbxproj`. Build settings live in `Config/*.xcconfig`:
 
 | File | Contents |
 |---|---|
@@ -17,6 +17,7 @@ Each app has its own `AGENTS.md` with these conventions, for agents working in t
 | `Debug.xcconfig`, `Release.xcconfig` | Per-configuration settings, including the environment (`APP_ENVIRONMENT`) |
 | `App.xcconfig` | The app target: Info.plist keys, app icon, accent color. Set `DEVELOPMENT_TEAM` here to run on a device. |
 | `AppTests.xcconfig` | The unit test target |
+| `AppUITests.xcconfig` | The UI test target (XCUITest), which launches the app and taps through it. Not main-actor isolated by default, so UI test methods are marked `@MainActor`. |
 | `Identity.xcconfig` | Generated from `contracts/app.json` |
 
 **Patterns:** a screen is `struct NotesScreen: View`; it holds its `@Observable final class NotesViewModel` in `@State`; data goes through `protocol NotesRepository`; dependencies come from `@Environment(AppContainer.self)`. Navigation is one `NavigationStack` in `RootView`: add a case to `Route` and handle it in `navigationDestination`. Each screen has a `#Preview` using `AppContainer.preview()` or in-memory repositories.
@@ -25,7 +26,7 @@ Each app has its own `AGENTS.md` with these conventions, for agents working in t
 
 **Appearance:** `RootView` applies the chosen appearance to the windows themselves, so sheets and alerts follow it too.
 
-**Commands:** `make check-ios` (build and tests on a simulator), `make run-ios`, or `open apps/ios/App.xcodeproj`.
+**Commands:** `make check-ios` (build, unit tests and UI tests on a simulator), `make run-ios`, or `open apps/ios/App.xcodeproj`.
 
 **Gotchas:** adding a Swift package changes the project file, so the agent asks you first.
 
