@@ -70,18 +70,18 @@ Any family on [Google Fonts](https://fonts.google.com) works; a name it doesn't 
 npx geeknative check [all | contracts | ios | android | web ...]   # or: make check, make check-ios, ...
 ```
 
-Always validates the contracts first and fails if generated files are out of date. Then it builds and tests each requested app and prints one line per app. Full output goes to `.geeknative/logs/<platform>.log`; on failure, the most relevant lines are printed (up to 25). The exit code is 1 if anything failed.
+Always validates the contracts first and fails if generated files are out of date. Then it builds and tests each requested app. While iOS and Android build, it prints each phase as it starts (compiling, linking, running tests) and a line every 30 seconds with the time so far, then one result line per app. Full output goes to `.geeknative/logs/<platform>.log`; on failure, the most relevant lines are printed (up to 25). The exit code is 1 if anything failed.
 
 | Target | What runs |
 |---|---|
-| `ios` | `xcodebuild test` for the `App` scheme on an iPhone simulator, with derived data in `apps/ios/.build/`. macOS only. |
+| `ios` | `xcodebuild test` for the `App` scheme on an iPhone simulator, with derived data in `apps/ios/.build/` and parallel testing off, so it runs on the simulator itself instead of booting a copy. macOS only. |
 | `android` | `./gradlew :app:testDebugUnitTest :app:assembleDebug` in `apps/android`. Writes `local.properties` if it's missing. |
 | `web` | `npm run check` in `apps/web`: route generation and `tsc`, then Vitest, then a production build. Needs `npm install` first. |
 | `contracts` | Only the contract validation. |
 
 To build another environment, set `GEEKNATIVE_ENV` (or pass `ENV=staging` to `make`). iOS gets `APP_ENVIRONMENT=<name>`, Android gets `-PappEnvironment=<name>`, and the web build gets `VITE_APP_ENVIRONMENT=<name>`. A name `config.json` doesn't declare is an error. The web build also gets the values in `.env`, so server code can read `process.env`.
 
-The simulator is the one named in `GEEKNATIVE_IOS_SIMULATOR` (a name or UDID) if set, otherwise a booted iPhone, otherwise an iPhone on the newest iOS runtime.
+The simulator is the one named in `GEEKNATIVE_IOS_SIMULATOR` (a name or UDID) if set, otherwise an iPhone on the newest installed iOS runtime, preferring one that's already booted. An older booted simulator is never picked on its own, so every run uses the same iOS version.
 
 ## doctor
 
