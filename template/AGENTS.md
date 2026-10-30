@@ -92,6 +92,8 @@ Ask only when a wrong guess is expensive to undo: the data model, the navigation
 | `make check-ios`, `make check-android`, `make check-web` | One app; full logs go to .geeknative/logs/ |
 | `make run-ios`, `make run-android`, `make run-web` | Builds and launches one app |
 | `make parity` | Updates spec/parity.md |
+
+Add `ENV=staging` (or another environment from contracts/config.json) to `make check*` and `make run-*` to build that environment instead of the default.
 <!-- geeknative:end -->
 
 ## Project rules
