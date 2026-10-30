@@ -328,8 +328,9 @@ function lintChanges(root) {
   const tracked = capture('git', ['diff', '--name-only', '--relative', 'HEAD', '--', 'apps'], { cwd: root })
   const untracked = capture('git', ['ls-files', '--others', '--exclude-standard', '--', 'apps'], { cwd: root })
   if (tracked === null || untracked === null) return []
-  // Generated code and agent docs don't count as implementing a change.
-  const ignored = /(\/Generated\/|\/generated\/|\/generated_[^/]*\.xml$|Identity\.xcconfig$|identity\.properties$|AGENTS\.md$|CLAUDE\.md$)/
+  // Generated code, agent docs and tests don't count as implementing a change: improving one
+  // app's tests is not a feature the others are missing.
+  const ignored = /(\/Generated\/|\/generated\/|\/generated_[^/]*\.xml$|Identity\.xcconfig$|identity\.properties$|AGENTS\.md$|CLAUDE\.md$|^apps\/ios\/[^/]*Tests\/|^apps\/android\/app\/src\/(test|androidTest)\/|^apps\/web\/src\/testing\/|\.(test|spec)\.tsx?$)/
   const changed = `${tracked}\n${untracked}`.split('\n').filter((file) => file.startsWith('apps/') && !ignored.test(file))
   const touched = PLATFORMS.filter((p) => changed.some((file) => file.startsWith(`apps/${p}/`)))
   if (touched.length === 0 || touched.length === PLATFORMS.length) return []
