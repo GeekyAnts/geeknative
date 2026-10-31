@@ -298,6 +298,7 @@ export function tokenOutputs(tokens) {
     { path: `${OUT.androidRes}/values/generated_colors.xml`, content: androidColorResources(tokens, 'light') },
     { path: `${OUT.androidRes}/values-night/generated_colors.xml`, content: androidColorResources(tokens, 'dark') },
     { path: `${OUT.webGenerated}/tokens.css`, content: css(tokens) },
+    { path: `${OUT.webGenerated}/tokens.ts`, content: typescriptTokens(tokens) },
     ...fonts,
   ]
 }
@@ -361,6 +362,12 @@ ${numbers(tokens.size)}
 ${typeDoc}
 nonisolated enum AppTypography {
 ${type}
+}
+
+/// Each text style's size in points at the default text size, for showing or computing with it
+/// (the fonts above grow with Dynamic Type; these numbers don't).
+nonisolated enum AppTextSize {
+${Object.entries(tokens.typography).map(([name, t]) => `    static let ${name}: CGFloat = ${t.size}`).join('\n')}
 }
 
 /// The shared typeface's files, bundled from contracts/fonts. AppMain registers them at launch.
@@ -534,6 +541,11 @@ object AppTypography {
 ${styles}
 }
 
+/** Each text style's size, the same numbers iOS and the web get (AppTypography.x.fontSize holds it too). */
+object AppTextSize {
+${Object.entries(tokens.typography).map(([name, t]) => `    val ${name} = ${t.size}.sp`).join('\n')}
+}
+
 /** The text styles mapped onto Material 3 type roles, so stock components use them. */
 val AppMaterialTypography = Typography().copy(
 ${slots}
@@ -566,6 +578,25 @@ const cssColor = ([r, g, b, a]) => `#${hex2(r)}${hex2(g)}${hex2(b)}${a === 255 ?
 
 /** @param {number} px */
 const rem = (px) => `${Number((px / 16).toFixed(4))}rem`
+
+/**
+ * The numeric tokens for code that needs the numbers themselves (showing a size, computing a
+ * layout), as iOS and Android get them. Styling still uses the Tailwind classes from tokens.css.
+ * @param {Tokens} tokens
+ */
+function typescriptTokens(tokens) {
+  const group = (/** @type {string} */ name, /** @type {string} */ doc, /** @type {Record<string, number>} */ values) =>
+    `/** ${doc} */\nexport const ${name} = {\n${Object.entries(values).map(([key, value]) => `  ${key}: ${value},`).join('\n')}\n} as const\n`
+  const textSizes = Object.fromEntries(Object.entries(tokens.typography).map(([name, t]) => [name, t.size]))
+  return [
+    `// ${banner(SOURCE)}\n`,
+    group('AppSpacing', 'Spacing, in px.', tokens.spacing),
+    group('AppRadius', 'Corner radii, in px.', tokens.radius),
+    group('AppIconSize', 'Icon sizes, in px.', tokens.icon),
+    ...(Object.keys(tokens.size).length ? [group('AppSize', 'Fixed sizes (touch targets and the like), in px.', tokens.size)] : []),
+    group('AppTextSize', "Each text style's size in px at the default text size (styles themselves are the text-* classes).", textSizes),
+  ].join('\n')
+}
 
 /** Tailwind's container size names (--container-*), which width utilities also look up. */
 const TAILWIND_CONTAINERS = new Set(['3xs', '2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl'])
