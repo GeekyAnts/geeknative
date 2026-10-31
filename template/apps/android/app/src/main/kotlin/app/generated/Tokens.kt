@@ -154,6 +154,16 @@ object AppTypography {
     val caption = TextStyle(fontFamily = AppFontFamily, fontWeight = FontWeight.Normal, fontSize = 12.sp, lineHeight = 16.sp)
 }
 
+/** Each text style's size, the same numbers iOS and the web get (AppTypography.x.fontSize holds it too). */
+object AppTextSize {
+    val display = 34.sp
+    val headline = 28.sp
+    val title = 20.sp
+    val body = 16.sp
+    val label = 14.sp
+    val caption = 12.sp
+}
+
 /** The text styles mapped onto Material 3 type roles, so stock components use them. */
 val AppMaterialTypography = Typography().copy(
     displaySmall = AppTypography.display,
