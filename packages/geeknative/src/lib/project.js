@@ -1,5 +1,5 @@
 // @ts-check
-import { cpSync, existsSync, mkdtempSync, readFileSync, renameSync, rmSync } from 'node:fs'
+import { cpSync, existsSync, mkdtempSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -43,18 +43,44 @@ export function packCheckout(destDir) {
       if (existsSync(path.join(PACKAGE_DIR, part))) cpSync(path.join(PACKAGE_DIR, part), path.join(stage, part), { recursive: true })
     }
     copyTemplate(REPO_TEMPLATE_DIR, path.join(stage, 'template'), { keepGitignoreNames: true })
-    const packed = capture('npm', ['pack', '--ignore-scripts', '--silent', '--pack-destination', destDir], { cwd: stage })
-    const tarball = packed?.split('\n').pop()
-    if (!tarball) throw new CliError('Could not pack the local geeknative checkout with `npm pack`.')
 
     const commit = capture('git', ['rev-parse', '--short', 'HEAD'], { cwd: repo })
     const branch = capture('git', ['branch', '--show-current'], { cwd: repo }) || null
     const dirty = Boolean(capture('git', ['status', '--porcelain'], { cwd: repo }))
+    // Where the snapshot came from, so `pin` can find the checkout again and `doctor` can tell
+    // when it has moved on.
+    /** @type {SnapshotSource} */
+    const source = { checkout: repo, branch, commit, dirty }
+    writeFileSync(path.join(stage, SOURCE_FILE), `${JSON.stringify(source, null, 2)}\n`)
+    const pkg = JSON.parse(readFileSync(path.join(stage, 'package.json'), 'utf8'))
+    pkg.files = [...(pkg.files ?? []), SOURCE_FILE]
+    writeFileSync(path.join(stage, 'package.json'), `${JSON.stringify(pkg, null, 2)}\n`)
+
+    const packed = capture('npm', ['pack', '--ignore-scripts', '--silent', '--pack-destination', destDir], { cwd: stage })
+    const tarball = packed?.split('\n').pop()
+    if (!tarball) throw new CliError('Could not pack the local geeknative checkout with `npm pack`.')
     const file = `geeknative-${packageVersion()}${commit ? `-${commit}${dirty ? '-dirty' : ''}` : ''}.tgz`
     renameSync(path.join(destDir, tarball), path.join(destDir, file))
     return { file, commit, branch, dirty }
   } finally {
     rmSync(stage, { recursive: true, force: true })
+  }
+}
+
+/**
+ * @typedef {{ checkout: string, branch: string | null, commit: string | null, dirty: boolean }} SnapshotSource
+ */
+
+const SOURCE_FILE = 'source.json'
+
+/** Where this CLI's snapshot was packed from, or null when it isn't a snapshot. @returns {SnapshotSource | null} */
+export function snapshotSource() {
+  const file = path.join(PACKAGE_DIR, SOURCE_FILE)
+  if (!existsSync(file)) return null
+  try {
+    return JSON.parse(readFileSync(file, 'utf8'))
+  } catch {
+    return null
   }
 }
 
