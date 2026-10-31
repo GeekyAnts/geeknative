@@ -7,7 +7,7 @@ export const AC_ID = /AC-[a-z0-9]+(?:-[a-z0-9]+)*-\d+/g
 
 /**
  * @typedef {{ id: string, text: string, ui: boolean }} Criterion `ui`: marked "(ui)", so only a test that drives the real UI covers it
- * @typedef {{ id: string, line: number }} TestId a test ID the spec lists, with `<placeholder>` parts for dynamic IDs
+ * @typedef {{ id: string, line: number, notOn: string[] }} TestId a test ID the spec lists, with `<placeholder>` parts for dynamic IDs; `notOn`: platforms marked "(not on iOS)" and so on, which can't use it
  * @typedef {{ id: string, title: string, file: string, status: Record<string, string>, criteria: Criterion[], testIds: TestId[] }} Feature
  */
 
@@ -50,12 +50,24 @@ function readTestIds(text) {
   for (let i = start + 1; i < lines.length && !/^##\s/.test(lines[i]); i++) {
     const bullet = lines[i].match(/^\s*[-*]\s+(.*)$/)
     if (!bullet) continue
-    const head = bullet[1].split(/`\s*:/)[0]
-    for (const match of `${head}\``.matchAll(/`([^`\s]+)`/g)) {
-      if (/^[A-Za-z<][\w<>.-]*$/.test(match[1])) ids.push({ id: match[1], line: i + 1 })
+    const head = beforeColon(bullet[1])
+    // "(not on iOS)" or "(not on iOS or Android)": platforms that can't use these IDs.
+    const notOn = [...(head.match(/\(not on ([^)]*)\)/i)?.[1] ?? '').matchAll(/\b(ios|android|web)\b/gi)].map((m) => m[1].toLowerCase())
+    for (const match of head.matchAll(/`([^`\s]+)`/g)) {
+      if (/^[A-Za-z<][\w<>.-]*$/.test(match[1])) ids.push({ id: match[1], line: i + 1, notOn })
     }
   }
   return ids
+}
+
+/** A bullet's text up to its first colon outside `code`: the IDs, before their description. @param {string} text */
+function beforeColon(text) {
+  let code = false
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === '`') code = !code
+    else if (text[i] === ':' && !code) return text.slice(0, i)
+  }
+  return text
 }
 
 /**
