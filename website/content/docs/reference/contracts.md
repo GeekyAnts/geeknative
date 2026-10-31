@@ -38,6 +38,7 @@ In code: `AppIdentity.name` and `AppIdentity.version` (iOS), `AppIdentity.NAME` 
   "spacing": { "xs": 4, "sm": 8, "md": 12, "lg": 16, "xl": 24, "xxl": 32 },
   "radius": { "sm": 6, "md": 10, "lg": 16, "full": 9999 },
   "icon": { "sm": 16, "md": 24, "lg": 32 },
+  "size": { "touchTarget": 48 },
   "motion": {
     "duration": { "fast": 150, "normal": 250 },
     "easing": { "standard": [0.2, 0, 0, 1] },
@@ -61,7 +62,7 @@ In code: `AppIdentity.name` and `AppIdentity.version` (iOS), `AppIdentity.NAME` 
 
 **Colors** are `#RRGGBB` or `#RRGGBBAA`. `dark` is optional and defaults to `light`. These colors are required: `background`, `onBackground`, `surface`, `onSurface`, `surfaceVariant`, `onSurfaceVariant`, `primary`, `onPrimary`, `outline`, `error` and `onError`. You can add more.
 
-**Spacing, radius and icon** values are numbers of points (iOS), dp (Android) or pixels (web). A radius of 9999 or more is fully rounded on the web. Icon sizes are the sizes icons are drawn at in content.
+**Spacing, radius, icon and size** values are numbers of points (iOS), dp (Android) or pixels (web). `size` is optional and holds fixed sizes of things, like touch targets: its names can't repeat a spacing name or start with `icon`, because on the web they all share Tailwind's spacing scale. A radius of 9999 or more is fully rounded on the web. Icon sizes are the sizes icons are drawn at in content.
 
 **Typography** entries need:
 
@@ -102,6 +103,7 @@ A `body` style is required. Every platform uses `size`; `lineHeight` applies on 
 | Spacing | `AppSpacing.md` | `AppSpacing.md` | `--spacing-md`: `p-md`, `gap-md`. Width utilities named like Tailwind's container sizes (`w-md`, `max-w-md`, `min-w-sm`) keep the container size, so `max-w-md` is 28rem, not 12px. For a spacing-sized width, write `w-(--spacing-md)`. |
 | Radius | `AppRadius.lg` | `AppRadius.lg`, and Material 3 shapes | `--radius-lg`: `rounded-lg` |
 | Icon sizes | `AppIconSize.md` | `AppIconSize.md` | `--spacing-icon-md`: `size-icon-md` |
+| Sizes | `AppSize.touchTarget` | `AppSize.touchTarget` | `--spacing-touch-target`: `size-touch-target`, `min-h-touch-target` |
 | Type | `AppTypography.title`, as `Font.custom("Inter-SemiBold", size: 20, relativeTo: .title3)` | `AppTypography.title`, with `fontFamily = AppFontFamily`, and Material 3 typography | `--text-title`: `text-title` |
 | Motion | `AppMotion.fast` (seconds), `AppMotion.standard(_:)` and `AppMotion.snappy` (`Animation`), and `AppMotion.reduced(_:_:)` for Reduce Motion | `AppMotion.fast` (ms), `AppMotion.standard<T>()` (`tween`), `AppMotion.standardEasing` and `AppMotion.snappy<T>()` (`spring`) | `--transition-duration-fast`, `--ease-standard`, `--ease-snappy`: `duration-fast`, `ease-standard`, `ease-snappy duration-snappy` |
 | Elevation | `.shadow(AppElevation.low)` | `Modifier.shadow(AppElevation.low, shape)` (in the template's `AppTheme.kt`) | `--shadow-low`: `shadow-low` |
