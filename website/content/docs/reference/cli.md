@@ -138,6 +138,14 @@ Finds what builds and tests can't: places where the code breaks a rule from AGEN
 
 It skips generated code, tests, and the body of each iOS `#Preview` block and Android `@Preview` function (code around them is still checked). The web text rules look at `.tsx` files only. To keep a line on purpose (a sheet with the system's inline title, say), add a comment containing `geeknative-ignore` to it or to the line above.
 
+## pin
+
+```sh
+npx geeknative pin   # or: make pin
+```
+
+For a project created from a geeknative checkout, which is pinned to a snapshot of it (see [create](#create)). Packs the checkout the project came from, as it is now, into `.geeknative/`, points `package.json` at the new snapshot, deletes the old one and runs `npm install`. Each snapshot records its checkout, branch and commit, so `pin` finds the checkout on its own, and `make doctor` warns when the checkout has moved past the snapshot. Run `make gen` and `make check` afterwards. A project that uses geeknative from npm updates with `npm install --save-dev geeknative@latest` instead.
+
 ## run
 
 ```sh
@@ -165,6 +173,7 @@ The project's Makefile includes `.geeknative/framework.mk`:
 | `make check` | `geeknative check all` |
 | `make check-contracts` | `geeknative check contracts` |
 | `make check-ios`, `check-android`, `check-web` | `geeknative check <platform>` |
+| `make pin` | `geeknative pin` |
 | `make parity` | `geeknative parity` |
 | `make lint` | `geeknative lint` |
 | `make lint-ios`, `lint-android`, `lint-web` | `geeknative lint <platform>` |
