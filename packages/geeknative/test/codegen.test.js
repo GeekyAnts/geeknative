@@ -33,6 +33,7 @@ test('every app gets its generated files', () => {
     'apps/android/app/src/main/res/drawable/generated_icon_settings.xml',
     'apps/web/src/generated/app.ts',
     'apps/web/src/generated/tokens.css',
+    'apps/web/src/generated/tokens.ts',
     'apps/web/src/generated/strings.ts',
     'apps/web/src/generated/icons.tsx',
     'apps/web/src/generated/config.ts',
@@ -233,6 +234,22 @@ test('tokens: fixed sizes reach every platform, and share the web spacing scale 
   const root = tempProject()
   editJson(path.join(root, 'contracts', 'tokens.json'), (tokens) => delete tokens.size)
   assert.doesNotMatch(outputOf(generate(root), 'Tokens.swift'), /AppSize/, 'the group is optional')
+})
+
+test('tokens: text sizes and numeric tokens reach every platform as numbers', async () => {
+  const outputs = generate(TEMPLATE)
+  assert.match(outputOf(outputs, 'Tokens.swift'), /enum AppTextSize \{[\s\S]*static let title: CGFloat = 20/)
+  assert.match(outputOf(outputs, 'Tokens.kt'), /object AppTextSize \{[\s\S]*val title = 20\.sp/)
+
+  // The web gets the same numbers in TypeScript, not only as CSS.
+  const dir = tempProject()
+  const file = path.join(dir, 'tokens.ts')
+  writeFileSync(file, outputOf(outputs, 'generated/tokens.ts'))
+  const tokens = await import(file)
+  assert.equal(tokens.AppTextSize.title, 20)
+  assert.equal(tokens.AppSpacing.md, 12)
+  assert.equal(tokens.AppIconSize.lg, 32)
+  assert.equal(tokens.AppSize.touchTarget, 48)
 })
 
 test('fonts: the shared typeface reaches every platform from the same files', () => {
