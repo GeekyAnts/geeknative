@@ -64,6 +64,11 @@ description: Release notes for geeknative.
 - **Test IDs a platform can't use:** a spec's Test IDs bullet can say `(not on iOS)` (or Android, web), and the lint stops expecting that ID there. The lint also no longer lets an all-dynamic string like `"${total}"` count as every listed ID.
 - **Size tokens:** `tokens.json` can define a `size` group for touch targets and other fixed sizes, generated as `AppSize` on iOS and Android and as `size-*` / `min-h-*` classes on the web. The template's `touchTarget` is 48, used for its Android and web touch targets.
 - **`geeknative pin`** (`make pin`) moves a project created from a checkout to a fresh snapshot of that checkout, removing the old one. Snapshots record where they came from, and `make doctor` warns when the checkout has moved past the project's snapshot.
+- **Cross-platform consistency fixes from the Sizewise test:**
+  - **Text sizes as numbers everywhere:** `AppTextSize` on iOS, Android and the web, and a web `tokens.ts` with `AppSpacing`, `AppRadius`, `AppIconSize` and `AppSize`. Before, only Android exposed text sizes as numbers.
+  - **Android text roles are optional:** a text style can leave out `android`, so adding a style no longer restyles stock Material components on Android only.
+  - **iOS primary button:** `.buttonStyle(.primary)` draws `onPrimary` on `primary`, readable in dark mode like Android and the web. DESIGN.md points to it instead of plain `.borderedProminent`.
+  - **Android controls at token sizes:** `ControlSize.kt` (`Modifier.scaledToHeight`, `ControlContentPadding`) draws buttons, segmented buttons, switches and checkboxes at exactly a size token's height. Material's own minimums made them taller than on iOS and the web.
 - **Applying these to an existing project:** run `make doctor FIX=1` from a checkout to pin the CLI, then `make gen` (new `tokens.css` mappings) and `make parity`, and fix what `make lint` reports. The motion and elevation tokens, the full-width web shell, the iOS UI test target and the Android test setting belong to your project: copy them from the template if you want them.
 
 ## 0.1.0 (2026-10-10)
