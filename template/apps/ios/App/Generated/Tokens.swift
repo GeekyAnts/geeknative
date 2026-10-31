@@ -58,6 +58,17 @@ nonisolated enum AppTypography {
     static let caption: Font = .custom("Inter-Regular", size: 12, relativeTo: .caption)
 }
 
+/// Each text style's size in points at the default text size, for showing or computing with it
+/// (the fonts above grow with Dynamic Type; these numbers don't).
+nonisolated enum AppTextSize {
+    static let display: CGFloat = 34
+    static let headline: CGFloat = 28
+    static let title: CGFloat = 20
+    static let body: CGFloat = 16
+    static let label: CGFloat = 14
+    static let caption: CGFloat = 12
+}
+
 /// The shared typeface's files, bundled from contracts/fonts. AppMain registers them at launch.
 nonisolated enum AppFonts {
     static let files: [String] = [
