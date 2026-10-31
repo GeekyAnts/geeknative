@@ -103,6 +103,9 @@
   --spacing-icon-md: 24px;
   --spacing-icon-lg: 32px;
 
+  /* fixed sizes: size-touch-target, min-h-touch-target, ... */
+  --spacing-touch-target: 48px;
+
   --text-display: 2.125rem;
   --text-display--line-height: 2.5625rem;
   --text-display--font-weight: 700;
