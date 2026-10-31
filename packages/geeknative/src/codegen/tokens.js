@@ -165,7 +165,7 @@ export function readTokens(root) {
     }
     // Optional: a style without one is AppTypography.x on Android but restyles no stock Material component.
     if (android !== undefined && !M3_TEXT_SLOTS.has(android)) {
-      throw new CliError(`${where} "android" must be a Material 3 type style: ${[...M3_TEXT_SLOTS].join(', ')}.`)
+      throw new CliError(`${where} "android", when given, must be a Material 3 type style: ${[...M3_TEXT_SLOTS].join(', ')}. Leave it out for a style no stock Material component should use.`)
     }
     typography[name] = { size, lineHeight, weight, ios, android: android ?? null }
   }
