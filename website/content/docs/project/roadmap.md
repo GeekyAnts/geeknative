@@ -15,7 +15,6 @@ Everything below is planned, not built.
 
 ## Visual and end-to-end parity
 
-- **UI tests** on iOS and Android, so screen-level acceptance criteria (like the starter Home screen's) are covered on every platform.
 - **Screenshots** of each screen from all three apps, side by side, for visual review.
 - **Shared end-to-end flows** with Maestro for iOS and Android, and Playwright for the web.
 - **CI for generated projects.**

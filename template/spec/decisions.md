@@ -11,7 +11,7 @@ Intentional differences between the apps, found while auditing them against each
 - `common.back` is used on Android only, for the explicit back button. iOS and web get back from the system and the site header (spec/features/settings.md).
 - The web browser tab title is built in a route's `head` as `<screen title> · <app name>`. It is web chrome, so its separator is exempt from the no-literal-text rule (apps/web/AGENTS.md).
 - Web touch targets are 48 px (the header gear and the appearance rows), above the 24 px WCAG minimum and matching Android's 48 dp.
-- Android and web test the Home screen as rendered, including AC-home-3 (Home opens Settings): Android with Compose UI tests on Robolectric, web by rendering into happy-dom. All are test-only dependencies and don't ship in the apps. iOS keeps value-level tests and checks AC-home-3 by hand, because SwiftUI exposes no accessibility tree to unit tests and a UI test target would mean editing the Xcode project (spec/features/home.md).
+- Android and web test the Home screen as rendered, including AC-home-3 (Home opens Settings): Android with Compose UI tests on Robolectric, web by rendering into happy-dom. All are test-only dependencies and don't ship in the apps. iOS covers AC-home-3 with an XCUITest in apps/ios/AppUITests, because SwiftUI exposes no accessibility tree to unit tests (spec/features/home.md).
 - The `home` icon is defined in contracts/icons.json for all three platforms and used by none. It stays as a ready-made icon for new features.
 
 Hand checks of the Settings behavior (spec/features/settings.md), run on 2026-10-30 on the iOS simulator, an Android emulator and headless Chrome. Not run means not checked yet, not failed.
@@ -19,7 +19,7 @@ Hand checks of the Settings behavior (spec/features/settings.md), run on 2026-10
 | Check | iOS | Android | Web |
 |---|---|---|---|
 | With System chosen, the app follows a device appearance change while it is open | Pass | Pass | Pass |
-| With Dark chosen and the device in light mode, a cold start has no flash of the light theme | Not run | Pass: every frame captured was dark, but capture started shortly after launch | Pass: the dark class is set when the document finishes parsing |
+| With Dark chosen and the device in light mode, a cold start has no flash of the light theme | Not run | Pass on Android 12 and later, splash screen included: the app registers the chosen appearance with the system (`UiModeManager.setApplicationNightMode`). Earlier versions have no API for it, so their splash follows the system. | Pass: the dark class is set when the document finishes parsing |
 | Choosing Dark applies to the whole screen at once, including system bars | Not run | Pass | Pass |
 | Back from Settings returns to Home with its state intact | Not run | Pass | Pass: browser back and the header home link both return to Home |
 | After a restart with Dark stored, the Settings screen shows Dark as selected | Pass | Pass | Pass, after a fix (see below) |

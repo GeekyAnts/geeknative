@@ -43,6 +43,11 @@ nonisolated enum AppIconSize {
     static let lg: CGFloat = 32
 }
 
+/// Fixed sizes (touch targets and the like), in points.
+nonisolated enum AppSize {
+    static let touchTarget: CGFloat = 48
+}
+
 /// Text styles in Inter, the shared typeface. Each scales with its Dynamic Type style, so it follows the user's text size setting.
 nonisolated enum AppTypography {
     static let display: Font = .custom("Inter-Bold", size: 34, relativeTo: .largeTitle)
@@ -51,6 +56,17 @@ nonisolated enum AppTypography {
     static let body: Font = .custom("Inter-Regular", size: 16, relativeTo: .body)
     static let label: Font = .custom("Inter-Medium", size: 14, relativeTo: .subheadline)
     static let caption: Font = .custom("Inter-Regular", size: 12, relativeTo: .caption)
+}
+
+/// Each text style's size in points at the default text size, for showing or computing with it
+/// (the fonts above grow with Dynamic Type; these numbers don't).
+nonisolated enum AppTextSize {
+    static let display: CGFloat = 34
+    static let headline: CGFloat = 28
+    static let title: CGFloat = 20
+    static let body: CGFloat = 16
+    static let label: CGFloat = 14
+    static let caption: CGFloat = 12
 }
 
 /// The shared typeface's files, bundled from contracts/fonts. AppMain registers them at launch.
@@ -67,6 +83,66 @@ nonisolated enum AppFonts {
             guard let url = Bundle.main.url(forResource: file, withExtension: nil) else { continue }
             CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
         }
+    }
+}
+
+/// Motion, the same on every platform: durations in seconds, easing curves and springs.
+/// Respect Reduce Motion: `withAnimation(AppMotion.reduced(AppMotion.snappy, reduceMotion))`, with
+/// `reduceMotion` from `@Environment(\.accessibilityReduceMotion)`.
+nonisolated enum AppMotion {
+    /// 150 ms
+    static let fast: Double = 0.15
+
+    /// 250 ms
+    static let normal: Double = 0.25
+
+    /// 350 ms
+    static let slow: Double = 0.35
+
+    /// cubic-bezier(0.2, 0, 0, 1)
+    static func standard(_ duration: Double = normal) -> Animation {
+        .timingCurve(0.2, 0, 0, 1, duration: duration)
+    }
+
+    /// cubic-bezier(0, 0, 0, 1)
+    static func decelerate(_ duration: Double = normal) -> Animation {
+        .timingCurve(0, 0, 0, 1, duration: duration)
+    }
+
+    /// cubic-bezier(0.3, 0, 1, 1)
+    static func accelerate(_ duration: Double = normal) -> Animation {
+        .timingCurve(0.3, 0, 1, 1, duration: duration)
+    }
+
+    /// A spring: 300 ms, bounce 0.15
+    static let snappy: Animation = .spring(duration: 0.3, bounce: 0.15)
+
+    /// A spring: 400 ms, bounce 0.3
+    static let bouncy: Animation = .spring(duration: 0.4, bounce: 0.3)
+
+    /// `animation`, or none when the user has turned on Reduce Motion.
+    static func reduced(_ animation: Animation, _ reduceMotion: Bool) -> Animation? {
+        reduceMotion ? nil : animation
+    }
+}
+
+/// A shadow from the elevation tokens. Apply it with `.shadow(AppElevation.low)`.
+nonisolated struct AppShadow: Sendable {
+    let color: Color
+    let radius: CGFloat
+    let y: CGFloat
+}
+
+/// Shadows, for things that float above the content.
+nonisolated enum AppElevation {
+    static let low = AppShadow(color: Color.black.opacity(0.12), radius: 1.5, y: 1)
+    static let high = AppShadow(color: Color.black.opacity(0.16), radius: 12, y: 8)
+}
+
+extension View {
+    /// Draws one of the elevation tokens' shadows.
+    func shadow(_ shadow: AppShadow) -> some View {
+        self.shadow(color: shadow.color, radius: shadow.radius, x: 0, y: shadow.y)
     }
 }
 

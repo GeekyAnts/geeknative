@@ -8,8 +8,9 @@ Read the root AGENTS.md first. This file covers how the Android app is built.
 - Kotlin and Jetpack Compose with Material 3, Android 7.0 (API 24) and later (Navigation 3's minimum). Compiles against API 37.
 - Navigation 3, ViewModel with StateFlow, Kotlin coroutines, DataStore.
 - Dependencies are wired by hand in `AppContainer`: no DI framework.
+- Core library desugaring is on, so `java.time` (LocalDate, LocalTime, ...) works down to API 24.
 - AGP 9 with built-in Kotlin. Gradle downloads JDK 21 for the build (gradle/gradle-daemon-jvm.properties).
-- JUnit and kotlinx-coroutines-test for unit tests; Compose UI tests run on the JVM with Robolectric (`@RunWith(RobolectricTestRunner::class)`), so `make check-android` needs no emulator.
+- JUnit and kotlinx-coroutines-test for unit tests; Compose UI tests run on the JVM with Robolectric (`@RunWith(RobolectricTestRunner::class)`), so `make check-android` needs no emulator. Plain unit tests have no Android APIs: calling one (`org.json`, `android.util.Log`, ...) throws rather than returning a default, so test such code with Robolectric or use a JVM library such as kotlinx-serialization-json.
 
 ## Layout
 
@@ -40,8 +41,10 @@ Same names and responsibilities as the iOS and web apps.
 | Data | `interface NotesRepository`, plus implementations such as `DataStoreNotesRepository` and `InMemoryNotesRepository` |
 | Dependencies | `AppContainer` from `LocalAppContainer.current`; ViewModels are created with `viewModel { NotesViewModel(container.notesRepository) }` |
 | Navigation | Add a `Route` object and an `entry<Route.Notes>` in AppNavigation; push with `backStack.add(Route.Notes)` |
-| Copy | `stringResource(R.string.notes_empty_title)` (generated from contracts/strings) |
-| Colors, spacing, radii, icon sizes, type | `AppTheme.colors.primary`, `AppSpacing.md`, `AppRadius.lg`, `AppIconSize.md`, `AppTypography.title` (the typeface comes with it) |
+| Copy | `stringResource(R.string.notes_empty_title)` (generated from contracts/strings); plurals with `AppPlurals.notesCount(count)`, never `pluralStringResource` directly, so a `zero` form works as on iOS and web |
+| Colors, spacing, radii, icon sizes, type | `AppTheme.colors.primary`, `AppSpacing.md`, `AppRadius.lg`, `AppIconSize.md`, `AppSize.touchTarget`, `AppTypography.title` (the typeface comes with it) |
+| Sized controls | To draw a control at a size token (`AppSize.x`) as iOS and web do: Button and SegmentedButton with `Modifier.height(AppSize.x)` and `contentPadding = ControlContentPadding`; Switch, Checkbox and RadioButton with `Modifier.scaledToHeight(AppSize.x)` and `onCheckedChange = null` inside a toggleable row at least `AppSize.touchTarget` tall (core/designsystem/ControlSize.kt). `heightIn(min = ...)` alone leaves them taller. |
+| Motion and shadows | `animationSpec = AppMotion.snappy()`, `AppMotion.standard(AppMotion.fast)`; `Modifier.shadow(AppElevation.low, shape)`. Never raw durations, easings or elevations. Material components draw their own elevation, so set it to 0 when you apply a token shadow (for example `FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp)`), or they draw two. Compose follows the system's animation scale, so "Remove animations" turns motion off. |
 | Icons | `Icon(AppIcons.settings, contentDescription = ...)` (generated vector drawables; never `Icons.Filled.*`) |
 | Config | `AppConfig.apiBaseUrl`, `AppEnvironment.current` (generated from contracts/config.json) |
 | Secrets | `AppSecrets.mapsApiKey` (generated from .env, git-ignored; never commit values) |

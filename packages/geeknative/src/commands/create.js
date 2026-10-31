@@ -1,11 +1,11 @@
 // @ts-check
-import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { capture, runInherit } from '../lib/exec.js'
 import { copyTemplate } from '../lib/fsutil.js'
 import { CliError, color, log } from '../lib/log.js'
 import { writeLock } from '../lib/managed.js'
-import { isLocalCheckout, PACKAGE_DIR, packageVersion, templateDir } from '../lib/project.js'
+import { isLocalCheckout, PACKAGE_DIR, packCheckout, packageVersion, templateDir } from '../lib/project.js'
 import { findAndroidSdk, writeLocalProperties } from '../lib/toolchains.js'
 import { validateApp } from '../codegen/app.js'
 import { gen } from './gen.js'
@@ -13,9 +13,11 @@ import { gen } from './gen.js'
 /**
  * Creates a new project from the template.
  * @param {string} dir
- * @param {{ name?: string, id?: string, install?: boolean, git?: boolean }} options
+ * @param {{ name?: string, id?: string, install?: boolean, git?: boolean, link?: boolean }} options
+ *   `link`: from a checkout, depend on the checkout itself (it follows whatever branch is open
+ *   there) instead of a snapshot of it. For working on geeknative.
  */
-export async function create(dir, { name, id, install = true, git = true }) {
+export async function create(dir, { name, id, install = true, git = true, link = false }) {
   if (!dir) throw new CliError('Usage: geeknative create <folder> [--name "My App"] [--id com.example.myapp]')
   const root = path.resolve(dir)
   if (existsSync(root) && readdirSync(root).length) throw new CliError(`${dir} already exists and isn't empty.`)
@@ -39,7 +41,7 @@ export async function create(dir, { name, id, install = true, git = true }) {
   const pkgFile = path.join(root, 'package.json')
   const pkg = JSON.parse(readFileSync(pkgFile, 'utf8'))
   pkg.name = slug
-  pkg.devDependencies.geeknative = isLocalCheckout() ? `file:${PACKAGE_DIR}` : `^${version}`
+  pkg.devDependencies.geeknative = isLocalCheckout() ? localDependency(root, link) : `^${version}`
   writeFileSync(pkgFile, `${JSON.stringify(pkg, null, 2)}\n`)
 
   for (const doc of ['README.md']) {
@@ -76,6 +78,26 @@ ${color.bold('Next steps')}
 Then open the folder in your coding agent (Claude Code, Codex, Cursor, Gemini CLI, ...)
 and describe the app you want. AGENTS.md tells it how to build it for iOS, Android and web.
 `)
+}
+
+/**
+ * How a project created from a geeknative checkout depends on it: a snapshot of the checkout in
+ * .geeknative/ (pinned, so switching branches there never changes this project), or with `link`
+ * the checkout itself.
+ * @param {string} root
+ * @param {boolean} link
+ */
+function localDependency(root, link) {
+  if (link) {
+    log.warn('geeknative', `linked to ${PACKAGE_DIR}: this project uses whatever branch is checked out there`)
+    return `file:${PACKAGE_DIR}`
+  }
+  const dir = path.join(root, '.geeknative')
+  mkdirSync(dir, { recursive: true })
+  const snapshot = packCheckout(dir)
+  const source = snapshot.commit ? ` (${snapshot.branch ?? 'detached'} at ${snapshot.commit}${snapshot.dirty ? ', with uncommitted changes' : ''})` : ''
+  log.ok('geeknative', `pinned to a snapshot of the local checkout${source}: .geeknative/${snapshot.file}`)
+  return `file:.geeknative/${snapshot.file}`
 }
 
 /** @param {string} slug */
