@@ -252,6 +252,17 @@ test('tokens: text sizes and numeric tokens reach every platform as numbers', as
   assert.equal(tokens.AppSize.touchTarget, 48)
 })
 
+test('tokens: a text style without an Android role restyles no Material component', () => {
+  const root = tempProject()
+  editJson(path.join(root, 'contracts', 'tokens.json'), (tokens) => {
+    tokens.typography.specimen = { size: 22, lineHeight: 28, weight: 400, ios: 'title2' }
+  })
+  const kotlin = outputOf(generate(root), 'Tokens.kt')
+  assert.match(kotlin, /val specimen = TextStyle\(/, 'still a text style on Android')
+  assert.doesNotMatch(kotlin, /= AppTypography\.specimen,/, 'but not mapped onto a Material role')
+  assert.match(kotlin, /titleLarge = AppTypography\.title,/)
+})
+
 test('fonts: the shared typeface reaches every platform from the same files', () => {
   const outputs = generate(TEMPLATE)
 
