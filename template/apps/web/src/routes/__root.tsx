@@ -50,7 +50,7 @@ function AppShell() {
     <>
       <AppearanceEffect />
       <header className="border-b border-outline">
-        <nav className="mx-auto flex max-w-2xl items-center justify-between px-lg py-md">
+        <nav className="flex items-center justify-between px-lg py-md md:px-xl">
           <Link to="/" className="text-title">
             {AppIdentity.name}
           </Link>
@@ -58,13 +58,14 @@ function AppShell() {
             to="/settings"
             aria-label={strings.homeOpenSettings}
             data-testid="home.openSettings"
-            className="rounded-full p-md text-on-surface-variant hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-primary"
+            className="inline-flex size-touch-target items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-primary"
           >
             <AppIcons.settings aria-hidden className="size-icon-md" />
           </Link>
         </nav>
       </header>
-      <main className="mx-auto max-w-2xl px-lg py-xl">
+      {/* Full width, like the mobile apps: content runs edge to edge with the same side padding as the header. */}
+      <main className="px-lg py-xl md:px-xl">
         <Outlet />
       </main>
     </>

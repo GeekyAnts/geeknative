@@ -33,6 +33,7 @@ test('every app gets its generated files', () => {
     'apps/android/app/src/main/res/drawable/generated_icon_settings.xml',
     'apps/web/src/generated/app.ts',
     'apps/web/src/generated/tokens.css',
+    'apps/web/src/generated/tokens.ts',
     'apps/web/src/generated/strings.ts',
     'apps/web/src/generated/icons.tsx',
     'apps/web/src/generated/config.ts',
@@ -132,6 +133,40 @@ test('strings: plurals and extra locales', () => {
   assert.match(ts, /export const locales = \["en","fr","pt-BR","zh-Hans"\] as const/)
 })
 
+test('strings: a zero form is used for a count of 0 on every platform, even in English', async () => {
+  const dir = tempProject()
+  editJson(path.join(dir, 'contracts', 'strings', 'en.json'), (en) => {
+    en['events.count'] = { zero: 'No events', one: '{count} event', other: '{count} events' }
+    en['notes.count'] = { one: '{count} note', other: '{count} notes' }
+  })
+  const outputs = generate(dir)
+
+  // Android: <plurals> ignores "zero" in English, so AppPlurals picks a separate string for 0.
+  const xml = outputOf(outputs, 'values/generated_strings.xml')
+  assert.match(xml, /<string name="events_count_zero">No events<\/string>/)
+  assert.doesNotMatch(xml, /notes_count_zero/, 'only plurals with a zero form get one')
+  const kotlin = outputOf(outputs, 'AppPlurals.kt')
+  assert.match(kotlin, /fun eventsCount\(count: Int\): String =\n\s+if \(count == 0\) stringResource\(R\.string\.events_count_zero, count\)/)
+  assert.match(kotlin, /fun notesCount\(count: Int\): String = pluralStringResource\(R\.plurals\.notes_count, count, count\)/)
+
+  // Web: Intl.PluralRules has no zero category in English, so plural() checks for 0 itself.
+  const file = path.join(dir, 'strings.ts')
+  writeFileSync(file, outputOf(outputs, 'generated/strings.ts'))
+  const { strings } = await import(file)
+  assert.equal(strings.eventsCount(0), 'No events')
+  assert.equal(strings.eventsCount(1), '1 event')
+  assert.equal(strings.eventsCount(2), '2 events')
+  assert.equal(strings.notesCount(0), '0 notes')
+
+  // iOS: the string catalog already uses "zero" for 0 in every language.
+  const catalog = JSON.parse(outputOf(outputs, 'Localizable.xcstrings'))
+  assert.equal(catalog.strings['events.count'].localizations.en.variations.plural.zero.stringUnit.value, 'No events')
+})
+
+test('strings: without plurals, no AppPlurals.kt is generated', () => {
+  assert.ok(!generate(TEMPLATE).some((o) => o.path.endsWith('AppPlurals.kt')))
+})
+
 test('tokens: colors, spacing, radii and type on every platform', () => {
   const outputs = generate(TEMPLATE)
 
@@ -167,6 +202,65 @@ test('tokens: colors, spacing, radii and type on every platform', () => {
   const accent = JSON.parse(outputOf(outputs, 'AccentColor.colorset/Contents.json'))
   assert.equal(accent.colors[0].color.components.red, '0x4F')
   assert.equal(accent.colors[1].appearances[0].value, 'dark')
+})
+
+test('tokens: spacing names never shrink Tailwind width utilities like max-w-md', () => {
+  const css = outputOf(generate(TEMPLATE), 'tokens.css')
+  // Tailwind looks up max-w-md in --max-width-* before --spacing-*, so these keep it a container width.
+  for (const name of ['xs', 'sm', 'md', 'lg', 'xl']) {
+    for (const prefix of ['width', 'min-width', 'max-width']) {
+      assert.match(css, new RegExp(`--${prefix}-${name}: var\\(--container-${name}\\);`))
+    }
+  }
+  assert.doesNotMatch(css, /--max-width-xxl/, 'names Tailwind has no container for are left alone')
+  assert.match(css, /--spacing-md: 12px;/, 'padding and gaps still use the spacing tokens')
+})
+
+test('tokens: fixed sizes reach every platform, and share the web spacing scale safely', () => {
+  const outputs = generate(TEMPLATE)
+  assert.match(outputOf(outputs, 'Tokens.swift'), /enum AppSize \{\n    static let touchTarget: CGFloat = 48\n\}/)
+  assert.match(outputOf(outputs, 'Tokens.kt'), /object AppSize \{\n    val touchTarget = 48\.dp\n\}/)
+  assert.match(outputOf(outputs, 'tokens.css'), /--spacing-touch-target: 48px;/, 'size-touch-target, min-h-touch-target in Tailwind')
+
+  for (const [size, message] of [
+    [{ md: 40 }, /size\.md has the same name as spacing\.md/],
+    [{ iconButton: 40 }, /size\.iconButton can't start with "icon"/],
+  ]) {
+    const root = tempProject()
+    editJson(path.join(root, 'contracts', 'tokens.json'), (tokens) => (tokens.size = size))
+    assert.throws(() => generate(root), message)
+  }
+
+  const root = tempProject()
+  editJson(path.join(root, 'contracts', 'tokens.json'), (tokens) => delete tokens.size)
+  assert.doesNotMatch(outputOf(generate(root), 'Tokens.swift'), /AppSize/, 'the group is optional')
+})
+
+test('tokens: text sizes and numeric tokens reach every platform as numbers', async () => {
+  const outputs = generate(TEMPLATE)
+  assert.match(outputOf(outputs, 'Tokens.swift'), /enum AppTextSize \{[\s\S]*static let title: CGFloat = 20/)
+  assert.match(outputOf(outputs, 'Tokens.kt'), /object AppTextSize \{[\s\S]*val title = 20\.sp/)
+
+  // The web gets the same numbers in TypeScript, not only as CSS.
+  const dir = tempProject()
+  const file = path.join(dir, 'tokens.ts')
+  writeFileSync(file, outputOf(outputs, 'generated/tokens.ts'))
+  const tokens = await import(file)
+  assert.equal(tokens.AppTextSize.title, 20)
+  assert.equal(tokens.AppSpacing.md, 12)
+  assert.equal(tokens.AppIconSize.lg, 32)
+  assert.equal(tokens.AppSize.touchTarget, 48)
+})
+
+test('tokens: a text style without an Android role restyles no Material component', () => {
+  const root = tempProject()
+  editJson(path.join(root, 'contracts', 'tokens.json'), (tokens) => {
+    tokens.typography.specimen = { size: 22, lineHeight: 28, weight: 400, ios: 'title2' }
+  })
+  const kotlin = outputOf(generate(root), 'Tokens.kt')
+  assert.match(kotlin, /val specimen = TextStyle\(/, 'still a text style on Android')
+  assert.doesNotMatch(kotlin, /= AppTypography\.specimen,/, 'but not mapped onto a Material role')
+  assert.match(kotlin, /titleLarge = AppTypography\.title,/)
 })
 
 test('fonts: the shared typeface reaches every platform from the same files', () => {

@@ -7,7 +7,7 @@ Read the root AGENTS.md first. This file covers how the web app is built.
 
 - React 19 and TanStack Start (server rendering), with TanStack Router file routes and TanStack Query.
 - Tailwind CSS v4 with the generated design tokens, and Lucide icons.
-- TypeScript (strict), Vite, Vitest. Tests run in Node; a test that renders into a DOM starts with `// @vitest-environment happy-dom` and renders with `react-dom/client` inside `act` (see features/home/homeEntry.test.tsx).
+- TypeScript (strict), Vite, Vitest. Tests run in Node; a test that renders into a DOM starts with `// @vitest-environment happy-dom` and renders the app with `renderApp(path, testContainer(...))` from src/testing/renderApp.tsx. Add each new repository to `testContainer`.
 - Supports Safari 16.4+, Chrome 111+ and Firefox 128+ (Tailwind v4's minimum).
 
 ## Layout
@@ -31,13 +31,16 @@ Same names and responsibilities as the iOS and Android apps.
 
 | Concept | Web |
 |---|---|
-| Screen | `NotesScreen` in features/notes/, rendered by routes/notes.tsx |
+| Screen | `NotesScreen` in features/notes/, rendered by routes/notes.tsx, with its content in `<Page>` (core/designsystem/Page.tsx): a centered readable column, or `<Page width="full">` for grids and side-by-side layouts. Never cap a screen's width without centering it. |
 | State and actions | `useNotesViewModel()`: reads data with TanStack Query, returns state and actions |
 | Data | `NotesRepository` interface, plus implementations such as `LocalStorageNotesRepository` |
 | Dependencies | `AppContainer`, in router context: `useRouteContext({ from: '__root__' }).container` |
 | Navigation | A file in routes/ per screen; link with `<Link to="/notes">` |
 | Copy | `strings.notesEmptyTitle` (generated) |
-| Colors, spacing, radii, icon sizes, type | Tailwind token classes: `bg-primary`, `p-md`, `rounded-lg`, `size-icon-md`, `text-title` (the typeface comes with `font-sans`) |
+| Colors, spacing, radii, icon sizes, type | Tailwind token classes: `bg-primary`, `p-md`, `rounded-lg`, `size-icon-md`, `min-h-touch-target`, `text-title` (the typeface comes with `font-sans`) |
+| Token values as numbers | `AppTextSize.title`, `AppSpacing.md`, `AppSize.touchTarget` from `#/generated/tokens` (the same numbers iOS and Android get), for showing or computing with a size. Style with the classes, not with these. |
+| Widths and sizes | `w-*`, `min-w-*` and `max-w-*` with a size name (`max-w-md`, `w-xl`) are Tailwind's container widths, for layout. For a spacing-sized width write `w-(--spacing-md)`. `size-*`, `h-*`, `p-*` and `gap-*` with a token name use the spacing tokens (`size-xs` is 4px). |
+| Motion and shadows | `motion-safe:transition duration-fast ease-standard`; a spring is `ease-snappy duration-snappy`; `shadow-low`. Never raw durations, curves or shadow values, and wrap motion in `motion-safe:`. |
 | Icons | `<AppIcons.settings className="size-icon-md" />` (generated) |
 | Config | `AppConfig.apiBaseUrl`, `environment` from `#/generated/config` (generated from contracts/config.json) |
 | Secrets | `AppSecrets.mapsApiKey` from `#/generated/secrets.server` (server functions and API routes only) |
@@ -53,13 +56,14 @@ Follow features/settings as the reference implementation.
 - Never import `generated/secrets.server` from a component: secrets are server-only and the module throws in the browser.
 - Code that uses browser APIs (localStorage, window) must also run safely during server rendering.
 - Use semantic HTML, give icon-only links and buttons an `aria-label` from strings, and keep focus visible.
-- For complex primitives (dialogs, menus, popovers), use shadcn/ui: the tokens already map onto its CSS variables.
+- For dialogs, use the native `<dialog>` element with `showModal()`: it's accessible, traps focus and needs no dependency. For primitives HTML doesn't cover well (menus, popovers, comboboxes), add shadcn/ui, which isn't installed by default: the tokens already map onto its CSS variables.
 - Name tests after acceptance criteria: `test('AC-notes-2: ...')`.
 
 ## Commands
 
 - `make check-web`: type-check, unit tests and a production build. Full log: .geeknative/logs/web.log.
 - `make run-web`: dev server at http://localhost:3000.
+- To look at a production build: `npx vite build`, then (re)start `npx vite preview` in apps/web. A running preview server keeps serving the previous build's files, so restart it after every build.
 <!-- geeknative:end -->
 
 ## Project rules

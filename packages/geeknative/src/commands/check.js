@@ -5,8 +5,10 @@ import { readConfig } from '../codegen/config.js'
 import { dotenvForChild, requestedEnvironment } from '../lib/env.js'
 import { runLogged } from '../lib/exec.js'
 import { CliError, color, log } from '../lib/log.js'
+import { createProgress, GRADLE_PHASES, XCODE_PASSED, XCODE_PHASES, XCODE_STARTED } from '../lib/progress.js'
 import { findAndroidSdk, pickSimulator, writeLocalProperties } from '../lib/toolchains.js'
 import { gen } from './gen.js'
+import { lint } from './lint.js'
 
 export const PLATFORMS = ['ios', 'android', 'web']
 
@@ -32,6 +34,13 @@ export async function check(root, targets) {
     log.fail('contracts', /** @type {Error} */ (error).message)
     failed = true
   }
+
+  // The rules builds can't enforce (hardcoded text, test IDs, title alignment, stale specs). They
+  // run here so they hold even when the agent's hooks aren't loaded. A full check also checks the
+  // specs; a single platform's check only checks that app's code, so a platform agent isn't
+  // blocked by bookkeeping the lead does at the end.
+  const platforms = /** @type {import('./lint.js').Platform[]} */ (wanted.filter((t) => PLATFORMS.includes(t)))
+  if (platforms.length && !lint(root, { platforms, specs: everything })) failed = true
 
   // GEEKNATIVE_ENV picks which environment from contracts/config.json the apps are built for.
   // Unset, debug builds use development, as they do in Xcode and Android Studio.
@@ -82,6 +91,7 @@ const CHECKS = {
     if (!simulator) return fail('no iPhone simulator found; run `make doctor`', [], root, logFile)
     const firstBuild = !existsSync(path.join(root, 'apps', 'ios', '.build'))
     log.step('ios', `building and testing on ${simulator.name} (${simulator.runtime})…${firstBuild ? ' (first build: allow a few minutes)' : ''}`)
+    const progress = createProgress({ phases: XCODE_PHASES, passed: XCODE_PASSED, started: XCODE_STARTED })
     const { code, lines } = await runLogged(
       'xcodebuild',
       [
@@ -90,13 +100,17 @@ const CHECKS = {
         '-scheme', 'App',
         '-destination', `id=${simulator.udid}`,
         '-derivedDataPath', '.build/DerivedData',
-        '-quiet',
+        // Parallel testing clones and boots a fresh copy of the simulator on every run, which
+        // costs minutes; the suite is small enough to run on the simulator itself.
+        '-parallel-testing-enabled', 'NO',
         // A build setting on the command line overrides APP_ENVIRONMENT in Config/Debug.xcconfig.
         ...(environment ? [`APP_ENVIRONMENT=${environment}`] : []),
       ],
-      { cwd: path.join(root, 'apps', 'ios'), logFile },
+      // Not -quiet: the progress lines come from xcodebuild's full output (which also goes to the log).
+      { cwd: path.join(root, 'apps', 'ios'), logFile, onLine: progress.onLine },
     )
-    const passed = lines.filter((l) => /^Test case '.*' passed/.test(l)).length
+    progress.stop()
+    const passed = lines.filter((l) => XCODE_PASSED.test(l)).length
     if (code === 0) return { ok: true, summary: `build and ${passed} tests passed`, details: [], log: shown(root, logFile) }
     const details = unique(
       lines.filter((l) => /(error:|✘|failed|\*\* (BUILD|TEST) FAILED)/.test(l) && !/^\s*$/.test(l)).map((l) => l.trim()),
@@ -111,6 +125,7 @@ const CHECKS = {
     if (!existsSync(path.join(root, 'apps', 'android', 'local.properties'))) writeLocalProperties(root, sdk)
     const firstBuild = !existsSync(path.join(root, 'apps', 'android', 'app', 'build'))
     log.step('android', `building and running unit tests…${firstBuild ? ' (the first build downloads Gradle, JDK 21 and dependencies: allow several minutes)' : ''}`)
+    const progress = createProgress({ phases: GRADLE_PHASES })
     const { code, lines } = await runLogged(
       './gradlew',
       [
@@ -120,8 +135,9 @@ const CHECKS = {
         '--warning-mode=summary',
         ...(environment ? [`-PappEnvironment=${environment}`] : []),
       ],
-      { cwd: path.join(root, 'apps', 'android'), logFile },
+      { cwd: path.join(root, 'apps', 'android'), logFile, onLine: progress.onLine },
     )
+    progress.stop()
     if (code === 0) {
       const tests = junitCount(path.join(root, 'apps', 'android', 'app', 'build', 'test-results', 'testDebugUnitTest'))
       return { ok: true, summary: `build and ${tests} unit tests passed`, details: [], log: shown(root, logFile) }

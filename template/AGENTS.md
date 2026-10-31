@@ -56,7 +56,7 @@ Before changing anything, decide what kind of request it is. State it as the fir
 3. **Implement on each platform.** Before editing under `apps/<platform>/`, read `apps/<platform>/AGENTS.md`.
    - If you can run sub-agents in parallel, give each platform its own, with the spec path, the acceptance criteria IDs and what changed in contracts/. Only you, the lead, edit `spec/`, `contracts/`, PRODUCT.md and DESIGN.md; platform agents report gaps back to you.
    - Otherwise, do the platforms one after another.
-4. **Verify** with `make check-ios`, `make check-android` and `make check-web` (or `make check` for everything). Fix until they pass.
+4. **Verify** with `make check-ios`, `make check-android` and `make check-web` (or `make check` for everything). Fix until they pass. Each one also lints that app's code: user-facing text written in code, test IDs no spec lists, and centered screen titles.
 5. **Record** each platform's status in the feature's front matter, then run `make parity`.
 6. **Report** one line per platform (done, partial or skipped, and why), the checks you ran, and any assumptions you made.
 
@@ -79,7 +79,7 @@ Ask only when a wrong guess is expensive to undo: the data model, the navigation
 
 - The docs and contracts describe the new behavior.
 - `make gen` leaves no changes.
-- Checks pass for every platform you touched.
+- Checks pass for every platform you touched, and the full `make check` passes: it also lints the specs (stale statuses, an out-of-date spec/parity.md).
 - Each platform's status is recorded and spec/parity.md is current.
 - Anything left undone is in your report, with the reason.
 
@@ -94,6 +94,10 @@ Ask only when a wrong guess is expensive to undo: the data model, the navigation
 | `make check-ios`, `make check-android`, `make check-web` | One app; full logs go to .geeknative/logs/ |
 | `make run-ios`, `make run-android`, `make run-web` | Builds and launches one app |
 | `make parity` | Updates spec/parity.md |
+| `make pin` | For a project created from a geeknative checkout: moves it to a fresh snapshot of that checkout (`make doctor` says when there's a newer one) |
+| `make lint` | Finds hardcoded text, test IDs no spec lists, centered titles, stale statuses and a stale parity.md (`make check` runs it too) |
+
+**Working from outside this folder.** Claude Code loads this project's hooks and platform agents (.claude/) only when the session starts in this folder. If yours started elsewhere (a parent folder, another repo), they aren't active: run `make gen` yourself after every contract edit, brief general-purpose agents with the platform's AGENTS.md, and rely on `make check`, which enforces the same rules as the hooks. Better: start the session in this folder.
 
 Add `ENV=staging` (or another environment from contracts/config.json) to `make check*` and `make run-*` to build that environment instead of the default.
 <!-- geeknative:end -->

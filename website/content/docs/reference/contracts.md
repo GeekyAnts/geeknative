@@ -38,6 +38,16 @@ In code: `AppIdentity.name` and `AppIdentity.version` (iOS), `AppIdentity.NAME` 
   "spacing": { "xs": 4, "sm": 8, "md": 12, "lg": 16, "xl": 24, "xxl": 32 },
   "radius": { "sm": 6, "md": 10, "lg": 16, "full": 9999 },
   "icon": { "sm": 16, "md": 24, "lg": 32 },
+  "size": { "touchTarget": 48 },
+  "motion": {
+    "duration": { "fast": 150, "normal": 250 },
+    "easing": { "standard": [0.2, 0, 0, 1] },
+    "spring": { "snappy": { "duration": 300, "bounce": 0.15 } }
+  },
+  "elevation": {
+    "low": { "y": 1, "blur": 3, "opacity": 0.12 },
+    "brand": { "y": 8, "blur": 24, "opacity": 0.3, "color": "primary" }
+  },
   "typography": {
     "title": { "size": 20, "lineHeight": 26, "weight": 600, "ios": "title3", "android": "titleLarge" }
   },
@@ -52,7 +62,7 @@ In code: `AppIdentity.name` and `AppIdentity.version` (iOS), `AppIdentity.NAME` 
 
 **Colors** are `#RRGGBB` or `#RRGGBBAA`. `dark` is optional and defaults to `light`. These colors are required: `background`, `onBackground`, `surface`, `onSurface`, `surfaceVariant`, `onSurfaceVariant`, `primary`, `onPrimary`, `outline`, `error` and `onError`. You can add more.
 
-**Spacing, radius and icon** values are numbers of points (iOS), dp (Android) or pixels (web). A radius of 9999 or more is fully rounded on the web. Icon sizes are the sizes icons are drawn at in content.
+**Spacing, radius, icon and size** values are numbers of points (iOS), dp (Android) or pixels (web). `size` is optional and holds fixed sizes of things, like touch targets: its names can't repeat a spacing name or start with `icon`, because on the web they all share Tailwind's spacing scale. A radius of 9999 or more is fully rounded on the web. Icon sizes are the sizes icons are drawn at in content.
 
 **Typography** entries need:
 
@@ -61,9 +71,19 @@ In code: `AppIdentity.name` and `AppIdentity.version` (iOS), `AppIdentity.NAME` 
 | `size`, `lineHeight` | Positive numbers (points on iOS, sp on Android, converted to rem on web) |
 | `weight` | 100, 200, ... 900. With a shared font, every weight used here needs a file under `font.files`. |
 | `ios` | The Dynamic Type style it scales with: `largeTitle`, `title`, `title2`, `title3`, `headline`, `subheadline`, `body`, `callout`, `footnote`, `caption`, `caption2` |
-| `android` | The Material 3 type style it fills: `displayLarge` to `displaySmall`, `headlineLarge` to `headlineSmall`, `titleLarge` to `titleSmall`, `bodyLarge` to `bodySmall`, `labelLarge` to `labelSmall` |
+| `android` | Optional. The Material 3 type style it fills, so stock Material components use it (leave it out for a style only your own screens use, or it changes those components on Android only): `displayLarge` to `displaySmall`, `headlineLarge` to `headlineSmall`, `titleLarge` to `titleSmall`, `bodyLarge` to `bodySmall`, `labelLarge` to `labelSmall` |
 
 A `body` style is required. Every platform uses `size`; `lineHeight` applies on Android and web. On iOS the style scales relative to its Dynamic Type style, so text follows the user's text size setting.
+
+**Motion** is optional. Names must be unique across its three groups.
+
+| Group | Rule |
+|---|---|
+| `duration` | Positive numbers of milliseconds |
+| `easing` | Four cubic-bezier numbers `[x1, y1, x2, y2]`, with x values from 0 to 1 |
+| `spring` | `duration` in milliseconds and `bounce` from 0 up to (not including) 1, as SwiftUI defines them. Android gets the same spring as a damping ratio of `1 - bounce` and a stiffness of `(2π / duration)²`. The web gets a CSS `linear()` curve sampled from it, with the time the spring takes to settle as its duration. |
+
+**Elevation** is optional: one shadow per name, with `y` (offset), `blur`, `opacity` (0 to 1) and an optional `color` naming a color token (black if left out). A tinted shadow follows dark mode.
 
 **Font** is the typeface all three apps share:
 
@@ -80,10 +100,14 @@ A `body` style is required. Every platform uses `size`; `lineHeight` applies on 
 | Token | iOS | Android | Web |
 |---|---|---|---|
 | Colors | `AppColors.primary` (adapts to dark mode) and the global accent color | `AppTheme.colors.primary`, mapped onto Material 3 roles; `@color/token_primary` resources with night variants | `--color-primary` in a Tailwind `@theme`: `bg-primary`, `text-on-primary` |
-| Spacing | `AppSpacing.md` | `AppSpacing.md` | `--spacing-md`: `p-md`, `gap-md` |
+| Spacing | `AppSpacing.md` | `AppSpacing.md` | `--spacing-md`: `p-md`, `gap-md`. Width utilities named like Tailwind's container sizes (`w-md`, `max-w-md`, `min-w-sm`) keep the container size, so `max-w-md` is 28rem, not 12px. For a spacing-sized width, write `w-(--spacing-md)`. |
 | Radius | `AppRadius.lg` | `AppRadius.lg`, and Material 3 shapes | `--radius-lg`: `rounded-lg` |
 | Icon sizes | `AppIconSize.md` | `AppIconSize.md` | `--spacing-icon-md`: `size-icon-md` |
+| Sizes | `AppSize.touchTarget` | `AppSize.touchTarget` | `--spacing-touch-target`: `size-touch-target`, `min-h-touch-target` |
 | Type | `AppTypography.title`, as `Font.custom("Inter-SemiBold", size: 20, relativeTo: .title3)` | `AppTypography.title`, with `fontFamily = AppFontFamily`, and Material 3 typography | `--text-title`: `text-title` |
+| Text sizes (numbers) | `AppTextSize.title` (`CGFloat`) | `AppTextSize.title` (sp) | `AppTextSize.title` in `src/generated/tokens.ts`, which also has `AppSpacing`, `AppRadius`, `AppIconSize` and `AppSize` as numbers |
+| Motion | `AppMotion.fast` (seconds), `AppMotion.standard(_:)` and `AppMotion.snappy` (`Animation`), and `AppMotion.reduced(_:_:)` for Reduce Motion | `AppMotion.fast` (ms), `AppMotion.standard<T>()` (`tween`), `AppMotion.standardEasing` and `AppMotion.snappy<T>()` (`spring`) | `--transition-duration-fast`, `--ease-standard`, `--ease-snappy`: `duration-fast`, `ease-standard`, `ease-snappy duration-snappy` |
+| Elevation | `.shadow(AppElevation.low)` | `Modifier.shadow(AppElevation.low, shape)` (in the template's `AppTheme.kt`) | `--shadow-low`: `shadow-low` |
 | Font | The files in `App/Generated/Fonts/`, registered at launch by `AppFonts.register()` (called from `AppMain`) | The files as `res/font/generated_*` resources behind `AppFontFamily` | The files in `src/generated/fonts/`, with one `@font-face` per weight and `--font-sans` set to the family |
 
 With `"family": "system"`, `AppTypography.title` is `.title3.weight(.semibold)` on iOS, Android styles have no `fontFamily`, and `--font-sans` is the system stack.
@@ -106,7 +130,7 @@ One JSON file per locale: `contracts/strings/en.json`, `contracts/strings/fr.jso
 |---|---|
 | Keys | Dot-separated camelCase words: `settings.appearance.title`. Two keys can't map to the same name. `app.name` isn't allowed (the name comes from `app.json`). |
 | Placeholders | `{name}` is a string, `{name:int}` an integer. |
-| Plurals | An object with `zero`, `one`, `two`, `few`, `many` and `other` forms. `other` is required, and the only placeholder allowed is `{count}`. |
+| Plurals | An object with `zero`, `one`, `two`, `few`, `many` and `other` forms. `other` is required, and the only placeholder allowed is `{count}`. A `zero` form is used for a count of 0 in every language on every platform, even where the language's plural rules have no zero category (English): iOS does this itself, and the generated web and Android code (`AppPlurals`) do it too. |
 | Translations | Must use the same placeholders and plural shape as the source, and can't add keys the source doesn't have. Missing keys fall back to the source. |
 
 ### Generated
@@ -115,7 +139,7 @@ One JSON file per locale: `contracts/strings/en.json`, `contracts/strings/fr.jso
 |---|---|---|---|
 | `settings.title` | `Strings.settingsTitle` | `stringResource(R.string.settings_title)` | `strings.settingsTitle` |
 | `settings.about.version` | `Strings.settingsAboutVersion(version:build:)` | `stringResource(R.string.settings_about_version, version, build)` | `strings.settingsAboutVersion({ version, build })` |
-| `notes.count` | `Strings.notesCount(count:)` | `pluralStringResource(R.plurals.notes_count, count, count)` | `strings.notesCount(count)` |
+| `notes.count` | `Strings.notesCount(count:)` | `AppPlurals.notesCount(count)` (or `AppPlurals.notesCount(resources, count)` outside composables) | `strings.notesCount(count)` |
 
 Files: `App/Generated/Localizable.xcstrings` and `Strings.swift` on iOS; `res/values/generated_strings.xml` (plus `values-fr`, `values-pt-rBR`, `values-b+zh+Hans` and so on) on Android, which also gets `app_name`; `src/generated/strings.ts` on web, with `setLocale()`.
 

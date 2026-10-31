@@ -1,12 +1,16 @@
 package app.core.designsystem
 
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 import app.generated.AppColorTokens
 import app.generated.AppMaterialTypography
+import app.generated.AppShadow
 import app.generated.AppShapes
 import app.generated.DarkAppColors
 import app.generated.LightAppColors
@@ -32,4 +36,11 @@ object AppTheme {
     /** The current color tokens, light or dark. */
     val colors: AppColorTokens
         @Composable @ReadOnlyComposable get() = LocalAppColors.current
+}
+
+/** Draws one of the elevation tokens' shadows (DESIGN.md: Elevation), in the current light or dark colors. */
+@Composable
+fun Modifier.shadow(shadow: AppShadow, shape: Shape): Modifier {
+    val color = shadow.color(AppTheme.colors).copy(alpha = shadow.alpha)
+    return shadow(elevation = shadow.elevation, shape = shape, ambientColor = color, spotColor = color)
 }
