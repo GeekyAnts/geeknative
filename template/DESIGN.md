@@ -32,6 +32,7 @@ Defined in contracts/tokens.json and compiled into each app by `make gen`.
 | Spacing `md` | `AppSpacing.md` | `AppSpacing.md` | `p-md`, `gap-md` |
 | Radius `lg` | `AppRadius.lg` | `AppRadius.lg` | `rounded-lg` |
 | Icon size `md` | `AppIconSize.md` | `AppIconSize.md` | `size-icon-md` |
+| Size `touchTarget` | `AppSize.touchTarget` | `AppSize.touchTarget` | `size-touch-target`, `min-h-touch-target` |
 | Type `title` | `AppTypography.title` | `AppTypography.title` | `text-title` |
 | Motion `snappy` (a spring) | `AppMotion.snappy` | `AppMotion.snappy()` | `ease-snappy duration-snappy` |
 | Motion `standard` curve, `fast` duration | `AppMotion.standard(AppMotion.fast)` | `AppMotion.standard(AppMotion.fast)` | `ease-standard duration-fast` |
@@ -74,5 +75,5 @@ How each platform builds the shared patterns. Add a row whenever a new pattern a
 
 - Support Dynamic Type (iOS), font scaling (Android) and browser zoom (web).
 - Every icon-only button has a label from contracts/strings.
-- Touch targets are at least 44 pt on iOS and 48 dp on Android. On web, aim for 44 px or more (WCAG 2.5.8 requires 24 px at least), as the header link and the radio rows do.
+- Touch targets are at least `touchTarget` (48) on every platform: above 44 pt on iOS and 44 px on web, and exactly 48 dp on Android. Use the token instead of a number. On web, aim for 44 px or more (WCAG 2.5.8 requires 24 px at least), as the header link and the radio rows do.
 - Text meets WCAG AA contrast (4.5:1 for body text) in light and dark mode.
