@@ -58,7 +58,7 @@ function AppShell() {
             to="/settings"
             aria-label={strings.homeOpenSettings}
             data-testid="home.openSettings"
-            className="rounded-full p-md text-on-surface-variant hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-primary"
+            className="inline-flex size-touch-target items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-primary"
           >
             <AppIcons.settings aria-hidden className="size-icon-md" />
           </Link>
