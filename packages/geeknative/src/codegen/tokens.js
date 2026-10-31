@@ -106,7 +106,7 @@ const SHADCN_ALIASES = {
 /**
  * @typedef {[number, number, number, number]} Rgba
  * @typedef {{ light: Rgba, dark: Rgba }} ColorToken
- * @typedef {{ size: number, lineHeight: number, weight: number, ios: string, android: string }} TextToken
+ * @typedef {{ size: number, lineHeight: number, weight: number, ios: string, android: string | null }} TextToken (`android`: the Material 3 role it fills, if any)
  * @typedef {{ file: string, postScriptName: string, data: Buffer, web: string, webData: Buffer }} Face one weight of the font
  * @typedef {{ family: 'system' } | { family: string, faces: Record<number, Face> }} FontSpec
  * @typedef {{
@@ -163,10 +163,11 @@ export function readTokens(root) {
     if (!IOS_TEXT_STYLES.has(ios)) {
       throw new CliError(`${where} "ios" must be a Dynamic Type style: ${[...IOS_TEXT_STYLES].join(', ')}.`)
     }
-    if (!M3_TEXT_SLOTS.has(android)) {
+    // Optional: a style without one is AppTypography.x on Android but restyles no stock Material component.
+    if (android !== undefined && !M3_TEXT_SLOTS.has(android)) {
       throw new CliError(`${where} "android" must be a Material 3 type style: ${[...M3_TEXT_SLOTS].join(', ')}.`)
     }
-    typography[name] = { size, lineHeight, weight, ios, android }
+    typography[name] = { size, lineHeight, weight, ios, android: android ?? null }
   }
   for (const name of ['body']) {
     if (!typography[name]) throw new CliError(`${SOURCE} typography needs a "${name}" style.`)
@@ -466,6 +467,7 @@ ${faces.map(([weight, face]) => `    Font(R.font.${androidFontName(face.file)}, 
 `
     : ''
   const slots = Object.entries(tokens.typography)
+    .filter(([, t]) => t.android)
     .map(([name, t]) => `    ${t.android} = AppTypography.${name},`)
     .join('\n')
   const shape = (/** @type {string} */ key) => (tokens.radius[key] !== undefined ? `RoundedCornerShape(AppRadius.${key})` : null)
