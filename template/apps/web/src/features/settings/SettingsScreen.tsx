@@ -17,7 +17,7 @@ export function SettingsScreen() {
             {viewModel.appearanceOptions.map((option) => (
               <label
                 key={option.id}
-                className="flex cursor-pointer items-center gap-md rounded-md p-md hover:bg-surface-variant"
+                className="flex min-h-touch-target cursor-pointer items-center gap-md rounded-md px-md hover:bg-surface-variant"
               >
                 <input
                   type="radio"
