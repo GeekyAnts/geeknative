@@ -114,6 +114,7 @@ const SHADCN_ALIASES = {
  *   spacing: Record<string, number>,
  *   radius: Record<string, number>,
  *   icon: Record<string, number>,
+ *   size: Record<string, number>,
  *   typography: Record<string, TextToken>,
  *   font: FontSpec,
  *   motion: import('./motion.js').Motion,
@@ -143,6 +144,13 @@ export function readTokens(root) {
   const spacing = readNumbers(raw.spacing, 'spacing')
   const radius = readNumbers(raw.radius, 'radius')
   const icon = readNumbers(raw.icon, 'icon')
+  // Fixed sizes of things (touch targets, avatars, dots). On the web they share Tailwind's
+  // spacing scale with the spacing tokens, so the names can't overlap.
+  const size = readNumbers(raw.size, 'size')
+  for (const name of Object.keys(size)) {
+    if (spacing[name] !== undefined) throw new CliError(`${SOURCE} size.${name} has the same name as spacing.${name}: on the web both become --spacing-${kebab(name)}. Rename one.`)
+    if (name.startsWith('icon')) throw new CliError(`${SOURCE} size.${name} can't start with "icon": icon sizes use those names on the web.`)
+  }
 
   /** @type {Record<string, TextToken>} */
   const typography = {}
@@ -183,7 +191,7 @@ export function readTokens(root) {
   const motion = readMotion(raw.motion)
   const elevation = readElevation(raw.elevation, new Set(Object.keys(colors)))
 
-  return { colors, spacing, radius, icon, typography, font, motion, elevation }
+  return { colors, spacing, radius, icon, size, typography, font, motion, elevation }
 }
 
 /**
@@ -344,7 +352,12 @@ ${numbers(tokens.radius)}
 nonisolated enum AppIconSize {
 ${numbers(tokens.icon)}
 }
-
+${Object.keys(tokens.size).length ? `
+/// Fixed sizes (touch targets and the like), in points.
+nonisolated enum AppSize {
+${numbers(tokens.size)}
+}
+` : ''}
 ${typeDoc}
 nonisolated enum AppTypography {
 ${type}
@@ -510,7 +523,12 @@ ${numbers(tokens.radius)}
 object AppIconSize {
 ${numbers(tokens.icon)}
 }
-
+${Object.keys(tokens.size).length ? `
+/** Fixed sizes (touch targets and the like). */
+object AppSize {
+${numbers(tokens.size)}
+}
+` : ''}
 ${fontFamily}/** Text styles, in sp so they follow the user's font size setting. */
 object AppTypography {
 ${styles}
@@ -582,12 +600,15 @@ function css(tokens) {
   // Tailwind resolves w-*, min-w-* and max-w-* from --width/--min-width/--max-width, then
   // --spacing, then --container. A spacing token named like a container size (sm, md, xl, ...)
   // would turn max-w-md into 12px, so those names point back at the container sizes.
-  const widthNames = Object.keys(tokens.spacing).map(kebab).filter((name) => TAILWIND_CONTAINERS.has(name))
+  const widthNames = [...Object.keys(tokens.spacing), ...Object.keys(tokens.size)].map(kebab).filter((name) => TAILWIND_CONTAINERS.has(name))
   const widths = widthNames
     .flatMap((name) => ['width', 'min-width', 'max-width'].map((prefix) => `  --${prefix}-${name}: var(--container-${name});`))
     .join('\n')
   const iconSizes = Object.entries(tokens.icon)
     .map(([name, value]) => `  --spacing-icon-${kebab(name)}: ${value}px;`)
+    .join('\n')
+  const fixedSizes = Object.entries(tokens.size)
+    .map(([name, value]) => `  --spacing-${kebab(name)}: ${value}px;`)
     .join('\n')
   const motion = cssMotion(tokens.motion, tokens.elevation)
   const systemStack = "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
@@ -624,7 +645,7 @@ ${numbers(tokens.radius, 'radius')}
 
   /* icon sizes: size-icon-md, w-icon-lg, ... */
 ${iconSizes}
-
+${fixedSizes ? `\n  /* fixed sizes: size-touch-target, min-h-touch-target, ... */\n${fixedSizes}\n` : ''}
 ${type}
 ${motion ? `\n${motion}\n` : ''}
   --font-sans: ${faces.length ? `'${family}', ` : ''}${systemStack};
