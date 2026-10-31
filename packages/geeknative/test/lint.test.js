@@ -155,6 +155,15 @@ test('lint: test IDs passed to helper components are checked too', () => {
   for (const f of unknown) assert.match(f.message, /"order\.grandTotal" isn't listed/)
 })
 
+test('lint: a test ID marked (not on iOS) is not expected on iOS, but still on the others', () => {
+  const root = cleanProject()
+  write(root, 'spec/features/order.md', ORDER_SPEC().replace('- `order.number`, `order.total`: the summary values.', '- `order.number`, `order.total`: the summary values.\n- `order.title` (not on iOS): the large title, which iOS gives no test ID.'))
+  parity(root)
+  const missing = lintFindings(root).filter((f) => f.rule === 'test-id').map((f) => f.message)
+  assert.equal(missing.length, 2)
+  assert.ok(missing.every((m) => /"order\.title" isn't used in the (android|web) app/.test(m)), missing.join('\n'))
+})
+
 test('lint: a fully dynamic prefix still matches a listed ID', () => {
   const root = cleanProject()
   write(root, 'apps/android/app/src/main/kotlin/app/features/order/Stepper.kt', 'Modifier.testTag("$prefix.total")')
