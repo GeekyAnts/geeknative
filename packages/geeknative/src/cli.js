@@ -7,6 +7,7 @@ import { font } from './commands/font.js'
 import { gen } from './commands/gen.js'
 import { lint } from './commands/lint.js'
 import { parity } from './commands/parity.js'
+import { pin } from './commands/pin.js'
 import { run } from './commands/run.js'
 import { CliError, color } from './lib/log.js'
 import { findProjectRoot, packageVersion } from './lib/project.js'
@@ -24,6 +25,7 @@ Usage: geeknative <command>
   parity               Update spec/parity.md from feature specs and tests
   lint [platforms]     Find hardcoded text, unknown test IDs, centered titles and stale specs (or one app's code)
   run <platform>       Build and launch: ios (simulator), android (emulator or device), web (dev server)
+  pin                  Pin the project to a fresh snapshot of the geeknative checkout it came from
   version              Print the version
 `
 
@@ -71,6 +73,8 @@ export async function main(argv) {
       if (!ok) process.exitCode = 1
       return
     }
+    case 'pin':
+      return pin(findProjectRoot(), { install: !values['no-install'] })
     case 'run':
       return run(findProjectRoot(), rest[0])
     default:
