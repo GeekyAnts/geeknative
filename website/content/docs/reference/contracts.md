@@ -71,7 +71,7 @@ In code: `AppIdentity.name` and `AppIdentity.version` (iOS), `AppIdentity.NAME` 
 | `size`, `lineHeight` | Positive numbers (points on iOS, sp on Android, converted to rem on web) |
 | `weight` | 100, 200, ... 900. With a shared font, every weight used here needs a file under `font.files`. |
 | `ios` | The Dynamic Type style it scales with: `largeTitle`, `title`, `title2`, `title3`, `headline`, `subheadline`, `body`, `callout`, `footnote`, `caption`, `caption2` |
-| `android` | The Material 3 type style it fills: `displayLarge` to `displaySmall`, `headlineLarge` to `headlineSmall`, `titleLarge` to `titleSmall`, `bodyLarge` to `bodySmall`, `labelLarge` to `labelSmall` |
+| `android` | Optional. The Material 3 type style it fills, so stock Material components use it (leave it out for a style only your own screens use, or it changes those components on Android only): `displayLarge` to `displaySmall`, `headlineLarge` to `headlineSmall`, `titleLarge` to `titleSmall`, `bodyLarge` to `bodySmall`, `labelLarge` to `labelSmall` |
 
 A `body` style is required. Every platform uses `size`; `lineHeight` applies on Android and web. On iOS the style scales relative to its Dynamic Type style, so text follows the user's text size setting.
 
