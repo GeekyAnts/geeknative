@@ -43,6 +43,7 @@ Where the platforms intentionally differ (navigation chrome, controls, gestures)
 ## Test IDs
 
 - `feature.element`: ...
+- `feature.title` (not on iOS): ... (a platform that can't carry the ID, here an iOS large title, is named like this so the lint doesn't expect it there)
 
 ## Assumptions and open questions
 
