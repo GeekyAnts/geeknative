@@ -131,6 +131,11 @@ object AppIconSize {
     val lg = 32.dp
 }
 
+/** Fixed sizes (touch targets and the like). */
+object AppSize {
+    val touchTarget = 48.dp
+}
+
 /** The shared typeface, Inter, from contracts/fonts. */
 val AppFontFamily = FontFamily(
     Font(R.font.generated_inter_regular, FontWeight.Normal),
