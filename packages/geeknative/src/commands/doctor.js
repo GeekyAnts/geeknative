@@ -5,7 +5,7 @@ import { readConfig, resolveSecrets } from '../codegen/config.js'
 import { readEnvFile } from '../lib/env.js'
 import { capture, runInherit, runLogged } from '../lib/exec.js'
 import { log } from '../lib/log.js'
-import { isLocalCheckout, packCheckout } from '../lib/project.js'
+import { isLocalCheckout, packCheckout, snapshotSource } from '../lib/project.js'
 import {
   ANDROID_COMPILE_SDK,
   findAndroidSdk,
@@ -45,7 +45,20 @@ async function checkGeeknativeSource(root, fix) {
   const pkg = JSON.parse(readFileSync(pkgFile, 'utf8'))
   const source = geeknativeSource(pkg.devDependencies?.geeknative, root)
   if (source.kind === 'registry') return log.ok('geeknative', `${source.target} from npm`)
-  if (source.kind === 'snapshot') return log.ok('geeknative', `pinned to ${path.relative(root, source.target ?? '')}`)
+  if (source.kind === 'snapshot') {
+    log.ok('geeknative', `pinned to ${path.relative(root, source.target ?? '')}`)
+    // A snapshot from a checkout that has moved on: say so, since fixes there don't reach this project.
+    const from = snapshotSource()
+    if (from?.commit && existsSync(from.checkout)) {
+      const now = capture('git', ['rev-parse', '--short', 'HEAD'], { cwd: from.checkout })
+      const branch = capture('git', ['branch', '--show-current'], { cwd: from.checkout })
+      if (now && now !== from.commit) {
+        log.warn('geeknative', `the checkout it came from is now at ${branch || 'detached'} ${now} (the snapshot is ${from.branch ?? 'detached'} ${from.commit})`)
+        log.detail('Run `make pin` to use the newer geeknative here, then `make gen` and `make check`.')
+      }
+    }
+    return
+  }
   if (source.kind !== 'linked' || !source.target) return
 
   const branch = capture('git', ['branch', '--show-current'], { cwd: source.target })
