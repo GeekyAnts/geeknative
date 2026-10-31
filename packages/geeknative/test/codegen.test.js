@@ -215,6 +215,26 @@ test('tokens: spacing names never shrink Tailwind width utilities like max-w-md'
   assert.match(css, /--spacing-md: 12px;/, 'padding and gaps still use the spacing tokens')
 })
 
+test('tokens: fixed sizes reach every platform, and share the web spacing scale safely', () => {
+  const outputs = generate(TEMPLATE)
+  assert.match(outputOf(outputs, 'Tokens.swift'), /enum AppSize \{\n    static let touchTarget: CGFloat = 48\n\}/)
+  assert.match(outputOf(outputs, 'Tokens.kt'), /object AppSize \{\n    val touchTarget = 48\.dp\n\}/)
+  assert.match(outputOf(outputs, 'tokens.css'), /--spacing-touch-target: 48px;/, 'size-touch-target, min-h-touch-target in Tailwind')
+
+  for (const [size, message] of [
+    [{ md: 40 }, /size\.md has the same name as spacing\.md/],
+    [{ iconButton: 40 }, /size\.iconButton can't start with "icon"/],
+  ]) {
+    const root = tempProject()
+    editJson(path.join(root, 'contracts', 'tokens.json'), (tokens) => (tokens.size = size))
+    assert.throws(() => generate(root), message)
+  }
+
+  const root = tempProject()
+  editJson(path.join(root, 'contracts', 'tokens.json'), (tokens) => delete tokens.size)
+  assert.doesNotMatch(outputOf(generate(root), 'Tokens.swift'), /AppSize/, 'the group is optional')
+})
+
 test('fonts: the shared typeface reaches every platform from the same files', () => {
   const outputs = generate(TEMPLATE)
 
