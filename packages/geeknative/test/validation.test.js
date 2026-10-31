@@ -34,7 +34,7 @@ const cases = [
   [
     'an unknown Material type style',
     (c) => editJson(path.join(c, 'tokens.json'), (t) => (t.typography.title.android = 'titleHuge')),
-    /"android" must be a Material 3 type style/,
+    /"android", when given, must be a Material 3 type style/,
   ],
   [
     'a font file that is missing',
