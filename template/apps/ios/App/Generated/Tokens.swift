@@ -43,6 +43,11 @@ nonisolated enum AppIconSize {
     static let lg: CGFloat = 32
 }
 
+/// Fixed sizes (touch targets and the like), in points.
+nonisolated enum AppSize {
+    static let touchTarget: CGFloat = 48
+}
+
 /// Text styles in Inter, the shared typeface. Each scales with its Dynamic Type style, so it follows the user's text size setting.
 nonisolated enum AppTypography {
     static let display: Font = .custom("Inter-Bold", size: 34, relativeTo: .largeTitle)
