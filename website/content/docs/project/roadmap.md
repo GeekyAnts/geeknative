@@ -15,13 +15,13 @@ Everything below is planned, not built.
 
 ## Visual and end-to-end parity
 
-- **UI tests** on iOS and Android, so screen-level acceptance criteria (like the starter Home screen's) are covered on every platform.
 - **Screenshots** of each screen from all three apps, side by side, for visual review.
 - **Shared end-to-end flows** with Maestro for iOS and Android, and Playwright for the web.
 - **CI for generated projects.**
 
 ## More
 
-- **Backends.** An API contract in `contracts/`, generated clients, and repository implementations that call it.
-- **Custom fonts** in design tokens.
+- **Backends.** An API contract in `contracts/`, generated clients that use the URLs in `contracts/config.json`, and repository implementations that call it.
+- **More icon families** as bundled catalogs beside Lucide, and multi-color icons.
+- **Italic and variable fonts**, and letter spacing in the type scale.
 - **Windows** support for the Android and web apps.

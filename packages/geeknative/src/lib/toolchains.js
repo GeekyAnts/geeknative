@@ -83,30 +83,40 @@ export function emulator(sdk) {
 
 /**
  * Picks the simulator to build and test on: GEEKNATIVE_IOS_SIMULATOR (name or UDID) if set,
- * otherwise a booted iPhone, otherwise an iPhone on the newest installed iOS runtime.
+ * otherwise an iPhone on the newest installed iOS runtime, preferring one that's already booted.
  * @returns {Simulator | null}
  */
 export function pickSimulator() {
   const json = capture('xcrun', ['simctl', 'list', 'devices', 'available', '--json'])
-  if (!json) return null
+  return json ? chooseSimulator(JSON.parse(json), process.env.GEEKNATIVE_IOS_SIMULATOR) : null
+}
+
+/**
+ * The choice behind pickSimulator, from `simctl list devices --json` output. The runtime is
+ * always the newest one, so checks run on the same iOS version whichever simulator happens to be
+ * booted; booting only breaks ties within that runtime.
+ * @param {{ devices?: Record<string, any[]> }} list
+ * @param {string} [wanted] a simulator name or UDID
+ * @returns {Simulator | null}
+ */
+export function chooseSimulator(list, wanted) {
   /** @type {Simulator[]} */
   const all = []
-  for (const [runtime, devices] of Object.entries(JSON.parse(json).devices ?? {})) {
+  for (const [runtime, devices] of Object.entries(list.devices ?? {})) {
     const match = runtime.match(/iOS-(\d+)-(\d+)(?:-(\d+))?$/)
     if (!match) continue
     const version = match.slice(1).filter(Boolean).map(Number)
-    for (const device of /** @type {any[]} */ (devices)) {
+    for (const device of devices) {
       if (device.isAvailable === false) continue
       all.push({ udid: device.udid, name: device.name, state: device.state, runtime: `iOS ${version.join('.')}`, version })
     }
   }
-  const wanted = process.env.GEEKNATIVE_IOS_SIMULATOR
   if (wanted) return all.find((sim) => sim.udid === wanted || sim.name === wanted) ?? null
   const iphones = all.filter((sim) => sim.name.startsWith('iPhone'))
-  const booted = iphones.find((sim) => sim.state === 'Booted')
-  if (booted) return booted
-  iphones.sort((a, b) => compareVersions(b.version, a.version))
-  return iphones[0] ?? null
+  if (!iphones.length) return null
+  const newest = iphones.reduce((best, sim) => (compareVersions(sim.version, best.version) > 0 ? sim : best)).version
+  const candidates = iphones.filter((sim) => compareVersions(sim.version, newest) === 0)
+  return candidates.find((sim) => sim.state === 'Booted') ?? candidates[0]
 }
 
 /** @param {number[]} a @param {number[]} b */

@@ -11,6 +11,10 @@ val identity = Properties().apply {
     load(providers.fileContents(layout.projectDirectory.file("identity.properties")).asText.get().reader())
 }
 
+// The environment from contracts/config.json this build targets: development for debug builds,
+// production for release builds. Override with: ./gradlew -PappEnvironment=staging
+val appEnvironment = providers.gradleProperty("appEnvironment")
+
 android {
     // The Kotlin package stays "app" in every project; the app's identity is applicationId.
     namespace = "app"
@@ -27,22 +31,32 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "APP_ENVIRONMENT", "\"${appEnvironment.getOrElse("development")}\"")
+        }
         release {
             isMinifyEnabled = false
+            buildConfigField("String", "APP_ENVIRONMENT", "\"${appEnvironment.getOrElse("production")}\"")
         }
     }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        // java.time and other newer Java APIs on Android 7 (API 24-25), which predate them.
+        isCoreLibraryDesugaringEnabled = true
     }
 
     buildFeatures {
         compose = true
+        buildConfig = true // for BuildConfig.APP_ENVIRONMENT, read by the generated AppEnvironment
     }
 
     testOptions {
-        unitTests.isReturnDefaultValues = true
+        // Off, so a unit test that calls an Android API without Robolectric fails loudly instead of
+        // getting silent defaults (null, 0, false) from stubs like org.json. Use Robolectric for those tests.
+        unitTests.isReturnDefaultValues = false
+        unitTests.isIncludeAndroidResources = true // for Robolectric UI tests
     }
 }
 
@@ -53,7 +67,6 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.material.icons.core)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
@@ -62,7 +75,12 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.kotlinx.serialization.core)
     debugImplementation(libs.androidx.compose.ui.tooling)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.robolectric)
+    testImplementation(platform(libs.androidx.compose.bom))
+    testImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.test.manifest) // debug builds only: hosts composables in UI tests
 }

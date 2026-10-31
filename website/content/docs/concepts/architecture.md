@@ -15,8 +15,8 @@ Each app is idiomatic for its platform, but all three share one structure and on
 | Dependencies | `AppContainer`, from `@Environment(AppContainer.self)` | `AppContainer`, from `LocalAppContainer.current` | `AppContainer`, from router context |
 | Navigation | A case in the `Route` enum | An object in the `Route` sealed interface | A file in `routes/` |
 | Copy | `Strings.notesEmptyTitle` | `stringResource(R.string.notes_empty_title)` | `strings.notesEmptyTitle` |
-| Colors, spacing, radii, type | `AppColors.primary`, `AppSpacing.md`, `AppRadius.lg`, `AppTypography.title` | `AppTheme.colors.primary`, `AppSpacing.md`, `AppRadius.lg`, `AppTypography.title` | `bg-primary`, `p-md`, `rounded-lg`, `text-title` |
-| Icons | `Image(systemName: AppIcon.settings)` | `Icon(AppIcons.settings, ...)` | `<AppIcons.settings />` |
+| Colors, spacing, radii, icon sizes, type | `AppColors.primary`, `AppSpacing.md`, `AppRadius.lg`, `AppIconSize.md`, `AppTypography.title` | `AppTheme.colors.primary`, `AppSpacing.md`, `AppRadius.lg`, `AppIconSize.md`, `AppTypography.title` | `bg-primary`, `p-md`, `rounded-lg`, `size-icon-md`, `text-title` |
+| Icons | `Image(AppIcon.settings)` | `Icon(AppIcons.settings, ...)` | `<AppIcons.settings className="size-icon-md" />` |
 | Test IDs | `.accessibilityIdentifier("notes.addButton")` | `Modifier.testTag("notes.addButton")` | `data-testid="notes.addButton"` |
 | Tests | Swift Testing: `@Test("AC-notes-2: ...")` | JUnit: ``fun `AC-notes-2 ...`()`` | Vitest: `test('AC-notes-2: ...')` |
 
@@ -28,7 +28,7 @@ The starter Settings screen (appearance and app version) is built the same way o
 |---|---|---|---|
 | Screen | `SettingsScreen.swift` | `SettingsScreen.kt` | `SettingsScreen.tsx` |
 | State | `SettingsViewModel.swift` | `SettingsViewModel.kt` | `useSettingsViewModel.ts` |
-| Data | `SettingsRepository.swift` (`UserDefaultsSettingsRepository`, `InMemorySettingsRepository`) | `SettingsRepository.kt` (`DataStoreSettingsRepository`, `InMemorySettingsRepository`) | `SettingsRepository.ts`, `LocalStorageSettingsRepository.ts` |
+| Data | `SettingsRepository.swift` (`UserDefaultsSettingsRepository`, `InMemorySettingsRepository`) | `SettingsRepository.kt` (`DataStoreSettingsRepository`, `InMemorySettingsRepository`) | `SettingsRepository.ts`, `LocalStorageSettingsRepository.ts`, `InMemorySettingsRepository.ts` |
 | Model | `Appearance.swift` | `Appearance.kt` | `Appearance.ts` |
 | Tests | `AppTests/SettingsTests.swift` | `SettingsTest.kt` | `settings.test.ts` |
 
@@ -56,7 +56,8 @@ On the web, TanStack Start's server functions and API routes are only for web-on
 |---|---|
 | Features, flows and data | Navigation chrome (navigation bar, top app bar, site header) |
 | Copy | Controls: pickers, switches, radio lists, segmented controls |
-| Colors, spacing, radii and type scale | Gestures, haptics and transitions |
-| Icons by meaning | Icon artwork: SF Symbols, Material icons, Lucide |
+| Colors, spacing, radii, icon sizes and type scale | Gestures, haptics and transitions |
+| The typeface (Inter by default) | The font of navigation bars and system controls |
+| Icons: the same Lucide drawing everywhere | Chrome icons like the iOS back chevron |
 | Screen structure and content order | Sheets, dialogs and menus |
-| Accessibility labels and test IDs | System font |
+| Accessibility labels and test IDs | |

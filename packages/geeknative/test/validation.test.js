@@ -1,6 +1,6 @@
 // Contract mistakes must fail with a message an agent can act on.
 import assert from 'node:assert/strict'
-import { renameSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdirSync, renameSync, rmSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { test } from 'node:test'
 import { generate } from '../src/codegen/index.js'
@@ -34,12 +34,37 @@ const cases = [
   [
     'an unknown Material type style',
     (c) => editJson(path.join(c, 'tokens.json'), (t) => (t.typography.title.android = 'titleHuge')),
-    /"android" must be a Material 3 type style/,
+    /"android", when given, must be a Material 3 type style/,
   ],
   [
-    'a custom font family',
-    (c) => editJson(path.join(c, 'tokens.json'), (t) => (t.font.family = 'Inter')),
-    /isn't supported yet/,
+    'a font file that is missing',
+    (c) => editJson(path.join(c, 'tokens.json'), (t) => (t.font.files['400'] = 'Inter-Thin.ttf')),
+    /contracts\/fonts\/Inter-Thin\.ttf is missing \(font\.files\["400"\]\)/,
+  ],
+  [
+    'a font file listed under the wrong weight',
+    (c) => editJson(path.join(c, 'tokens.json'), (t) => (t.font.files['500'] = 'Inter-Regular.ttf')),
+    /Inter-Regular\.ttf has weight 400, but font\.files lists it under "500"/,
+  ],
+  [
+    'a font family that does not match its files',
+    (c) => editJson(path.join(c, 'tokens.json'), (t) => (t.font.family = 'Roboto')),
+    /Inter-Regular\.ttf is "Inter", but font\.family is "Roboto"/,
+  ],
+  [
+    'a type weight with no font file',
+    (c) => editJson(path.join(c, 'tokens.json'), (t) => delete t.font.files['600']),
+    /no file for weight 600, which typography uses/,
+  ],
+  [
+    'font files with the system family',
+    (c) => editJson(path.join(c, 'tokens.json'), (t) => (t.font = { family: 'system', files: { 400: 'Inter-Regular.ttf' } })),
+    /font\.files only applies to a shared family/,
+  ],
+  [
+    'a type size that disagrees with its Dynamic Type style under the system font',
+    (c) => editJson(path.join(c, 'tokens.json'), (t) => (t.font = { family: 'system' })),
+    /typography\.body has size 16, but its iOS style "body" is 17pt/,
   ],
   [
     'a badly formed string key',
@@ -82,14 +107,33 @@ const cases = [
     /strings\/en\.json is missing/,
   ],
   [
-    'an icon with an invalid Material name',
-    (c) => editJson(path.join(c, 'icons.json'), (i) => (i.star = { ios: 'star', android: 'Star', web: 'Star' })),
-    /"star" needs "android"/,
+    'an icon that is not in the Lucide catalog',
+    (c) => editJson(path.join(c, 'icons.json'), (i) => (i.star = 'sparkly-star')),
+    /"sparkly-star" is not a Lucide icon/,
   ],
   [
-    'an icon missing its web name',
-    (c) => editJson(path.join(c, 'icons.json'), (i) => (i.star = { ios: 'star', android: 'Icons.Filled.Star' })),
-    /"star" needs "web"/,
+    'an icon family geeknative does not ship',
+    (c) => editJson(path.join(c, 'icons.json'), (i) => (i.$family = 'material')),
+    /"\$family" must be "lucide"/,
+  ],
+  [
+    'an icon with both a catalog name and an SVG file',
+    (c) => editJson(path.join(c, 'icons.json'), (i) => (i.star = { icon: 'star', svg: 'star.svg' })),
+    /"star" must be a lucide icon name/,
+  ],
+  [
+    'an icon whose SVG file is missing',
+    (c) => editJson(path.join(c, 'icons.json'), (i) => (i.logo = { svg: 'logo.svg' })),
+    /contracts\/icons\/logo\.svg is missing/,
+  ],
+  [
+    'an icon SVG with features icons can\'t use',
+    (c) => {
+      mkdirSync(path.join(c, 'icons'))
+      writeFileSync(path.join(c, 'icons', 'logo.svg'), '<svg viewBox="0 0 24 24"><defs/><path d="M0 0h1"/></svg>')
+      editJson(path.join(c, 'icons.json'), (i) => (i.logo = { svg: 'logo.svg' }))
+    },
+    /contracts\/icons\/logo\.svg uses <defs>/,
   ],
   [
     'an app ID that is not reverse-DNS',
@@ -105,6 +149,96 @@ const cases = [
     'a build number below 1',
     (c) => editJson(path.join(c, 'app.json'), (a) => (a.build = 0)),
     /"build" must be a whole number/,
+  ],
+  // contracts/config.json
+  [
+    'a missing config.json',
+    (c) => rmSync(path.join(c, 'config.json')),
+    /contracts\/config\.json is missing\. Create it with/,
+  ],
+  [
+    'an unknown top-level config key',
+    (c) => editJson(path.join(c, 'config.json'), (cfg) => (cfg.value = {})),
+    /unknown key "value"/,
+  ],
+  [
+    'environments without production',
+    (c) => editJson(path.join(c, 'config.json'), (cfg) => (cfg.environments = ['development', 'staging'])),
+    /must include "development" and "production"/,
+  ],
+  [
+    'a duplicate environment',
+    (c) => editJson(path.join(c, 'config.json'), (cfg) => cfg.environments.push('staging')),
+    /lists "staging" twice/,
+  ],
+  [
+    'an environment that is not an identifier',
+    (c) => editJson(path.join(c, 'config.json'), (cfg) => cfg.environments.push('Dev-1')),
+    /environment "Dev-1": names must be camelCase/,
+  ],
+  [
+    'a config value with an unknown type',
+    (c) => editJson(path.join(c, 'config.json'), (cfg) => (cfg.values.timeout = { type: 'float' })),
+    /values\.timeout "type" must be "string", "url", "boolean" or "int"/,
+  ],
+  [
+    'a config value missing an environment',
+    (c) =>
+      editJson(path.join(c, 'config.json'), (cfg) => {
+        cfg.values.pageSize = { type: 'int', development: 10, production: 20 }
+      }),
+    /values\.pageSize is missing a value for "staging"/,
+  ],
+  [
+    'a config value for an undeclared environment',
+    (c) =>
+      editJson(path.join(c, 'config.json'), (cfg) => {
+        cfg.values.pageSize = { type: 'int', development: 1, staging: 2, production: 3, qa: 4 }
+      }),
+    /values\.pageSize has "qa", which isn't in "environments"/,
+  ],
+  [
+    'a config url that is not absolute',
+    (c) =>
+      editJson(path.join(c, 'config.json'), (cfg) => {
+        cfg.values.apiBaseUrl = { type: 'url', development: 'localhost:8080', staging: 'https://s.example.com', production: 'https://a.example.com' }
+      }),
+    /values\.apiBaseUrl\.development must be an absolute URL/,
+  ],
+  [
+    'a config boolean that is not a boolean',
+    (c) =>
+      editJson(path.join(c, 'config.json'), (cfg) => {
+        cfg.values.beta = { type: 'boolean', development: 'yes', staging: true, production: false }
+      }),
+    /values\.beta\.development must be true or false/,
+  ],
+  [
+    'a config int that is not whole',
+    (c) =>
+      editJson(path.join(c, 'config.json'), (cfg) => {
+        cfg.values.pageSize = { type: 'int', development: 1.5, staging: 2, production: 3 }
+      }),
+    /values\.pageSize\.development must be a whole number/,
+  ],
+  [
+    'a secret that carries a value',
+    (c) => editJson(path.join(c, 'config.json'), (cfg) => (cfg.secrets.mapsApiKey = { type: 'string', value: 'abc' })),
+    /secrets\.mapsApiKey has "value"\. Secrets are names only: put the value in \.env as MAPS_API_KEY/,
+  ],
+  [
+    'a secret that is not a string',
+    (c) => editJson(path.join(c, 'config.json'), (cfg) => (cfg.secrets.retries = { type: 'int' })),
+    /secrets\.retries "type" must be "string"/,
+  ],
+  [
+    'two secrets that map to one .env key',
+    (c) =>
+      editJson(path.join(c, 'config.json'), (cfg) => {
+        cfg.secrets.apiKey = { type: 'string' }
+        cfg.secrets.apiKEY = { type: 'string' }
+      }),
+    /"apiKey" and "apiKEY" both map to the \.env key API_KEY/,
   ],
   [
     'invalid JSON',

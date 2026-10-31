@@ -14,6 +14,11 @@ template/apps/android/.kotlin/
 template/apps/android/build/
 template/apps/android/app/build/
 template/apps/android/local.properties
+
+# Secrets: values from .env that gen inlines into the mobile apps
+template/.env
+template/apps/ios/App/Generated/AppSecrets.swift
+template/apps/android/app/src/main/kotlin/app/generated/AppSecrets.kt
 template/apps/web/.output/
 template/apps/web/.tanstack/
 template/apps/web/.nitro/

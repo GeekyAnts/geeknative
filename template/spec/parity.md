@@ -2,11 +2,13 @@
 # Parity
 
 Status comes from each feature spec's front matter. "Tested" counts acceptance criteria whose ID
-(like `AC-settings-2`) appears in that platform's tests.
+(like `AC-settings-2`) appears in that platform's tests. A criterion marked (ui) counts only when a
+test drives the real UI (iOS UI tests, Android Compose tests, web tests that render into a DOM);
+🟡 means only other tests (values, view models, routes) name it.
 
 | Feature | iOS | Android | Web |
 |---|---|---|---|
-| [Home](features/home.md) | ✅ done · 0/3 tested | ✅ done · 0/3 tested | ✅ done · 2/3 tested |
+| [Home](features/home.md) | ✅ done · 3/3 tested | ✅ done · 3/3 tested | ✅ done · 3/3 tested |
 | [Settings](features/settings.md) | ✅ done · 4/4 tested | ✅ done · 4/4 tested | ✅ done · 4/4 tested |
 
 ## Acceptance criteria coverage
@@ -15,9 +17,9 @@ Status comes from each feature spec's front matter. "Tested" counts acceptance c
 
 | Criterion | iOS | Android | Web |
 |---|---|---|---|
-| AC-home-1: Home shows the app name as its title. | ❌ | ❌ | ✅ |
-| AC-home-2: Home shows the welcome card's title and text. | ❌ | ❌ | ✅ |
-| AC-home-3: Home has an entry point that opens Settings. | ❌ | ❌ | ❌ |
+| AC-home-1: Home shows the app name as its title. | ✅ | ✅ | ✅ |
+| AC-home-2: Home shows the welcome card's title and text. | ✅ | ✅ | ✅ |
+| AC-home-3 (ui): Home has an entry point that opens Settings. | ✅ | ✅ | ✅ |
 
 ### Settings
 

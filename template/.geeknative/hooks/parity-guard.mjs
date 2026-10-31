@@ -18,8 +18,8 @@ const tracked = git('diff', '--name-only', '--relative', 'HEAD', '--', 'apps')
 const untracked = git('ls-files', '--others', '--exclude-standard', '--', 'apps')
 if (tracked.status !== 0 || untracked.status !== 0) process.exit(0) // not a git repo, or no commits yet
 
-// Generated code and agent docs don't count as implementing a change.
-const ignored = /(\/Generated\/|\/generated\/|\/generated_[^/]*\.xml$|Identity\.xcconfig$|identity\.properties$|AGENTS\.md$|CLAUDE\.md$)/
+// Generated code, agent docs and tests don't count as implementing a change (same list as `geeknative lint`).
+const ignored = /(\/Generated\/|\/generated\/|\/generated_[^/]*\.xml$|Identity\.xcconfig$|identity\.properties$|AGENTS\.md$|CLAUDE\.md$|^apps\/ios\/[^/]*Tests\/|^apps\/android\/app\/src\/(test|androidTest)\/|^apps\/web\/src\/testing\/|\.(test|spec)\.tsx?$)/
 const changed = [...tracked.stdout.split('\n'), ...untracked.stdout.split('\n')]
   .filter((file) => file.startsWith('apps/') && !ignored.test(file))
   .sort()

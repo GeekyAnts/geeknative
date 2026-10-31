@@ -127,9 +127,18 @@ export function stringOutputs(strings, appName) {
       path: `${OUT.androidRes}/${androidValuesDir(locale, strings.defaultLocale)}/generated_strings.xml`,
       content: androidXml(strings, locale, locale === strings.defaultLocale ? appName : null),
     })),
+    ...(strings.entries.some((e) => e.plural) ? [{ path: `${OUT.androidKotlin}/AppPlurals.kt`, content: kotlinPlurals(strings) }] : []),
     { path: `${OUT.webGenerated}/strings.ts`, content: typescript(strings) },
   ]
 }
+
+/**
+ * Whether a plural string has a "zero" form in any locale. iOS uses that form for a count of 0
+ * in every language, but Android and Intl.PluralRules only for languages whose rules have a zero
+ * category (English has none), so the generated code picks it for 0 itself on those platforms.
+ * @param {Entry} entry
+ */
+const hasZero = (entry) => entry.plural && Object.values(entry.values).some((v) => typeof v === 'object' && 'zero' in v)
 
 // ---------- iOS ----------
 
@@ -220,6 +229,8 @@ function androidXml(strings, locale, appName) {
       lines.push(`    <plurals name="${name}">`)
       for (const [form, t] of Object.entries(value)) lines.push(`        <item quantity="${form}">${text(t)}</item>`)
       lines.push('    </plurals>')
+      // What AppPlurals shows for a count of 0: the zero form, or else the "other" form.
+      if (hasZero(entry)) lines.push(`    <string name="${name}_zero">${text(value.zero ?? value.other)}</string>`)
     }
   }
   return `<?xml version="1.0" encoding="utf-8"?>
@@ -227,6 +238,51 @@ function androidXml(strings, locale, appName) {
 <resources>
 ${lines.join('\n')}
 </resources>
+`
+}
+
+/** @param {Strings} strings */
+function kotlinPlurals(strings) {
+  const functions = strings.entries
+    .filter((e) => e.plural)
+    .map((entry) => {
+      const id = camelKey(entry.key)
+      const name = snakeKey(entry.key)
+      const source = entry.values[strings.defaultLocale]
+      const doc = `    /** ${docText(plainPlaceholders(typeof source === 'string' ? source : source.other))} */`
+      if (!hasZero(entry)) {
+        return `${doc}
+    fun ${id}(resources: Resources, count: Int): String = resources.getQuantityString(R.plurals.${name}, count, count)
+
+    @Composable
+    fun ${id}(count: Int): String = pluralStringResource(R.plurals.${name}, count, count)`
+      }
+      return `${doc}
+    fun ${id}(resources: Resources, count: Int): String =
+        if (count == 0) resources.getString(R.string.${name}_zero, count)
+        else resources.getQuantityString(R.plurals.${name}, count, count)
+
+    @Composable
+    fun ${id}(count: Int): String =
+        if (count == 0) stringResource(R.string.${name}_zero, count)
+        else pluralStringResource(R.plurals.${name}, count, count)`
+    })
+  return `// ${banner(SOURCE)}
+package app.generated
+
+import android.content.res.Resources
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import app.R
+
+/**
+ * Plural strings. Use these instead of pluralStringResource: a "zero" form is used for a count of
+ * 0 in every language, as on iOS and the web (Android's own rules ignore it in English).
+ */
+object AppPlurals {
+${functions.join('\n\n')}
+}
 `
 }
 
@@ -295,7 +351,9 @@ function fill(template: string, args: Record<string, string | number>): string {
     ? `
 function plural(key: string, count: number): string {
   const forms = lookup(key) as Plural
-  return fill(forms[new Intl.PluralRules(currentLocale).select(count)] ?? forms.other, { count })
+  // A "zero" form is for a count of 0 in every language, as on iOS: Intl.PluralRules has no zero category in English.
+  const form = count === 0 && forms.zero !== undefined ? forms.zero : forms[new Intl.PluralRules(currentLocale).select(count)]
+  return fill(form ?? forms.other, { count })
 }
 `
     : ''

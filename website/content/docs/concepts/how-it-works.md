@@ -26,9 +26,11 @@ These are written for agents and people alike. When an implementation reveals so
 | What | Contract |
 |---|---|
 | App name, ID and version | `contracts/app.json` |
-| Colors, spacing, radii and type | `contracts/tokens.json` |
+| Colors, spacing, radii, icon sizes and type | `contracts/tokens.json` |
+| The typeface, with its font files | `contracts/tokens.json` `font` and `contracts/fonts/` |
+| Backend URLs and other per-environment settings | `contracts/config.json` |
 | All user-facing text | `contracts/strings/<locale>.json` |
-| Icons (SF Symbols, Material, Lucide) | `contracts/icons.json` |
+| Icons (Lucide names, or your own SVGs) | `contracts/icons.json` and `contracts/icons/` |
 
 `make gen` compiles them into Swift, Kotlin, Android resources, TypeScript and a Tailwind theme. Generated files are committed and never edited by hand, and `make check` fails if they're out of date. See the [contracts reference](/docs/reference/contracts/).
 

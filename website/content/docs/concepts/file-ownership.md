@@ -9,7 +9,7 @@ Every file in a geeknative project has one owner. That's what makes framework up
 |---|---|---|
 | **Framework** | `.geeknative/framework.mk`, `.geeknative/playbooks/`, `.geeknative/templates/`, `.geeknative/hooks/`, `.claude/agents/ios-engineer.md`, `android-engineer.md` and `web-engineer.md`, and the managed block in each `AGENTS.md` and the root `CLAUDE.md` | Replaced |
 | **You** | Everything else: PRODUCT.md, DESIGN.md, `spec/`, `contracts/`, all app code, your sections of `AGENTS.md`, the Makefile, `.claude/settings.json` | Never touched |
-| **Generated** | `Generated/`, `generated/`, `generated_*.xml`, `Identity.xcconfig`, `identity.properties` | Rebuilt by `make gen` |
+| **Generated** | `Generated/`, `generated/`, `generated_*.xml`, `Identity.xcconfig`, `identity.properties`, `.env.example` | Rebuilt by `make gen` |
 
 ## Managed blocks
 
@@ -63,7 +63,7 @@ Because `create` already writes the lockfile, projects created today can be upgr
 
 ## Generated files
 
-Never edit generated files. Change the contract in `contracts/` and run `make gen`. `make check` fails if generated files are out of date:
+Never edit generated files. Change the contract in `contracts/` and run `make gen`. The exception to "committed" is `AppSecrets.swift` and `AppSecrets.kt`: they are built from `.env`, git-ignored, and rewritten by every `make gen` and `make check`. A `.env.example` you wrote yourself is never deleted; only one that still has the generated banner is. `make check` fails if generated files are out of date:
 
 ```text
 ✖ contracts  Generated files are out of date:

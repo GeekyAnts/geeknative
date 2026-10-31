@@ -5,5 +5,9 @@ ENABLE_TESTABILITY = YES
 GCC_OPTIMIZATION_LEVEL = 0
 GCC_PREPROCESSOR_DEFINITIONS = DEBUG=1 $(inherited)
 ONLY_ACTIVE_ARCH = YES
-SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG $(inherited)
+// The environment from contracts/config.json this build targets. Override with:
+//   xcodebuild APP_ENVIRONMENT=staging ...
+APP_ENVIRONMENT = development
+// APP_ENV_<name> is what the generated AppEnvironment.current switches on.
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG APP_ENV_$(APP_ENVIRONMENT) $(inherited)
 SWIFT_OPTIMIZATION_LEVEL = -Onone
