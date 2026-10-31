@@ -283,6 +283,8 @@ function idPattern(id) {
  * @param {RegExp} pattern
  */
 function idMatches(id, pattern) {
+  // A string that is all dynamic ("${total}" → "*") could be anything, so it identifies nothing.
+  if (!/[A-Za-z0-9]/.test(id.replace(/\*/g, ''))) return false
   if (pattern.test(id.replace(/\*/g, 'x1'))) return true
   if (!id.includes('*')) return false
   const code = new RegExp(`^${id.split('*').map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('.+')}$`)
