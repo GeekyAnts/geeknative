@@ -129,7 +129,7 @@ Finds what builds and tests can't: places where the code breaks a rule from AGEN
 |---|---|---|
 | `text` | Error | User-facing text written in code instead of `contracts/strings`: `Text("Total")`, `Button("…")`, `.navigationTitle("…")` and `.accessibilityLabel("…")` on iOS; `Text("…")` and `contentDescription = "…"` on Android; text between JSX tags, string children and `aria-label`, `placeholder`, `title` and `alt` attributes on the web. Text composed around values counts too (`"\(name) × \(count)"`); a value alone (`"\(count)"`) and emoji don't. |
 | `test-id` | Error | A test ID in app code that no spec lists in its "Test IDs" section: set directly (`accessibilityIdentifier`, `testTag`, `data-testid`) or passed to a helper (`testID:` on iOS, `testTag =` on Android, `testId=` on the web). `<placeholder>` parts of a listed ID match any value. |
-| `test-id` | Warning | A listed test ID that an app whose status is `done` never uses |
+| `test-id` | Warning | A listed test ID that an app whose status is `done` never uses. A spec can exempt a platform that can't carry the ID: `` `calendar.monthTitle` (not on iOS): ... `` |
 | `title` | Error | A centered screen title: `.navigationBarTitleDisplayMode(.inline)` on iOS, `CenterAlignedTopAppBar` on Android. Titles are leading-aligned on every platform. |
 | `width` | Error | A web screen (`*Screen.tsx`) whose outer element caps its width (`max-w-*`) without centering it (`mx-auto`). Wrap the screen in `Page` instead. |
 | `status` | Error | A platform still `planned` although its tests name the feature's criteria. A warning for `in-progress` with every criterion covered. Fixed in `spec/` by whoever owns the specs. |
