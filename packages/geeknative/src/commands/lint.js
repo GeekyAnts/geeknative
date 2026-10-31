@@ -145,7 +145,7 @@ function lintPlatform(root, platform, features) {
   }
 
   for (const spec of specIds) {
-    if (spec.feature.status[platform] !== 'done') continue
+    if (spec.feature.status[platform] !== 'done' || spec.notOn.includes(platform)) continue
     if (![...used, ...strings].some((id) => idMatches(id, spec.pattern))) {
       findings.push({
         rule: 'test-id',
