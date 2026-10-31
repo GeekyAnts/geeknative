@@ -68,7 +68,7 @@ How each platform builds the shared patterns. Add a row whenever a new pattern a
 | Settings or form | `Form` with sections, on `background` with `surface` rows (`scrollContentBackground(.hidden)`) | Column with section headers | Sections in cards |
 | Single choice | Inline `Picker` (checkmarks) | Radio buttons | Radio group |
 | Card | `AppColors.surface` fill, `AppRadius.lg` corners | `Surface` in `AppTheme.colors.surface`, `AppRadius.lg` corners | `bg-surface rounded-lg` |
-| Primary action | `.borderedProminent` button | `Button` | `button` with `bg-primary text-on-primary` |
+| Primary action | `.buttonStyle(.primary)` (Core/DesignSystem/PrimaryButtonStyle.swift): `onPrimary` on `primary`. Not plain `.borderedProminent`, whose white text is unreadable on a light dark-mode `primary` | `Button` | `button` with `bg-primary text-on-primary` |
 | Icon | `Image(AppIcon.settings)` (a template image) | `Icon(AppIcons.settings, contentDescription = ...)` | `<AppIcons.settings className="size-icon-md" />` |
 
 ## Accessibility
