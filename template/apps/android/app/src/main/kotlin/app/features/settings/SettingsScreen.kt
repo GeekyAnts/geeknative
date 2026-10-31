@@ -26,12 +26,12 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.R
 import app.core.designsystem.AppCard
 import app.core.designsystem.AppTheme
 import app.generated.AppIcons
+import app.generated.AppSize
 import app.generated.AppSpacing
 import app.generated.AppTypography
 
@@ -71,7 +71,7 @@ private fun SettingsContent(state: SettingsUiState, onSelectAppearance: (Appeara
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .heightIn(min = 48.dp)
+                                .heightIn(min = AppSize.touchTarget)
                                 .selectable(
                                     selected = option == state.appearance,
                                     onClick = { onSelectAppearance(option) },
