@@ -4,7 +4,7 @@ GEEKNATIVE ?= ./node_modules/.bin/geeknative
 # `make check ENV=staging` builds the staging environment from contracts/config.json.
 ENV_PREFIX = $(if $(ENV),GEEKNATIVE_ENV=$(ENV) )
 
-.PHONY: help doctor gen font check check-contracts check-ios check-android check-web lint lint-ios lint-android lint-web parity run-ios run-android run-web
+.PHONY: help doctor gen font pin check check-contracts check-ios check-android check-web lint lint-ios lint-android lint-web parity run-ios run-android run-web
 
 help: ## List the commands
 	@grep -hE '^[a-zA-Z_-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "  make %-16s %s\n", $$1, $$2}'
@@ -17,6 +17,9 @@ gen: ## Regenerate app code from contracts/
 
 font: ## Switch the shared typeface (FAMILY="Open Sans" from Google Fonts, or FAMILY=system)
 	@$(GEEKNATIVE) font $(FAMILY)
+
+pin: ## Pin the project to a fresh snapshot of the geeknative checkout it came from
+	@$(GEEKNATIVE) pin
 
 check: ## Validate contracts, then build and test all three apps
 	@$(ENV_PREFIX)$(GEEKNATIVE) check all
