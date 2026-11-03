@@ -30,6 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.R
 import app.core.designsystem.AppCard
 import app.core.designsystem.AppTheme
+import app.generated.AppIconSize
 import app.generated.AppIcons
 import app.generated.AppSize
 import app.generated.AppSpacing
@@ -50,7 +51,7 @@ private fun SettingsContent(state: SettingsUiState, onSelectAppearance: (Appeara
                 title = { Text(stringResource(R.string.settings_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(AppIcons.back, contentDescription = stringResource(R.string.common_back))
+                        Icon(AppIcons.back, contentDescription = stringResource(R.string.common_back), modifier = Modifier.size(AppIconSize.md))
                     }
                 },
             )
