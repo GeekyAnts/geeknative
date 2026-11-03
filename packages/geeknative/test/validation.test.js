@@ -150,6 +150,11 @@ const cases = [
     (c) => editJson(path.join(c, 'app.json'), (a) => (a.build = 0)),
     /"build" must be a whole number/,
   ],
+  [
+    'an invalid consistency level',
+    (c) => editJson(path.join(c, 'app.json'), (a) => (a.consistency = 'flexible')),
+    /"consistency", when given, must be "strict", "adapted", or "loose"/,
+  ],
   // contracts/config.json
   [
     'a missing config.json',
