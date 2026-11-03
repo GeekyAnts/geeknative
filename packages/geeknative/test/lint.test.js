@@ -234,3 +234,24 @@ test('lint: uncommitted changes to only some apps are a warning', async () => {
   assert.equal(platforms.length, 1)
   assert.match(platforms[0].message, /touch ios but not android and web/)
 })
+
+test('lint: strict consistency flags features marked n/a as errors', () => {
+  const root = cleanProject()
+  write(root, 'contracts/app.json', JSON.stringify({ name: 'Strict App', id: 'com.example.strict', version: '1.0.0', build: 1, consistency: 'strict' }))
+  write(
+    root,
+    'spec/features/order.md',
+    `---
+id: order
+title: Order
+status:
+  ios: done
+  android: done
+  web: n/a
+---
+`,
+  )
+  parity(root)
+  const findings = summary(root)
+  assert.ok(findings.includes('error consistency spec/features/order.md'), findings.join('\n'))
+})
