@@ -1,6 +1,8 @@
 // @ts-check
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
+import { stdin as input, stdout as output } from 'node:process'
+import { createInterface } from 'node:readline/promises'
 import { capture, runInherit } from '../lib/exec.js'
 import { copyTemplate } from '../lib/fsutil.js'
 import { CliError, color, log } from '../lib/log.js'
@@ -13,22 +15,51 @@ import { gen } from './gen.js'
 /**
  * Creates a new project from the template.
  * @param {string} dir
- * @param {{ name?: string, id?: string, install?: boolean, git?: boolean, link?: boolean }} options
+ * @param {{ name?: string, id?: string, consistency?: string, install?: boolean, git?: boolean, link?: boolean }} options
  *   `link`: from a checkout, depend on the checkout itself (it follows whatever branch is open
  *   there) instead of a snapshot of it. For working on geeknative.
  */
-export async function create(dir, { name, id, install = true, git = true, link = false }) {
-  if (!dir) throw new CliError('Usage: geeknative create <folder> [--name "My App"] [--id com.example.myapp]')
+export async function create(dir, { name, id, consistency, install = true, git = true, link = false }) {
+  if (!dir) throw new CliError('Usage: geeknative create <folder> [--name "My App"] [--id com.example.myapp] [--consistency <strict|adapted|loose>]')
   const root = path.resolve(dir)
   if (existsSync(root) && readdirSync(root).length) throw new CliError(`${dir} already exists and isn't empty.`)
+
+  let chosenConsistency = consistency
+  if (!chosenConsistency && process.stdin.isTTY) {
+    const rl = createInterface({ input, output })
+    try {
+      output.write(`
+Cross-platform consistency:
+  1. Platform-adapted (80%-90%) [default]
+     Shared contracts, tokens, copy, and flows; native navigation chrome and idiomatic controls.
+  2. Completely similar (95%-100%)
+     Strict 1:1 mirroring across all screens, identical layouts, minimal platform deviation.
+  3. Platform-first / Looser (70%-80%)
+     Shared domain logic and contracts; UX and navigation tailored independently for web vs mobile.
+
+Choose consistency level [1]: `)
+      const answer = (await rl.question('')).trim()
+      if (answer === '2' || answer.toLowerCase() === 'strict') {
+        chosenConsistency = 'strict'
+      } else if (answer === '3' || answer.toLowerCase() === 'loose') {
+        chosenConsistency = 'loose'
+      } else {
+        chosenConsistency = 'adapted'
+      }
+    } finally {
+      rl.close()
+    }
+  } else if (!chosenConsistency) {
+    chosenConsistency = 'adapted'
+  }
 
   const slug = path.basename(root).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'app'
   const appName = name?.trim() || titleCase(slug)
   const appId = id ?? `com.example.${slug.replace(/-/g, '')}`
   const version = packageVersion()
 
-  // Fail before writing anything if the name or ID can't work on every platform.
-  validateApp({ name: appName, id: appId, version: '1.0.0', build: 1 })
+  // Fail before writing anything if the name, ID or consistency can't work on every platform.
+  validateApp({ name: appName, id: appId, version: '1.0.0', build: 1, consistency: /** @type {any} */ (chosenConsistency) })
 
   log.step('create', `${appName} (${appId}) in ${dir}`)
   copyTemplate(templateDir(), root)
@@ -36,13 +67,30 @@ export async function create(dir, { name, id, install = true, git = true, link =
   // App identity: the one place the name and ID live. Everything else is generated from it.
   const appFile = path.join(root, 'contracts', 'app.json')
   const app = JSON.parse(readFileSync(appFile, 'utf8'))
-  writeFileSync(appFile, `${JSON.stringify({ ...app, name: appName, id: appId }, null, 2)}\n`)
+  writeFileSync(appFile, `${JSON.stringify({ ...app, name: appName, id: appId, consistency: chosenConsistency }, null, 2)}\n`)
 
   const pkgFile = path.join(root, 'package.json')
   const pkg = JSON.parse(readFileSync(pkgFile, 'utf8'))
   pkg.name = slug
   pkg.devDependencies.geeknative = isLocalCheckout() ? localDependency(root, link) : `^${version}`
   writeFileSync(pkgFile, `${JSON.stringify(pkg, null, 2)}\n`)
+
+  const decisionsFile = path.join(root, 'spec', 'decisions.md')
+  if (existsSync(decisionsFile)) {
+    const today = new Date().toISOString().slice(0, 10)
+    /** @type {Record<string, string>} */
+    const consistencyDescriptions = {
+      strict: 'Strict (95%-100%): 1:1 mirroring across all screens, identical layouts, minimal platform deviation.',
+      adapted: 'Platform-Adapted (80%-90%): shared contracts, tokens, copy, and flows; native navigation chrome and idiomatic controls.',
+      loose: 'Platform-First / Loose (70%-80%): shared domain logic and contracts; UX and navigation tailored independently for web vs mobile.',
+    }
+    const entry = `\n## ${today}: Cross-platform consistency target\n\nConfigured as **${chosenConsistency}** (${consistencyDescriptions[chosenConsistency] || chosenConsistency}).\n`
+    const content = readFileSync(decisionsFile, 'utf8')
+    const marker = 'A dated log of product and technical decisions, and of assumptions made along the way. Newest first.\n'
+    if (content.includes(marker)) {
+      writeFileSync(decisionsFile, content.replace(marker, `${marker}${entry}`))
+    }
+  }
 
   for (const doc of ['README.md']) {
     const file = path.join(root, doc)

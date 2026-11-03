@@ -68,3 +68,19 @@ test('create rejects an invalid app ID before writing anything', async () => {
   await assert.rejects(create(dir, { id: 'not a bundle id', install: false, git: false }), /reverse-DNS/)
   assert.ok(!existsSync(dir))
 })
+
+test('create respects --consistency and records the decision', async () => {
+  const dir = path.join(tempDir(), 'strict-app')
+  await create(dir, { consistency: 'strict', install: false, git: false })
+  const app = readJson(path.join(dir, 'contracts', 'app.json'))
+  assert.equal(app.consistency, 'strict')
+  const decisions = readFileSync(path.join(dir, 'spec', 'decisions.md'), 'utf8')
+  assert.match(decisions, /Cross-platform consistency target/)
+  assert.match(decisions, /Configured as \*\*strict\*\*/)
+})
+
+test('create rejects an invalid consistency level before writing anything', async () => {
+  const dir = path.join(tempDir(), 'bad-consistency')
+  await assert.rejects(create(dir, { consistency: 'invalid', install: false, git: false }), /"consistency", when given, must be "strict", "adapted", or "loose"/)
+  assert.ok(!existsSync(dir))
+})
