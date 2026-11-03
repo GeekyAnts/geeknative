@@ -13,7 +13,8 @@ description: The format of every file in contracts/, its validation rules, and t
   "id": "com.example.geeknative",
   "version": "1.0.0",
   "build": 1,
-  "defaultLocale": "en"
+  "defaultLocale": "en",
+  "consistency": "adapted"
 }
 ```
 
@@ -24,6 +25,7 @@ description: The format of every file in contracts/, its validation rules, and t
 | `version` | Like `1.0.0` | iOS marketing version, Android `versionName` |
 | `build` | A whole number, 1 or more | iOS build number, Android `versionCode` |
 | `defaultLocale` | A language code like `en` or `pt-BR`; defaults to `en` | The source locale for strings |
+| `consistency` | `"strict"`, `"adapted"`, or `"loose"`; defaults to `"adapted"` | The cross-platform consistency and parity target |
 
 In code: `AppIdentity.name` and `AppIdentity.version` (iOS), `AppIdentity.NAME` and `AppIdentity.VERSION` (Android), `AppIdentity.name` and `AppIdentity.version` (web).
 

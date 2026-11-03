@@ -8,7 +8,7 @@ The `geeknative` CLI is a dev dependency of every project. Inside a project you 
 ```text
 geeknative <command>
 
-  create <folder>      Create a project. Options: --name "My App" --id com.acme.myapp --no-install --no-git
+  create <folder>      Create a project. Options: --name "My App" --id com.acme.myapp --consistency <strict|adapted|loose> --no-install --no-git
   gen                  Regenerate platform code from contracts/
   font <family>        Switch the shared typeface: a Google Fonts family ("Open Sans") or system
   check [targets]      Verify contracts, then build and test. Targets: all (default), contracts, ios, android, web
@@ -23,7 +23,7 @@ geeknative <command>
 ## create
 
 ```sh
-npm create geeknative@latest <folder> -- [--name "My App"] [--id com.acme.myapp] [--no-install] [--no-git]
+npm create geeknative@latest <folder> -- [--name "My App"] [--id com.acme.myapp] [--consistency <strict|adapted|loose>] [--no-install] [--no-git]
 npx geeknative@latest create <folder> [options]
 ```
 
@@ -31,6 +31,7 @@ npx geeknative@latest create <folder> [options]
 |---|---|---|
 | `--name` | The folder name in title case (`my-app` becomes "My App") | The app's display name |
 | `--id` | `com.example.<folder name without dashes>` | Bundle ID on iOS, application ID on Android |
+| `--consistency` | `adapted` | Cross-platform consistency target (`strict`, `adapted`, or `loose`) |
 | `--no-install` | | Skip `npm install` |
 | `--no-git` | | Skip `git init` and the first commit |
 | `--link` | | Only when running from a geeknative checkout: depend on the checkout itself instead of a snapshot of it (see below) |
