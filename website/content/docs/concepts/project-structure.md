@@ -15,7 +15,7 @@ my-app/
 ├── Makefile                  Includes .geeknative/framework.mk; add your own targets below it
 ├── package.json              npm workspaces (apps/web) and the geeknative dev dependency
 ├── contracts/
-│   ├── app.json              Name, ID, version, build and default locale
+│   ├── app.json              Name, ID, version, build, default locale and consistency target
 │   ├── tokens.json           Colors (light and dark), spacing, radii, icon sizes, type, the font family
 │   ├── fonts/                The typeface's files, one per weight (Inter to start)
 │   ├── config.json           Environments and their per-environment values
