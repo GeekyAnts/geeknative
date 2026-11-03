@@ -37,7 +37,8 @@ Cross-platform consistency:
   3. Platform-first / Looser (70%-80%)
      Shared domain logic and contracts; UX and navigation tailored independently for web vs mobile.
 
-Choose consistency level [1]: `)
+     Choose the target consistency for this project (1, 2, or 3 , default 1) and press Enter : 
+     `)
       const answer = (await rl.question('')).trim()
       if (answer === '2' || answer.toLowerCase() === 'strict') {
         chosenConsistency = 'strict'
