@@ -19,6 +19,7 @@ struct HomeScreen: View {
             ToolbarItem(placement: .primaryAction) {
                 NavigationLink(value: Route.settings) {
                     Image(AppIcon.settings)
+                        .frame(width: AppIconSize.md, height: AppIconSize.md)
                 }
                 .accessibilityLabel(Strings.homeOpenSettings)
                 .accessibilityIdentifier("home.openSettings")
