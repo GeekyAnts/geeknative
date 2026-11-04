@@ -9,6 +9,7 @@ import { lint } from './commands/lint.js'
 import { parity } from './commands/parity.js'
 import { pin } from './commands/pin.js'
 import { run } from './commands/run.js'
+import { upgrade } from './commands/upgrade.js'
 import { CliError, color } from './lib/log.js'
 import { findProjectRoot, packageVersion } from './lib/project.js'
 
@@ -26,6 +27,7 @@ Usage: geeknative <command>
   lint [platforms]     Find hardcoded text, unknown test IDs, centered titles and stale specs (or one app's code)
   run <platform>       Build and launch: ios (simulator), android (emulator or device), web (dev server)
   pin                  Pin the project to a fresh snapshot of the geeknative checkout it came from
+  upgrade              Bring framework files up to this geeknative. Options: --dry-run --npm --no-install
   version              Print the version
 `
 
@@ -42,6 +44,8 @@ export async function main(argv) {
       'no-git': { type: 'boolean' },
       link: { type: 'boolean' },
       fix: { type: 'boolean' },
+      'dry-run': { type: 'boolean' },
+      npm: { type: 'boolean' },
       help: { type: 'boolean', short: 'h' },
       version: { type: 'boolean', short: 'v' },
     },
@@ -83,6 +87,15 @@ export async function main(argv) {
     }
     case 'pin':
       return pin(findProjectRoot(), { install: !values['no-install'] })
+    case 'upgrade': {
+      const result = await upgrade(findProjectRoot(), {
+        dryRun: values['dry-run'],
+        install: !values['no-install'],
+        npm: values.npm,
+      })
+      if (!result.ok) process.exitCode = 1
+      return
+    }
     case 'run':
       return run(findProjectRoot(), rest[0])
     default:
