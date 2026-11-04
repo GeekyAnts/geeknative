@@ -36,15 +36,16 @@ Cross-platform consistency:
      Strict 1:1 mirroring across all screens, identical layouts, minimal platform deviation.
   3. Platform-first / Looser (70%-80%)
      Shared domain logic and contracts; UX and navigation tailored independently for web vs mobile.
-
-     Choose the target consistency for this project (1, 2, or 3 , default 1) and press Enter : 
-     `)
-      const answer = (await rl.question('')).trim()
+\n`)
+      const answer = (await rl.question('Choose the target consistency for this project (1, 2, or 3, default 1) and press Enter: ')).trim()
       if (answer === '2' || answer.toLowerCase() === 'strict') {
         chosenConsistency = 'strict'
       } else if (answer === '3' || answer.toLowerCase() === 'loose') {
         chosenConsistency = 'loose'
+      } else if (answer === '1' || answer === '' || answer.toLowerCase() === 'adapted') {
+        chosenConsistency = 'adapted'
       } else {
+        output.write(`\nYou entered "${answer}", which is not an option. Using Platform-adapted by default.\n`)
         chosenConsistency = 'adapted'
       }
     } finally {
