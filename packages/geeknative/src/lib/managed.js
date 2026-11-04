@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto'
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { walk } from './fsutil.js'
+import { CliError } from './log.js'
 import { rel } from './project.js'
 
 /*
@@ -38,7 +39,31 @@ export function extractBlock(text) {
 }
 
 /** @param {string | Buffer} content */
-const hash = (content) => `sha256-${createHash('sha256').update(content).digest('hex')}`
+export const hashContent = (content) => `sha256-${createHash('sha256').update(content).digest('hex')}`
+
+/**
+ * Replaces the managed block. The rest of the file, including project rules, stays as it was.
+ * Returns null when `text` has no block. Replacement is literal, so `$` in `block` is kept.
+ * @param {string} text
+ * @param {string} block
+ */
+export function replaceBlock(text, block) {
+  if (!extractBlock(text)) return null
+  return text.replace(BLOCK, () => block)
+}
+
+/** Framework files present in a project or a template, relative to its root. @param {string} root */
+export function managedFilePaths(root) {
+  /** @type {string[]} */
+  const files = []
+  for (const dir of MANAGED_DIRS) {
+    for (const file of walk(path.join(root, dir))) files.push(rel(root, file))
+  }
+  for (const file of MANAGED_FILES) {
+    if (existsSync(path.join(root, file))) files.push(file)
+  }
+  return [...new Set(files)].sort()
+}
 
 /**
  * Hashes every framework-owned file and block in a project.
@@ -48,20 +73,33 @@ export function managedHashes(root) {
   /** @type {Record<string, string>} */
   const files = {}
   for (const dir of MANAGED_DIRS) {
-    for (const file of walk(path.join(root, dir))) files[rel(root, file)] = hash(readFileSync(file))
+    for (const file of walk(path.join(root, dir))) files[rel(root, file)] = hashContent(readFileSync(file))
   }
   for (const file of MANAGED_FILES) {
     const full = path.join(root, file)
-    if (existsSync(full)) files[file] = hash(readFileSync(full))
+    if (existsSync(full)) files[file] = hashContent(readFileSync(full))
   }
   /** @type {Record<string, string>} */
   const blocks = {}
   for (const file of MANAGED_BLOCK_FILES) {
     const full = path.join(root, file)
     const block = existsSync(full) ? extractBlock(readFileSync(full, 'utf8')) : null
-    if (block) blocks[file] = hash(block)
+    if (block) blocks[file] = hashContent(block)
   }
   return { files: sortKeys(files), blocks: sortKeys(blocks) }
+}
+
+/**
+ * Writes .geeknative/lock.json from the hashes of `source`.
+ * `source` is the project at create time. On upgrade it is the new template, so a merged
+ * local edit stays different from the lock and the next upgrade merges it again.
+ * @param {string} root project that receives the lockfile
+ * @param {string} version
+ * @param {string} source tree whose framework files are hashed
+ */
+export function writeLockFrom(root, version, source) {
+  const lock = { geeknative: version, ...managedHashes(source) }
+  writeFileSync(path.join(root, '.geeknative', 'lock.json'), `${JSON.stringify(lock, null, 2)}\n`)
 }
 
 /**
@@ -70,8 +108,35 @@ export function managedHashes(root) {
  * @param {string} version
  */
 export function writeLock(root, version) {
-  const lock = { geeknative: version, ...managedHashes(root) }
-  writeFileSync(path.join(root, '.geeknative', 'lock.json'), `${JSON.stringify(lock, null, 2)}\n`)
+  writeLockFrom(root, version, root)
+}
+
+/**
+ * @param {string} root
+ * @returns {{ geeknative: string, files: Record<string, string>, blocks: Record<string, string> }}
+ */
+export function readLock(root) {
+  const file = path.join(root, '.geeknative', 'lock.json')
+  if (!existsSync(file)) {
+    throw new CliError(
+      'This project has no .geeknative/lock.json, so it cannot be upgraded. It was created before geeknative recorded framework file hashes.',
+    )
+  }
+  let lock
+  try {
+    lock = JSON.parse(readFileSync(file, 'utf8'))
+  } catch (error) {
+    throw new CliError(`.geeknative/lock.json is not valid JSON: ${/** @type {Error} */ (error).message}`)
+  }
+  if (typeof lock?.geeknative !== 'string' || !isRecord(lock.files) || !isRecord(lock.blocks)) {
+    throw new CliError('.geeknative/lock.json is not a geeknative lockfile.')
+  }
+  return lock
+}
+
+/** @param {unknown} value */
+function isRecord(value) {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value)
 }
 
 /** @param {Record<string, string>} object */
