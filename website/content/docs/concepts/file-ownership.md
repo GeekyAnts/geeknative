@@ -52,14 +52,14 @@ The same applies to `apps/ios/AGENTS.md`, `apps/android/AGENTS.md`, `apps/web/AG
 
 ## Upgrades
 
-`geeknative upgrade` is planned, not built yet; see the [roadmap](/docs/project/roadmap/). The lockfile is what will make it safe:
+`geeknative upgrade` (or `make upgrade`) uses the lockfile:
 
 - framework files you never touched (their hash still matches) get replaced;
-- framework files you edited get a three-way merge with the new version, with conflicts listed;
+- framework files you edited get a three-way merge with the new version, with conflicts written to `.geeknative/upgrade/` and the project file left unchanged;
 - your files are never touched, except by explicit migrations;
-- generated files are rebuilt by `make gen`.
+- generated files are rebuilt by `gen`.
 
-Because `create` already writes the lockfile, projects created today can be upgraded when the command ships.
+The lock records the template that shipped, so a merge you keep still counts as an edit on the next upgrade. See [CLI](/docs/reference/cli/#upgrade).
 
 ## Generated files
 

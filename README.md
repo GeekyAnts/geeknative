@@ -76,7 +76,7 @@ Every file in a generated project has one owner:
 | Project | Everything else: docs, spec, contracts, app code, your sections of AGENTS.md | Never touched |
 | Generated | `Generated/`, `generated/`, `generated_*.xml`, identity files | Rebuilt by `make gen` |
 
-`create` writes .geeknative/lock.json with the framework version and a hash of each framework-owned file, so a future `geeknative upgrade` can replace untouched files and merge edited ones.
+`create` writes .geeknative/lock.json with the framework version and a hash of each framework-owned file. `geeknative upgrade` replaces untouched files and merges edited ones.
 
 ## This repo
 
@@ -101,7 +101,7 @@ The CI workflow (`.github/workflows/ci.yml`) runs all of these: the CLI tests, a
 ## Roadmap
 
 1. **Foundation** (this release): three apps building from the CLI, contracts and codegen, the agent instructions, Claude Code integration, `create`, `doctor`, `check`, `parity`, `run`.
-2. **Upgrades and evals:** `geeknative upgrade` with three-way merges and migrations (scripted and agent-applied); a set of real prompts run through several agents to tune AGENTS.md.
+2. **Upgrades and evals:** migrations on top of `geeknative upgrade` (scripted and agent-applied); a set of real prompts run through several agents to tune AGENTS.md.
 3. **Visual and end-to-end parity:** per-screen screenshots from all three apps, shared Maestro flows for iOS and Android, Playwright for web, and a CI workflow for generated projects.
 4. **Backends:** an API contract in contracts/, generated clients, remote repositories.
 

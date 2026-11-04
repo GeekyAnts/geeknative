@@ -9,8 +9,7 @@ Everything below is planned, not built.
 
 ## Upgrades and agent evaluation
 
-- **`geeknative upgrade`.** Replace framework files that you haven't changed, three-way merge the ones you have, and list conflicts, using the hashes in `.geeknative/lock.json`. See [File ownership](/docs/concepts/file-ownership/).
-- **Migrations.** Scripted migrations for mechanical changes (such as a new spec format), and written migrations an agent applies across all three apps for changes that need judgment.
+- **Migrations.** Scripted migrations for mechanical changes (such as a new spec format), and written migrations an agent applies across all three apps for changes that need judgment. `geeknative upgrade` already replaces and merges framework files; see [File ownership](/docs/concepts/file-ownership/).
 - **Agent evaluation.** A set of real prompts (a feature, a design change, a bug, a platform-only tweak) run through several agents, used to tune AGENTS.md and the playbooks wherever agents go wrong.
 
 ## Visual and end-to-end parity

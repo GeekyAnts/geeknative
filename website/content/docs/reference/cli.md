@@ -14,7 +14,10 @@ geeknative <command>
   check [targets]      Verify contracts, then build and test. Targets: all (default), contracts, ios, android, web
   doctor [--fix]       Check Xcode, the Android SDK and Node; --fix installs what it can
   parity               Update spec/parity.md from feature specs and tests
+  lint [platforms]     Find hardcoded text, unknown test IDs, centered titles and stale specs (or one app's code)
   run <platform>       Build and launch: ios (simulator), android (emulator or device), web (dev server)
+  pin                  Pin the project to a fresh snapshot of the geeknative checkout it came from
+  upgrade              Bring framework files up to this geeknative. Options: --dry-run --npm --no-install
   version              Print the version
 ```
 
@@ -145,7 +148,35 @@ It skips generated code, tests, and the body of each iOS `#Preview` block and An
 npx geeknative pin   # or: make pin
 ```
 
-For a project created from a geeknative checkout, which is pinned to a snapshot of it (see [create](#create)). Packs the checkout the project came from, as it is now, into `.geeknative/`, points `package.json` at the new snapshot, deletes the old one and runs `npm install`. Each snapshot records its checkout, branch and commit, so `pin` finds the checkout on its own, and `make doctor` warns when the checkout has moved past the snapshot. Run `make gen` and `make check` afterwards. A project that uses geeknative from npm updates with `npm install --save-dev geeknative@latest` instead.
+For a project created from a geeknative checkout, which is pinned to a snapshot of it (see [create](#create)). Packs the checkout the project came from, as it is now, into `.geeknative/`, points `package.json` at the new snapshot, deletes the old one and runs `npm install`. Each snapshot records its checkout, branch and commit, so `pin` finds the checkout on its own, and `make doctor` warns when the checkout has moved past the snapshot. `pin` does not update framework files; use [`upgrade`](#upgrade) for that. Run `make gen` and `make check` afterwards. A project that uses geeknative from npm updates with `npm install --save-dev geeknative@latest` instead.
+
+## upgrade
+
+```sh
+npx geeknative@latest upgrade          # or: make upgrade
+npx geeknative upgrade --dry-run       # or: make upgrade DRY=1
+```
+
+Brings the project's framework files up to the geeknative you run. `npx geeknative@latest upgrade` takes the published release. From a checkout, `node packages/geeknative/bin/geeknative.js upgrade` takes that checkout. Your files (`PRODUCT.md`, `DESIGN.md`, `spec/`, `contracts/`, app code, and the project rules under each managed block) are left alone. See [File ownership](/docs/concepts/file-ownership/).
+
+| Option | Description |
+|---|---|
+| `--dry-run` | Print what would change, and write nothing |
+| `--no-install` | Skip `npm install` after the dependency changes |
+| `--npm` | On a project pinned to a checkout snapshot, switch the dependency to the published package |
+
+For each framework file and each `geeknative:begin` / `geeknative:end` block:
+
+- a file you never edited (its hash still matches `.geeknative/lock.json`) is replaced;
+- a file you edited is three-way merged with the new version;
+- a new framework file is added, and one this version no longer ships is deleted if you did not edit it;
+- a file you deleted stays deleted.
+
+A clean merge is written. A conflict is not: the merged text goes to `.geeknative/upgrade/<path>`, the project file stays as it was, and the lockfile is left unchanged. Fix the copy, put it in place, and run `upgrade` again. The same happens when an edited file cannot be merged because the installed copy of the old version is no longer available: the new file is written beside it and the project file stays.
+
+The lockfile records the template that shipped, not a merged edit, so the next upgrade can still see that you changed the file.
+
+After a clean upgrade the `geeknative` dependency moves to the version you ran, `npm install` runs, generated code is rebuilt, and the lockfile is rewritten. Then run `make check`. A project pinned to a checkout snapshot is not switched to npm unless you pass `--npm`. From a checkout, a snapshot pin is refreshed and a `file:` link stays a link.
 
 ## run
 
@@ -175,6 +206,7 @@ The project's Makefile includes `.geeknative/framework.mk`:
 | `make check-contracts` | `geeknative check contracts` |
 | `make check-ios`, `check-android`, `check-web` | `geeknative check <platform>` |
 | `make pin` | `geeknative pin` |
+| `make upgrade` | `geeknative upgrade` (`DRY=1` adds `--dry-run`) |
 | `make parity` | `geeknative parity` |
 | `make lint` | `geeknative lint` |
 | `make lint-ios`, `lint-android`, `lint-web` | `geeknative lint <platform>` |
