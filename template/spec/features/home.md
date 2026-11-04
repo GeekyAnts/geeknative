@@ -32,7 +32,7 @@ The first screen. It names the app, welcomes the user and leads to Settings. It'
 
 - iOS: large navigation title; the Settings entry is a gear button in the toolbar.
 - Android: top app bar with the app name; the Settings entry is a gear action in the app bar.
-- Web: the page heading is the app name; Settings is a gear link in the site header, on every page.
+- Web: the site header shows the app name, and Home content starts with the welcome card. Settings is a gear link in that header, on every page.
 
 ## Test IDs
 
