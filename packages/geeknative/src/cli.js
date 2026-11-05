@@ -16,7 +16,7 @@ const HELP = `${color.bold('geeknative')}: one prompt, three native apps (SwiftU
 
 Usage: geeknative <command>
 
-  create <folder>      Create a project. Options: --name "My App" --id com.acme.myapp --consistency <strict|adapted|loose> --no-install --no-git
+  create <folder>      Create a project. Options: --name "My App" --id com.acme.myapp --consistency <strict|adapted> --no-install --no-git
                        (from a geeknative checkout, --link follows the checkout instead of pinning a snapshot)
   gen                  Regenerate platform code from contracts/
   font <family>        Switch the shared typeface: a Google Fonts family ("Open Sans") or system

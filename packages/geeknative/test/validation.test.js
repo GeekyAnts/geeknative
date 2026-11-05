@@ -153,7 +153,7 @@ const cases = [
   [
     'an invalid consistency level',
     (c) => editJson(path.join(c, 'app.json'), (a) => (a.consistency = 'flexible')),
-    /"consistency", when given, must be "strict", "adapted", or "loose"/,
+    /"consistency", when given, must be "strict" or "adapted"/,
   ],
   // contracts/config.json
   [

@@ -1,8 +1,6 @@
 // @ts-check
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
-import { stdin as input, stdout as output } from 'node:process'
-import { createInterface } from 'node:readline/promises'
 import { capture, runInherit } from '../lib/exec.js'
 import { copyTemplate } from '../lib/fsutil.js'
 import { CliError, color, log } from '../lib/log.js'
@@ -20,40 +18,11 @@ import { gen } from './gen.js'
  *   there) instead of a snapshot of it. For working on geeknative.
  */
 export async function create(dir, { name, id, consistency, install = true, git = true, link = false }) {
-  if (!dir) throw new CliError('Usage: geeknative create <folder> [--name "My App"] [--id com.example.myapp] [--consistency <strict|adapted|loose>]')
+  if (!dir) throw new CliError('Usage: geeknative create <folder> [--name "My App"] [--id com.example.myapp] [--consistency <strict|adapted>]')
   const root = path.resolve(dir)
   if (existsSync(root) && readdirSync(root).length) throw new CliError(`${dir} already exists and isn't empty.`)
 
-  let chosenConsistency = consistency
-  if (!chosenConsistency && process.stdin.isTTY) {
-    const rl = createInterface({ input, output })
-    try {
-      output.write(`
-Cross-platform consistency:
-  1. Platform-adapted (80%-90%) [default]
-     Shared contracts, tokens, copy, and flows; native navigation chrome and idiomatic controls.
-  2. Completely similar (95%-100%)
-     Strict 1:1 mirroring across all screens, identical layouts, minimal platform deviation.
-  3. Platform-first / Looser (70%-80%)
-     Shared domain logic and contracts; UX and navigation tailored independently for web vs mobile.
-\n`)
-      const answer = (await rl.question('Choose the target consistency for this project (1, 2, or 3, default 1) and press Enter: ')).trim()
-      if (answer === '2' || answer.toLowerCase() === 'strict') {
-        chosenConsistency = 'strict'
-      } else if (answer === '3' || answer.toLowerCase() === 'loose') {
-        chosenConsistency = 'loose'
-      } else if (answer === '1' || answer === '' || answer.toLowerCase() === 'adapted') {
-        chosenConsistency = 'adapted'
-      } else {
-        output.write(`\nYou entered "${answer}", which is not an option. Using Platform-adapted by default.\n`)
-        chosenConsistency = 'adapted'
-      }
-    } finally {
-      rl.close()
-    }
-  } else if (!chosenConsistency) {
-    chosenConsistency = 'adapted'
-  }
+  const chosenConsistency = consistency ?? 'adapted'
 
   const slug = path.basename(root).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'app'
   const appName = name?.trim() || titleCase(slug)
@@ -81,17 +50,13 @@ Cross-platform consistency:
   if (existsSync(decisionsFile)) {
     const today = new Date().toISOString().slice(0, 10)
     /** @type {Record<string, string>} */
-    const consistencyDescriptions = {
-      strict: 'Strict (95%-100%): 1:1 mirroring across all screens, identical layouts, minimal platform deviation.',
-      adapted: 'Platform-Adapted (80%-90%): shared contracts, tokens, copy, and flows; native navigation chrome and idiomatic controls.',
-      loose: 'Platform-First / Loose (70%-80%): shared domain logic and contracts; UX and navigation tailored independently for web vs mobile.',
+    const rules = {
+      strict: 'same features, screens and behavior on every platform, with native controls',
+      adapted: 'same flows, data, copy and brand; n/a is allowed',
     }
-    const entry = `\n## ${today}: Cross-platform consistency target\n\nConfigured as **${chosenConsistency}** (${consistencyDescriptions[chosenConsistency] || chosenConsistency}).\n`
+    const entry = `\n## ${today}: Cross-platform consistency\n\nConfigured as **${chosenConsistency}**: ${rules[chosenConsistency] ?? chosenConsistency}.\n`
     const content = readFileSync(decisionsFile, 'utf8')
-    const marker = 'A dated log of product and technical decisions, and of assumptions made along the way. Newest first.\n'
-    if (content.includes(marker)) {
-      writeFileSync(decisionsFile, content.replace(marker, `${marker}${entry}`))
-    }
+    writeFileSync(decisionsFile, `${content.trimEnd()}\n${entry}`)
   }
 
   for (const doc of ['README.md']) {
