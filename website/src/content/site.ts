@@ -8,8 +8,15 @@ export const links = {
   geekyants: "https://geekyants.com",
   colony: "https://colony.geekyants.com",
   openSource: "https://geekyants.com/open-source",
-  contact: "https://geekyants.com/contact-us",
+  hire: "https://geekyants.com/hire",
 };
+
+/**
+ * The GeekyAnts Hire page, where the contact form is. `placement` names where the link sits
+ * (nav, footer, closing, article, ...) so enquiries can be traced back to it.
+ */
+export const hireUrl = (placement: string) =>
+  `${links.hire}?utm_source=geeknative&utm_medium=website&utm_campaign=talk-to-the-team&utm_content=${encodeURIComponent(placement)}`;
 
 export const createCommand = 'npm create geeknative@latest my-app -- --name "My App" --id com.acme.myapp';
 
@@ -44,6 +51,7 @@ export const footer = {
     { label: "Contributing", href: "/docs/project/contributing/" },
   ],
   geekyants: [
+    { label: "Talk to the team", href: hireUrl("footer") },
     { label: "geekyants.com", href: links.geekyants },
     { label: "The colony", href: links.colony },
     { label: "Open source", href: links.openSource },

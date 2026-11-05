@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Logo } from "@/components/brand/Logo";
 import { Arrow, Button, wrap } from "@/components/ui/primitives";
-import { links, nav } from "@/content/site";
+import { hireUrl, links, nav } from "@/content/site";
 
 export function GitHubIcon({ className = "" }: { className?: string }) {
   return (
@@ -63,6 +63,12 @@ export function Nav({ solid = false }: { solid?: boolean }) {
 
         <div className="flex items-center gap-2">
           <a
+            href={hireUrl("nav")}
+            className="hidden px-3 py-2 text-[14.5px] font-medium tracking-[-0.005em] text-ink/80 transition-colors hover:text-brand xl:inline-flex"
+          >
+            Talk to the team
+          </a>
+          <a
             href={links.github}
             className="hidden size-10 items-center justify-center rounded-full text-ink/80 transition-colors hover:text-ink sm:inline-flex"
             aria-label="geeknative on GitHub"
@@ -112,6 +118,9 @@ export function Nav({ solid = false }: { solid?: boolean }) {
           <div className="mt-auto space-y-6">
             <Button href="/docs/start-here/quick-start/" className="w-full justify-between">
               Get started
+            </Button>
+            <Button href={hireUrl("nav-mobile")} tone="ghost" className="w-full justify-between">
+              Talk to the team
             </Button>
             <a href={links.github} className="flex items-center justify-between text-lg">
               GitHub <Arrow direction="up-right" />

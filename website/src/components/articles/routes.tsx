@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { Footer } from "@/components/site/Footer";
 import { Nav } from "@/components/site/Nav";
-import { Arrow, Eyebrow, Stop, wrap } from "@/components/ui/primitives";
+import { Arrow, Button, Eyebrow, Stop, wrap } from "@/components/ui/primitives";
+import { hireUrl } from "@/content/site";
 import { allArticles, COLLECTIONS, formatDate, getArticle, type CollectionId } from "@/lib/articles";
 import { absoluteUrl, breadcrumbs, ogImage } from "@/lib/seo";
 import { ArticleView } from "./ArticleView";
@@ -79,6 +80,20 @@ export function collectionIndex(id: CollectionId) {
             </li>
           ))}
         </ul>
+        <section aria-labelledby="talk-title" className="mt-16 grid grid-cols-1 gap-y-6 rounded-2xl bg-mist p-8 sm:p-10 xl:grid-cols-12 xl:items-center xl:gap-x-6">
+          <div className="xl:col-span-8">
+            <h2 id="talk-title" className="text-[1.6rem] font-[720] leading-[1.05] tracking-[-0.03em] wide">
+              Planning a native app?
+            </h2>
+            <p className="mt-3 max-w-[38rem] text-[15.5px] leading-[1.6] text-ink/70">
+              GeekyAnts, the company behind geeknative, designs and builds native apps for startups and enterprises. Tell us what
+              you are building.
+            </p>
+          </div>
+          <div className="xl:col-span-4 xl:flex xl:justify-end">
+            <Button href={hireUrl(`${id}-index`)}>Talk to the team</Button>
+          </div>
+        </section>
       </div>
     );
   }

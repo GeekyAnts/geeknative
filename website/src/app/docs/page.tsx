@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CopyCommand } from "@/components/ui/CopyCommand";
-import { Arrow, Eyebrow, Stop } from "@/components/ui/primitives";
-import { createCommand } from "@/content/site";
+import { Arrow, Button, Eyebrow, Stop } from "@/components/ui/primitives";
+import { createCommand, hireUrl } from "@/content/site";
 import { sidebar } from "@/lib/docs/content";
 import { absoluteUrl } from "@/lib/seo";
 
@@ -69,6 +69,20 @@ export default function DocsHome() {
           </section>
         ))}
       </div>
+
+      <section aria-labelledby="docs-talk" className="mt-16 flex flex-col gap-6 rounded-2xl bg-mist p-8 sm:p-10 xl:flex-row xl:items-center xl:justify-between">
+        <div>
+          <h2 id="docs-talk" className="text-[1.6rem] font-[720] leading-[1.05] tracking-[-0.03em] wide">
+            Want help building it?
+          </h2>
+          <p className="mt-3 max-w-[38rem] text-[15.5px] leading-[1.6] text-ink/70">
+            GeekyAnts, the company behind geeknative, designs and builds native apps for startups and enterprises.
+          </p>
+        </div>
+        <Button href={hireUrl("docs-home")} className="shrink-0 self-start xl:self-auto">
+          Talk to the team
+        </Button>
+      </section>
     </div>
   );
 }
