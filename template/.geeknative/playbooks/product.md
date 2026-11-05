@@ -2,7 +2,7 @@
 
 Use when the user describes an app (often the first prompt in a new project), or changes what it is, who it's for, or its scope.
 
-1. **Understand.** Restate the product in one sentence. Verify the consistency tier from contracts/app.json (`adapted`, `strict`, or `loose`) and respect its constraints when scoping screens and platform parity. Ask only about things that would change the data model or the navigation structure (AGENTS.md section 6), and assume the rest.
+1. **Understand.** Restate the product in one sentence. Read `consistency` from contracts/app.json and follow AGENTS.md, Consistency. Ask once during this first product prompt only if the user's scope conflicts with the tier. Ask only about things that would change the data model or the navigation structure (AGENTS.md section 6), and assume the rest.
 2. **PRODUCT.md.** Fill in the one-sentence description, the audience, the feature list, the glossary and what's out of scope. Glossary terms become the names used in code on every platform.
 3. **Design.** If the user described a look, write the direction in DESIGN.md and update contracts/tokens.json (colors in light and dark, type, spacing, radii). Run `make gen`.
 4. **Navigation.** Update spec/navigation.md with the screens and how users move between them (tabs, stacks, modals). Keep the starter Settings screen unless the user says otherwise.

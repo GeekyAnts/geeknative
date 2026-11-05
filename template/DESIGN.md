@@ -9,13 +9,12 @@ design changes. Token values live in contracts/tokens.json; this file explains h
 
 _Not described yet. Describe the look you want (for example "calm and minimal" or "bold and playful") and your coding agent will set colors, type and spacing to match._
 
-## Consistency Target
+## Consistency
 
-Configured in `contracts/app.json` (`"consistency": "strict" | "adapted" | "loose"`).
+`contracts/app.json` `"consistency"` is `strict` or `adapted` (default `adapted`). See AGENTS.md, Consistency, for what the agent does under each tier.
 
-- **Platform-adapted (80%-90%, default)**: Shared contracts, tokens, copy, and flows; native navigation chrome (navigation bar, top app bar, site header) and idiomatic controls (pickers, switches, radio lists).
-- **Completely similar (95%-100%, strict)**: Strict 1:1 mirroring across all screens, identical layouts, minimal platform deviation. All features must be implemented on all three platforms.
-- **Platform-first / Looser (70%-80%, loose)**: Shared domain logic, tokens, and contracts; UX and navigation tailored independently for web vs mobile. Features may omit platforms with `n/a` in specs.
+- **strict:** the same features, screens and behavior on every platform, with no `n/a`. Controls and navigation chrome stay native.
+- **adapted:** same flows, data, copy and brand. `n/a` and shipping one platform first are allowed when the spec says so.
 
 ## Same everywhere, native where it counts
 

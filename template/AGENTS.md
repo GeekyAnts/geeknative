@@ -5,7 +5,17 @@ This repo is **one product, built three times, natively**: iOS (SwiftUI), Androi
 
 ## 1. Every request is for all three apps
 
-Unless the user names a platform ("on Android, ...") or the spec marks something as platform-only, a request is done only when iOS, Android **and** web all do it.
+Unless the user names a platform ("on Android, ...") or the spec marks something as platform-only, a request is done only when iOS, Android **and** web all do it. Whether `n/a` is allowed, whether a feature may ship on one platform first, and how far layouts may diverge are the project's `consistency` in contracts/app.json. See Consistency below.
+
+## Consistency
+
+Read `consistency` from contracts/app.json (`strict` or `adapted`; missing means `adapted`). Both tiers keep native controls and navigation chrome (DESIGN.md). The setting changes what you do:
+
+| | `strict` | `adapted` |
+|---|---|---|
+| `n/a` | Never. `make lint` fails if a spec marks a platform `n/a`. | Allowed when the feature is not on that platform; write why in Platform notes. |
+| Shipping one platform first | No. Finish the feature on every platform before starting the next. | Only when the user asks, or the other platforms are `n/a`. |
+| Layouts | Same screens and behavior everywhere. SwiftUI, Compose and web controls stay native; do not copy one platform's chrome onto the others. | Screen structure and content order follow DESIGN.md. Further layout differences go in Platform notes. |
 
 ## 2. Triage first, and say it in one line
 
@@ -38,7 +48,7 @@ Before changing anything, decide what kind of request it is. State it as the fir
 | How each feature behaves, with acceptance criteria | `spec/features/<id>.md` (start from .geeknative/templates/feature.md) |
 | Screens and routes | spec/navigation.md |
 | Decisions and assumptions, dated | spec/decisions.md |
-| App name, ID and version | contracts/app.json |
+| App name, ID, version and consistency | contracts/app.json |
 | Backend URLs, feature flags and other per-environment settings | contracts/config.json |
 | Secret keys (names only; values live in .env and are never committed) | contracts/config.json `secrets` |
 | Colors, spacing, radii, icon sizes and type | contracts/tokens.json |
@@ -66,8 +76,8 @@ Before changing anything, decide what kind of request it is. State it as the fir
 - **Same names everywhere.** A feature `notes` is `NotesScreen`, `NotesViewModel` and `NotesRepository` in every app, in each app's notes feature folder. One search finds all three.
 - **Same IDs everywhere.** Test IDs (`notes.addButton`), storage keys and stored values match across apps.
 - **Tests name acceptance criteria.** Put the ID (for example `AC-notes-2`) in each test's name, so `make parity` can show coverage.
-- **Native, not identical.** Features, flows, data, copy and brand match. Navigation chrome, controls, gestures and system conventions follow each platform. DESIGN.md says which is which.
-- **One feature at a time.** Finish a feature on every platform before starting the next.
+- **Native, not identical.** Features, flows, data, copy and brand match. Navigation chrome, controls, gestures and system conventions follow each platform. DESIGN.md says which is which. How far layouts may diverge is Consistency above.
+- **One feature at a time.** Finish a feature on every platform before starting the next, unless Consistency allows shipping one platform first.
 - **Spec changes ripple.** If building one platform changes the spec, recheck the platforms you already did.
 - **No backend yet.** Features read and write through a repository interface with local implementations. When a backend arrives, only the repositories change. Put its URLs in contracts/config.json, one per environment.
 

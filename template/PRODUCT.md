@@ -28,7 +28,7 @@ _Not described yet._
 | Android | Kotlin, Jetpack Compose | Android 7.0 (API 24) |
 | Web | React, TanStack Start | Safari 16.4, Chrome 111, Firefox 128 |
 
-**Consistency Target:** Configured in `contracts/app.json`. Governs parity expectations and cross-platform divergence across iOS, Android, and Web.
+**Consistency:** `adapted` in `contracts/app.json`. Same flows, data, copy and brand; `n/a` is allowed.
 
 ## Glossary
 
