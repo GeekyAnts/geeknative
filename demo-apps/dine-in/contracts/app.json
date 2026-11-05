@@ -1,0 +1,8 @@
+{
+  "name": "The Dining Club",
+  "id": "com.example.dinein",
+  "version": "1.0.0",
+  "build": 1,
+  "defaultLocale": "en",
+  "consistency": "strict"
+}
