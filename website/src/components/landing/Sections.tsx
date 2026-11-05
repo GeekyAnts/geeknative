@@ -5,7 +5,7 @@ import { DeviceShowcase } from "@/components/showcase/DeviceShowcase";
 import { CopyCommand } from "@/components/ui/CopyCommand";
 import { Reveal, Words } from "@/components/ui/Reveal";
 import { Arrow, Button, Eyebrow, Stop, TextLink, wrap } from "@/components/ui/primitives";
-import { createCommand, links } from "@/content/site";
+import { createCommand, hireUrl, links } from "@/content/site";
 import { Mark } from "@/components/brand/Logo";
 import Link from "next/link";
 import { ContractsShowcase } from "./Contracts";
@@ -344,6 +344,9 @@ export function WhoItsFor() {
         <div className="mt-12 flex flex-wrap gap-x-10 gap-y-4">
           <TextLink href="/geeknative/use-cases/">All use cases</TextLink>
           <TextLink href="/geeknative/compare/">How it compares with React Native and Flutter</TextLink>
+          <TextLink href={hireUrl("landing-who")} className="text-brand">
+            Talk to the team about your app
+          </TextLink>
         </div>
       </div>
     </section>
@@ -375,6 +378,13 @@ export function Closing() {
               Star on GitHub
             </Button>
           </div>
+          <p className="mt-10 max-w-[34rem] border-t border-white/20 pt-6 text-[15px] leading-[1.6] text-white/80">
+            Want a team to build it with you? GeekyAnts, the company behind geeknative, designs and builds native apps for
+            startups and enterprises.{" "}
+            <a href={hireUrl("landing-closing")} className="font-medium text-white underline decoration-white/40 underline-offset-4 hover:decoration-white">
+              Talk to the team
+            </a>
+          </p>
         </div>
         <figure className="mx-auto w-full max-w-[min(78vw,420px)] lg:col-span-5 lg:max-w-none">
           <ColonyStage id="closing" formation="markwhite" className="aspect-square w-full">

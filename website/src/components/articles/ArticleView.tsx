@@ -2,7 +2,7 @@ import Link from "next/link";
 import { DocBody } from "@/components/docs/DocBody";
 import { Toc } from "@/components/docs/Toc";
 import { Arrow, Button, Eyebrow } from "@/components/ui/primitives";
-import { links } from "@/content/site";
+import { hireUrl, links } from "@/content/site";
 import { allArticles, COLLECTIONS, formatDate, readingMinutes, type Article } from "@/lib/articles";
 import { absoluteUrl, breadcrumbs, publisher } from "@/lib/seo";
 import { JsonLd } from "./JsonLd";
@@ -32,9 +32,8 @@ function Breadcrumbs({ article }: { article: Article }) {
   );
 }
 
-/** Closing call to action. Use cases and comparisons also point at GeekyAnts for teams that want help. */
+/** Closing call to action: try it yourself, or talk to GeekyAnts about building it together. */
 function Cta({ article }: { article: Article }) {
-  const services = article.collection !== "blog";
   return (
     <section aria-labelledby="cta-title" className="mt-20 rounded-2xl bg-ink p-8 text-white sm:p-10" data-pagefind-ignore>
       <h2 id="cta-title" className="text-[1.75rem] font-[720] leading-[1.05] tracking-[-0.03em] wide">
@@ -51,16 +50,15 @@ function Cta({ article }: { article: Article }) {
           Star on GitHub
         </Button>
       </div>
-      {services ? (
-        <p className="mt-8 border-t border-white/15 pt-6 text-[14.5px] leading-[1.6] text-white/70">
+      <div className="mt-8 flex flex-col gap-5 border-t border-white/15 pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <p className="max-w-[30rem] text-[14.5px] leading-[1.6] text-white/70">
           Want a team to build it with you? GeekyAnts, the company behind geeknative, designs and builds native apps for
-          startups and enterprises.{" "}
-          <a href={links.contact} className="text-white underline decoration-white/40 underline-offset-4 hover:decoration-white">
-            Talk to GeekyAnts
-          </a>
-          .
+          startups and enterprises.
         </p>
-      ) : null}
+        <Button href={hireUrl(`${article.collection}-${article.slug}`)} tone="white" className="shrink-0">
+          Talk to the team
+        </Button>
+      </div>
     </section>
   );
 }

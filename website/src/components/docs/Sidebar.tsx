@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Dot } from "@/components/ui/primitives";
+import { Arrow, Dot } from "@/components/ui/primitives";
 import type { SidebarSection } from "@/lib/docs/content";
 import { trimSlash } from "@/lib/docs/nav";
 import { SearchButton } from "./Search";
+import { hireUrl } from "@/content/site";
 
 function Sections({ sections, current, onNavigate }: { sections: SidebarSection[]; current: string; onNavigate?: () => void }) {
   return (
@@ -61,6 +62,18 @@ export function DocsSidebar({ sections }: { sections: SidebarSection[] }) {
         <div className="sticky top-[72px] -ml-1 max-h-[calc(100vh-72px)] overflow-y-auto pb-16 pl-1 pr-3 pt-12 [scrollbar-width:thin]">
           <SearchButton className="mb-10 w-full" />
           <Sections sections={sections} current={pathname} />
+          <a
+            href={hireUrl("docs-sidebar")}
+            className="group mt-12 block rounded-xl border border-line p-4 transition-colors hover:border-ink"
+          >
+            <span className="label block text-muted">Need a team?</span>
+            <span className="mt-2 block text-[13.5px] leading-[1.45] text-ink/70">
+              GeekyAnts builds native apps for startups and enterprises.
+            </span>
+            <span className="mt-3 flex items-center gap-2 text-[13.5px] font-medium text-ink transition-colors group-hover:text-brand">
+              Talk to the team <Arrow className="transition-transform duration-500 ease-[var(--ease-expo)] group-hover:translate-x-1" />
+            </span>
+          </a>
         </div>
       </aside>
 
