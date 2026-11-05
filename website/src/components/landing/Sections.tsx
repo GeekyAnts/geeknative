@@ -7,6 +7,7 @@ import { Reveal, Words } from "@/components/ui/Reveal";
 import { Arrow, Button, Eyebrow, Stop, TextLink, wrap } from "@/components/ui/primitives";
 import { createCommand, links } from "@/content/site";
 import { Mark } from "@/components/brand/Logo";
+import Link from "next/link";
 import { ContractsShowcase } from "./Contracts";
 
 function Head({ index, eyebrow, title, id, aside }: { index: string; eyebrow: string; title: string; id: string; aside?: string }) {
@@ -304,6 +305,51 @@ export function Agents() {
 }
 
 /* Closing call to action, in red, with the mark drawn in white ants. */
+/* 08: who it's for, linking to the use cases */
+const WHO = [
+  { name: "Startups", href: "/use-cases/startups/", body: "Launch on iOS, Android and the web at once, native from day one, without hiring three teams." },
+  { name: "Product teams", href: "/use-cases/product-teams/", body: "Keep separate native apps on the same features, copy and brand, with parity you can measure." },
+  { name: "Adding a platform", href: "/use-cases/add-a-platform/", body: "Use the app you have as the spec, and build the missing iOS, Android or web app from it." },
+  { name: "Hybrid apps", href: "/use-cases/replace-a-hybrid-app/", body: "Move a WebView app to real SwiftUI and Compose screens, one feature at a time." },
+  { name: "Xamarin apps", href: "/use-cases/xamarin-migration/", body: "Rebuild an app on modern native stacks now that Xamarin support has ended." },
+  { name: "Agencies and portfolios", href: "/use-cases/app-portfolios/", body: "Ship many branded apps from one base: a new brand is a contracts change." },
+];
+
+export function WhoItsFor() {
+  return (
+    <section id="who-its-for" aria-labelledby="who-title" className="scroll-mt-16 lg:scroll-mt-[72px] border-t border-line py-28 lg:py-40">
+      <div className={wrap}>
+        <Head
+          index="08"
+          eyebrow="Who it's for"
+          id="who-title"
+          title="Anyone shipping an app on more than one platform"
+          aside="Every app team has had to choose between native quality and one shared codebase. With a coding agent and geeknative, you don't have to."
+        />
+        <ul className="mt-16 border-t border-line lg:mt-20">
+          {WHO.map((w) => (
+            <li key={w.name} className="border-b border-line">
+              <Link href={w.href} className="group grid grid-cols-[minmax(0,1fr)_auto] gap-x-6 gap-y-2 py-6 lg:grid-cols-12 lg:items-baseline lg:py-7">
+                <span className="text-[1.35rem] font-[680] tracking-[-0.025em] transition-colors group-hover:text-brand wide lg:col-span-3 lg:text-[1.5rem]">
+                  {w.name}
+                </span>
+                <span className="order-3 col-span-2 text-[15px] leading-[1.6] text-ink/65 lg:order-none lg:col-span-8">{w.body}</span>
+                <span className="flex justify-end lg:col-span-1">
+                  <Arrow className="text-ink/40 transition-all duration-500 ease-[var(--ease-expo)] group-hover:translate-x-1 group-hover:text-ink" />
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-12 flex flex-wrap gap-x-10 gap-y-4">
+          <TextLink href="/geeknative/use-cases/">All use cases</TextLink>
+          <TextLink href="/geeknative/compare/">How it compares with React Native and Flutter</TextLink>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function Closing() {
   return (
     <section aria-labelledby="start-title" className="relative overflow-hidden bg-brand py-28 text-white lg:py-36">

@@ -8,19 +8,27 @@ export const links = {
   geekyants: "https://geekyants.com",
   colony: "https://colony.geekyants.com",
   openSource: "https://geekyants.com/open-source",
+  contact: "https://geekyants.com/contact-us",
 };
 
 export const createCommand = 'npm create geeknative@latest my-app -- --name "My App" --id com.acme.myapp';
 
 export const nav = [
   { label: "How it works", href: "/#how-it-works" },
-  { label: "Apps", href: "/#apps" },
-  { label: "Contracts", href: "/#contracts" },
-  { label: "Agents", href: "/#agents" },
+  { label: "Use cases", href: "/use-cases/" },
+  { label: "Compare", href: "/compare/" },
+  { label: "Blog", href: "/blog/" },
   { label: "Docs", href: "/docs/" },
 ];
 
 export const footer = {
+  learn: [
+    { label: "Use cases", href: "/use-cases/" },
+    { label: "Compare", href: "/compare/" },
+    { label: "Blog", href: "/blog/" },
+    { label: "vs React Native", href: "/compare/react-native/" },
+    { label: "vs Flutter", href: "/compare/flutter/" },
+  ],
   docs: [
     { label: "Quick start", href: "/docs/start-here/quick-start/" },
     { label: "How it works", href: "/docs/concepts/how-it-works/" },
