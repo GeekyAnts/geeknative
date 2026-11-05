@@ -20,6 +20,7 @@ import { coverage, parityMarkdown, testedCriteria } from './parity.js'
  * - width:    a web screen that caps its width without centering it (DESIGN.md: Screen)
  * Spec rules:
  * - status:   a platform still "planned" although its tests cover the feature's criteria
+ * - consistency: a platform marked n/a while contracts/app.json consistency is strict
  * - parity:   spec/parity.md out of date
  * - platforms: uncommitted changes touch some apps but not the others (a warning, as the
  *   Claude Code Stop hook gives, for agents that run without the hooks)

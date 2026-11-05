@@ -39,7 +39,7 @@ The front matter `status` records where each platform stands:
 | `planned` | Specified, not built yet |
 | `in-progress` | Partly built |
 | `done` | Built and verified |
-| `n/a` | Not on this platform, on purpose |
+| `n/a` | Not on this platform, on purpose. Allowed under `adapted`; `make lint` fails on it when `contracts/app.json` `consistency` is `strict`. |
 
 ## Acceptance criteria
 
@@ -85,7 +85,7 @@ It writes `spec/parity.md` and prints the gaps. A gap is a criterion no test nam
 Wrote spec/parity.md
 ```
 
-`spec/parity.md` has a summary table and a per-criterion table:
+`spec/parity.md` starts with a **Consistency:** line (`strict` or `adapted`) from `contracts/app.json`, then a summary table and a per-criterion table:
 
 | Feature | iOS | Android | Web |
 |---|---|---|---|
