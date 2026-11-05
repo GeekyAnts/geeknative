@@ -1,14 +1,17 @@
+import { JsonLd } from "@/components/articles/JsonLd";
 import { ColonyCanvas } from "@/components/colony/ColonyCanvas";
 import { Hero } from "@/components/landing/Hero";
 import { Idea } from "@/components/landing/Idea";
-import { Agents, Apps, Closing, Contracts, HowItWorks, Parity, Triage } from "@/components/landing/Sections";
+import { Agents, Apps, Closing, Contracts, HowItWorks, Parity, Triage, WhoItsFor } from "@/components/landing/Sections";
 import { Footer } from "@/components/site/Footer";
 import { Nav } from "@/components/site/Nav";
+import { publisher, softwareApplication } from "@/lib/seo";
 
 export default function Home() {
   return (
     // Relative, so the colony's canvas can span the whole page.
     <div className="relative">
+      <JsonLd data={[softwareApplication, { "@context": "https://schema.org", ...publisher }]} />
       <Nav />
       <main>
         <Hero />
@@ -19,6 +22,7 @@ export default function Home() {
         <Contracts />
         <Parity />
         <Agents />
+        <WhoItsFor />
         <Closing />
       </main>
       <Footer colony />

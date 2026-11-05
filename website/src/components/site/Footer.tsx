@@ -5,6 +5,7 @@ import { wrap } from "@/components/ui/primitives";
 import { footer, links } from "@/content/site";
 
 const columns = [
+  { title: "Learn", links: footer.learn },
   { title: "Docs", links: footer.docs },
   { title: "Project", links: footer.project },
   { title: "GeekyAnts", links: footer.geekyants },
@@ -22,7 +23,7 @@ export function Footer({ colony = false }: { colony?: boolean }) {
           </p>
           {colony ? <ColonyToggle className="self-start" /> : null}
         </div>
-        <nav aria-label="Footer" className="grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-3 lg:col-span-7">
+        <nav aria-label="Footer" className="grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-4 lg:col-span-7">
           {columns.map((col) => (
             <div key={col.title}>
               <p className="label text-muted">{col.title}</p>

@@ -13,6 +13,9 @@ The landing page and documentation for geeknative: a static Next.js site (`outpu
 | src/components/diagrams/ | The architecture diagram (also embedded in the docs with `{{architecture}}`) |
 | content/docs/ | Docs pages in Markdown. Frontmatter: title, description. Callouts: `:::note`, `:::tip`, `:::caution` |
 | src/app/docs/, src/components/docs/, src/lib/docs/ | The docs routes, layout, search (Pagefind) and Markdown pipeline |
+| content/use-cases/, content/compare/, content/blog/ | Marketing pages in Markdown, one file per page. Frontmatter: title, description, label (short name for breadcrumbs), order, and date (YYYY-MM-DD, required for blog posts) |
+| src/app/use-cases/, src/app/compare/, src/app/blog/, src/components/articles/, src/lib/articles.ts | Their routes, shared by all three collections, with the docs Markdown pipeline and prose styles |
+| src/lib/seo.ts, src/app/sitemap.ts | Absolute URLs, the share image and JSON-LD helpers, and /geeknative/sitemap.xml |
 | scripts/ | preview (serves out/ under /geeknative), check-links, deploy (pushes out/ to gh-pages) |
 
 ## Rules
@@ -20,6 +23,8 @@ The landing page and documentation for geeknative: a static Next.js site (`outpu
 - Internal links: in components use next/link (`href="/docs/..."`, the base path is added); plain `<a>` and image paths need the `/geeknative` prefix. In Markdown, link to `/docs/<section>/<page>/`.
 - Document only what exists in the repo today (template/ and packages/geeknative/). Planned work belongs on the Roadmap page.
 - Writing style: short, plain sentences. No em dashes or en dashes. Code samples must match real file names, commands and generated symbols.
+- SEO: canonical and og:url must be absolute (`absoluteUrl()` in src/lib/seo.ts), because Next doesn't add the base path to them. A page that sets its own `openGraph` also sets `images: [ogImage]`. New routes go in src/app/sitemap.ts.
+- Use cases and comparisons describe what geeknative does today and stay fair to the alternatives: every comparison says when the other tool is the better choice.
 - Screenshots are real captures of the starter app; regenerate them rather than editing them.
 - The colony: every `ColonyStage` gets its own ants, and they stay in that stage. Unlike colony.geekyants.com, ants never travel between sections as the page scrolls, because that was distracting. Every stage starts formed on load, the hero included (no entrance from the nav logo), and rebuilds after a resize place ants directly instead of walking them over.
 - Scrolling is the browser's own. Don't add smooth-scroll or scroll-jacking libraries such as Lenis. The colony's canvas sits in the page and scrolls with it (it covers the viewport plus a margin and moves along each frame), so the ants stay locked to their figures under native scrolling.

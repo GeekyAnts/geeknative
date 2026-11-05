@@ -4,10 +4,12 @@ import { CopyCommand } from "@/components/ui/CopyCommand";
 import { Arrow, Eyebrow, Stop } from "@/components/ui/primitives";
 import { createCommand } from "@/content/site";
 import { sidebar } from "@/lib/docs/content";
+import { absoluteUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Docs",
   description: "How to build native iOS, Android and web apps from one spec with geeknative and your coding agent.",
+  alternates: { canonical: absoluteUrl("/docs/") },
 };
 
 export default function DocsHome() {

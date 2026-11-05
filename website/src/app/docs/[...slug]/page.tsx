@@ -4,7 +4,9 @@ import { notFound } from "next/navigation";
 import { DocBody } from "@/components/docs/DocBody";
 import { Toc } from "@/components/docs/Toc";
 import { Arrow, Eyebrow } from "@/components/ui/primitives";
+import { JsonLd } from "@/components/articles/JsonLd";
 import { allDocs, getDoc, neighbors } from "@/lib/docs/content";
+import { absoluteUrl, breadcrumbs, ogImage, publisher } from "@/lib/seo";
 
 export const dynamicParams = false;
 
@@ -18,7 +20,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const doc = allDocs().find((d) => d.slug === slug.join("/"));
   if (!doc) return {};
-  return { title: doc.title, description: doc.description, openGraph: { title: `${doc.title} · geeknative`, description: doc.description } };
+  return {
+    title: doc.title,
+    description: doc.description,
+    alternates: { canonical: absoluteUrl(doc.href) },
+    openGraph: { title: `${doc.title} · geeknative`, description: doc.description, url: absoluteUrl(doc.href), images: [ogImage] },
+  };
 }
 
 export default async function DocPage({ params }: Props) {
@@ -27,8 +34,28 @@ export default async function DocPage({ params }: Props) {
   if (!doc) notFound();
   const { prev, next } = neighbors(doc.slug);
 
+  const structured = [
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      headline: doc.title,
+      description: doc.description,
+      url: absoluteUrl(doc.href),
+      mainEntityOfPage: absoluteUrl(doc.href),
+      author: publisher,
+      publisher,
+      about: { "@type": "SoftwareApplication", name: "geeknative", url: absoluteUrl("/") },
+    },
+    breadcrumbs([
+      { name: "Docs", path: "/docs/" },
+      { name: doc.section.title, path: "/docs/" },
+      { name: doc.title, path: doc.href },
+    ]),
+  ];
+
   return (
     <>
+      <JsonLd data={structured} />
       <article className="min-w-0 pb-24 pt-10 lg:pt-14" data-pagefind-body>
         <header className="max-w-[46rem] border-b border-line pb-10">
           <Eyebrow index={`0${doc.section.index}`} className="text-muted">
