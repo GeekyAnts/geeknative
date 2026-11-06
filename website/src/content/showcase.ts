@@ -33,6 +33,19 @@ export const showcaseApps: ShowcaseApp[] = [
       { id: "confirmation", label: "Confirmation", path: "/reservations/e47315ca-32cd-4b5e-83bf-9c78f0d8706a/confirmation", title: "Your table awaits · The Dining Club" },
     ],
   },
+  {
+    slug: "destination-wedding-planner",
+    name: "ORLÈVE",
+    summary: "Couples discover extraordinary places, choose a venue, and arrange a destination wedding.",
+    mark: "#1F3A4D",
+    screens: [
+      { id: "home", label: "Home", path: "/", title: "ORLÈVE" },
+      { id: "destinations", label: "Destinations", path: "/destinations", title: "Destinations · ORLÈVE" },
+      { id: "udaipur", label: "Udaipur", path: "/destinations/udaipur", title: "Udaipur · ORLÈVE" },
+      { id: "venue", label: "Venue", path: "/venues/udaipur-taj-lake", title: "Taj Lake Palace · ORLÈVE" },
+      { id: "wedding", label: "Wedding", path: "/wedding", title: "My Wedding · ORLÈVE" },
+    ],
+  },
 ];
 
 export const showcaseHref = (slug: string) => `/showcase/${slug}/`;
