@@ -10,11 +10,14 @@ import { getShowcase, showcaseApps, showcaseHref, type ShowcaseApp } from "@/con
 import { absoluteUrl, breadcrumbs, ogImage } from "@/lib/seo";
 
 const PLATFORMS = ["ios", "web", "android"] as const;
+const MODES = ["light", "dark"] as const;
 
 /** Files present in public/screens/<slug>/, so the page never points at a missing capture. */
 function capturedShots(app: ShowcaseApp) {
   const dir = path.join(process.cwd(), "public", "screens", app.slug);
-  return PLATFORMS.flatMap((platform) => app.screens.map((screen) => `${platform}-${screen.id}.webp`)).filter((file) => existsSync(path.join(dir, file)));
+  return PLATFORMS.flatMap((platform) =>
+    app.screens.flatMap((screen) => MODES.map((mode) => `${platform}-${screen.id}-${mode}.webp`)),
+  ).filter((file) => existsSync(path.join(dir, file)));
 }
 
 type Props = { params: Promise<{ slug: string }> };
