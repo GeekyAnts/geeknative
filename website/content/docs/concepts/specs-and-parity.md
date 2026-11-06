@@ -58,6 +58,14 @@ fun `AC-settings-1 appearance defaults to System`() = runTest { ... }
 test('AC-settings-1: appearance defaults to System', async () => { ... })
 ```
 
+Mark a criterion `(ui)` when it's about what the user sees or taps:
+
+```markdown
+- AC-home-3 (ui): Home has an entry point that opens Settings.
+```
+
+Only a test that drives the real UI covers a `(ui)` criterion: an XCUITest in `apps/ios/AppUITests` (put the ID in `XCTContext.runActivity(named:)`), a Compose UI test on Android (a file that creates a compose rule, run on Robolectric), or a web test that renders into a DOM (`// @vitest-environment happy-dom` with `createRoot`, `hydrateRoot` or `render`). A test that checks a view model or a route names the criterion but doesn't cover it.
+
 ## make parity
 
 `make parity` reads every spec in `spec/features/` (files starting with `_` are skipped), collects the criteria from list items that start with an `AC-` ID, and searches each app's tests for those IDs:
@@ -68,12 +76,11 @@ test('AC-settings-1: appearance defaults to System', async () => { ... })
 | Android | Kotlin files in `apps/android/app/src/test/` and `src/androidTest/` |
 | Web | `*.test.ts(x)` and `*.spec.ts(x)` files in `apps/web/src/`, and `apps/web/e2e/` |
 
-It writes `spec/parity.md` and prints the gaps. For the starter app it reports:
+It writes `spec/parity.md` and prints the gaps. A gap is a criterion no test names, or a `(ui)` criterion only non-UI tests name:
 
 ```text
-! home       iOS done 0/3 · Android done 0/3 · Web done 2/3
-             AC-home-1 untested on iOS
-             ...
+! cart       iOS done 6/7 · Android done 7/7 · Web done 7/7
+             AC-cart-5 needs a UI test on iOS (only other tests name it)
 ✔ settings   iOS done 4/4 · Android done 4/4 · Web done 4/4
 Wrote spec/parity.md
 ```
@@ -82,7 +89,7 @@ Wrote spec/parity.md
 
 | Feature | iOS | Android | Web |
 |---|---|---|---|
-| Home | ✅ done · 0/3 tested | ✅ done · 0/3 tested | ✅ done · 2/3 tested |
+| Home | ✅ done · 3/3 tested | ✅ done · 3/3 tested | ✅ done · 3/3 tested |
 | Settings | ✅ done · 4/4 tested | ✅ done · 4/4 tested | ✅ done · 4/4 tested |
 
-Home's criteria are about what's on screen. The web app tests them by rendering the screen to HTML; iOS and Android need UI tests, which are on the [roadmap](/docs/project/roadmap/). Parity shows such gaps instead of hiding them.
+In the per-criterion table, ✅ means covered, ❌ untested, and 🟡 a `(ui)` criterion that only non-UI tests name.

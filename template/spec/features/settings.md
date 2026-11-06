@@ -37,7 +37,7 @@ Lets the user choose the app's appearance and see which version they're running.
 ## Platform notes
 
 - iOS: a `Form`, with the appearance as an inline `Picker` (checkmarks).
-- Android: radio buttons in a selectable group; the top app bar has a back button.
+- Android: radio buttons in a selectable group; the top app bar has a back button, labeled `common.back`. That string is Android-only: iOS (navigation bar) and web (site header) get back from the system and the page chrome.
 - Web: a radio group in a card. The stored appearance is applied before the first paint, so there's no flash of the wrong theme.
 
 ## Test IDs

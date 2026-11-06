@@ -1,0 +1,11 @@
+// The UI test target: drives the built app the way a user does, through XCUITest.
+#include "Identity.xcconfig"
+
+PRODUCT_NAME = AppUITests
+PRODUCT_BUNDLE_IDENTIFIER = $(APP_BUNDLE_ID).uitests
+GENERATE_INFOPLIST_FILE = YES
+TEST_TARGET_NAME = App
+
+// XCTestCase isn't main-actor isolated, so the app's default (MainActor) doesn't fit here.
+// Mark UI test methods @MainActor instead: XCUIApplication requires it.
+SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated

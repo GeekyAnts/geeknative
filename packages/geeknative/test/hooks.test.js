@@ -1,7 +1,7 @@
 // The Claude Code hooks shipped in template/.geeknative/hooks, run the way Claude Code runs them.
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
-import { appendFileSync, chmodSync, mkdirSync, writeFileSync } from 'node:fs'
+import { appendFileSync, chmodSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { test } from 'node:test'
 import { CLI, editJson, TEMPLATE, tempDir, tempProject } from './helpers.js'
@@ -108,6 +108,21 @@ test('after-edit regenerates code when a contract changes', () => {
   const output = JSON.parse(result.stdout)
   assert.equal(output.hookSpecificOutput.hookEventName, 'PostToolUse')
   assert.match(output.hookSpecificOutput.additionalContext, /regenerated the app code/)
+})
+
+test('after-edit regenerates when the root .env changes, so AppSecrets stay current', () => {
+  const dir = projectWithCli()
+  editJson(path.join(dir, 'contracts', 'config.json'), (config) => (config.secrets = { mapsApiKey: { type: 'string' } }))
+  writeFileSync(path.join(dir, '.env'), 'MAPS_API_KEY=fresh\n')
+  const result = runHook('after-edit.mjs', dir, { tool_input: { file_path: path.join(dir, '.env') } })
+  assert.equal(result.status, 0, result.stderr)
+  assert.match(JSON.parse(result.stdout).hookSpecificOutput.additionalContext, /^\.env changed/)
+  assert.match(readFileSync(path.join(dir, 'apps/ios/App/Generated/AppSecrets.swift'), 'utf8'), /"fresh"/)
+})
+
+test('after-edit ignores a .env in a subfolder', () => {
+  const dir = projectWithCli()
+  assert.equal(runHook('after-edit.mjs', dir, { tool_input: { file_path: path.join(dir, 'apps', '.env') } }).stdout, '')
 })
 
 test('after-edit reports a broken contract back to the agent', () => {

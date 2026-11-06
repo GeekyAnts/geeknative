@@ -15,6 +15,7 @@ Most visual changes are a change to `contracts/tokens.json` followed by `make ge
 | Color `onPrimary` | `AppColors.onPrimary` | `AppTheme.colors.onPrimary` | `text-on-primary` |
 | Spacing `md` | `AppSpacing.md` | `AppSpacing.md` | `p-md`, `gap-md` |
 | Radius `lg` | `AppRadius.lg` | `AppRadius.lg` | `rounded-lg` |
+| Icon size `md` | `AppIconSize.md` | `AppIconSize.md` | `size-icon-md` |
 | Type `title` | `AppTypography.title` | `AppTypography.title` | `text-title` |
 
 Every color has a light and a dark value, and the agent keeps text readable in both (WCAG AA, 4.5:1 for body text).
@@ -54,9 +55,13 @@ Brand elements (color, type, spacing, imagery) change everywhere. Platform conve
 
 ## Type and fonts
 
-Typography tokens are roles: `display`, `headline`, `title`, `body`, `label` and `caption`. On iOS each maps to a Dynamic Type style, so it follows the user's text size. On Android sizes are in sp and on web in rem, so they scale with the user's font size setting. Each token says which iOS style and which Material 3 type style it maps to; see the [contracts reference](/docs/reference/contracts/#tokensjson).
+Typography tokens are roles: `display`, `headline`, `title`, `body`, `label` and `caption`, each with a size, line height and weight that every app uses. On iOS each also names the Dynamic Type style it scales with, on Android sizes are in sp and on web in rem, so text follows the user's text size setting everywhere. See the [contracts reference](/docs/reference/contracts/#tokensjson).
 
-The apps use each platform's system font. Custom fonts aren't supported by codegen yet; they're on the [roadmap](/docs/project/roadmap/).
+All three apps share one typeface. New projects start with Inter, and the same font files are bundled into each app. To change it, the agent runs `make font FAMILY="Open Sans"` (any Google Fonts family) and every app picks it up; `make font FAMILY=system` goes back to each platform's own font. Navigation bars and system controls keep the platform's font, as the "native where it counts" table says.
+
+## Icons
+
+Icons are named by meaning in `contracts/icons.json` and drawn from one family, Lucide, so the same icon looks the same on every platform: `make gen` turns each one into an asset-catalog image on iOS, a vector drawable on Android and an inline SVG component on the web. To add one, the agent picks a name at [lucide.dev](https://lucide.dev/icons); for artwork Lucide doesn't have, it drops a simple single-color SVG into `contracts/icons/`. Icons in content use the icon size tokens (`AppIconSize.md`, `size-icon-md`); a wrong name fails `make gen` instead of a build.
 
 ## Check the result
 

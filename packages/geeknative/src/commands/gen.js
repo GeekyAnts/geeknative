@@ -1,7 +1,7 @@
 // @ts-check
 import { existsSync, readFileSync, rmSync } from 'node:fs'
 import path from 'node:path'
-import { generate, staleFiles } from '../codegen/index.js'
+import { generateAll, staleFiles } from '../codegen/index.js'
 import { writeIfChanged } from '../lib/fsutil.js'
 import { CliError, log } from '../lib/log.js'
 
@@ -13,11 +13,18 @@ import { CliError, log } from '../lib/log.js'
  * @returns {{ changed: string[], removed: string[] }}
  */
 export function gen(root, { check = false, quiet = false } = {}) {
-  const outputs = generate(root)
+  const { outputs, warnings } = generateAll(root)
   /** @type {string[]} */
   const changed = []
   for (const output of outputs) {
     const file = path.join(root, output.path)
+    if (output.local) {
+      // Built from .env and gitignored (AppSecrets.*). Always written, even in check mode, so a fresh
+      // clone compiles; never compared, because the committed tree can't contain it.
+      const written = writeIfChanged(file, output.content)
+      if (written && !check) changed.push(output.path)
+      continue
+    }
     if (check) {
       const next = typeof output.content === 'string' ? Buffer.from(output.content) : output.content
       if (!existsSync(file) || !readFileSync(file).equals(next)) changed.push(output.path)
@@ -34,6 +41,7 @@ export function gen(root, { check = false, quiet = false } = {}) {
     )
   }
   if (!quiet) {
+    for (const warning of warnings) log.warn('secrets', warning)
     if (check) log.ok('contracts', 'valid, generated files up to date')
     else if (changed.length || removed.length) {
       log.ok('gen', `${changed.length} file${changed.length === 1 ? '' : 's'} updated${removed.length ? `, ${removed.length} removed` : ''}`)

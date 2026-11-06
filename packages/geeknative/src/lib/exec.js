@@ -8,10 +8,11 @@ import path from 'node:path'
  * Agents get a short summary on screen and can open the log when they need detail.
  * @param {string} cmd
  * @param {string[]} args
- * @param {{ cwd?: string, logFile: string, env?: Record<string, string> }} options
+ * @param {{ cwd?: string, logFile: string, env?: Record<string, string>, onLine?: (line: string) => void }} options
+ *   `onLine` sees each line as it arrives, for progress reporting.
  * @returns {Promise<{ code: number, lines: string[] }>}
  */
-export function runLogged(cmd, args, { cwd, logFile, env }) {
+export function runLogged(cmd, args, { cwd, logFile, env, onLine }) {
   mkdirSync(path.dirname(logFile), { recursive: true })
   return new Promise((resolve) => {
     const out = createWriteStream(logFile)
@@ -30,6 +31,7 @@ export function runLogged(cmd, args, { cwd, logFile, env }) {
       const parts = pending.split('\n')
       pending = parts.pop() ?? ''
       lines.push(...parts)
+      if (onLine) for (const part of parts) onLine(part)
     }
     child.stdout.on('data', collect)
     child.stderr.on('data', collect)
@@ -38,7 +40,10 @@ export function runLogged(cmd, args, { cwd, logFile, env }) {
       resolve({ code: 127, lines: [String(error)] })
     })
     child.on('close', (code) => {
-      if (pending) lines.push(pending)
+      if (pending) {
+        lines.push(pending)
+        onLine?.(pending)
+      }
       out.end()
       resolve({ code: code ?? 1, lines })
     })

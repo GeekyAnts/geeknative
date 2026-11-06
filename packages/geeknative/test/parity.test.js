@@ -56,3 +56,37 @@ test('parity handles a feature with no acceptance criteria yet', () => {
   const md = readFileSync(path.join(root, 'spec', 'parity.md'), 'utf8')
   assert.match(md, /\| \[Search\]\(features\/search\.md\) \| ⏳ planned \| ⏳ planned \| ⏳ planned \|/)
 })
+
+test('parity counts a (ui) criterion only when a test drives the real UI', () => {
+  const root = tempDir()
+  write(
+    root,
+    'spec/features/cart.md',
+    '---\nid: cart\ntitle: Cart\nstatus:\n  ios: done\n  android: done\n  web: done\n---\n\n## Acceptance criteria\n\n- AC-cart-1: Totals add up.\n- AC-cart-2 (ui): The cart bar opens Cart.\n',
+  )
+  // Value and view-model tests name both criteria on every platform.
+  write(root, 'apps/ios/AppTests/CartTests.swift', '@Test("AC-cart-1: totals") func a() {}\n@Test("AC-cart-2: router opens cart") func b() {}')
+  write(root, 'apps/android/app/src/test/kotlin/app/CartTest.kt', 'fun `AC-cart-1 totals`() {}\nfun `AC-cart-2 route`() {}')
+  write(root, 'apps/web/src/features/cart/cart.test.ts', "test('AC-cart-1: totals', () => {})\ntest('AC-cart-2: route', () => {})")
+  // Only Android and web also drive the UI.
+  write(root, 'apps/android/app/src/test/kotlin/app/CartUiTest.kt', 'val compose = createComposeRule()\nfun `AC-cart-2 the cart bar opens Cart`() {}')
+  write(root, 'apps/web/src/features/cart/cartBar.test.tsx', "// @vitest-environment happy-dom\ncreateRoot(root).render(app)\ntest('AC-cart-2: opens', () => {})")
+
+  parity(root)
+  const md = readFileSync(path.join(root, 'spec', 'parity.md'), 'utf8')
+  assert.match(md, /\| AC-cart-1: Totals add up\. \| ✅ \| ✅ \| ✅ \|/)
+  assert.match(md, /\| AC-cart-2 \(ui\): The cart bar opens Cart\. \| 🟡 \| ✅ \| ✅ \|/)
+  assert.match(md, /\| \[Cart\]\(features\/cart\.md\) \| ✅ done · 1\/2 tested \| ✅ done · 2\/2 tested \| ✅ done · 2\/2 tested \|/)
+
+  // UI tests that render through shared helpers count too.
+  const helperRoot = tempDir()
+  write(helperRoot, 'spec/features/cart.md', readFileSync(path.join(root, 'spec', 'features', 'cart.md'), 'utf8'))
+  write(helperRoot, 'apps/web/src/features/cart/cartBar.test.tsx', "// @vitest-environment happy-dom\nimport { renderApp } from '#/testing/renderApp'\ntest('AC-cart-2: opens', async () => { await renderApp('/') })")
+  write(helperRoot, 'apps/android/app/src/test/kotlin/app/CartUiTest.kt', 'fun `AC-cart-2 opens`() { app.launch(); compose.onNodeWithTag("cartBar").performClick() }')
+  parity(helperRoot)
+  assert.match(readFileSync(path.join(helperRoot, 'spec', 'parity.md'), 'utf8'), /\| AC-cart-2 \(ui\): The cart bar opens Cart\. \| ❌ \| ✅ \| ✅ \|/)
+
+  write(root, 'apps/ios/AppUITests/CartUITests.swift', 'func test_AC_cart_2() {} // AC-cart-2: taps the cart bar')
+  parity(root)
+  assert.match(readFileSync(path.join(root, 'spec', 'parity.md'), 'utf8'), /\| AC-cart-2 \(ui\): The cart bar opens Cart\. \| ✅ \| ✅ \| ✅ \|/)
+})
