@@ -37,7 +37,7 @@ function Layers({
   const frames = app.screens.flatMap((s) => MODES.map((m) => ({ s, m })));
   return (
     <>
-      {frames.map(({ s, m }, i) => {
+      {frames.map(({ s, m }) => {
         const active = s.id === screen && m === mode;
         // The visible capture stays in flow. The others sit on top of it and fade.
         const box = `screen-layer block h-auto w-full ${active ? "relative opacity-100" : "pointer-events-none absolute inset-0 opacity-0"}`;
@@ -60,7 +60,7 @@ function Layers({
           <img
             key={`${s.id}-${m}`}
             src={shot(app.slug, platform, s.id, m)}
-            alt={i === 0 ? `${size.label}, ${s.label}` : ""}
+            alt={active ? `${size.label}, ${s.label}, ${m} mode` : ""}
             aria-hidden={active ? undefined : true}
             width={size.width}
             height={size.height}

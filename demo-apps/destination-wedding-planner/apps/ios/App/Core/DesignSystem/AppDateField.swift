@@ -44,7 +44,6 @@ struct AppDateField: View {
                     .padding(AppSpacing.md)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                     .navigationTitle(title)
-                    .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) {
                             Button(Strings.commonDone) {
