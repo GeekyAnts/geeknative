@@ -30,7 +30,7 @@ export const showcaseApps: ShowcaseApp[] = [
       { id: "explore", label: "Explore", path: "/explore", title: "Explore · The Dining Club" },
       { id: "restaurant", label: "Restaurant", path: "/restaurants/maison-lumiere", title: "Maison Lumière · The Dining Club" },
       { id: "reserve", label: "Reserve", path: "/restaurants/maison-lumiere/reserve", title: "Reserve a table · The Dining Club" },
-      { id: "confirmation", label: "Confirmation", path: "/reservations/dc-7kq2mx/confirmation", title: "Your table awaits · The Dining Club" },
+      { id: "confirmation", label: "Confirmation", path: "/reservations/e47315ca-32cd-4b5e-83bf-9c78f0d8706a/confirmation", title: "Your table awaits · The Dining Club" },
     ],
   },
 ];
