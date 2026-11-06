@@ -1,0 +1,557 @@
+import SwiftUI
+
+/// Sample catalog shared with the web and Android apps. Photography is remote Unsplash imagery.
+enum WeddingCatalog {
+    private static func img(_ id: String, width: Int = 1600) -> String {
+        "https://images.unsplash.com/\(id)?auto=format&fit=crop&w=\(width)&q=80"
+    }
+
+    static let heroImageUrl = img("photo-1613395877344-13d4a8e0d49e", width: 2400)
+
+    static let destinations: [Destination] = [
+        Destination(
+            id: "udaipur",
+            name: "Udaipur",
+            country: "India",
+            region: "Rajasthan",
+            tagline: "Royal Palace Weddings",
+            description:
+                "Marble courtyards open onto Lake Pichola. Udaipur still feels like a court in slow motion — processions, palaces, and evenings that turn gold before they turn night.",
+            seasonalNote: "October to March: cool evenings, clear lake light, and the wedding season at its most gracious.",
+            styles: [.royal, .heritage],
+            guestCapacityMin: 40,
+            guestCapacityMax: 400,
+            budgetMin: 80000,
+            imageUrl: img("photo-1605649487212-47bdab064df7"),
+            gallery: [
+                img("photo-1605649487212-47bdab064df7"),
+                img("photo-1564507592333-c60657eea523"),
+                img("photo-1582719478250-c89cae4dc85b"),
+            ],
+            venueIds: ["udaipur-taj-lake", "udaipur-leela"],
+            packageIds: ["royal", "bespoke", "grand"]
+        ),
+        Destination(
+            id: "goa",
+            name: "Goa",
+            country: "India",
+            region: "Goa",
+            tagline: "Beachside Celebrations",
+            description:
+                "A softer India: palms, Portuguese houses, and ceremonies that end with bare feet in warm sand. Goa holds both a Catholic chapel quiet and a Konkan feast.",
+            seasonalNote: "November to February: dry skies, gentle sea, and long golden hours on the water.",
+            styles: [.beach, .luxuryResort],
+            guestCapacityMin: 20,
+            guestCapacityMax: 250,
+            budgetMin: 45000,
+            imageUrl: img("photo-1512343879784-a960bf40e7f2"),
+            gallery: [
+                img("photo-1512343879784-a960bf40e7f2"),
+                img("photo-1507525428034-b723cf961d3e"),
+                img("photo-1520250497591-112f2f40a3f4"),
+            ],
+            venueIds: ["goa-taj-exotica"],
+            packageIds: ["intimate", "grand"]
+        ),
+        Destination(
+            id: "jaipur",
+            name: "Jaipur",
+            country: "India",
+            region: "Rajasthan",
+            tagline: "Heritage & Royal Weddings",
+            description:
+                "Pink stone, polo lawns, and processions that still know how to arrive. Jaipur is for families who want heritage without leaving the comfort of a palace hotel.",
+            seasonalNote: "November to February: crisp nights and courtyards lit for baraat.",
+            styles: [.royal, .heritage, .garden],
+            guestCapacityMin: 60,
+            guestCapacityMax: 500,
+            budgetMin: 90000,
+            imageUrl: img("photo-1477587458883-47145ed94245"),
+            gallery: [
+                img("photo-1477587458883-47145ed94245"),
+                img("photo-1603262110263-fb0112e7cc33"),
+                img("photo-1524492412937-b28074a5d7da"),
+            ],
+            venueIds: ["jaipur-rambagh", "jaipur-rajmahal"],
+            packageIds: ["royal", "grand", "bespoke"]
+        ),
+        Destination(
+            id: "bali",
+            name: "Bali",
+            country: "Indonesia",
+            region: "Bali",
+            tagline: "Tropical Luxury Weddings",
+            description:
+                "Cliff temples, jungle canopies, and a kind of light that makes white linen look inevitable. Bali is tropical luxury with ritual still in the air.",
+            seasonalNote: "April to October: the dry season, with calmer seas and terraces that stay gilded until dusk.",
+            styles: [.luxuryResort, .beach, .garden],
+            guestCapacityMin: 20,
+            guestCapacityMax: 200,
+            budgetMin: 55000,
+            imageUrl: img("photo-1537996194471-e657df975ab4"),
+            gallery: [
+                img("photo-1537996194471-e657df975ab4"),
+                img("photo-1555400038-63f5ba517a47"),
+                img("photo-1518548419970-58e3b4079ab2"),
+            ],
+            venueIds: ["bali-bulgari"],
+            packageIds: ["intimate", "bespoke", "grand"]
+        ),
+        Destination(
+            id: "tuscany",
+            name: "Tuscany",
+            country: "Italy",
+            region: "Tuscany",
+            tagline: "Countryside Romance",
+            description:
+                "Cypress lines, villa courtyards, and long tables under a sky that knows how to do gold. Tuscany is countryside romance with serious wine and no hurry.",
+            seasonalNote: "May, June, September: warm stone, harvest light, and gardens still in flower.",
+            styles: [.garden, .heritage],
+            guestCapacityMin: 30,
+            guestCapacityMax: 180,
+            budgetMin: 70000,
+            imageUrl: img("photo-1523906834658-6e24ef2386f9"),
+            gallery: [
+                img("photo-1523906834658-6e24ef2386f9"),
+                img("photo-1516483638261-f4dbaf036963"),
+                img("photo-1467269204594-9661b134dd2b"),
+            ],
+            venueIds: ["tuscany-castello"],
+            packageIds: ["intimate", "grand", "bespoke"]
+        ),
+        Destination(
+            id: "santorini",
+            name: "Santorini",
+            country: "Greece",
+            region: "Cyclades",
+            tagline: "Mediterranean Elegance",
+            description:
+                "Whitewashed caldera, a sea that turns ink at dusk, and ceremonies small enough to feel like a secret. Santorini is Mediterranean elegance at the edge of the world.",
+            seasonalNote: "May to early October: long evenings, caldera wind, and sunsets that do the decorating.",
+            styles: [.luxuryResort, .beach],
+            guestCapacityMin: 12,
+            guestCapacityMax: 80,
+            budgetMin: 60000,
+            imageUrl: img("photo-1613395877344-13d4a8e0d49e"),
+            gallery: [
+                img("photo-1613395877344-13d4a8e0d49e"),
+                img("photo-1570077188670-e3a8d69ac5ff"),
+                img("photo-1533105079780-92b9be482077"),
+            ],
+            venueIds: ["santorini-canaves"],
+            packageIds: ["intimate", "bespoke"]
+        ),
+    ]
+
+    static let venues: [Venue] = [
+        Venue(
+            id: "udaipur-taj-lake",
+            destinationId: "udaipur",
+            name: "Taj Lake Palace",
+            description:
+                "A white marble island on Lake Pichola. Arrivals are by boat; vows are held in courtyards that have hosted royalty for generations.",
+            highlights: ["Boat arrival on Lake Pichola", "Marble courtyard ceremony", "Heritage suites for the wedding party"],
+            location: "Lake Pichola, Udaipur",
+            latitude: 24.5753,
+            longitude: 73.6801,
+            capacity: 180,
+            spaces: ["Jag Niwas courtyard", "Lily Pond terrace", "Grand palanquin lawn"],
+            accommodation: "83 heritage rooms and suites on the palace island, with additional rooms at Taj hotels on the shore.",
+            amenities: ["Private boat transfers", "Spa", "Fine dining", "Butler service", "Lake-view suites"],
+            priceFrom: 120000,
+            packageIds: ["royal", "bespoke"],
+            rating: 4.9,
+            reviewCount: 48,
+            reviews: [
+                Review(author: "Meera & Arjun", rating: 5, body: "The boat arrival still feels like a dream. Every steward knew our names."),
+                Review(author: "The Kapoor family", rating: 5, body: "A palace that behaves like a home — if your home floated on a lake."),
+            ],
+            imageUrl: img("photo-1564507592333-c60657eea523"),
+            gallery: [
+                img("photo-1564507592333-c60657eea523"),
+                img("photo-1582719478250-c89cae4dc85b"),
+                img("photo-1542314831-068cd1dbfeeb"),
+            ]
+        ),
+        Venue(
+            id: "udaipur-leela",
+            destinationId: "udaipur",
+            name: "The Leela Palace Udaipur",
+            description:
+                "A modern palace on the lake’s edge, with Mewar portraiture, torchlit terraces, and rooms that look back at the City Palace.",
+            highlights: ["Torchlit lakeside terrace", "Royal ballroom", "Spa overlooking the water"],
+            location: "Lake Pichola, Udaipur",
+            latitude: 24.5769,
+            longitude: 73.6822,
+            capacity: 320,
+            spaces: ["Mewar terrace", "Grand ballroom", "Garden pavilion"],
+            accommodation: "80 rooms and suites, many with lake-facing balconies and private dining.",
+            amenities: ["Helipad", "Spa", "Two palaces of dining", "Wedding studio", "Valet"],
+            priceFrom: 95000,
+            packageIds: ["grand", "royal"],
+            rating: 4.8,
+            reviewCount: 36,
+            reviews: [
+                Review(author: "Ananya & Dev", rating: 5, body: "The terrace at dusk did more for our photographs than any set ever could."),
+            ],
+            imageUrl: img("photo-1542314831-068cd1dbfeeb"),
+            gallery: [
+                img("photo-1542314831-068cd1dbfeeb"),
+                img("photo-1566073771259-6a8506099945"),
+                img("photo-1605649487212-47bdab064df7"),
+            ]
+        ),
+        Venue(
+            id: "goa-taj-exotica",
+            destinationId: "goa",
+            name: "Taj Exotica Resort & Spa",
+            description:
+                "A Goan estate of villas, palms, and a private beach. Ceremonies can be on the sand at golden hour or in a chapel of old laterite.",
+            highlights: ["Private beach ceremony", "Villa stay for the couple", "Goan-Portuguese reception"],
+            location: "Benaulim, Goa",
+            latitude: 15.2581,
+            longitude: 73.925,
+            capacity: 200,
+            spaces: ["Beachfront", "Garden chapel", "Open pavilion"],
+            accommodation: "140 villas and rooms set in coconut groves, a short walk from the Arabian Sea.",
+            amenities: ["Private beach", "Spa", "Kids’ atelier", "Water sports", "In-villa dining"],
+            priceFrom: 55000,
+            packageIds: ["intimate", "grand"],
+            rating: 4.7,
+            reviewCount: 29,
+            reviews: [
+                Review(author: "Sofia & Neil", rating: 5, body: "Barefoot vows, then a table that ran until the tide turned."),
+            ],
+            imageUrl: img("photo-1520250497591-112f2f40a3f4"),
+            gallery: [
+                img("photo-1520250497591-112f2f40a3f4"),
+                img("photo-1512343879784-a960bf40e7f2"),
+                img("photo-1507525428034-b723cf961d3e"),
+            ]
+        ),
+        Venue(
+            id: "jaipur-rambagh",
+            destinationId: "jaipur",
+            name: "Rambagh Palace",
+            description:
+                "The former residence of the Maharaja of Jaipur. Polo lawns, peacock terraces, and a ballroom that still knows a procession.",
+            highlights: ["Polo lawn baraat", "Palace ballroom", "Heritage suites"],
+            location: "Bhawani Singh Road, Jaipur",
+            latitude: 26.898,
+            longitude: 75.8085,
+            capacity: 400,
+            spaces: ["Polo lawn", "Maharani suite terrace", "Grand dining hall"],
+            accommodation: "79 rooms and royal suites inside the palace, with additional rooms in the garden wing.",
+            amenities: ["Polo and riding", "Spa", "Vintage car arrival", "Palace butler", "Indoor pool"],
+            priceFrom: 110000,
+            packageIds: ["royal", "bespoke"],
+            rating: 4.9,
+            reviewCount: 52,
+            reviews: [
+                Review(author: "Ishita & Kabir", rating: 5, body: "The lawns held four hundred people and still felt intimate."),
+            ],
+            imageUrl: img("photo-1603262110263-fb0112e7cc33"),
+            gallery: [
+                img("photo-1603262110263-fb0112e7cc33"),
+                img("photo-1477587458883-47145ed94245"),
+                img("photo-1566073771259-6a8506099945"),
+            ]
+        ),
+        Venue(
+            id: "jaipur-rajmahal",
+            destinationId: "jaipur",
+            name: "Rajmahal Palace",
+            description:
+                "A smaller royal house with art-deco suites, a secret garden, and the feeling of borrowing a private court for a week.",
+            highlights: ["Secret garden dinner", "Art-deco suites", "City Palace proximity"],
+            location: "Sardar Patel Marg, Jaipur",
+            latitude: 26.926,
+            longitude: 75.8236,
+            capacity: 120,
+            spaces: ["Garden court", "Durbar hall", "Rooftop"],
+            accommodation: "13 suites — the whole palace can be taken for a wedding week.",
+            amenities: ["Full-palace buyout", "Vintage bar", "Spa treatments", "Private chef"],
+            priceFrom: 72000,
+            packageIds: ["intimate", "royal"],
+            rating: 4.8,
+            reviewCount: 18,
+            reviews: [
+                Review(author: "Aditi & Sam", rating: 5, body: "It felt like the city had been asked to wait outside."),
+            ],
+            imageUrl: img("photo-1524492412937-b28074a5d7da"),
+            gallery: [
+                img("photo-1524492412937-b28074a5d7da"),
+                img("photo-1477587458883-47145ed94245"),
+                img("photo-1542314831-068cd1dbfeeb"),
+            ]
+        ),
+        Venue(
+            id: "bali-bulgari",
+            destinationId: "bali",
+            name: "Bulgari Resort Bali",
+            description:
+                "A cliff on the Bukit, an ocean that fills the frame, and a chapel that hangs above the water. Italy’s jewellery house, in tropical stone.",
+            highlights: ["Clifftop chapel", "Ocean-view villa", "Italian and Balinese kitchens"],
+            location: "Uluwatu, Bali",
+            latitude: -8.829,
+            longitude: 115.087,
+            capacity: 120,
+            spaces: ["Clifftop chapel", "Ocean lawn", "Villa courtyard"],
+            accommodation: "59 villas with private pools, many cantilevered over the Indian Ocean.",
+            amenities: ["Private chapel", "Spa", "Beach club", "Helipad", "Yacht"],
+            priceFrom: 140000,
+            packageIds: ["bespoke", "intimate"],
+            rating: 4.9,
+            reviewCount: 41,
+            reviews: [
+                Review(author: "Elena & Marco", rating: 5, body: "The chapel at sunset needed no flowers. We added them anyway."),
+            ],
+            imageUrl: img("photo-1518548419970-58e3b4079ab2"),
+            gallery: [
+                img("photo-1518548419970-58e3b4079ab2"),
+                img("photo-1537996194471-e657df975ab4"),
+                img("photo-1555400038-63f5ba517a47"),
+            ]
+        ),
+        Venue(
+            id: "tuscany-castello",
+            destinationId: "tuscany",
+            name: "Castello di Casole",
+            description:
+                "A thousand-year-old estate in the hills near Siena. Olive groves, a frescoed chapel, and long tables that run until the candles fail.",
+            highlights: ["Frescoed chapel", "Estate buyout", "Harvest dinners"],
+            location: "Casole d’Elsa, Tuscany",
+            latitude: 43.337,
+            longitude: 11.037,
+            capacity: 160,
+            spaces: ["Estate chapel", "Garden terrace", "Great hall"],
+            accommodation: "39 suites in the castello and villas scattered through the olive groves.",
+            amenities: ["Wine cellar", "Spa", "Cooking atelier", "Pool terrace", "Estate cars"],
+            priceFrom: 98000,
+            packageIds: ["grand", "bespoke", "intimate"],
+            rating: 4.8,
+            reviewCount: 27,
+            reviews: [
+                Review(author: "Chiara & James", rating: 5, body: "Guests still write about the walk through the cypress at dusk."),
+            ],
+            imageUrl: img("photo-1516483638261-f4dbaf036963"),
+            gallery: [
+                img("photo-1516483638261-f4dbaf036963"),
+                img("photo-1523906834658-6e24ef2386f9"),
+                img("photo-1467269204594-9661b134dd2b"),
+            ]
+        ),
+        Venue(
+            id: "santorini-canaves",
+            destinationId: "santorini",
+            name: "Canaves Oia Epitome",
+            description:
+                "A quieter Oia, with private pools, a chapel of white plaster, and a caldera that does the work of a cathedral.",
+            highlights: ["Private caldera chapel", "Villa with pool", "Sunset dinner in the crater wind"],
+            location: "Oia, Santorini",
+            latitude: 36.4618,
+            longitude: 25.3753,
+            capacity: 60,
+            spaces: ["Cave chapel", "Infinity terrace", "Villa courtyard"],
+            accommodation: "22 suites and villas carved into the caldera, each with a private pool.",
+            amenities: ["Private chapel", "Spa", "Wine cave", "Yacht at Ammoudi"],
+            priceFrom: 85000,
+            packageIds: ["intimate", "bespoke"],
+            rating: 4.9,
+            reviewCount: 33,
+            reviews: [
+                Review(author: "Nina & Alexis", rating: 5, body: "Sixty people, one terrace, and a sea that kept changing colour."),
+            ],
+            imageUrl: img("photo-1570077188670-e3a8d69ac5ff"),
+            gallery: [
+                img("photo-1570077188670-e3a8d69ac5ff"),
+                img("photo-1613395877344-13d4a8e0d49e"),
+                img("photo-1533105079780-92b9be482077"),
+            ]
+        ),
+    ]
+
+    static let experiences: [Experience] = [
+        Experience(
+            id: "photography",
+            name: "Photography & cinematography",
+            description: "Editorial stills and a film that feels like a letter, not a recap — from the first marigold to the last dance.",
+            priceFrom: 8500,
+            imageUrl: img("photo-1583939003579-730e3918a45a"),
+            icon: "camera"
+        ),
+        Experience(
+            id: "florals",
+            name: "Floral décor & styling",
+            description: "Rust roses, blush peonies, and installations that respect the architecture rather than covering it.",
+            priceFrom: 12000,
+            imageUrl: img("photo-1478146896981-b80fe463b330"),
+            icon: "flower"
+        ),
+        Experience(
+            id: "catering",
+            name: "Catering & fine dining",
+            description: "Menus written with the region: Mewar thalis, Goan seafood, Tuscan harvest, or a chef’s table under the stars.",
+            priceFrom: 18000,
+            imageUrl: img("photo-1414235077428-338989a2e8c0"),
+            icon: "utensils"
+        ),
+        Experience(
+            id: "planner",
+            name: "Wedding planners & coordinators",
+            description: "A private atelier team who already know the palaces, the priests, and the quiet paths between them.",
+            priceFrom: 15000,
+            imageUrl: img("photo-1465495976277-4387d4b0b4c6"),
+            icon: "sparkles"
+        ),
+        Experience(
+            id: "makeup",
+            name: "Makeup artists & stylists",
+            description: "Bridal ateliers that travel with you — jewellery, hair, and light that holds from Haldi to the last toast.",
+            priceFrom: 4500,
+            imageUrl: img("photo-1457972729786-0411a3b2b626"),
+            icon: "gem"
+        ),
+        Experience(
+            id: "entertainment",
+            name: "Entertainment & live music",
+            description: "String quartets at dusk, folk processions, and a dance floor that knows when to be loud.",
+            priceFrom: 7000,
+            imageUrl: img("photo-1470229722913-7c0e2dbbafd3"),
+            icon: "music"
+        ),
+        Experience(
+            id: "accommodation",
+            name: "Guest accommodation",
+            description: "Room blocks, villa buyouts, and welcome notes so every guest feels housed, not merely booked.",
+            priceFrom: 20000,
+            imageUrl: img("photo-1566073771259-6a8506099945"),
+            icon: "building"
+        ),
+        Experience(
+            id: "transport",
+            name: "Transportation & logistics",
+            description: "Vintage cars, lake boats, helicopters, and the unglamorous brilliance of on-time transfers.",
+            priceFrom: 6000,
+            imageUrl: img("photo-1503376780353-7e6692767b70"),
+            icon: "car"
+        ),
+        Experience(
+            id: "prewedding",
+            name: "Pre-wedding photographs",
+            description: "A quieter day before the house fills: cliffs, courtyards, or a city still asleep.",
+            priceFrom: 3500,
+            imageUrl: img("photo-1520854221256-17451cc331bf"),
+            icon: "image"
+        ),
+        Experience(
+            id: "rituals",
+            name: "Mehendi, Haldi, Sangeet & reception",
+            description: "Each ritual designed as its own evening — colour, music, and a table that belongs to that hour.",
+            priceFrom: 16000,
+            imageUrl: img("photo-1606800052052-a08af7148866"),
+            icon: "crown"
+        ),
+    ]
+
+    static let packages: [WeddingPackage] = [
+        WeddingPackage(
+            id: "intimate",
+            name: "Intimate Wedding",
+            description: "A close gathering — the people who already know the story — in a villa, chapel, or quiet courtyard.",
+            includedGuests: 40,
+            extraGuestPrice: 420,
+            basePrice: 45000,
+            venueShare: 16000,
+            accommodationShare: 9000,
+            cateringShare: 8000,
+            decorationShare: 6000,
+            photographyShare: 6000,
+            includes: ["Venue for two days", "Forty guests dining", "Editorial photography", "Floral ceremony"],
+            imageUrl: img("photo-1519225421980-715cb0215aed")
+        ),
+        WeddingPackage(
+            id: "grand",
+            name: "Grand Celebration",
+            description: "A generous house: welcome dinners, a full ceremony, and a reception that can hold the wider family.",
+            includedGuests: 150,
+            extraGuestPrice: 380,
+            basePrice: 120000,
+            venueShare: 40000,
+            accommodationShare: 25000,
+            cateringShare: 28000,
+            decorationShare: 15000,
+            photographyShare: 12000,
+            includes: ["Three-day estate", "One hundred fifty guests", "Photography and film", "Sangeet or rehearsal dinner"],
+            imageUrl: img("photo-1465495976277-4387d4b0b4c6")
+        ),
+        WeddingPackage(
+            id: "royal",
+            name: "Royal Luxury Wedding",
+            description: "A palace week: processions, multiple rituals, and hospitality that treats every guest as family of the house.",
+            includedGuests: 300,
+            extraGuestPrice: 360,
+            basePrice: 280000,
+            venueShare: 95000,
+            accommodationShare: 70000,
+            cateringShare: 55000,
+            decorationShare: 35000,
+            photographyShare: 25000,
+            includes: ["Palace or estate buyout", "Three hundred guests", "Atelier planning", "Procession and live court music"],
+            imageUrl: img("photo-1564507592333-c60657eea523")
+        ),
+        WeddingPackage(
+            id: "bespoke",
+            name: "Bespoke Wedding Experience",
+            description: "Composed from a blank page: the destination, the rituals, the table, and the film, written only for you.",
+            includedGuests: 80,
+            extraGuestPrice: 520,
+            basePrice: 400000,
+            venueShare: 140000,
+            accommodationShare: 90000,
+            cateringShare: 70000,
+            decorationShare: 55000,
+            photographyShare: 45000,
+            includes: ["Full atelier direction", "Uncapped creative", "Private travel desk", "Multi-day cinematic film"],
+            imageUrl: img("photo-1519741497674-611481863552")
+        ),
+    ]
+
+    static func destination(id: String) -> Destination? {
+        destinations.first { $0.id == id }
+    }
+
+    static func venue(id: String) -> Venue? {
+        venues.first { $0.id == id }
+    }
+
+    static func experience(id: String) -> Experience? {
+        experiences.first { $0.id == id }
+    }
+
+    static func package(id: String) -> WeddingPackage? {
+        packages.first { $0.id == id }
+    }
+
+    static func venues(forDestinationId destinationId: String) -> [Venue] {
+        venues.filter { $0.destinationId == destinationId }
+    }
+}
+
+extension Experience {
+    var appIcon: ImageResource {
+        switch icon {
+        case "camera": AppIcon.camera
+        case "flower": AppIcon.flower
+        case "utensils": AppIcon.utensils
+        case "sparkles": AppIcon.sparkles
+        case "gem": AppIcon.gem
+        case "music": AppIcon.music
+        case "building": AppIcon.building
+        case "car": AppIcon.car
+        case "image": AppIcon.image
+        case "crown": AppIcon.crown
+        default: AppIcon.sparkles
+        }
+    }
+}
