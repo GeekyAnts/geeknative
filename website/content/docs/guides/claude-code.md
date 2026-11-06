@@ -72,6 +72,6 @@ Claude Code applies project permissions after you accept the workspace trust pro
 
 ## Tips
 
-- Start Claude Code in the project root so the root instructions load.
+- Start Claude Code in the project root. Claude Code loads the project's instructions, hooks and platform subagents from the folder the session starts in, so a session started in a parent folder or another repo runs without them, and nothing warns you. `make check` enforces the same rules as the hooks (generated code is current, specs and parity are up to date, see [lint](/docs/reference/cli/#lint)), so run it before you call a change done either way.
 - A good first prompt describes the whole app. See [From idea to three apps](/docs/guides/idea-to-three-apps/).
 - If the stop hook flags a change you meant for one platform only, tell Claude so; it records the difference in the spec's Platform notes.

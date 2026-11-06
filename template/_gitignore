@@ -6,6 +6,7 @@ node_modules/
 
 # iOS
 apps/ios/.build/
+apps/ios/App/Generated/AppSecrets.swift
 xcuserdata/
 *.xcuserstate
 
@@ -15,6 +16,7 @@ apps/android/.kotlin/
 apps/android/build/
 apps/android/app/build/
 apps/android/local.properties
+apps/android/app/src/main/kotlin/app/generated/AppSecrets.kt
 apps/android/.idea/
 *.iml
 .cxx/

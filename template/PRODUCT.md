@@ -28,6 +28,8 @@ _Not described yet._
 | Android | Kotlin, Jetpack Compose | Android 7.0 (API 24) |
 | Web | React, TanStack Start | Safari 16.4, Chrome 111, Firefox 128 |
 
+**Consistency:** `adapted` in `contracts/app.json`. Same flows, data, copy and brand; `n/a` is allowed.
+
 ## Glossary
 
 Domain terms, defined once. Code uses these exact names on every platform.

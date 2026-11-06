@@ -1,4 +1,5 @@
 import { AppCard } from '#/core/designsystem/AppCard'
+import { Page } from '#/core/designsystem/Page'
 import { strings } from '#/generated/strings'
 import { useSettingsViewModel } from './useSettingsViewModel'
 
@@ -6,7 +7,7 @@ export function SettingsScreen() {
   const viewModel = useSettingsViewModel()
 
   return (
-    <div className="flex flex-col gap-xl">
+    <Page>
       <h1 className="text-display">{strings.settingsTitle}</h1>
 
       <AppCard>
@@ -16,7 +17,7 @@ export function SettingsScreen() {
             {viewModel.appearanceOptions.map((option) => (
               <label
                 key={option.id}
-                className="flex cursor-pointer items-center gap-md rounded-md p-sm hover:bg-surface-variant"
+                className="flex min-h-touch-target cursor-pointer items-center gap-md rounded-md px-md hover:bg-surface-variant"
               >
                 <input
                   type="radio"
@@ -39,6 +40,6 @@ export function SettingsScreen() {
           {viewModel.versionText}
         </p>
       </AppCard>
-    </div>
+    </Page>
   )
 }

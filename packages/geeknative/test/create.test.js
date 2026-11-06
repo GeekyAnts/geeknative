@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict'
-import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { test } from 'node:test'
 import { create } from '../src/commands/create.js'
 import { gen } from '../src/commands/gen.js'
 import { MANAGED_BLOCK_FILES, MANAGED_FILES } from '../src/lib/managed.js'
-import { packageVersion } from '../src/lib/project.js'
+import { PACKAGE_DIR, packageVersion } from '../src/lib/project.js'
 import { readJson, tempDir } from './helpers.js'
 
 test('create copies the template and applies the app identity everywhere', async () => {
@@ -18,7 +18,10 @@ test('create copies the template and applies the app identity everywhere', async
 
   const pkg = readJson(path.join(dir, 'package.json'))
   assert.equal(pkg.name, 'acme-notes')
-  assert.match(pkg.devDependencies.geeknative, /^file:/, 'a checkout links the local CLI')
+  // From a checkout, the project is pinned to a snapshot, not linked to the checkout itself.
+  const snapshot = pkg.devDependencies.geeknative.match(/^file:(\.geeknative\/geeknative-[\d.]+-[0-9a-f]+(-dirty)?\.tgz)$/)
+  assert.ok(snapshot, `expected a snapshot dependency, got ${pkg.devDependencies.geeknative}`)
+  assert.ok(existsSync(path.join(dir, snapshot[1])), 'the snapshot tarball is in the project')
 
   assert.ok(existsSync(path.join(dir, '.gitignore')), '_gitignore becomes .gitignore')
   assert.ok(!existsSync(path.join(dir, '_gitignore')))
@@ -38,12 +41,21 @@ test('create copies the template and applies the app identity everywhere', async
   for (const file of MANAGED_BLOCK_FILES) assert.match(lock.blocks[file], /^sha256-/, file)
 })
 
+test('create --link follows the checkout instead of pinning a snapshot', async () => {
+  const dir = path.join(tempDir(), 'linked-app')
+  await create(dir, { install: false, git: false, link: true })
+  const pkg = readJson(path.join(dir, 'package.json'))
+  assert.equal(pkg.devDependencies.geeknative, `file:${PACKAGE_DIR}`)
+  assert.deepEqual(readdirSync(path.join(dir, '.geeknative')).filter((f) => f.endsWith('.tgz')), [])
+})
+
 test('create derives the name and ID from the folder name', async () => {
   const dir = path.join(tempDir(), 'my-cool-app')
   await create(dir, { install: false, git: false })
   const app = readJson(path.join(dir, 'contracts', 'app.json'))
   assert.equal(app.name, 'My Cool App')
   assert.equal(app.id, 'com.example.mycoolapp')
+  assert.equal(app.consistency, 'adapted')
 })
 
 test('create refuses a folder that is not empty', async () => {
@@ -55,5 +67,20 @@ test('create refuses a folder that is not empty', async () => {
 test('create rejects an invalid app ID before writing anything', async () => {
   const dir = path.join(tempDir(), 'bad-id')
   await assert.rejects(create(dir, { id: 'not a bundle id', install: false, git: false }), /reverse-DNS/)
+  assert.ok(!existsSync(dir))
+})
+
+test('create respects --consistency and records the decision', async () => {
+  const dir = path.join(tempDir(), 'strict-app')
+  await create(dir, { consistency: 'strict', install: false, git: false })
+  const app = readJson(path.join(dir, 'contracts', 'app.json'))
+  assert.equal(app.consistency, 'strict')
+  const decisions = readFileSync(path.join(dir, 'spec', 'decisions.md'), 'utf8')
+  assert.match(decisions, /## \d{4}-\d{2}-\d{2}: Cross-platform consistency\n\nConfigured as \*\*strict\*\*: same features, screens and behavior on every platform, with native controls\.\n$/)
+})
+
+test('create rejects an invalid consistency level before writing anything', async () => {
+  const dir = path.join(tempDir(), 'bad-consistency')
+  await assert.rejects(create(dir, { consistency: 'loose', install: false, git: false }), /"consistency", when given, must be "strict" or "adapted"/)
   assert.ok(!existsSync(dir))
 })

@@ -5,7 +5,8 @@ import { CliError } from '../lib/log.js'
 import { banner, kotlinString, OUT, swiftString } from './util.js'
 
 /**
- * @typedef {{ name: string, id: string, version: string, build: number, defaultLocale: string }} AppIdentity
+ * @typedef {'strict' | 'adapted'} ConsistencyLevel
+ * @typedef {{ name: string, id: string, version: string, build: number, defaultLocale: string, consistency: ConsistencyLevel }} AppIdentity
  * @typedef {{ path: string, content: string | Buffer }} Output
  */
 
@@ -37,7 +38,11 @@ export function validateApp(app) {
   if (typeof defaultLocale !== 'string' || !/^[a-z]{2,3}(-[A-Za-z0-9]+)*$/.test(defaultLocale)) {
     throw new CliError(`${where} "defaultLocale" must be a language code like "en" or "pt-BR".`)
   }
-  return { name: app.name.trim(), id: app.id, version: app.version, build: app.build, defaultLocale }
+  const consistency = app.consistency ?? 'adapted'
+  if (typeof consistency !== 'string' || !['strict', 'adapted'].includes(consistency)) {
+    throw new CliError(`${where} "consistency", when given, must be "strict" or "adapted".`)
+  }
+  return { name: app.name.trim(), id: app.id, version: app.version, build: app.build, defaultLocale, consistency }
 }
 
 /** @param {AppIdentity} app @returns {Output[]} */
