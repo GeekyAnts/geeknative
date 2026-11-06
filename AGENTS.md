@@ -9,7 +9,7 @@ This repo is the geeknative framework itself, not an app built with it.
 | packages/create-geeknative/ | The `npm create geeknative` entry point; forwards to `geeknative create`. |
 | packages/geeknative/test/ | The CLI test suite (`npm test`, Node's built-in test runner). |
 | website/ | The landing page and docs (Next.js static export, styled after colony.geekyants.com), deployed to GitHub Pages by .github/workflows/docs.yml. |
-| demo-apps/ | Finished sample apps (this branch). Each one has a `previews/` folder of real screenshots. |
+| demo-apps/ | Finished sample apps built with geeknative, not checked by CI. Each one has a `previews/` folder of real screenshots. |
 | scripts/smoke.js | Creates a fresh project in a temp folder and runs every check in it. |
 | scripts/publish-demo-app.mjs | Copies an app into `demo-apps/<slug>/` and photographs every screen on iOS, Android and web. |
 

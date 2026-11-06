@@ -483,6 +483,8 @@ async function capturePlatforms({ root, shots, screens, platforms, dest }) {
     }
 
     if (platforms.includes('web')) {
+      // npm install brings Playwright but not its browser. This is a no-op once it's downloaded.
+      run('npx', ['playwright', 'install', '--only-shell', 'chromium'], { cwd: scriptsDir, stdio: 'inherit' })
       web = await startWebPreview(root)
       const browser = await playwright.chromium.launch()
       try {
