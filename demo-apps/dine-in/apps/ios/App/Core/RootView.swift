@@ -38,7 +38,10 @@ struct RootView: View {
 /// Welcome, Sign in and Sign up.
 private struct SignedOutRoot: View {
     @Environment(AppContainer.self) private var container
-    @State private var path: [AuthRoute] = []
+    @State private var path: [AuthRoute] = {
+        guard let screen = UITesting.screenshotScreen, let route = UITesting.authRoute(for: screen) else { return [] }
+        return [route]
+    }()
 
     var body: some View {
         NavigationStack(path: $path) {
