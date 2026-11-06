@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { showcaseApps, showcaseHref } from "@/content/showcase";
 import { allArticles, COLLECTIONS, type CollectionId } from "@/lib/articles";
 import { allDocs } from "@/lib/docs/content";
 import { absoluteUrl } from "@/lib/seo";
@@ -12,6 +13,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: absoluteUrl("/"), changeFrequency: "weekly", priority: 1 },
     { url: absoluteUrl("/docs/"), changeFrequency: "weekly", priority: 0.9 },
+    { url: absoluteUrl("/showcase/"), changeFrequency: "weekly", priority: 0.8 },
+    ...showcaseApps.map((app) => ({ url: absoluteUrl(showcaseHref(app.slug)), changeFrequency: "monthly" as const, priority: 0.7 })),
     ...allDocs().map((d) => ({ url: absoluteUrl(d.href), changeFrequency: "monthly" as const, priority: 0.7 })),
     ...collections.flatMap((id) => [
       { url: absoluteUrl(`/${id}/`), changeFrequency: "weekly" as const, priority: 0.8 },
