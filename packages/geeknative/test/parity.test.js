@@ -57,6 +57,15 @@ test('parity handles a feature with no acceptance criteria yet', () => {
   assert.match(md, /\| \[Search\]\(features\/search\.md\) \| ⏳ planned \| ⏳ planned \| ⏳ planned \|/)
 })
 
+test('parity displays consistency target from contracts/app.json', () => {
+  const root = tempDir()
+  write(root, 'contracts/app.json', JSON.stringify({ name: 'Strict App', id: 'com.example.strict', version: '1.0.0', build: 1, consistency: 'strict' }))
+  write(root, 'spec/features/search.md', '---\nid: search\ntitle: Search\nstatus:\n  ios: planned\n  android: planned\n  web: planned\n---\n# Search\n')
+  parity(root)
+  const md = readFileSync(path.join(root, 'spec', 'parity.md'), 'utf8')
+  assert.match(md, /\*\*Consistency:\*\* strict/)
+})
+
 test('parity counts a (ui) criterion only when a test drives the real UI', () => {
   const root = tempDir()
   write(

@@ -9,6 +9,13 @@ design changes. Token values live in contracts/tokens.json; this file explains h
 
 _Not described yet. Describe the look you want (for example "calm and minimal" or "bold and playful") and your coding agent will set colors, type and spacing to match._
 
+## Consistency
+
+`contracts/app.json` `"consistency"` is `strict` or `adapted` (default `adapted`). See AGENTS.md, Consistency, for what the agent does under each tier.
+
+- **strict:** the same features, screens and behavior on every platform, with no `n/a`. Controls and navigation chrome stay native.
+- **adapted:** same flows, data, copy and brand. `n/a` and shipping one platform first are allowed when the spec says so.
+
 ## Same everywhere, native where it counts
 
 | Same on every platform | Native to each platform |

@@ -5,6 +5,7 @@ description: Release notes for geeknative.
 
 ## Unreleased
 
+- **Consistency:** `contracts/app.json` can set `consistency` to `strict` or `adapted` (default `adapted`). `strict` fails `make lint` when a feature spec uses `n/a`. Existing projects get a `parity` lint error after upgrading until they run `make parity`, because of the new header line. `create` takes `--consistency`; there is no setup prompt.
 - **One typeface everywhere:** `contracts/tokens.json` names a font family with one file per weight in `contracts/fonts`, and `make gen` bundles the same files into all three apps (registered at launch on iOS, font resources on Android, `@font-face` on the web). New projects start with Inter. `make font FAMILY="Open Sans"` switches to any Google Fonts family; `FAMILY=system` restores each platform's own font, in which case `make gen` checks that type sizes match their Dynamic Type styles.
 - **One icon family everywhere:** `contracts/icons.json` names Lucide icons (or an SVG of yours in `contracts/icons`), and `make gen` draws each one natively: an asset catalog on iOS, vector drawables on Android, inline SVG components on the web. The apps no longer depend on `lucide-react` or `material-icons-core`. Icons can be marked `mirrored` for right-to-left layouts, and icon sizes are tokens (`AppIconSize.md`, `size-icon-md`).
 - **Environments:** a new `contracts/config.json` declares environments and typed per-environment values, compiled into `AppConfig` and `AppEnvironment` on every platform. Debug builds use `development` and release builds use `production`.

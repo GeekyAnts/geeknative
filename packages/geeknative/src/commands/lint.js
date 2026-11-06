@@ -1,6 +1,7 @@
 // @ts-check
 import { existsSync, readFileSync } from 'node:fs'
 import path from 'node:path'
+import { readApp } from '../codegen/app.js'
 import { capture } from '../lib/exec.js'
 import { walk } from '../lib/fsutil.js'
 import { color, log } from '../lib/log.js'
@@ -19,6 +20,7 @@ import { coverage, parityMarkdown, testedCriteria } from './parity.js'
  * - width:    a web screen that caps its width without centering it (DESIGN.md: Screen)
  * Spec rules:
  * - status:   a platform still "planned" although its tests cover the feature's criteria
+ * - consistency: a platform marked n/a while contracts/app.json consistency is strict
  * - parity:   spec/parity.md out of date
  * - platforms: uncommitted changes touch some apps but not the others (a warning, as the
  *   Claude Code Stop hook gives, for agents that run without the hooks)
@@ -80,7 +82,7 @@ export function lint(root, options = {}) {
 }
 
 /** Rules about the specs rather than any app's code. */
-const SPEC_RULES = new Set(['status', 'parity'])
+const SPEC_RULES = new Set(['status', 'parity', 'consistency'])
 
 // ---------- Code ----------
 
@@ -305,14 +307,22 @@ function lintSpecs(root, features) {
   /** @type {Finding[]} */
   const findings = []
   const tested = testedCriteria(root)
+  let consistency = 'adapted'
+  try {
+    consistency = readApp(root).consistency ?? 'adapted'
+  } catch {}
+
   for (const feature of features) {
     for (const platform of PLATFORMS) {
       const status = feature.status[platform]
+      const file = `spec/features/${feature.file}`
+      if (consistency === 'strict' && status === 'n/a') {
+        findings.push({ rule: 'consistency', level: 'error', file, line: 0, message: `${platform} is marked "n/a", but consistency is set to strict. All platforms must support every feature in strict mode.` })
+      }
       if (!feature.criteria.length || status === 'n/a') continue
       const levels = feature.criteria.map((c) => coverage(c, tested[platform]))
       const named = levels.filter((l) => l !== 'none').length
       const covered = levels.filter((l) => l === 'ui' || l === 'unit').length
-      const file = `spec/features/${feature.file}`
       if (status === 'planned' && named) {
         findings.push({ rule: 'status', level: 'error', file, line: 0, message: `${platform} is "planned", but its tests name ${named} of ${feature.criteria.length} criteria. Set it to in-progress or done.` })
       } else if (status === 'in-progress' && covered === feature.criteria.length) {

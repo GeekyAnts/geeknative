@@ -55,6 +55,7 @@ test('create derives the name and ID from the folder name', async () => {
   const app = readJson(path.join(dir, 'contracts', 'app.json'))
   assert.equal(app.name, 'My Cool App')
   assert.equal(app.id, 'com.example.mycoolapp')
+  assert.equal(app.consistency, 'adapted')
 })
 
 test('create refuses a folder that is not empty', async () => {
@@ -66,5 +67,20 @@ test('create refuses a folder that is not empty', async () => {
 test('create rejects an invalid app ID before writing anything', async () => {
   const dir = path.join(tempDir(), 'bad-id')
   await assert.rejects(create(dir, { id: 'not a bundle id', install: false, git: false }), /reverse-DNS/)
+  assert.ok(!existsSync(dir))
+})
+
+test('create respects --consistency and records the decision', async () => {
+  const dir = path.join(tempDir(), 'strict-app')
+  await create(dir, { consistency: 'strict', install: false, git: false })
+  const app = readJson(path.join(dir, 'contracts', 'app.json'))
+  assert.equal(app.consistency, 'strict')
+  const decisions = readFileSync(path.join(dir, 'spec', 'decisions.md'), 'utf8')
+  assert.match(decisions, /## \d{4}-\d{2}-\d{2}: Cross-platform consistency\n\nConfigured as \*\*strict\*\*: same features, screens and behavior on every platform, with native controls\.\n$/)
+})
+
+test('create rejects an invalid consistency level before writing anything', async () => {
+  const dir = path.join(tempDir(), 'bad-consistency')
+  await assert.rejects(create(dir, { consistency: 'loose', install: false, git: false }), /"consistency", when given, must be "strict" or "adapted"/)
   assert.ok(!existsSync(dir))
 })

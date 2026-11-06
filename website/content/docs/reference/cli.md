@@ -8,7 +8,7 @@ The `geeknative` CLI is a dev dependency of every project. Inside a project you 
 ```text
 geeknative <command>
 
-  create <folder>      Create a project. Options: --name "My App" --id com.acme.myapp --no-install --no-git
+  create <folder>      Create a project. Options: --name "My App" --id com.acme.myapp --consistency <strict|adapted> --no-install --no-git
   gen                  Regenerate platform code from contracts/
   font <family>        Switch the shared typeface: a Google Fonts family ("Open Sans") or system
   check [targets]      Verify contracts, then build and test. Targets: all (default), contracts, ios, android, web
@@ -23,7 +23,7 @@ geeknative <command>
 ## create
 
 ```sh
-npm create geeknative@latest <folder> -- [--name "My App"] [--id com.acme.myapp] [--no-install] [--no-git]
+npm create geeknative@latest <folder> -- [--name "My App"] [--id com.acme.myapp] [--consistency <strict|adapted>] [--no-install] [--no-git]
 npx geeknative@latest create <folder> [options]
 ```
 
@@ -31,6 +31,7 @@ npx geeknative@latest create <folder> [options]
 |---|---|---|
 | `--name` | The folder name in title case (`my-app` becomes "My App") | The app's display name |
 | `--id` | `com.example.<folder name without dashes>` | Bundle ID on iOS, application ID on Android |
+| `--consistency` | `adapted` | Cross-platform consistency (`strict` or `adapted`) |
 | `--no-install` | | Skip `npm install` |
 | `--no-git` | | Skip `git init` and the first commit |
 | `--link` | | Only when running from a geeknative checkout: depend on the checkout itself instead of a snapshot of it (see below) |
@@ -133,6 +134,7 @@ Finds what builds and tests can't: places where the code breaks a rule from AGEN
 | `title` | Error | A centered screen title: `.navigationBarTitleDisplayMode(.inline)` on iOS, `CenterAlignedTopAppBar` on Android. Titles are leading-aligned on every platform. |
 | `width` | Error | A web screen (`*Screen.tsx`) whose outer element caps its width (`max-w-*`) without centering it (`mx-auto`). Wrap the screen in `Page` instead. |
 | `status` | Error | A platform still `planned` although its tests name the feature's criteria. A warning for `in-progress` with every criterion covered. Fixed in `spec/` by whoever owns the specs. |
+| `consistency` | Error | A feature spec marks a platform `n/a` while `contracts/app.json` `consistency` is `strict`. |
 | `parity` | Error | `spec/parity.md` doesn't match the specs and tests. Run `make parity`. |
 | `platforms` | Warning | Uncommitted changes touch some apps but not the others, the same reminder the Claude Code stop hook gives |
 

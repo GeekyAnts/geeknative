@@ -13,4 +13,4 @@
    - `<Name>Screen`, `<Name>ViewModel` (`use<Name>ViewModel` on web) and `<Name>Repository`, test IDs, storage keys, stored values and fallbacks match across the apps.
    - Icon-only controls have a label from strings, and touch targets meet 44 pt (iOS), 48 dp (Android) and 44 px (web).
    - Every intentional platform difference is written in DESIGN.md or the spec's Platform notes.
-9. **Record.** Set each platform's status in the spec's front matter (`done`, `in-progress`, `planned`, or `n/a` for a feature that's not on that platform). Run `make parity`. Add new features to PRODUCT.md's feature list.
+9. **Record.** Set each platform's status in the spec's front matter (`done`, `in-progress`, `planned`, or `n/a` for a feature that's not on that platform). Under `strict` (AGENTS.md, Consistency), never use `n/a`. Run `make parity`. Add new features to PRODUCT.md's feature list.
