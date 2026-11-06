@@ -1,0 +1,70 @@
+1:"$Sreact.fragment"
+3:I[68989,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/38zk-49d1uomt.js","/geeknative/_next/static/chunks/2tv8uytvja6uu.js"],"ArticleEnhancer"]
+2:T51f,[{"@context":"https://schema.org","@type":"TechArticle","headline":"Other agents","description":"Using a geeknative project with Codex, Cursor, GitHub Copilot, Gemini CLI and other coding agents.","url":"https://geekyants.github.io/geeknative/docs/guides/other-agents/","mainEntityOfPage":"https://geekyants.github.io/geeknative/docs/guides/other-agents/","author":{"@type":"Organization","name":"GeekyAnts","url":"https://geekyants.com","sameAs":["https://github.com/GeekyAnts","https://www.linkedin.com/company/geekyants-software-pvt-ltd/","https://x.com/geekyants"]},"publisher":{"@type":"Organization","name":"GeekyAnts","url":"https://geekyants.com","sameAs":["https://github.com/GeekyAnts","https://www.linkedin.com/company/geekyants-software-pvt-ltd/","https://x.com/geekyants"]},"about":{"@type":"SoftwareApplication","name":"geeknative","url":"https://geekyants.github.io/geeknative/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Docs","item":"https://geekyants.github.io/geeknative/docs/"},{"@type":"ListItem","position":2,"name":"Guides","item":"https://geekyants.github.io/geeknative/docs/"},{"@type":"ListItem","position":3,"name":"Other agents","item":"https://geekyants.github.io/geeknative/docs/guides/other-agents/"}]}]4:Td24,<p>geeknative's instructions are plain markdown in <code>AGENTS.md</code> files, the format most coding agents read. Nothing in them depends on a particular agent.</p>
+<h2 id="agents-that-read-agentsmd">Agents that read AGENTS.md<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#agents-that-read-agentsmd">#</a></h2>
+<p>Codex, Cursor, the GitHub Copilot coding agent and many others read <code>AGENTS.md</code> at the project root. Open the project folder and prompt as usual.</p>
+<p>Each app also has its own <code>AGENTS.md</code> with its conventions:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>File</th>
+<th>Covers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>apps/ios/AGENTS.md</code></td>
+<td>SwiftUI patterns, the Xcode project, iOS commands</td>
+</tr>
+<tr>
+<td><code>apps/android/AGENTS.md</code></td>
+<td>Compose patterns, Gradle, Android commands</td>
+</tr>
+<tr>
+<td><code>apps/web/AGENTS.md</code></td>
+<td>React and TanStack patterns, web commands</td>
+</tr>
+</tbody>
+</table></div>
+<p>Some agents load nested AGENTS.md files on their own and some don't, so the root file also tells the agent to read <code>apps/&#x3C;platform>/AGENTS.md</code> before editing in that folder.</p>
+<h2 id="gemini-cli">Gemini CLI<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#gemini-cli">#</a></h2>
+<p>Gemini CLI reads <code>GEMINI.md</code> by default. The project's <code>.gemini/settings.json</code> points it at AGENTS.md instead:</p>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="json"><code><span class="line"><span style="color:#686664">{</span></span>
+<span class="line"><span style="color:#686664">  "</span><span style="color:#0B0B0B">context</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#686664"> {</span></span>
+<span class="line"><span style="color:#686664">    "</span><span style="color:#0B0B0B">fileName</span><span style="color:#686664">"</span><span style="color:#686664">:</span><span style="color:#686664"> [</span><span style="color:#9F0310">"AGENTS.md"</span><span style="color:#686664">]</span></span>
+<span class="line"><span style="color:#686664">  }</span></span>
+<span class="line"><span style="color:#686664">}</span></span></code></pre>
+<h2 id="agents-without-sub-agents">Agents without sub-agents<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#agents-without-sub-agents">#</a></h2>
+<p>The loop in AGENTS.md works with or without sub-agents. If your agent can run sub-agents in parallel, it gives each platform its own. Otherwise it does the platforms one after another. Either way, the request isn't done until all three apps do it (or the spec marks the difference).</p>
+<h2 id="whats-claude-specific">What's Claude-specific<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#whats-claude-specific">#</a></h2>
+<p>The hooks and subagents in <code>.claude/</code> only run in Claude Code. With other agents:</p>
+<ul>
+<li>AGENTS.md tells the agent to run <code>make gen</code> after editing <code>contracts/</code>. The <a href="/geeknative/docs/guides/claude-code/">Claude Code</a> hook does that automatically.</li>
+<li>The parity reminder doesn't run, but <code>make parity</code> and the agent's per-platform report show the same information.</li>
+</ul>a:X
+f:X
+f:C
+0:{"buildId":"ry0uvycqtzHJ7dCB4S5wT","data":[{"rsc":["$","$1","c",{"children":[[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"$2"}}],["$","article",null,{"className":"min-w-0 pb-24 pt-10 lg:pt-14","data-pagefind-body":true,"children":[["$","header",null,{"className":"max-w-[46rem] border-b border-line pb-10","children":[["$","p",null,{"className":"label flex items-center gap-3 text-muted","children":[["$","span",null,{"aria-hidden":true,"className":"inline-block size-[7px] shrink-0 rounded-full bg-brand "}],["$","span",null,{"className":"tabular-nums","children":"02"}],["$","span",null,{"className":"h-px w-5 bg-current opacity-30"}],["$","span",null,{"children":"Guides"}]]}],["$","h1",null,{"className":"mt-6 display-m","data-pagefind-meta":"title","children":"Other agents"}],["$","p",null,{"className":"mt-5 max-w-[40rem] text-[1.125rem] leading-[1.55] text-ink/70","children":"Using a geeknative project with Codex, Cursor, GitHub Copilot, Gemini CLI and other coding agents."}]]}],["$","div",null,{"className":"mt-10 max-w-[46rem]","children":["$","$L3","guides/other-agents",{"children":[["$","div","0",{"className":"docs-prose","dangerouslySetInnerHTML":{"__html":"$4"}}]]}]}],"$L5"]}],"$L6"],["$L7"],"$L8"]}],"isPartial":"$@9","staleTime":"$a","varyParams":null},{"rsc":"$Lb","isPartial":"$@c","staleTime":"$a","varyParams":null},{"rsc":"$Ld","isPartial":"$@e","staleTime":"$a","varyParams":"$f"}],"isUpgradeableISRFallback":false,"a":"$@10","rootVaryParams":null,"needsRuntimeRequest":"$@11"}
+12:I[54249,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/38zk-49d1uomt.js","/geeknative/_next/static/chunks/2tv8uytvja6uu.js"],""]
+13:I[35820,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/38zk-49d1uomt.js","/geeknative/_next/static/chunks/2tv8uytvja6uu.js"],"Toc"]
+14:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"OutletBoundary"]
+15:"$Sreact.suspense"
+17:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"ViewportBoundary"]
+18:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"MetadataBoundary"]
+19:I[18516,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"IconMark"]
+1a:I[87180,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+1b:I[42045,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+5:["$","footer",null,{"className":"mt-20 max-w-[46rem]","data-pagefind-ignore":true,"children":[["$","a",null,{"href":"https://github.com/GeekyAnts/geeknative/edit/main/website/content/docs/guides/other-agents.md","className":"label inline-flex items-center gap-2 text-muted transition-colors hover:text-ink","rel":"noreferrer","children":["Edit this page on GitHub ",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0 -rotate-45 ","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}],["$","nav",null,{"aria-label":"Previous and next","className":"mt-8 grid gap-px overflow-hidden rounded-2xl bg-line ring-1 ring-line sm:grid-cols-2","children":[["$","$L12",null,{"href":"/docs/guides/claude-code/","className":"group flex flex-col gap-3 bg-white p-6 transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Previous"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":[["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  rotate-180 transition-transform duration-500 ease-[var(--ease-expo)] group-hover:-translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}],"Claude Code"]}]]}],["$","$L12",null,{"href":"/docs/concepts/how-it-works/","className":"group flex flex-col items-end gap-3 bg-white p-6 text-right transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Next"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":["How it works",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  transition-transform duration-500 ease-[var(--ease-expo)] group-hover:translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}]]}]]}]]}]
+6:["$","$L13",null,{"items":[{"depth":2,"id":"agents-that-read-agentsmd","text":"Agents that read AGENTS.md"},{"depth":2,"id":"gemini-cli","text":"Gemini CLI"},{"depth":2,"id":"agents-without-sub-agents","text":"Agents without sub-agents"},{"depth":2,"id":"whats-claude-specific","text":"What's Claude-specific"}]}]
+7:["$","script","script-0",{"src":"/geeknative/_next/static/chunks/2tv8uytvja6uu.js","async":true}]
+8:["$","$L14",null,{"children":["$","$15",null,{"name":"Next.MetadataOutlet","children":"$@16"}]}]
+b:["$","$1","h",{"children":[null,["$","$L17",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#ffffff"}]]}],["$","div",null,{"hidden":true,"children":["$","$L18",null,{"children":["$","$15",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Other agents · geeknative"}],["$","meta","1",{"name":"description","content":"Using a geeknative project with Codex, Cursor, GitHub Copilot, Gemini CLI and other coding agents."}],["$","meta","2",{"name":"keywords","content":"native app development,SwiftUI,Jetpack Compose,React,TanStack Start,coding agents,Claude Code,AGENTS.md,iOS Android web app,React Native alternative,Flutter alternative"}],["$","link","3",{"rel":"canonical","href":"https://geekyants.github.io/geeknative/docs/guides/other-agents/"}],["$","meta","4",{"property":"og:title","content":"Other agents · geeknative"}],["$","meta","5",{"property":"og:description","content":"Using a geeknative project with Codex, Cursor, GitHub Copilot, Gemini CLI and other coding agents."}],["$","meta","6",{"property":"og:url","content":"https://geekyants.github.io/geeknative/docs/guides/other-agents/"}],["$","meta","7",{"property":"og:image","content":"https://geekyants.github.io/geeknative/opengraph-image.png"}],["$","meta","8",{"property":"og:image:width","content":"1200"}],["$","meta","9",{"property":"og:image:height","content":"630"}],["$","meta","10",{"property":"og:image:alt","content":"geeknative: one prompt, three native apps"}],["$","meta","11",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","12",{"name":"twitter:title","content":"Other agents · geeknative"}],["$","meta","13",{"name":"twitter:description","content":"Using a geeknative project with Codex, Cursor, GitHub Copilot, Gemini CLI and other coding agents."}],["$","meta","14",{"name":"twitter:image","content":"https://geekyants.github.io/geeknative/twitter-image.png?twitter-image.2fjuh4p5ndhng.png"}],["$","meta","15",{"name":"twitter:image:type","content":"image/png"}],["$","meta","16",{"name":"twitter:image:width","content":"1200"}],["$","meta","17",{"name":"twitter:image:height","content":"630"}],["$","link","18",{"rel":"icon","href":"/geeknative/icon.svg?icon.12cpu7ud8w87b.svg","sizes":"any","type":"image/svg+xml"}],["$","link","19",{"rel":"apple-touch-icon","href":"/geeknative/apple-icon.png?apple-icon.1b0eoaalscjqq.png","sizes":"180x180","type":"image/png"}],["$","$L19","20",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}]
+d:["$","$1","c",{"children":[null,["$","$L1a",null,{"parallelRouterKey":"children","template":["$","$L1b",null,{}]}]]}]
+11:true
+16:null
+a:300
+a:C
+10:0
+c:"$undefined"
+e:"$undefined"
+9:"$undefined"
