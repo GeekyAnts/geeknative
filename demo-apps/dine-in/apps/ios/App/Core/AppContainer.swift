@@ -58,7 +58,9 @@ final class AppContainer {
 
     static func live() -> AppContainer {
         let arguments = ProcessInfo.processInfo.arguments
-        if arguments.contains(UITesting.flag) { return uiTesting(arguments: arguments) }
+        if arguments.contains(UITesting.flag) || arguments.contains(UITesting.screenshotScreenFlag) {
+            return uiTesting(arguments: arguments)
+        }
         let defaults = UserDefaults.standard
         return AppContainer(
             settingsRepository: UserDefaultsSettingsRepository(defaults: defaults),
@@ -76,10 +78,10 @@ final class AppContainer {
     }
 
     /// In-memory dependencies, for previews and tests. Signed in as a sample member by default.
-    static func preview(signedIn: Bool = true, reservations: [Reservation] = [], saved: [String] = [], preferences: DiningPreferences = .defaults, now: @escaping () -> Date = Date.init) -> AppContainer {
+    static func preview(signedIn: Bool = true, reservations: [Reservation] = [], saved: [String] = [], preferences: DiningPreferences = .defaults, appearance: Appearance = .system, now: @escaping () -> Date = Date.init) -> AppContainer {
         let auth = signedIn ? InMemoryAuthRepository.signedIn(name: UITesting.memberName, email: UITesting.memberEmail, password: UITesting.memberPassword, createdAt: UITesting.memberCreatedAt, now: now) : InMemoryAuthRepository(now: now)
         return AppContainer(
-            settingsRepository: InMemorySettingsRepository(),
+            settingsRepository: InMemorySettingsRepository(appearance: appearance),
             authRepository: auth,
             catalogRepository: InMemoryCatalogRepository(),
             exploreRepository: InMemoryExploreRepository(),
