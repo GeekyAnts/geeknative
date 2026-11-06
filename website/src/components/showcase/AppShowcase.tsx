@@ -39,7 +39,8 @@ function Layers({
     <>
       {frames.map(({ s, m }, i) => {
         const active = s.id === screen && m === mode;
-        const box = `screen-layer block h-auto w-full ${i === 0 ? "relative" : "absolute inset-0"} ${active ? "opacity-100" : "opacity-0"}`;
+        // The visible capture stays in flow. The others sit on top of it and fade.
+        const box = `screen-layer block h-auto w-full ${active ? "relative opacity-100" : "pointer-events-none absolute inset-0 opacity-0"}`;
         if (!shots.includes(shotFile(platform, s.id, m))) {
           const dark = m === "dark";
           return (
@@ -81,34 +82,43 @@ function Mark({ color }: { color: string }) {
   );
 }
 
+// Light passes of every screen, then the same screens in dark. The auto cycle walks this in order.
+function cycle(screens: ShowcaseApp["screens"]) {
+  return (["light", "dark"] as const).flatMap((mode) => screens.map((_, index) => ({ index, mode })));
+}
+
 // The same screen on iOS, web and Android. A control walks the app's screens, and the three stay in sync.
 export function AppShowcase({ app, shots }: { app: ShowcaseApp; shots: readonly string[] }) {
-  const [index, setIndex] = useState(0);
-  const [mode, setMode] = useState<Mode>("light");
+  const frames = cycle(app.screens);
+  const [cursor, setCursor] = useState(0);
   const [auto, setAuto] = useState(true);
   const root = useRef<HTMLDivElement>(null);
-  const screen = app.screens[index] ?? app.screens[0];
+  const frame = frames[cursor] ?? frames[0];
+  const screen = frame ? app.screens[frame.index] : undefined;
+  const mode = frame?.mode ?? "light";
 
   useEffect(() => {
     const el = root.current;
-    if (!auto || !el || app.screens.length < 2 || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!auto || !el || frames.length < 2 || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let timer = 0;
     const io = new IntersectionObserver(([entry]) => {
       window.clearInterval(timer);
-      if (entry.isIntersecting) timer = window.setInterval(() => setIndex((i) => (i + 1) % app.screens.length), 3400);
+      if (entry.isIntersecting) timer = window.setInterval(() => setCursor((current) => (current + 1) % frames.length), 3400);
     });
     io.observe(el);
     return () => {
       io.disconnect();
       window.clearInterval(timer);
     };
-  }, [auto, app.screens.length]);
+  }, [auto, frames.length]);
 
   if (!screen) return null;
 
-  const pick = (id: string) => {
+  const show = (index: number, nextMode: Mode) => {
+    const next = frames.findIndex((item) => item.index === index && item.mode === nextMode);
+    if (next < 0) return;
     setAuto(false);
-    setIndex(app.screens.findIndex((s) => s.id === id));
+    setCursor(next);
   };
 
   return (
@@ -135,7 +145,12 @@ export function AppShowcase({ app, shots }: { app: ShowcaseApp; shots: readonly 
       </div>
 
       <div className="mt-12 flex flex-wrap items-center justify-center gap-3">
-        <Segmented label="Screen" value={screen.id} options={app.screens.map((s): [string, string] => [s.id, s.label])} onChange={pick} />
+        <Segmented
+          label="Screen"
+          value={screen.id}
+          options={app.screens.map((s): [string, string] => [s.id, s.label])}
+          onChange={(id) => show(app.screens.findIndex((s) => s.id === id), mode)}
+        />
         <Segmented
           label="Appearance"
           value={mode}
@@ -143,10 +158,7 @@ export function AppShowcase({ app, shots }: { app: ShowcaseApp; shots: readonly 
             ["light", "Light"],
             ["dark", "Dark"],
           ]}
-          onChange={(next) => {
-            setAuto(false);
-            setMode(next);
-          }}
+          onChange={(next) => show(frame.index, next)}
         />
       </div>
     </div>
