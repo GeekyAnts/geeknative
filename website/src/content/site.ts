@@ -24,6 +24,7 @@ export const nav = [
   { label: "How it works", href: "/#how-it-works" },
   { label: "Use cases", href: "/use-cases/" },
   { label: "Compare", href: "/compare/" },
+  { label: "Showcase", href: "/showcase/" },
   { label: "Blog", href: "/blog/" },
   { label: "Docs", href: "/docs/" },
 ];
@@ -32,6 +33,7 @@ export const footer = {
   learn: [
     { label: "Use cases", href: "/use-cases/" },
     { label: "Compare", href: "/compare/" },
+    { label: "Showcase", href: "/showcase/" },
     { label: "Blog", href: "/blog/" },
     { label: "vs React Native", href: "/compare/react-native/" },
     { label: "vs Flutter", href: "/compare/flutter/" },

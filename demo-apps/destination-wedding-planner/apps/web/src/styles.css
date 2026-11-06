@@ -1,0 +1,81 @@
+@import 'tailwindcss';
+@import './generated/tokens.css';
+
+/* `dark:` utilities follow the "dark" class on <html>, which AppearanceEffect sets. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+html {
+  font-family: var(--font-sans);
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+@keyframes ken-burns {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.08);
+  }
+}
+
+@utility animate-ken-burns {
+  animation: ken-burns var(--transition-duration-cinematic) var(--ease-standard) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-ken-burns {
+    animation: none;
+  }
+}
+
+@media (max-width: 40rem) {
+  html {
+    --text-hero: 2.35rem;
+    --text-hero--line-height: 2.7rem;
+    --text-display: 1.85rem;
+    --text-display--line-height: 2.2rem;
+  }
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-on-surface-variant);
+  opacity: 1;
+}
+
+/* Native date inputs should read as the same caption+row fields as text inputs. */
+.date-field {
+  position: relative;
+  color-scheme: inherit;
+}
+
+.date-field::-webkit-date-and-time-value {
+  text-align: start;
+}
+
+.date-field-empty,
+.date-field-empty::-webkit-datetime-edit,
+.date-field-empty::-webkit-datetime-edit-fields-wrapper,
+.date-field-empty::-webkit-datetime-edit-text,
+.date-field-empty::-webkit-datetime-edit-month-field,
+.date-field-empty::-webkit-datetime-edit-day-field,
+.date-field-empty::-webkit-datetime-edit-year-field {
+  color: var(--color-on-surface-variant);
+}
+
+.date-field::-webkit-calendar-picker-indicator {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: pointer;
+}

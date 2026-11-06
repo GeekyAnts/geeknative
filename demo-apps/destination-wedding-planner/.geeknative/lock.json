@@ -1,0 +1,26 @@
+{
+  "geeknative": "0.1.1",
+  "files": {
+    ".claude/agents/android-engineer.md": "sha256-1382fd928df9bb325cd8d85a17e867bc9edaedf8b6f368466ccc65094c14055d",
+    ".claude/agents/ios-engineer.md": "sha256-b0a93ebbf720490ae8a6414e074e47efbc44996c29294de434528fd61564dad1",
+    ".claude/agents/web-engineer.md": "sha256-3917af184b337fccb08cdccc60647ecb5effcf43c6445ac3ec684bb4af00d282",
+    ".geeknative/framework.mk": "sha256-aa1266dc025cc9c09f37ed54ee4290671223b8b7451bbf33e3610dca223cbc46",
+    ".geeknative/hooks/after-edit.mjs": "sha256-7e47a01d092d1f25c68d72e24b8a72df6fa1e691e900a9fd6389972ed461d079",
+    ".geeknative/hooks/parity-guard.mjs": "sha256-392e7d954f27672e9c52eb4d72a2c20c21a64dcd402edb041a682b079f38c945",
+    ".geeknative/hooks/subagent-context.mjs": "sha256-1eecfc06ed0233c9b176d3ce22968b081d4ca164092182eb4f85e25311bef3db",
+    ".geeknative/playbooks/bug.md": "sha256-2fcf1819978159957d8e3df35e7da3faa9c54b0e94087fec82673c122db34e61",
+    ".geeknative/playbooks/design.md": "sha256-c02704c29042f258dc414543098d09986717731c5765681dff7741ebeaf1d249",
+    ".geeknative/playbooks/engineering.md": "sha256-a82972f3f9fcc58ce8d871e4272e1944ad95e3d65282312ac14048830725de9c",
+    ".geeknative/playbooks/feature.md": "sha256-b4ae2f17c2211da573f3061b4c037360d36dc71362ba94bd3e8b653324c25f25",
+    ".geeknative/playbooks/platform-specific.md": "sha256-f17653e2589dfb9b8022c4c01df785aeeae948d52847c5d6d8923dddb2a53aa6",
+    ".geeknative/playbooks/product.md": "sha256-a8d79392f90cffcd56072f95e61c0e1f5b275d8c1589df662882052fd0c36969",
+    ".geeknative/templates/feature.md": "sha256-7a64b439de366710dd26d87539384bc7db1da9f30ac2c3e6046979be03671ea5"
+  },
+  "blocks": {
+    "AGENTS.md": "sha256-f45d9e24581fd7db269728d928a5445bd09255085032e76542d6899cfcc8c5fe",
+    "apps/android/AGENTS.md": "sha256-4145bf10e3272cbeb5aa69cb56d385c90722b91331671490dd2347bae94e38b7",
+    "apps/ios/AGENTS.md": "sha256-579b1532486b6b6b38ae4e2a40c6d42491acf662155ac3d39d25e46b2099a09b",
+    "apps/web/AGENTS.md": "sha256-adbd3aab0aa205512ff5046c1e853ede1cf6f4384740a7d8cb58ad596072ec4a",
+    "CLAUDE.md": "sha256-695db8c100fa323490e7f56ce5a16b759a174130c0a1d6f612a34f83f42d57dc"
+  }
+}

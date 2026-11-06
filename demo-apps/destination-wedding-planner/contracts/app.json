@@ -1,0 +1,8 @@
+{
+  "name": "ORLÈVE",
+  "id": "com.example.destinationweddingplanner",
+  "version": "1.0.0",
+  "build": 1,
+  "defaultLocale": "en",
+  "consistency": "strict"
+}
