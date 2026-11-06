@@ -49,6 +49,8 @@ class AppContainer(
     val blurEnabled: Boolean = false,
     /** Loads remote photos. Off in tests, which show the skeleton instead. */
     val loadImages: Boolean = true,
+    /** Set when launched for screenshot capture; navigation starts on that screen. */
+    val screenshot: ScreenshotLaunch? = null,
 ) {
     companion object {
         fun live(context: Context): AppContainer {
@@ -89,6 +91,29 @@ class AppContainer(
                 clock = clock,
                 label = context.applicationContext::getString,
                 loadImages = loadImages,
+            )
+        }
+
+        /** In-memory dependencies seeded for screenshot capture of one screen. */
+        fun screenshot(context: Context, launch: ScreenshotLaunch): AppContainer {
+            val app = context.applicationContext
+            val clock = ScreenshotLaunch.clock()
+            val store = launch.seedStore()
+            val auth = InMemoryAuthRepository(clock, store)
+            val catalog = BundledCatalogRepository(app)
+            return AppContainer(
+                settingsRepository = InMemorySettingsRepository(launch.appearance),
+                authRepository = auth,
+                catalogRepository = catalog,
+                reservationsRepository = InMemoryReservationsRepository(auth, catalog, clock, store),
+                savedRepository = InMemorySavedRepository(auth, store),
+                preferencesRepository = InMemoryPreferencesRepository(auth, store),
+                exploreRepository = InMemoryExploreRepository(store),
+                clock = clock,
+                label = app::getString,
+                blurEnabled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S,
+                loadImages = true,
+                screenshot = launch,
             )
         }
     }

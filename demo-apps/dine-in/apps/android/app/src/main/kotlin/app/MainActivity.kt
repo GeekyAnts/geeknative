@@ -14,7 +14,9 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.core.AppContainer
 import app.core.LocalAppContainer
+import app.core.ScreenshotLaunch
 import app.core.designsystem.AppTheme
 import app.core.navigation.AppNavigation
 import app.features.settings.Appearance
@@ -23,7 +25,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val container = (application as App).container
+        val launch = ScreenshotLaunch.from(intent)
+        val container = if (launch != null) AppContainer.screenshot(this, launch) else (application as App).container
 
         setContent {
             // Null until the stored choice loads. Skip that first frame rather than flash the wrong theme.

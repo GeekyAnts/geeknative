@@ -52,10 +52,20 @@ struct ReservationsSegmentRequest: Equatable {
 /// Navigation state of the signed-in stack: the pushed routes and the selected tab.
 @Observable
 final class AppRouter {
-    var path: [Route] = []
-    var selectedTab: AppTab = .discover
+    var path: [Route]
+    var selectedTab: AppTab
     var exploreRequest: ExploreRequest?
     var reservationsRequest: ReservationsSegmentRequest?
+
+    init() {
+        if let screen = UITesting.screenshotScreen {
+            selectedTab = UITesting.tab(for: screen) ?? .discover
+            path = UITesting.pushedRoute(for: screen).map { [$0] } ?? []
+        } else {
+            selectedTab = .discover
+            path = []
+        }
+    }
 
     func push(_ route: Route) {
         path.append(route)

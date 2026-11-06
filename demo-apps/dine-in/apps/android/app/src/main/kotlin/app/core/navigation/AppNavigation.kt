@@ -76,7 +76,8 @@ fun AppNavigation() {
 
 @Composable
 private fun SignedOutNavigation(container: AppContainer) {
-    val backStack = rememberNavBackStack(Route.Welcome)
+    val start = container.screenshot?.signedOutStack() ?: listOf(Route.Welcome)
+    val backStack = if (start.size > 1) rememberNavBackStack(start[0], start[1]) else rememberNavBackStack(start[0])
     NavDisplay(
         backStack = backStack,
         onBack = { if (backStack.size > 1) backStack.removeLastOrNull() },
@@ -118,7 +119,8 @@ private fun SignedOutNavigation(container: AppContainer) {
 
 @Composable
 private fun SignedInNavigation(container: AppContainer) {
-    val backStack = rememberNavBackStack(Route.Tabs)
+    val start = container.screenshot?.signedInStack() ?: listOf(Route.Tabs)
+    val backStack = if (start.size > 1) rememberNavBackStack(start[0], start[1]) else rememberNavBackStack(start[0])
     fun pop() { if (backStack.size > 1) backStack.removeLastOrNull() }
     fun replaceReserveWith(route: Route) {
         if (backStack.lastOrNull() is Route.Reserve) backStack.removeLastOrNull()
@@ -134,7 +136,7 @@ private fun SignedInNavigation(container: AppContainer) {
         ),
         entryProvider = entryProvider {
             entry<Route.Tabs> {
-                var selected by rememberSaveable { mutableStateOf(Tab.Discover) }
+                var selected by rememberSaveable { mutableStateOf(container.screenshot?.tab ?: Tab.Discover) }
                 var exploreRequest by remember { mutableStateOf<ExploreRequest?>(null) }
                 TabsScreen(
                     selected = selected,
