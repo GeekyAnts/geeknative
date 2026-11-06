@@ -120,8 +120,8 @@ html.js .reveal.is-in {
   display: inline-block;
   overflow: hidden;
   vertical-align: top;
-  padding-bottom: 0.12em;
-  margin-bottom: -0.12em;
+  padding-block: 0.12em;
+  margin-block: -0.12em;
 }
 .words .word > span {
   display: inline-block;
