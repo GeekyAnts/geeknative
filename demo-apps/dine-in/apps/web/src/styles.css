@@ -1,0 +1,302 @@
+@import 'tailwindcss';
+@import './generated/tokens.css';
+
+/* `dark:` utilities follow the "dark" class on <html>, which AppearanceEffect sets. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* The serif display face (Cormorant Garamond, contracts/fonts/display), copied by `make assets`. */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('./assets/fonts/CormorantGaramond-SemiBold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('./assets/fonts/CormorantGaramond-Medium.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: italic;
+  font-weight: 500;
+  font-display: swap;
+  src: url('./assets/fonts/CormorantGaramond-MediumItalic.ttf') format('truetype');
+}
+
+.font-serif {
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@theme {
+  --font-serif: 'Cormorant Garamond', ui-serif, Georgia, 'Times New Roman', serif;
+
+  /* DESIGN.md RestaurantGridItem: four columns from 1200 px. */
+  --breakpoint-desk: 75rem;
+
+  /* Motion built from the motion tokens. Use as motion-safe:animate-fade-up. */
+  --animate-fade-up: fade-up var(--transition-duration-normal) var(--ease-decelerate) both;
+  --animate-fade-in: fade-in var(--transition-duration-normal) var(--ease-decelerate) both;
+  --animate-slide-from-end: slide-from-end var(--transition-duration-snappy) var(--ease-snappy) both;
+  --animate-slide-from-start: slide-from-start var(--transition-duration-snappy) var(--ease-snappy) both;
+  --animate-rise: rise var(--transition-duration-gentle) var(--ease-gentle) both;
+  --animate-heart-pop: heart-pop var(--transition-duration-bouncy) var(--ease-bouncy);
+  --animate-tilt-in: tilt-in var(--transition-duration-gentle) var(--ease-gentle) both;
+  /* DESIGN.md: a slow 20 s Ken Burns zoom on Welcome. */
+  --animate-ken-burns: ken-burns 20s ease-in-out infinite alternate;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      translate: 0 var(--spacing-xl);
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes slide-from-end {
+    from {
+      opacity: 0;
+      translate: var(--spacing-xxl) 0;
+    }
+  }
+  @keyframes slide-from-start {
+    from {
+      opacity: 0;
+      translate: calc(var(--spacing-xxl) * -1) 0;
+    }
+  }
+  @keyframes rise {
+    from {
+      translate: 0 100%;
+    }
+  }
+  @keyframes heart-pop {
+    0% {
+      scale: 1;
+    }
+    35% {
+      scale: 1.25;
+    }
+    100% {
+      scale: 1;
+    }
+  }
+  @keyframes tilt-in {
+    from {
+      opacity: 0;
+      rotate: -3deg;
+      translate: 0 var(--spacing-xxl);
+    }
+  }
+  @keyframes ken-burns {
+    from {
+      scale: 1;
+    }
+    to {
+      scale: 1.08;
+    }
+  }
+}
+
+html {
+  font-family: var(--font-sans);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Warm paper field: ivory wash, a hint of gold, fine grain. Photography and espresso bands sit on top. */
+body {
+  background-color: var(--color-background);
+  background-image:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse 80% 45% at 0% 0%, color-mix(in srgb, var(--color-muted) 55%, transparent), transparent 58%),
+    radial-gradient(ellipse 55% 40% at 100% 8%, color-mix(in srgb, var(--color-accent) 16%, transparent), transparent 52%),
+    radial-gradient(ellipse 70% 45% at 50% 100%, color-mix(in srgb, var(--color-surface-variant) 55%, transparent), transparent 62%);
+  background-attachment: fixed;
+}
+
+/* Horizontal carousels: hidden scrollbars, snapping, smooth scrolling. */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Floating chrome clears the home indicator on phones. */
+@utility bottom-floating {
+  bottom: calc(var(--spacing-lg) + env(safe-area-inset-bottom));
+}
+
+@utility pb-floating {
+  padding-bottom: calc(var(--spacing-tab-bar) + var(--spacing-xl) + var(--spacing-lg) + env(safe-area-inset-bottom));
+}
+
+@utility pb-safe-md {
+  padding-bottom: max(var(--spacing-md), env(safe-area-inset-bottom));
+}
+
+/* Sheets leave a glimpse of the screen above them. */
+@utility max-h-sheet {
+  max-height: 90dvh;
+}
+
+/* Discover's hero on windows wider than 1024 px (spec/features/discover.md). */
+@utility h-hero-wide {
+  height: calc(var(--spacing-hero-height) * 1.2);
+}
+
+/* Expanding panels animate grid-template-rows between 0fr and 1fr. */
+@utility grid-rows-expanded {
+  grid-template-rows: 1fr;
+}
+
+@utility grid-rows-collapsed {
+  grid-template-rows: 0fr;
+}
+
+@utility pb-action-bar {
+  padding-bottom: calc(var(--spacing-button) + var(--spacing-huge) + env(safe-area-inset-bottom));
+}
+
+@layer components {
+  /* DESIGN.md Skeleton: surfaceVariant blocks with a slow 1.2 s highlight sweep; static with reduced motion. */
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--color-surface-variant);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .skeleton::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      translate: -100% 0;
+      background-image: linear-gradient(
+        90deg,
+        transparent,
+        color-mix(in srgb, var(--color-surface) 60%, transparent),
+        transparent
+      );
+      animation: shimmer 1.2s var(--ease-standard) infinite;
+    }
+  }
+
+  /* Native <dialog>: fades and rises in, and back out, with the gentle spring. */
+  .app-dialog {
+    opacity: 0;
+    translate: 0 var(--spacing-xxl);
+    transition-property: opacity, translate, overlay, display;
+    transition-duration: var(--transition-duration-normal);
+    transition-timing-function: var(--ease-standard);
+    transition-behavior: allow-discrete;
+  }
+  .app-dialog[open] {
+    opacity: 1;
+    translate: 0 0;
+    transition-duration: var(--transition-duration-gentle);
+    transition-timing-function: var(--ease-gentle);
+  }
+  @starting-style {
+    .app-dialog[open] {
+      opacity: 0;
+      translate: 0 var(--spacing-xxl);
+    }
+  }
+  .app-dialog::backdrop {
+    background-color: transparent;
+    transition-property: background-color, overlay, display;
+    transition-duration: var(--transition-duration-normal);
+    transition-behavior: allow-discrete;
+  }
+  .app-dialog[open]::backdrop {
+    background-color: color-mix(in srgb, var(--color-espresso) 45%, transparent);
+    backdrop-filter: blur(4px);
+  }
+  @starting-style {
+    .app-dialog[open]::backdrop {
+      background-color: transparent;
+    }
+  }
+  /* A bottom sheet on narrow screens: it rises from the bottom edge. */
+  @media (width < 48rem) {
+    .app-dialog.app-sheet {
+      translate: 0 100%;
+    }
+    .app-dialog.app-sheet[open] {
+      translate: 0 0;
+    }
+    @starting-style {
+      .app-dialog.app-sheet[open] {
+        translate: 0 100%;
+      }
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .app-dialog,
+    .app-dialog[open],
+    .app-dialog::backdrop {
+      transition-duration: 0s;
+      translate: 0 0;
+    }
+  }
+
+  /* Confirmation: a gold circle draws itself, the check scales in, then a ring pulses once. */
+  @media (prefers-reduced-motion: no-preference) {
+    .success-circle {
+      stroke-dasharray: 160;
+      stroke-dashoffset: 160;
+      animation: draw var(--transition-duration-page) var(--ease-standard) forwards;
+    }
+    .success-check {
+      stroke-dasharray: 40;
+      stroke-dashoffset: 40;
+      transform-origin: center;
+      animation:
+        draw var(--transition-duration-normal) var(--ease-decelerate) var(--transition-duration-page) forwards,
+        check-scale var(--transition-duration-gentle) var(--ease-gentle) var(--transition-duration-page) both;
+    }
+    .success-ring {
+      animation: ring-pulse var(--transition-duration-page) var(--ease-decelerate)
+        calc(var(--transition-duration-page) + var(--transition-duration-normal)) forwards;
+    }
+  }
+}
+
+@keyframes shimmer {
+  to {
+    translate: 100% 0;
+  }
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes check-scale {
+  from {
+    scale: 0.4;
+  }
+}
+
+@keyframes ring-pulse {
+  from {
+    opacity: 0.6;
+    scale: 1;
+  }
+  to {
+    opacity: 0;
+    scale: 1.6;
+  }
+}

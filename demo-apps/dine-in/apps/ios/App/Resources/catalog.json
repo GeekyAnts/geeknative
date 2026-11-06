@@ -1,0 +1,1384 @@
+{
+  "$comment": "Demonstration catalog for The Dining Club. Every restaurant, review and price here is fictional sample data, bundled in each app by `make assets`. A future backend replaces it; only the CatalogRepository implementations change.",
+  "version": 1,
+  "heroImage": "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=1600&q=80",
+  "welcomeImage": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1600&q=80",
+  "cuisines": [
+    "italian",
+    "japanese",
+    "indian",
+    "french",
+    "mediterranean",
+    "asian",
+    "continental"
+  ],
+  "collections": [
+    {
+      "id": "mostLoved",
+      "image": "https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": "fineDining",
+      "image": "https://images.unsplash.com/photo-1572715376701-98568319fd0b?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": "romantic",
+      "image": "https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": "rooftop",
+      "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": "hiddenGems",
+      "image": "https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": "chefsPicks",
+      "image": "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=800&q=80"
+    }
+  ],
+  "restaurants": [
+    {
+      "id": "maison-lumiere",
+      "name": "Maison Lumière",
+      "cuisine": "french",
+      "neighbourhood": "Colaba",
+      "address": "14 Apollo Bunder Road, Colaba, Mumbai 400001",
+      "phone": "+91 22 4000 1101",
+      "latitude": 18.9217,
+      "longitude": 72.8332,
+      "distanceKm": 1.2,
+      "rating": 4.9,
+      "reviewCount": 1284,
+      "priceLevel": 4,
+      "costForTwo": 12000,
+      "tagline": "Candlelit French haute cuisine overlooking the harbour.",
+      "about": "Set within a restored 1920s harbour-front mansion, Maison Lumière is a love letter to classical French cooking. Chef Élise Marchand pairs Breton technique with the finest Indian coastal produce across an eight-course tasting menu that changes with the seasons.",
+      "ambience": "Soft candlelight, hand-blown Murano chandeliers and velvet banquettes in deep cognac. A string trio plays on Friday and Saturday evenings, and the sommelier's cellar holds over 900 labels.",
+      "dressCode": "Formal. Jackets recommended for gentlemen.",
+      "featured": true,
+      "collections": [
+        "mostLoved",
+        "fineDining",
+        "romantic"
+      ],
+      "amenities": [
+        "sommelier",
+        "valet",
+        "privateDining",
+        "liveMusic",
+        "accessible"
+      ],
+      "seating": [
+        "indoor",
+        "window",
+        "private"
+      ],
+      "maxPartySize": 10,
+      "demandPercent": 45,
+      "openingHours": {
+        "mon": null,
+        "tue": {
+          "open": "19:00",
+          "close": "23:30"
+        },
+        "wed": {
+          "open": "19:00",
+          "close": "23:30"
+        },
+        "thu": {
+          "open": "19:00",
+          "close": "23:30"
+        },
+        "fri": {
+          "open": "19:00",
+          "close": "23:30"
+        },
+        "sat": {
+          "open": "19:00",
+          "close": "23:30"
+        },
+        "sun": {
+          "open": "19:00",
+          "close": "23:30"
+        }
+      },
+      "heroImage": "https://images.unsplash.com/photo-1574966739987-65e38db0f7ce?auto=format&fit=crop&w=1200&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1574966739987-65e38db0f7ce?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "signatureDishes": [
+        {
+          "name": "Langoustine Royale",
+          "description": "Butter-poached langoustine, saffron beurre blanc, caviar.",
+          "price": 3800,
+          "image": "https://images.unsplash.com/photo-1535399831218-d5bd36d1a6b3?auto=format&fit=crop&w=600&q=80"
+        },
+        {
+          "name": "Salmon en Croûte",
+          "description": "Wild salmon, sorrel velouté, spring vegetables.",
+          "price": 3200,
+          "image": "https://images.unsplash.com/photo-1580959375944-abd7e991f971?auto=format&fit=crop&w=600&q=80"
+        },
+        {
+          "name": "Mille-feuille aux Fraises",
+          "description": "Caramelised puff pastry, Mahabaleshwar strawberries.",
+          "price": 1600,
+          "image": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=600&q=80"
+        }
+      ],
+      "menuHighlights": [
+        {
+          "name": "Seasonal Tasting Menu",
+          "description": "Eight courses, with optional wine pairing.",
+          "price": 14500
+        },
+        {
+          "name": "Foie Gras Torchon",
+          "description": "Brioche, fig chutney, aged balsamic.",
+          "price": 2900
+        },
+        {
+          "name": "Duck à l'Orange",
+          "description": "Roasted Barbary duck, bigarade sauce.",
+          "price": 3600
+        },
+        {
+          "name": "Grand Marnier Soufflé",
+          "description": "Prepared to order, twenty minutes.",
+          "price": 1500
+        }
+      ],
+      "reviews": [
+        {
+          "author": "Ananya R.",
+          "rating": 5,
+          "date": "2026-10-12",
+          "text": "The most romantic evening we have had in Mumbai. Every course was a quiet revelation."
+        },
+        {
+          "author": "James W.",
+          "rating": 5,
+          "date": "2026-09-28",
+          "text": "Impeccable service and a wine list that rivals Paris. The langoustine is unforgettable."
+        },
+        {
+          "author": "Meera K.",
+          "rating": 4,
+          "date": "2026-09-03",
+          "text": "Exquisite food and setting. Book a window table at sunset."
+        }
+      ]
+    },
+    {
+      "id": "osteria-velluto",
+      "name": "Osteria Velluto",
+      "cuisine": "italian",
+      "neighbourhood": "Bandra West",
+      "address": "22 Pali Hill Road, Bandra West, Mumbai 400050",
+      "phone": "+91 22 4000 1102",
+      "latitude": 19.0681,
+      "longitude": 72.8264,
+      "distanceKm": 6.8,
+      "rating": 4.7,
+      "reviewCount": 962,
+      "priceLevel": 3,
+      "costForTwo": 6500,
+      "tagline": "Handmade pasta and Tuscan warmth in a velvet-lined osteria.",
+      "about": "Osteria Velluto brings the spirit of a Florentine family table to Pali Hill. Pasta is rolled by hand each afternoon, the bread is baked in a wood oven, and the wine list leans proudly on small Tuscan and Piedmontese producers.",
+      "ambience": "Warm terracotta walls, deep green velvet chairs and a long marble bar. The courtyard, strung with lanterns, is a favourite for long dinners.",
+      "dressCode": "Smart casual.",
+      "featured": true,
+      "collections": [
+        "mostLoved",
+        "romantic"
+      ],
+      "amenities": [
+        "bar",
+        "sommelier",
+        "garden",
+        "wifi"
+      ],
+      "seating": [
+        "indoor",
+        "outdoor",
+        "window"
+      ],
+      "maxPartySize": 12,
+      "demandPercent": 35,
+      "openingHours": {
+        "mon": {
+          "open": "12:00",
+          "close": "23:30"
+        },
+        "tue": {
+          "open": "12:00",
+          "close": "23:30"
+        },
+        "wed": {
+          "open": "12:00",
+          "close": "23:30"
+        },
+        "thu": {
+          "open": "12:00",
+          "close": "23:30"
+        },
+        "fri": {
+          "open": "12:00",
+          "close": "23:30"
+        },
+        "sat": {
+          "open": "12:00",
+          "close": "23:30"
+        },
+        "sun": {
+          "open": "12:00",
+          "close": "23:30"
+        }
+      },
+      "heroImage": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1600803907087-f56d462fd26b?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "signatureDishes": [
+        {
+          "name": "Pappardelle al Ragù",
+          "description": "Slow-braised lamb ragù, pecorino, rosemary.",
+          "price": 1450,
+          "image": "https://images.unsplash.com/photo-1611270629569-8b357cb88da9?auto=format&fit=crop&w=600&q=80"
+        },
+        {
+          "name": "Spaghetti alle Vongole",
+          "description": "Clams, white wine, garlic, Calabrian chilli.",
+          "price": 1650,
+          "image": "https://images.unsplash.com/photo-1595295333158-4742f28fbd85?auto=format&fit=crop&w=600&q=80"
+        },
+        {
+          "name": "Margherita Verace",
+          "description": "San Marzano tomato, fior di latte, basil.",
+          "price": 1150,
+          "image": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=600&q=80"
+        }
+      ],
+      "menuHighlights": [
+        {
+          "name": "Burrata Pugliese",
+          "description": "Heirloom tomatoes, basil oil, sourdough.",
+          "price": 1250
+        },
+        {
+          "name": "Risotto ai Funghi",
+          "description": "Carnaroli rice, porcini, aged parmigiano.",
+          "price": 1550
+        },
+        {
+          "name": "Ossobuco alla Milanese",
+          "description": "Saffron risotto, gremolata.",
+          "price": 2450
+        },
+        {
+          "name": "Tiramisù della Nonna",
+          "description": "Mascarpone, espresso, cocoa.",
+          "price": 750
+        }
+      ],
+      "reviews": [
+        {
+          "author": "Rohan D.",
+          "rating": 5,
+          "date": "2026-10-18",
+          "text": "The pappardelle alone is worth the drive across the city. Warm, generous service."
+        },
+        {
+          "author": "Sofia L.",
+          "rating": 5,
+          "date": "2026-10-02",
+          "text": "Felt like dinner in Florence. Ask for a courtyard table."
+        },
+        {
+          "author": "Karan M.",
+          "rating": 4,
+          "date": "2026-09-16",
+          "text": "Lovely wine list and excellent pasta. A little loud on weekends."
+        }
+      ]
+    },
+    {
+      "id": "koyo",
+      "name": "Kōyō",
+      "cuisine": "japanese",
+      "neighbourhood": "Lower Parel",
+      "address": "Level 3, The Mill Residences, Senapati Bapat Marg, Lower Parel, Mumbai 400013",
+      "phone": "+91 22 4000 1103",
+      "latitude": 19.0008,
+      "longitude": 72.8302,
+      "distanceKm": 4.1,
+      "rating": 4.9,
+      "reviewCount": 418,
+      "priceLevel": 4,
+      "costForTwo": 16000,
+      "tagline": "An intimate twelve-seat omakase counter.",
+      "about": "Kōyō is Chef Haruto Saito's quiet tribute to Edomae sushi. Fish arrives three times a week from Toyosu market, the rice is seasoned with aged red vinegar, and each of the twenty courses is shaped and served by hand across a single hinoki counter.",
+      "ambience": "A hushed room of hinoki wood, washi paper and a single spotlight on the counter. Two seatings a night keep the experience unhurried and personal.",
+      "dressCode": "Smart elegant. Please avoid strong fragrances.",
+      "featured": true,
+      "collections": [
+        "mostLoved",
+        "fineDining",
+        "hiddenGems",
+        "chefsPicks"
+      ],
+      "amenities": [
+        "chefsTable",
+        "sommelier",
+        "accessible"
+      ],
+      "seating": [
+        "indoor",
+        "private"
+      ],
+      "maxPartySize": 6,
+      "demandPercent": 60,
+      "openingHours": {
+        "mon": {
+          "open": "18:30",
+          "close": "23:00"
+        },
+        "tue": {
+          "open": "18:30",
+          "close": "23:00"
+        },
+        "wed": {
+          "open": "18:30",
+          "close": "23:00"
+        },
+        "thu": {
+          "open": "18:30",
+          "close": "23:00"
+        },
+        "fri": {
+          "open": "18:30",
+          "close": "23:00"
+        },
+        "sat": {
+          "open": "18:30",
+          "close": "23:00"
+        },
+        "sun": null
+      },
+      "heroImage": "https://images.unsplash.com/photo-1578474846511-04ba529f0b88?auto=format&fit=crop&w=1200&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1578474846511-04ba529f0b88?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1611143669185-af224c5e3252?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "signatureDishes": [
+        {
+          "name": "Ōtoro Nigiri",
+          "description": "Fatty bluefin tuna, aged red-vinegar rice.",
+          "price": 2400,
+          "image": "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=600&q=80"
+        },
+        {
+          "name": "Seasonal Sashimi",
+          "description": "Five cuts of the day's finest catch.",
+          "price": 3600,
+          "image": "https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=600&q=80"
+        },
+        {
+          "name": "Wagashi Selection",
+          "description": "Hand-shaped seasonal confections, matcha.",
+          "price": 1200,
+          "image": "https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?auto=format&fit=crop&w=600&q=80"
+        }
+      ],
+      "menuHighlights": [
+        {
+          "name": "Omakase",
+          "description": "Twenty courses at the counter.",
+          "price": 15000
+        },
+        {
+          "name": "Sake Pairing",
+          "description": "Six junmai daiginjo pours.",
+          "price": 6500
+        },
+        {
+          "name": "A5 Wagyu Sumibiyaki",
+          "description": "Charcoal-grilled, fresh wasabi.",
+          "price": 5800
+        },
+        {
+          "name": "Uni Chawanmushi",
+          "description": "Silken egg custard, Hokkaido sea urchin.",
+          "price": 2200
+        }
+      ],
+      "reviews": [
+        {
+          "author": "Vikram S.",
+          "rating": 5,
+          "date": "2026-10-21",
+          "text": "World-class sushi. Chef Saito is a master and a generous host."
+        },
+        {
+          "author": "Aiko T.",
+          "rating": 5,
+          "date": "2026-10-05",
+          "text": "As good as anything I have eaten in Tokyo. Truly special."
+        },
+        {
+          "author": "Nisha P.",
+          "rating": 5,
+          "date": "2026-09-19",
+          "text": "An experience rather than a meal. Book weeks in advance."
+        }
+      ]
+    },
+    {
+      "id": "saffron-and-silk",
+      "name": "Saffron & Silk",
+      "cuisine": "indian",
+      "neighbourhood": "Kala Ghoda",
+      "address": "5 Rampart Row, Kala Ghoda, Fort, Mumbai 400001",
+      "phone": "+91 22 4000 1104",
+      "latitude": 18.9286,
+      "longitude": 72.8318,
+      "distanceKm": 1.9,
+      "rating": 4.8,
+      "reviewCount": 1530,
+      "priceLevel": 3,
+      "costForTwo": 7500,
+      "tagline": "Royal Indian recipes reimagined in a heritage townhouse.",
+      "about": "Saffron & Silk revives forgotten recipes from the royal kitchens of Lucknow, Hyderabad and Rajputana. Chef Aditya Rao cooks over charcoal and in sealed dum pots, layering spice with patience and restraint.",
+      "ambience": "Hand-painted silk panels, brass lanterns and jharokha windows in a 19th-century townhouse. Evenings begin with live ghazals in the courtyard.",
+      "dressCode": "Smart casual.",
+      "featured": true,
+      "collections": [
+        "mostLoved",
+        "fineDining",
+        "chefsPicks"
+      ],
+      "amenities": [
+        "liveMusic",
+        "privateDining",
+        "valet",
+        "bar",
+        "accessible"
+      ],
+      "seating": [
+        "indoor",
+        "outdoor",
+        "private"
+      ],
+      "maxPartySize": 12,
+      "demandPercent": 40,
+      "openingHours": {
+        "mon": {
+          "open": "12:30",
+          "close": "23:30"
+        },
+        "tue": {
+          "open": "12:30",
+          "close": "23:30"
+        },
+        "wed": {
+          "open": "12:30",
+          "close": "23:30"
+        },
+        "thu": {
+          "open": "12:30",
+          "close": "23:30"
+        },
+        "fri": {
+          "open": "12:30",
+          "close": "23:30"
+        },
+        "sat": {
+          "open": "12:30",
+          "close": "23:30"
+        },
+        "sun": {
+          "open": "12:30",
+          "close": "23:30"
+        }
+      },
+      "heroImage": "https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?auto=format&fit=crop&w=1200&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1515669097368-22e68427d265?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "signatureDishes": [
+        {
+          "name": "Paneer Makhani",
+          "description": "Smoked cottage cheese, tomato and fenugreek butter.",
+          "price": 1150,
+          "image": "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&w=600&q=80"
+        },
+        {
+          "name": "Awadhi Dum Biryani",
+          "description": "Slow-sealed lamb biryani, saffron, rose water.",
+          "price": 1650,
+          "image": "https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?auto=format&fit=crop&w=600&q=80"
+        },
+        {
+          "name": "Truffle Samosa",
+          "description": "Crisp pastry, spiced potato, black truffle.",
+          "price": 850,
+          "image": "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=600&q=80"
+        }
+      ],
+      "menuHighlights": [
+        {
+          "name": "Royal Thali",
+          "description": "Twelve dishes from the royal kitchens.",
+          "price": 3200
+        },
+        {
+          "name": "Galouti Kebab",
+          "description": "Melt-in-the-mouth lamb, saffron sheermal.",
+          "price": 1450
+        },
+        {
+          "name": "Dal Saffron & Silk",
+          "description": "Black lentils simmered for 24 hours.",
+          "price": 850
+        },
+        {
+          "name": "Gulab Jamun Brûlée",
+          "description": "Cardamom custard, rose petals.",
+          "price": 650
+        }
+      ],
+      "reviews": [
+        {
+          "author": "Priya N.",
+          "rating": 5,
+          "date": "2026-10-15",
+          "text": "The biryani is the best I have had outside Lucknow. Beautiful setting."
+        },
+        {
+          "author": "Daniel H.",
+          "rating": 5,
+          "date": "2026-10-01",
+          "text": "An unforgettable introduction to royal Indian cuisine."
+        },
+        {
+          "author": "Sana A.",
+          "rating": 4,
+          "date": "2026-09-12",
+          "text": "Superb galouti kebabs and lovely live music in the courtyard."
+        }
+      ]
+    },
+    {
+      "id": "azure-terrace",
+      "name": "Azure Terrace",
+      "cuisine": "mediterranean",
+      "neighbourhood": "Worli",
+      "address": "Rooftop, Sea Link Towers, Worli Sea Face, Mumbai 400018",
+      "phone": "+91 22 4000 1105",
+      "latitude": 19.0176,
+      "longitude": 72.8162,
+      "distanceKm": 5.3,
+      "rating": 4.7,
+      "reviewCount": 874,
+      "priceLevel": 3,
+      "costForTwo": 8000,
+      "tagline": "Sunset mezze and Aegean seafood above the Arabian Sea.",
+      "about": "Thirty floors above Worli Sea Face, Azure Terrace serves the bright, generous cooking of the Greek islands and the Levant. Seafood is grilled over olive wood, and the mezze arrive to share as the sun sets behind the Sea Link.",
+      "ambience": "White linen, olive trees and an open-air terrace that glows gold at sunset. A resident DJ plays soft Balearic sets after nine.",
+      "dressCode": "Smart casual. Resort wear welcome.",
+      "featured": true,
+      "collections": [
+        "romantic",
+        "rooftop"
+      ],
+      "amenities": [
+        "rooftop",
+        "bar",
+        "valet",
+        "liveMusic"
+      ],
+      "seating": [
+        "outdoor",
+        "indoor",
+        "window"
+      ],
+      "maxPartySize": 10,
+      "demandPercent": 50,
+      "openingHours": {
+        "mon": {
+          "open": "17:30",
+          "close": "00:00"
+        },
+        "tue": {
+          "open": "17:30",
+          "close": "00:00"
+        },
+        "wed": {
+          "open": "17:30",
+          "close": "00:00"
+        },
+        "thu": {
+          "open": "17:30",
+          "close": "00:00"
+        },
+        "fri": {
+          "open": "17:30",
+          "close": "00:00"
+        },
+        "sat": {
+          "open": "17:30",
+          "close": "00:00"
+        },
+        "sun": {
+          "open": "17:30",
+          "close": "00:00"
+        }
+      },
+      "heroImage": "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1200&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1470337458703-46ad1756a187?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "signatureDishes": [
+        {
+          "name": "Heirloom Horiatiki",
+          "description": "Tomatoes, barrel-aged feta, Kalamata olives.",
+          "price": 950,
+          "image": "https://images.unsplash.com/photo-1592417817098-8fd3d9eb14a5?auto=format&fit=crop&w=600&q=80"
+        },
+        {
+          "name": "Olive-wood Sea Bass",
+          "description": "Lemon, capers, smoked aubergine.",
+          "price": 2400,
+          "image": "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=600&q=80"
+        },
+        {
+          "name": "Lamb Souvlaki",
+          "description": "Charred lamb skewers, tzatziki, flatbread.",
+          "price": 1650,
+          "image": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=600&q=80"
+        }
+      ],
+      "menuHighlights": [
+        {
+          "name": "Sunset Mezze",
+          "description": "Hummus, muhammara, labneh, warm pita.",
+          "price": 1350
+        },
+        {
+          "name": "Grilled Octopus",
+          "description": "Fava purée, pickled shallots.",
+          "price": 1950
+        },
+        {
+          "name": "Seafood Orzo",
+          "description": "Prawns, mussels, saffron tomato.",
+          "price": 2250
+        },
+        {
+          "name": "Baklava Mille-feuille",
+          "description": "Pistachio, honey, orange blossom.",
+          "price": 750
+        }
+      ],
+      "reviews": [
+        {
+          "author": "Arjun B.",
+          "rating": 5,
+          "date": "2026-10-20",
+          "text": "Best sunset view in the city, and the sea bass was perfect."
+        },
+        {
+          "author": "Emma C.",
+          "rating": 4,
+          "date": "2026-10-06",
+          "text": "Gorgeous terrace and lovely cocktails. Arrive before sunset."
+        },
+        {
+          "author": "Tara V.",
+          "rating": 5,
+          "date": "2026-09-22",
+          "text": "We celebrated our anniversary here. Magical from start to finish."
+        }
+      ]
+    },
+    {
+      "id": "ember-and-oak",
+      "name": "Ember & Oak",
+      "cuisine": "continental",
+      "neighbourhood": "Juhu",
+      "address": "8 Juhu Tara Road, Juhu, Mumbai 400049",
+      "phone": "+91 22 4000 1106",
+      "latitude": 19.1004,
+      "longitude": 72.8266,
+      "distanceKm": 9.6,
+      "rating": 4.6,
+      "reviewCount": 1106,
+      "priceLevel": 4,
+      "costForTwo": 9500,
+      "tagline": "Dry-aged steaks and live-fire cooking on a rooftop grill.",
+      "about": "Ember & Oak is built around a six-metre wood-fired hearth. Chef Marcus Fernandes dry-ages his beef in-house for up to sixty days and cooks everything — meat, fish and vegetables — over glowing oak embers.",
+      "ambience": "Dark oak, aged leather and copper, with the theatre of the open hearth at its heart. The rooftop bar looks out over Juhu beach.",
+      "dressCode": "Smart casual.",
+      "featured": true,
+      "collections": [
+        "rooftop",
+        "chefsPicks"
+      ],
+      "amenities": [
+        "rooftop",
+        "bar",
+        "sommelier",
+        "valet",
+        "chefsTable"
+      ],
+      "seating": [
+        "indoor",
+        "outdoor",
+        "private"
+      ],
+      "maxPartySize": 12,
+      "demandPercent": 30,
+      "openingHours": {
+        "mon": {
+          "open": "18:00",
+          "close": "00:00"
+        },
+        "tue": {
+          "open": "18:00",
+          "close": "00:00"
+        },
+        "wed": {
+          "open": "18:00",
+          "close": "00:00"
+        },
+        "thu": {
+          "open": "18:00",
+          "close": "00:00"
+        },
+        "fri": {
+          "open": "18:00",
+          "close": "00:00"
+        },
+        "sat": {
+          "open": "18:00",
+          "close": "00:00"
+        },
+        "sun": {
+          "open": "18:00",
+          "close": "00:00"
+        }
+      },
+      "heroImage": "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1200&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1525648199074-cee30ba79a4a?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "signatureDishes": [
+        {
+          "name": "60-Day Dry-Aged Ribeye",
+          "description": "Bone marrow butter, charred shallots.",
+          "price": 4800,
+          "image": "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?auto=format&fit=crop&w=600&q=80"
+        },
+        {
+          "name": "Smoked Short Rib",
+          "description": "Fourteen-hour oak smoke, bourbon glaze.",
+          "price": 3200,
+          "image": "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80"
+        },
+        {
+          "name": "Ember Tenderloin",
+          "description": "Roasted roots, red wine jus.",
+          "price": 3900,
+          "image": "https://images.unsplash.com/photo-1505275350441-83dcda8eeef5?auto=format&fit=crop&w=600&q=80"
+        }
+      ],
+      "menuHighlights": [
+        {
+          "name": "Hearth Tasting Menu",
+          "description": "Six courses cooked over live fire.",
+          "price": 8500
+        },
+        {
+          "name": "Ember-roasted Lobster",
+          "description": "Garlic butter, lemon.",
+          "price": 5200
+        },
+        {
+          "name": "Truffle Pomme Purée",
+          "description": "Black truffle, aged parmesan.",
+          "price": 850
+        },
+        {
+          "name": "Smoked Chocolate Tart",
+          "description": "Sea salt, crème fraîche.",
+          "price": 800
+        }
+      ],
+      "reviews": [
+        {
+          "author": "Neil F.",
+          "rating": 5,
+          "date": "2026-10-17",
+          "text": "The ribeye is the best steak in Mumbai, no contest."
+        },
+        {
+          "author": "Isha G.",
+          "rating": 4,
+          "date": "2026-10-03",
+          "text": "Wonderful theatre at the hearth and a great rooftop bar."
+        },
+        {
+          "author": "Omar Q.",
+          "rating": 5,
+          "date": "2026-09-25",
+          "text": "Book the chef's table and let Marcus cook for you."
+        }
+      ]
+    },
+    {
+      "id": "jade-pavilion",
+      "name": "Jade Pavilion",
+      "cuisine": "asian",
+      "neighbourhood": "Bandra Kurla Complex",
+      "address": "Level 42, One BKC, Bandra Kurla Complex, Mumbai 400051",
+      "phone": "+91 22 4000 1107",
+      "latitude": 19.0656,
+      "longitude": 72.8681,
+      "distanceKm": 8.2,
+      "rating": 4.6,
+      "reviewCount": 742,
+      "priceLevel": 3,
+      "costForTwo": 7000,
+      "tagline": "Pan-Asian small plates in a sky-high pavilion.",
+      "about": "Jade Pavilion journeys from Cantonese dim sum to Thai street flavours and Korean barbecue. Every dumpling is pleated by hand in the open dim sum kitchen, and the cocktail list draws on Asian botanicals.",
+      "ambience": "Jade-green lacquer, brass lattice screens and floor-to-ceiling windows forty-two floors above the city. The sky lounge glows after dark.",
+      "dressCode": "Smart casual.",
+      "featured": false,
+      "collections": [
+        "rooftop"
+      ],
+      "amenities": [
+        "bar",
+        "rooftop",
+        "valet",
+        "wifi",
+        "accessible"
+      ],
+      "seating": [
+        "indoor",
+        "window",
+        "private"
+      ],
+      "maxPartySize": 12,
+      "demandPercent": 25,
+      "openingHours": {
+        "mon": {
+          "open": "12:00",
+          "close": "23:30"
+        },
+        "tue": {
+          "open": "12:00",
+          "close": "23:30"
+        },
+        "wed": {
+          "open": "12:00",
+          "close": "23:30"
+        },
+        "thu": {
+          "open": "12:00",
+          "close": "23:30"
+        },
+        "fri": {
+          "open": "12:00",
+          "close": "23:30"
+        },
+        "sat": {
+          "open": "12:00",
+          "close": "23:30"
+        },
+        "sun": {
+          "open": "12:00",
+          "close": "23:30"
+        }
+      },
+      "heroImage": "https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1200&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1498654896293-37aacf113fd9?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "signatureDishes": [
+        {
+          "name": "Black Garlic Ramen",
+          "description": "Twenty-hour tonkotsu, chashu, ajitama.",
+          "price": 1250,
+          "image": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=600&q=80"
+        },
+        {
+          "name": "Wok-tossed Hakka Noodles",
+          "description": "Seasonal greens, chilli oil.",
+          "price": 950,
+          "image": "https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=600&q=80"
+        },
+        {
+          "name": "Tom Kha Gai",
+          "description": "Coconut, galangal, kaffir lime.",
+          "price": 850,
+          "image": "https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=600&q=80"
+        }
+      ],
+      "menuHighlights": [
+        {
+          "name": "Dim Sum Selection",
+          "description": "Eight hand-pleated dumplings.",
+          "price": 1450
+        },
+        {
+          "name": "Peking Duck",
+          "description": "Carved tableside, pancakes, hoisin.",
+          "price": 3800
+        },
+        {
+          "name": "Korean Short Rib",
+          "description": "Galbi glaze, kimchi, lettuce cups.",
+          "price": 2200
+        },
+        {
+          "name": "Yuzu Cheesecake",
+          "description": "Black sesame crumb.",
+          "price": 700
+        }
+      ],
+      "reviews": [
+        {
+          "author": "Kabir J.",
+          "rating": 5,
+          "date": "2026-10-11",
+          "text": "The view is spectacular and the dim sum is excellent."
+        },
+        {
+          "author": "Lena M.",
+          "rating": 4,
+          "date": "2026-09-30",
+          "text": "Great for groups. The Peking duck is a showstopper."
+        },
+        {
+          "author": "Rhea S.",
+          "rating": 4,
+          "date": "2026-09-14",
+          "text": "Lovely cocktails in the sky lounge after dinner."
+        }
+      ]
+    },
+    {
+      "id": "the-glasshouse",
+      "name": "The Glasshouse",
+      "cuisine": "continental",
+      "neighbourhood": "Mahalaxmi",
+      "address": "Willingdon Gardens, Mahalaxmi, Mumbai 400034",
+      "phone": "+91 22 4000 1108",
+      "latitude": 18.9827,
+      "longitude": 72.8113,
+      "distanceKm": 3.7,
+      "rating": 4.5,
+      "reviewCount": 386,
+      "priceLevel": 2,
+      "costForTwo": 4500,
+      "tagline": "Garden-to-table dining inside a Victorian conservatory.",
+      "about": "The Glasshouse grows much of what it serves in its own kitchen garden. The menu follows the harvest, with light, vibrant plates, natural wines and an all-day brunch that has become a Mumbai institution.",
+      "ambience": "A restored Victorian glasshouse filled with ferns, hanging plants and soft afternoon light. Evenings bring candles and a gentle jazz playlist.",
+      "dressCode": null,
+      "featured": false,
+      "collections": [
+        "hiddenGems",
+        "chefsPicks"
+      ],
+      "amenities": [
+        "garden",
+        "wifi",
+        "accessible",
+        "bar"
+      ],
+      "seating": [
+        "indoor",
+        "outdoor",
+        "window"
+      ],
+      "maxPartySize": 10,
+      "demandPercent": 20,
+      "openingHours": {
+        "mon": {
+          "open": "09:00",
+          "close": "23:00"
+        },
+        "tue": {
+          "open": "09:00",
+          "close": "23:00"
+        },
+        "wed": {
+          "open": "09:00",
+          "close": "23:00"
+        },
+        "thu": {
+          "open": "09:00",
+          "close": "23:00"
+        },
+        "fri": {
+          "open": "09:00",
+          "close": "23:00"
+        },
+        "sat": {
+          "open": "09:00",
+          "close": "23:00"
+        },
+        "sun": {
+          "open": "09:00",
+          "close": "23:00"
+        }
+      },
+      "heroImage": "https://images.unsplash.com/photo-1537047902294-62a40c20a6ae?auto=format&fit=crop&w=1200&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1537047902294-62a40c20a6ae?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "signatureDishes": [
+        {
+          "name": "Garden Salmon Bowl",
+          "description": "Cured salmon, avocado, pickled radish.",
+          "price": 1150,
+          "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80"
+        },
+        {
+          "name": "Harvest Salad",
+          "description": "Garden leaves, burrata, roasted figs.",
+          "price": 850,
+          "image": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=600&q=80"
+        },
+        {
+          "name": "Chocolate Garden Pot",
+          "description": "Dark chocolate mousse, cocoa soil.",
+          "price": 600,
+          "image": "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=600&q=80"
+        }
+      ],
+      "menuHighlights": [
+        {
+          "name": "Glasshouse Brunch",
+          "description": "Bread basket, eggs your way, fresh juice.",
+          "price": 1450
+        },
+        {
+          "name": "Roast Chicken",
+          "description": "Herb jus, garden greens.",
+          "price": 1350
+        },
+        {
+          "name": "Wild Mushroom Tart",
+          "description": "Thyme, goat cheese, honey.",
+          "price": 950
+        },
+        {
+          "name": "Lemon Posset",
+          "description": "Garden berries, shortbread.",
+          "price": 550
+        }
+      ],
+      "reviews": [
+        {
+          "author": "Zara H.",
+          "rating": 5,
+          "date": "2026-10-19",
+          "text": "A hidden oasis in the middle of the city. Stunning in the afternoon light."
+        },
+        {
+          "author": "Aman T.",
+          "rating": 4,
+          "date": "2026-10-04",
+          "text": "Fresh, beautiful food and a very relaxed atmosphere."
+        },
+        {
+          "author": "Grace O.",
+          "rating": 4,
+          "date": "2026-09-21",
+          "text": "The brunch is wonderful. Worth the wait for a garden table."
+        }
+      ]
+    },
+    {
+      "id": "rasa-royale",
+      "name": "Rasa Royale",
+      "cuisine": "indian",
+      "neighbourhood": "Nariman Point",
+      "address": "The Oberoi Arcade, Marine Drive, Nariman Point, Mumbai 400021",
+      "phone": "+91 22 4000 1109",
+      "latitude": 18.9256,
+      "longitude": 72.8207,
+      "distanceKm": 2.4,
+      "rating": 4.8,
+      "reviewCount": 1012,
+      "priceLevel": 4,
+      "costForTwo": 11000,
+      "tagline": "A regal journey through the coastal kitchens of India.",
+      "about": "Rasa Royale celebrates India's coastline, from the Konkan to Kerala and Bengal. Chef Lakshmi Iyer's tasting menus pair heirloom spice blends with pristine seafood, served on hand-beaten silver.",
+      "ambience": "Ivory and gold interiors, mother-of-pearl inlay and sweeping views of Marine Drive's Queen's Necklace after dark.",
+      "dressCode": "Formal.",
+      "featured": false,
+      "collections": [
+        "mostLoved",
+        "fineDining"
+      ],
+      "amenities": [
+        "sommelier",
+        "privateDining",
+        "valet",
+        "accessible"
+      ],
+      "seating": [
+        "indoor",
+        "window",
+        "private"
+      ],
+      "maxPartySize": 10,
+      "demandPercent": 40,
+      "openingHours": {
+        "mon": {
+          "open": "19:00",
+          "close": "23:30"
+        },
+        "tue": null,
+        "wed": {
+          "open": "19:00",
+          "close": "23:30"
+        },
+        "thu": {
+          "open": "19:00",
+          "close": "23:30"
+        },
+        "fri": {
+          "open": "19:00",
+          "close": "23:30"
+        },
+        "sat": {
+          "open": "19:00",
+          "close": "23:30"
+        },
+        "sun": {
+          "open": "19:00",
+          "close": "23:30"
+        }
+      },
+      "heroImage": "https://images.unsplash.com/photo-1544148103-0773bf10d330?auto=format&fit=crop&w=1200&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1544148103-0773bf10d330?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1530062845289-9109b2c9c868?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1606491956689-2ea866880c84?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "signatureDishes": [
+        {
+          "name": "Malabar Prawn Curry",
+          "description": "Tiger prawns, raw mango, coconut.",
+          "price": 2200,
+          "image": "https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?auto=format&fit=crop&w=600&q=80"
+        },
+        {
+          "name": "Chettinad Lamb",
+          "description": "Black pepper, curry leaf, star anise.",
+          "price": 1950,
+          "image": "https://images.unsplash.com/photo-1596797038530-2c107229654b?auto=format&fit=crop&w=600&q=80"
+        },
+        {
+          "name": "Butter Chicken Royale",
+          "description": "Charcoal-roasted chicken, cultured butter.",
+          "price": 1650,
+          "image": "https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=600&q=80"
+        }
+      ],
+      "menuHighlights": [
+        {
+          "name": "Coastal Tasting Menu",
+          "description": "Nine courses along India's coastline.",
+          "price": 9500
+        },
+        {
+          "name": "Lobster Moilee",
+          "description": "Kerala coconut stew, appam.",
+          "price": 3600
+        },
+        {
+          "name": "Bengali Bhetki Paturi",
+          "description": "Mustard, steamed in banana leaf.",
+          "price": 1850
+        },
+        {
+          "name": "Saffron Kulfi",
+          "description": "Pistachio, silver leaf.",
+          "price": 650
+        }
+      ],
+      "reviews": [
+        {
+          "author": "Rahul K.",
+          "rating": 5,
+          "date": "2026-10-14",
+          "text": "Breathtaking views and the finest prawn curry I have ever tasted."
+        },
+        {
+          "author": "Charlotte B.",
+          "rating": 5,
+          "date": "2026-09-29",
+          "text": "Elegant, refined and full of flavour. A true celebration of India."
+        },
+        {
+          "author": "Dev P.",
+          "rating": 4,
+          "date": "2026-09-10",
+          "text": "The coastal tasting menu is a beautiful journey."
+        }
+      ]
+    },
+    {
+      "id": "bistro-sept",
+      "name": "Bistro Sept",
+      "cuisine": "french",
+      "neighbourhood": "Bandra West",
+      "address": "7 Chapel Road, Ranwar Village, Bandra West, Mumbai 400050",
+      "phone": "+91 22 4000 1110",
+      "latitude": 19.0558,
+      "longitude": 72.8335,
+      "distanceKm": 6.2,
+      "rating": 4.6,
+      "reviewCount": 298,
+      "priceLevel": 2,
+      "costForTwo": 4000,
+      "tagline": "A seven-table Parisian bistro tucked into a Bandra lane.",
+      "about": "Bistro Sept is a tiny, much-loved neighbourhood bistro in a century-old Portuguese cottage. The chalkboard menu changes daily, the wines are natural, and the owners still greet every guest at the door.",
+      "ambience": "Seven candlelit tables, checkered floors, vintage posters and the sound of Édith Piaf. Cosy, intimate and wonderfully unpretentious.",
+      "dressCode": null,
+      "featured": false,
+      "collections": [
+        "romantic",
+        "hiddenGems"
+      ],
+      "amenities": [
+        "bar",
+        "wifi"
+      ],
+      "seating": [
+        "indoor",
+        "outdoor",
+        "window"
+      ],
+      "maxPartySize": 6,
+      "demandPercent": 55,
+      "openingHours": {
+        "mon": null,
+        "tue": {
+          "open": "18:00",
+          "close": "23:00"
+        },
+        "wed": {
+          "open": "18:00",
+          "close": "23:00"
+        },
+        "thu": {
+          "open": "18:00",
+          "close": "23:00"
+        },
+        "fri": {
+          "open": "18:00",
+          "close": "23:00"
+        },
+        "sat": {
+          "open": "18:00",
+          "close": "23:00"
+        },
+        "sun": {
+          "open": "18:00",
+          "close": "23:00"
+        }
+      },
+      "heroImage": "https://images.unsplash.com/photo-1522336572468-97b06e8ef143?auto=format&fit=crop&w=1200&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1522336572468-97b06e8ef143?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1559329007-40df8a9345d8?auto=format&fit=crop&w=1200&q=80"
+      ],
+      "signatureDishes": [
+        {
+          "name": "Steak Frites",
+          "description": "Hanger steak, béarnaise, hand-cut frites.",
+          "price": 1450,
+          "image": "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?auto=format&fit=crop&w=600&q=80"
+        },
+        {
+          "name": "Plat du Jour",
+          "description": "Chef's daily dish, from the chalkboard.",
+          "price": 1250,
+          "image": "https://images.unsplash.com/photo-1502301103665-0b95cc738daf?auto=format&fit=crop&w=600&q=80"
+        },
+        {
+          "name": "Pain Perdu",
+          "description": "Brioche, vanilla, berries, crème fraîche.",
+          "price": 650,
+          "image": "https://images.unsplash.com/photo-1484723091739-30a097e8f929?auto=format&fit=crop&w=600&q=80"
+        }
+      ],
+      "menuHighlights": [
+        {
+          "name": "French Onion Soup",
+          "description": "Gruyère crouton.",
+          "price": 650
+        },
+        {
+          "name": "Moules Marinières",
+          "description": "Mussels, white wine, cream, frites.",
+          "price": 1350
+        },
+        {
+          "name": "Coq au Vin",
+          "description": "Burgundy, mushrooms, lardons.",
+          "price": 1550
+        },
+        {
+          "name": "Crème Brûlée",
+          "description": "Tahitian vanilla.",
+          "price": 550
+        }
+      ],
+      "reviews": [
+        {
+          "author": "Maya F.",
+          "rating": 5,
+          "date": "2026-10-16",
+          "text": "Our favourite date-night spot. Tiny, warm and utterly charming."
+        },
+        {
+          "author": "Luc D.",
+          "rating": 5,
+          "date": "2026-09-27",
+          "text": "The steak frites tastes just like home in Paris."
+        },
+        {
+          "author": "Kiara W.",
+          "rating": 4,
+          "date": "2026-09-08",
+          "text": "Book ahead — there are only seven tables, and they fill fast."
+        }
+      ]
+    }
+  ]
+}
