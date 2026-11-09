@@ -1,0 +1,9 @@
+{
+  "slug": "starter",
+  "name": "My App",
+  "mark": "#4F46E5",
+  "screens": [
+    { "id": "home", "label": "Home", "webPath": "/" },
+    { "id": "settings", "label": "Settings", "webPath": "/settings" }
+  ]
+}

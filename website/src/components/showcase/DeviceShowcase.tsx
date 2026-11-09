@@ -1,106 +1,156 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { deviceShowcaseCatalog, type DeviceShowcaseApp } from "@/lib/showcase-catalog";
 import { AndroidPhone, ChromeWindow, IPhone, PlatformCaption, Segmented, type Mode, type Platform } from "./frames";
 
-type Screen = "home" | "settings";
+const APPS = deviceShowcaseCatalog.apps;
 
-const BASE = "/geeknative";
-const STATES: [Screen, Mode][] = [
-  ["home", "light"],
-  ["settings", "light"],
-  ["settings", "dark"],
-  ["home", "dark"],
-];
+const SIZES: Record<Platform, { width: number; height: number; label: string }> = {
+  ios: { width: 600, height: 1304, label: "iOS" },
+  web: { width: 1600, height: 1000, label: "Web" },
+  android: { width: 600, height: 1333, label: "Android" },
+};
 
-const shot = (p: Platform, s: Screen, m: Mode) => `${BASE}/screens/${p}-${s}-${m}.webp`;
+const MODES: Mode[] = ["light", "dark"];
 
-// Every state of one platform's screen, stacked, so switching is a crossfade.
-function Layers({ platform, screen, mode, width, height }: { platform: Platform; screen: Screen; mode: Mode; width: number; height: number }) {
+const shot = (app: DeviceShowcaseApp, platform: Platform, screen: string, mode: Mode) =>
+  `${app.shotPrefix}/${platform}-${screen}-${mode}.webp`;
+
+function Layers({ app, platform, screen, mode }: { app: DeviceShowcaseApp; platform: Platform; screen: string; mode: Mode }) {
+  const size = SIZES[platform];
+  const frames = app.screens.flatMap((s) => MODES.map((m) => ({ s, m })));
   return (
     <>
-      {STATES.map(([s, m], i) => (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          key={`${s}-${m}`}
-          src={shot(platform, s, m)}
-          alt={i === 0 ? `${platform === "ios" ? "iOS" : platform === "android" ? "Android" : "Web"} app, ${s} screen` : ""}
-          aria-hidden={s === screen && m === mode ? undefined : true}
-          width={width}
-          height={height}
-          loading="lazy"
-          decoding="async"
-          className={`screen-layer block h-auto w-full ${i === 0 ? "relative" : "absolute inset-0"} ${s === screen && m === mode ? "opacity-100" : "opacity-0"}`}
-        />
-      ))}
+      {frames.map(({ s, m }) => {
+        const active = s.id === screen && m === mode;
+        return (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            key={`${s.id}-${m}`}
+            src={shot(app, platform, s.id, m)}
+            alt={active ? `${size.label} app, ${s.label} screen` : ""}
+            aria-hidden={active ? undefined : true}
+            width={size.width}
+            height={size.height}
+            loading="lazy"
+            decoding="async"
+            className={`screen-layer block h-auto w-full ${active ? "relative opacity-100" : "absolute inset-0 opacity-0"}`}
+          />
+        );
+      })}
     </>
   );
 }
 
-// Real screenshots of the starter app, in an iPhone, a Chrome window and an Android phone.
-// The three switch together: same screen, same appearance, three native builds.
+function Mark({ color }: { color: string }) {
+  return (
+    <svg viewBox="0 0 64 64" className="size-[14px] shrink-0" aria-hidden>
+      <rect width="64" height="64" rx="14" fill={color} />
+    </svg>
+  );
+}
+
+function cycle(screens: DeviceShowcaseApp["screens"]) {
+  return MODES.flatMap((mode) => screens.map((screen) => ({ id: screen.id, mode })));
+}
+
 export function DeviceShowcase({ className = "", compact = false }: { className?: string; compact?: boolean }) {
-  const [state, setState] = useState(0);
+  const first = APPS[0];
+  const [appSlug, setAppSlug] = useState(first?.slug ?? "");
+  const [cursor, setCursor] = useState(0);
   const [auto, setAuto] = useState(!compact);
-  const [screen, mode] = STATES[state];
   const root = useRef<HTMLDivElement>(null);
 
-  // Cycle through the states while the showcase is on screen, until someone picks one.
+  const app = APPS.find((item) => item.slug === appSlug) ?? first;
+  const frames = app ? cycle(app.screens) : [];
+  const frame = frames[cursor] ?? frames[0];
+  const screen = app?.screens.find((item) => item.id === frame?.id) ?? app?.screens[0];
+  const mode = frame?.mode ?? "light";
+
   useEffect(() => {
     const el = root.current;
-    if (!auto || !el || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!auto || !el || frames.length < 2 || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let timer = 0;
-    const io = new IntersectionObserver(([e]) => {
+    const io = new IntersectionObserver(([entry]) => {
       window.clearInterval(timer);
-      if (e.isIntersecting) timer = window.setInterval(() => setState((s) => (s + 1) % STATES.length), 3400);
+      if (entry.isIntersecting) timer = window.setInterval(() => setCursor((current) => (current + 1) % frames.length), 3400);
     });
     io.observe(el);
     return () => {
       io.disconnect();
       window.clearInterval(timer);
     };
-  }, [auto]);
+  }, [auto, frames.length]);
 
-  const pick = (nextScreen: Screen, nextMode: Mode) => {
+  if (!app || !screen) return null;
+
+  const pickApp = (slug: string) => {
+    const next = APPS.find((item) => item.slug === slug);
+    if (!next) return;
+    const nextFrames = cycle(next.screens);
+    const index = nextFrames.findIndex((item) => item.id === next.screens[0]?.id && item.mode === mode);
     setAuto(false);
-    setState(STATES.findIndex(([s, m]) => s === nextScreen && m === nextMode));
+    setAppSlug(slug);
+    setCursor(index < 0 ? 0 : index);
   };
 
-  const path = screen === "settings" ? "/settings" : "/";
-  const title = screen === "settings" ? "Settings · My App" : "My App";
+  const pickScreen = (id: string) => {
+    const index = frames.findIndex((item) => item.id === id && item.mode === mode);
+    if (index < 0) return;
+    setAuto(false);
+    setCursor(index);
+  };
+
+  const pickMode = (next: Mode) => {
+    const index = frames.findIndex((item) => item.id === screen.id && item.mode === next);
+    if (index < 0) return;
+    setAuto(false);
+    setCursor(index);
+  };
 
   return (
     <div ref={root} className={className}>
       <div className="grid grid-cols-2 items-end gap-x-[6%] gap-y-12 md:flex md:justify-center md:gap-x-[3.2%]">
         <div className="md:w-[18.5%]">
           <IPhone>
-            <Layers platform="ios" screen={screen} mode={mode} width={600} height={1304} />
+            <Layers key={app.slug} app={app} platform="ios" screen={screen.id} mode={mode} />
           </IPhone>
           {compact ? null : <PlatformCaption platform="ios" />}
         </div>
         <div className="order-first col-span-2 md:order-none md:w-[56%]">
-          <ChromeWindow mode={mode} path={path} title={title}>
-            <Layers platform="web" screen={screen} mode={mode} width={1600} height={1000} />
+          <ChromeWindow
+            mode={mode}
+            path={screen.webPath}
+            title={screen.title}
+            favicon={app.slug === "starter" ? undefined : <Mark color={app.mark} />}
+          >
+            <Layers key={app.slug} app={app} platform="web" screen={screen.id} mode={mode} />
           </ChromeWindow>
           {compact ? null : <PlatformCaption platform="web" />}
         </div>
         <div className="md:w-[18.5%]">
           <AndroidPhone>
-            <Layers platform="android" screen={screen} mode={mode} width={600} height={1333} />
+            <Layers key={app.slug} app={app} platform="android" screen={screen.id} mode={mode} />
           </AndroidPhone>
           {compact ? null : <PlatformCaption platform="android" />}
         </div>
       </div>
 
       <div className={`flex flex-wrap items-center justify-center gap-3 ${compact ? "mt-8" : "mt-12"}`}>
+        {APPS.length > 1 ? (
+          <Segmented
+            label="App"
+            value={app.slug}
+            options={APPS.map((item): [string, string] => [item.slug, item.name])}
+            onChange={pickApp}
+          />
+        ) : null}
         <Segmented
           label="Screen"
-          value={screen}
-          options={[
-            ["home", "Home"],
-            ["settings", "Settings"],
-          ]}
-          onChange={(s) => pick(s, mode)}
+          value={screen.id}
+          options={app.screens.map((item): [string, string] => [item.id, item.label])}
+          onChange={pickScreen}
         />
         <Segmented
           label="Appearance"
@@ -109,7 +159,7 @@ export function DeviceShowcase({ className = "", compact = false }: { className?
             ["light", "Light"],
             ["dark", "Dark"],
           ]}
-          onChange={(m) => pick(screen, m)}
+          onChange={pickMode}
         />
       </div>
     </div>
