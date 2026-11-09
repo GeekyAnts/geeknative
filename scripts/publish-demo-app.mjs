@@ -2,17 +2,19 @@
 // Copies a GeekNative project into demo-apps/<slug>/ (unless --capture) and photographs every
 // screen in previews/shots.json on iOS, Android and web, light and dark.
 //
+// Per-app seed data lives in shots.json: `webStorage` (localStorage keys) and `launchExtras`
+// (extra iOS/Android launch arguments). The script does not hardcode restaurant, ride, or wedding ids.
+//
 //   node scripts/publish-demo-app.mjs /path/to/app dine-in
 //   node scripts/publish-demo-app.mjs --capture dine-in
 //   node scripts/publish-demo-app.mjs --capture dine-in --platforms web --screens welcome,discover
 import { spawn, spawnSync } from 'node:child_process'
-import { createHash } from 'node:crypto'
 import { createRequire } from 'node:module'
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { cp } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import { readApp } from '../packages/geeknative/src/codegen/app.js'
 import { capture, runLogged } from '../packages/geeknative/src/lib/exec.js'
 import { CliError, log } from '../packages/geeknative/src/lib/log.js'
@@ -96,10 +98,6 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-function passwordHash(email, password) {
-  return createHash('sha256').update(`${email}:${password}`).digest('hex')
-}
-
 function readJson(file, label = file) {
   if (!existsSync(file)) return null
   try {
@@ -122,43 +120,100 @@ function slugify(label) {
     .replace(/^-|-$/g, '')
 }
 
-function parseTable(markdown, heading) {
-  const start = markdown.indexOf(`## ${heading}`)
-  if (start < 0) return []
-  const rest = markdown.slice(start)
-  const end = rest.indexOf('\n## ', 4)
-  const section = end < 0 ? rest : rest.slice(0, end)
-  const rows = []
-  for (const line of section.split('\n')) {
-    if (!line.startsWith('|')) continue
-    const cells = line.split('|').slice(1, -1).map((c) => c.trim())
-    if (!cells.length || cells.every((c) => /^[-:]+$/.test(c))) continue
-    if (/^screen$/i.test(cells[0]) || /^tab$/i.test(cells[0])) continue
+function isPlainObject(value) {
+  return value !== null && typeof value === 'object' && !Array.isArray(value)
+}
+
+function storageValue(value) {
+  if (value == null) return ''
+  if (typeof value === 'string') return value
+  return JSON.stringify(value)
+}
+
+function assignStorage(target, values) {
+  if (!isPlainObject(values)) return target
+  for (const [key, value] of Object.entries(values)) {
+    target[key] = storageValue(value)
+  }
+  return target
+}
+
+function markdownTables(markdown) {
+  const tables = []
+  let heading = ''
+  /** @type {string[] | null} */
+  let headers = null
+  /** @type {string[][] | null} */
+  let rows = null
+
+  const flush = () => {
+    if (headers && rows) tables.push({ heading, headers, rows })
+    headers = null
+    rows = null
+  }
+
+  for (const line of markdown.split('\n')) {
+    const match = line.match(/^#{1,6}\s+(.*)/)
+    if (match) {
+      flush()
+      if (line.startsWith('## ')) heading = match[1].trim()
+      continue
+    }
+    if (!line.startsWith('|')) {
+      flush()
+      continue
+    }
+    const cells = line.split('|').slice(1, -1).map((cell) => cell.trim())
+    if (!cells.length || cells.every((cell) => /^[-:]+$/.test(cell))) continue
+    if (!headers) {
+      headers = cells.map((cell) => cell.toLowerCase())
+      rows = []
+      continue
+    }
     rows.push(cells)
   }
-  return rows
+  flush()
+  return tables
+}
+
+function markdownPath(value) {
+  return (value ?? '/').split(/\s+/)[0].replace(/^`+|`+$/g, '') || '/'
+}
+
+function screensFromNavigation(markdown) {
+  const screens = []
+  const seen = new Set()
+  for (const table of markdownTables(markdown)) {
+    const screenIdx = table.headers.findIndex((header) => header === 'screen')
+    const pathIdx = table.headers.findIndex((header) => header === 'web path' || header === 'path')
+    if (screenIdx < 0 || pathIdx < 0) continue
+    const signedIn = !/^signed out\b/i.test(table.heading)
+    for (const row of table.rows) {
+      const rawLabel = row[screenIdx]
+      if (!rawLabel) continue
+      const label = rawLabel.split('(')[0].trim()
+      const id = slugify(label)
+      if (!id || seen.has(id)) continue
+      seen.add(id)
+      screens.push({
+        id,
+        label,
+        signedIn,
+        webPath: markdownPath(row[pathIdx]),
+      })
+    }
+  }
+  return screens
 }
 
 function stubShots(root) {
   const nav = path.join(root, 'spec', 'navigation.md')
   if (!existsSync(nav)) throw new CliError('No spec/navigation.md, so a shots.json stub cannot be written.')
-  const markdown = readFileSync(nav, 'utf8')
-  /** @type {{ id: string, label: string, signedIn: boolean, webPath: string }[]} */
-  const screens = []
-  for (const [label, , webPath] of parseTable(markdown, 'Signed out')) {
-    screens.push({ id: slugify(label), label, signedIn: false, webPath: webPath.split(/\s+/)[0] })
-  }
-  for (const row of parseTable(markdown, 'Signed in: tabs')) {
-    const label = row[1] ?? row[0]
-    const webPath = (row[3] ?? row[2] ?? '/').split(/\s+/)[0]
-    screens.push({ id: slugify(label), label, signedIn: true, webPath })
-  }
-  for (const [label, , webPath] of parseTable(markdown, 'Signed in: pushed screens')) {
-    screens.push({ id: slugify(label.split('(')[0]), label, signedIn: true, webPath: webPath.split(/\s+/)[0] })
-  }
+  const screens = screensFromNavigation(readFileSync(nav, 'utf8'))
   if (!screens.length) throw new CliError('spec/navigation.md has no screen tables to turn into shots.json.')
   return {
-    sample: { restaurantId: '', reservationId: '', member: { name: '', email: '', password: '', createdAt: '' }, reservations: [], saved: [] },
+    launchExtras: {},
+    webStorage: { signedOut: {}, signedIn: {} },
     screens,
   }
 }
@@ -173,8 +228,52 @@ function loadShots(root) {
   const stub = stubShots(root)
   writeJson(file, stub)
   throw new CliError(
-    `Wrote a starter ${path.relative(root, file)} from spec/navigation.md. Fill in sample ids (restaurantId, reservationId, member) and rerun.`,
+    `Wrote a starter ${path.relative(root, file)} from spec/navigation.md. Fill in webStorage, launchExtras, and any $placeholders in webPath, then rerun.`,
   )
+}
+
+function storageGroups(webStorage) {
+  if (!isPlainObject(webStorage)) return { always: {}, signedOut: {}, signedIn: {} }
+  if (isPlainObject(webStorage.signedIn) || isPlainObject(webStorage.signedOut) || isPlainObject(webStorage.always)) {
+    return {
+      always: isPlainObject(webStorage.always) ? webStorage.always : {},
+      signedOut: isPlainObject(webStorage.signedOut) ? webStorage.signedOut : {},
+      signedIn: isPlainObject(webStorage.signedIn) ? webStorage.signedIn : {},
+    }
+  }
+  return { always: webStorage, signedOut: {}, signedIn: {} }
+}
+
+function storageForScreen(shots, screen, appearance) {
+  /** @type {Record<string, string>} */
+  const storage = { 'settings.appearance': appearance }
+  if (screen.webStorage === false) return storage
+  if (isPlainObject(screen.webStorage)) {
+    assignStorage(storage, screen.webStorage)
+    return storage
+  }
+  const groups = storageGroups(shots.webStorage)
+  assignStorage(storage, groups.always)
+  assignStorage(storage, screen.signedIn ? groups.signedIn : groups.signedOut)
+  return storage
+}
+
+function launchExtrasFor(shots, screen, appearance) {
+  /** @type {Record<string, string>} */
+  const extras = {
+    screenshotScreen: screen.id,
+    screenshotAppearance: appearance,
+  }
+  const merge = (values) => {
+    if (!isPlainObject(values)) return
+    for (const [key, value] of Object.entries(values)) {
+      if (value == null || value === '') continue
+      extras[key] = String(value)
+    }
+  }
+  merge(shots.launchExtras)
+  merge(screen.launchExtras)
+  return extras
 }
 
 function shouldSkipCopy(name) {
@@ -329,65 +428,27 @@ async function buildAndroid(root) {
   if (install.code !== 0) throw new CliError(`Android install failed (log: ${path.relative(root, logFile)}).`)
 }
 
-function launchIos(udid, bundleId, screen, appearance) {
+function launchIos(udid, bundleId, extras) {
   capture('xcrun', ['simctl', 'terminate', udid, bundleId])
-  capture('xcrun', ['simctl', 'ui', udid, 'appearance', appearance])
-  const launched = capture('xcrun', [
-    'simctl',
-    'launch',
-    '--terminate-running-process',
-    udid,
-    bundleId,
-    '--',
-    '-screenshotScreen',
-    screen.id,
-    '-screenshotAppearance',
-    appearance,
-  ])
-  if (launched === null) throw new CliError(`Could not launch iOS for ${screen.id} ${appearance}.`)
-}
-
-function launchAndroid(adbPath, appId, screen, appearance, sample) {
-  capture(adbPath, ['shell', 'cmd', 'uimode', 'night', appearance === 'dark' ? 'yes' : 'no'])
-  const args = [
-    'shell',
-    'am',
-    'start',
-    '-W',
-    '-S',
-    '-n',
-    `${appId}/app.MainActivity`,
-    '--es',
-    'screenshotScreen',
-    screen.id,
-    '--es',
-    'screenshotAppearance',
-    appearance,
-  ]
-  if (sample?.restaurantId) args.push('--es', 'screenshotRestaurantId', sample.restaurantId)
-  if (sample?.reservationId) args.push('--es', 'screenshotReservationId', sample.reservationId)
-  if (capture(adbPath, args) === null) throw new CliError(`Could not launch Android for ${screen.id} ${appearance}.`)
-}
-
-function webStorage(shots, screen, appearance) {
-  /** @type {Record<string, string>} */
-  const storage = { 'settings.appearance': appearance }
-  const member = shots.sample?.member
-  if (screen.signedIn && member?.email) {
-    const email = member.email.trim().toLowerCase()
-    storage['auth.accounts'] = JSON.stringify([
-      {
-        name: member.name,
-        email,
-        passwordHash: passwordHash(email, member.password),
-        createdAt: member.createdAt,
-      },
-    ])
-    storage['auth.session'] = email
-    if (shots.sample.reservations?.length) storage[`reservations.${email}`] = JSON.stringify(shots.sample.reservations)
-    if (shots.sample.saved?.length) storage[`saved.${email}`] = JSON.stringify(shots.sample.saved)
+  capture('xcrun', ['simctl', 'ui', udid, 'appearance', extras.screenshotAppearance])
+  const args = ['simctl', 'launch', '--terminate-running-process', udid, bundleId, '--']
+  for (const [key, value] of Object.entries(extras)) {
+    args.push(`-${key}`, value)
   }
-  return storage
+  if (capture('xcrun', args) === null) {
+    throw new CliError(`Could not launch iOS for ${extras.screenshotScreen} ${extras.screenshotAppearance}.`)
+  }
+}
+
+function launchAndroid(adbPath, appId, extras) {
+  capture(adbPath, ['shell', 'cmd', 'uimode', 'night', extras.screenshotAppearance === 'dark' ? 'yes' : 'no'])
+  const args = ['shell', 'am', 'start', '-W', '-S', '-n', `${appId}/app.MainActivity`]
+  for (const [key, value] of Object.entries(extras)) {
+    args.push('--es', key, value)
+  }
+  if (capture(adbPath, args) === null) {
+    throw new CliError(`Could not launch Android for ${extras.screenshotScreen} ${extras.screenshotAppearance}.`)
+  }
 }
 
 async function startWebPreview(root) {
@@ -437,7 +498,7 @@ async function capturePlatforms({ root, shots, screens, platforms, dest }) {
       for (const screen of screens) {
         for (const appearance of APPEARANCES) {
           log.step('ios', `${screen.id} ${appearance}`)
-          launchIos(simulator.udid, appId, screen, appearance)
+          launchIos(simulator.udid, appId, launchExtrasFor(shots, screen, appearance))
           await captureWhenPainted({
             sharp,
             settle: SETTLE_MS.ios,
@@ -463,7 +524,7 @@ async function capturePlatforms({ root, shots, screens, platforms, dest }) {
       for (const screen of screens) {
         for (const appearance of APPEARANCES) {
           log.step('android', `${screen.id} ${appearance}`)
-          launchAndroid(android.adbPath, appId, screen, appearance, shots.sample)
+          launchAndroid(android.adbPath, appId, launchExtrasFor(shots, screen, appearance))
           await captureWhenPainted({
             sharp,
             settle: SETTLE_MS.android,
@@ -498,9 +559,10 @@ async function capturePlatforms({ root, shots, screens, platforms, dest }) {
             })
             await context.addInitScript((values) => {
               for (const [key, value] of Object.entries(values)) localStorage.setItem(key, value)
-            }, webStorage(shots, screen, appearance))
+            }, storageForScreen(shots, screen, appearance))
             const page = await context.newPage()
             await page.goto(`${web.origin}${screen.webPath}`, { waitUntil: 'networkidle' })
+            await page.waitForFunction(() => (document.body?.innerText ?? '').trim().length > 40)
             await sleep(SETTLE_MS.web)
             const png = path.join(tmp, `web-${screen.id}-${appearance}.png`)
             await page.screenshot({ path: png, type: 'png' })
@@ -531,10 +593,10 @@ async function main() {
   const shots = loadShots(dest)
   const screens = args.screens ? shots.screens.filter((s) => args.screens.includes(s.id)) : shots.screens
   if (!screens.length) throw new CliError('No matching screens to capture.')
-  const incomplete = screens.filter((s) => s.signedIn && /\$/.test(s.webPath))
+  const incomplete = screens.filter((s) => /\$/.test(s.webPath))
   if (incomplete.length) {
     throw new CliError(
-      `These signed-in paths still have placeholders: ${incomplete.map((s) => s.id).join(', ')}. Put real sample ids in previews/shots.json.`,
+      `These paths still have placeholders: ${incomplete.map((s) => s.id).join(', ')}. Put real ids in webPath (and launchExtras if the app needs them).`,
     )
   }
 
@@ -544,10 +606,14 @@ async function main() {
   log.ok('previews', path.relative(repo, previews))
 }
 
-main().catch((error) => {
-  if (error instanceof CliError) {
-    log.fail('previews', error.message)
-    process.exit(1)
-  }
-  throw error
-})
+export { launchExtrasFor, screensFromNavigation, storageForScreen }
+
+if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
+  main().catch((error) => {
+    if (error instanceof CliError) {
+      log.fail('previews', error.message)
+      process.exit(1)
+    }
+    throw error
+  })
+}
