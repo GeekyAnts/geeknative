@@ -269,6 +269,9 @@ test('fonts: the shared typeface reaches every platform from the same files', ()
   const swift = outputOf(outputs, 'Tokens.swift')
   assert.match(swift, /static let body: Font = \.custom\("Inter-Regular", size: 16, relativeTo: \.body\)/)
   assert.match(swift, /enum AppFonts \{[\s\S]*"Inter-Regular\.ttf",\n\s+"Inter-Medium\.ttf",[\s\S]*CTFontManagerRegisterFontsForURL\(url as CFURL, \.process, nil\)/)
+  assert.match(swift, /face\("Inter-Bold", size: 34\)/)
+  assert.match(swift, /face\("Inter-SemiBold", size: 17\)/)
+  assert.match(swift, /bar\.scrollEdgeAppearance = resting/)
 
   const kotlin = outputOf(outputs, 'Tokens.kt')
   assert.match(kotlin, /^import app\.R$/m)
@@ -285,6 +288,16 @@ test('fonts: the shared typeface reaches every platform from the same files', ()
   }
 })
 
+test('fonts: the navigation large title uses the 34pt role, not a larger hero mapped to the same style', () => {
+  const dir = tempProject()
+  editJson(path.join(dir, 'contracts', 'tokens.json'), (tokens) => {
+    tokens.typography.hero = { size: 52, lineHeight: 60, weight: 700, ios: 'largeTitle' }
+  })
+  const swift = outputOf(generate(dir), 'Tokens.swift')
+  assert.match(swift, /face\("Inter-Bold", size: 34\)/)
+  assert.doesNotMatch(swift, /face\("Inter-Bold", size: 52\)/)
+})
+
 test('fonts: with the system family each platform keeps its own font, sized by Dynamic Type on iOS', () => {
   const dir = tempProject()
   editJson(path.join(dir, 'contracts', 'tokens.json'), (tokens) => {
@@ -296,6 +309,7 @@ test('fonts: with the system family each platform keeps its own font, sized by D
   const swift = outputOf(outputs, 'Tokens.swift')
   assert.match(swift, /static let title: Font = \.title3\.weight\(\.semibold\)/)
   assert.match(swift, /static let files: \[String\] = \[\]/)
+  assert.doesNotMatch(swift, /UINavigationBarAppearance/)
   const kotlin = outputOf(outputs, 'Tokens.kt')
   assert.doesNotMatch(kotlin, /AppFontFamily|import app\.R/)
   assert.match(kotlin, /val title = TextStyle\(fontWeight = FontWeight\.SemiBold, fontSize = 20\.sp/)

@@ -21,6 +21,8 @@ jobs:
           node-version: 24
       - name: Run the CLI test suite
         run: npm test
+      - name: Run the publish and showcase script tests
+        run: node --test scripts/publish-demo-app.test.mjs website/scripts/sync-showcase.test.mjs
 
   smoke:
     name: Create a project
@@ -103,3 +105,23 @@ jobs:
         with:
           name: ios-logs
           path: template/.geeknative/logs/
+
+  website:
+    name: Website
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: website
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Check links
+        run: npm run check-links

@@ -2,8 +2,9 @@
   "name": "geeknative-website",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build && pagefind --site out",
+    "sync-showcase": "node scripts/sync-showcase.mjs",
+    "dev": "npm run sync-showcase && next dev",
+    "build": "npm run sync-showcase && next build && pagefind --site out",
     "preview": "node scripts/preview.mjs",
     "deploy": "npm run build && node scripts/deploy.mjs",
     "check-links": "node scripts/check-links.mjs"

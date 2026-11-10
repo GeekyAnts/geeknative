@@ -4,3 +4,5 @@ out/
 next-env.d.ts
 *.tsbuildinfo
 .DS_Store
+public/showcase/
+src/generated/showcase.json

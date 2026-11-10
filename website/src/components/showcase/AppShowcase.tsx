@@ -4,8 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import type { ShowcaseApp } from "@/content/showcase";
 import { AndroidPhone, ChromeWindow, IPhone, PlatformCaption, Segmented, type Mode, type Platform } from "./frames";
 
-const BASE = "/geeknative";
-
 const SIZES: Record<Platform, { width: number; height: number; label: string }> = {
   ios: { width: 600, height: 1304, label: "iOS" },
   web: { width: 1600, height: 1000, label: "Web" },
@@ -14,8 +12,8 @@ const SIZES: Record<Platform, { width: number; height: number; label: string }> 
 
 const MODES: Mode[] = ["light", "dark"];
 
-const shot = (slug: string, platform: Platform, screen: string, mode: Mode) =>
-  `${BASE}/screens/${slug}/${platform}-${screen}-${mode}.webp`;
+const shot = (app: ShowcaseApp, platform: Platform, screen: string, mode: Mode) =>
+  `${app.shotPrefix}/${platform}-${screen}-${mode}.webp`;
 const shotFile = (platform: Platform, screen: string, mode: Mode) => `${platform}-${screen}-${mode}.webp`;
 
 // Every screen and appearance of one platform, stacked, so switching is a crossfade.
@@ -59,7 +57,7 @@ function Layers({
           // eslint-disable-next-line @next/next/no-img-element
           <img
             key={`${s.id}-${m}`}
-            src={shot(app.slug, platform, s.id, m)}
+            src={shot(app, platform, s.id, m)}
             alt={active ? `${size.label}, ${s.label}, ${m} mode` : ""}
             aria-hidden={active ? undefined : true}
             width={size.width}

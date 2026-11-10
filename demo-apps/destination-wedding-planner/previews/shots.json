@@ -1,0 +1,32 @@
+{
+  "launchExtras": {
+    "screenshotDestinationId": "udaipur",
+    "screenshotVenueId": "udaipur-taj-lake"
+  },
+  "webStorage": {
+    "wedding.plan": {
+      "date": "2027-02-14",
+      "destinationId": "udaipur",
+      "venueId": "udaipur-taj-lake",
+      "guestCount": 120,
+      "budget": 180000,
+      "packageId": "royal",
+      "bookingStatus": "enquirySent",
+      "savedDestinationIds": ["udaipur", "santorini"],
+      "savedVenueIds": ["udaipur-taj-lake"],
+      "completedTaskIds": ["venue"],
+      "selectedExperienceIds": ["photography", "florals"],
+      "searchLocation": "",
+      "searchDate": "",
+      "searchGuests": 0,
+      "searchBudget": 0
+    }
+  },
+  "screens": [
+    { "id": "home", "label": "Home", "signedIn": false, "webPath": "/", "showcase": true },
+    { "id": "destinations", "label": "Destinations", "signedIn": false, "webPath": "/destinations", "showcase": true },
+    { "id": "udaipur", "label": "Udaipur", "signedIn": false, "webPath": "/destinations/udaipur", "showcase": true },
+    { "id": "venue", "label": "Venue", "signedIn": false, "webPath": "/venues/udaipur-taj-lake", "showcase": true },
+    { "id": "wedding", "label": "Wedding", "signedIn": false, "webPath": "/wedding", "showcase": true }
+  ]
+}
