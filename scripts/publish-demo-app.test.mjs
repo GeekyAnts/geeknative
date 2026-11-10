@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import test from 'node:test'
-import { launchExtrasFor, screensFromNavigation, storageForScreen } from './publish-demo-app.mjs'
+import { animationScaleToRestore, launchExtrasFor, nightModeFromUimode, screensFromNavigation, storageForScreen } from './publish-demo-app.mjs'
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -76,6 +76,25 @@ test('screen webStorage: false is appearance only', () => {
   const shots = { webStorage: { signedOut: { 'onboarding.completed': 'true' } } }
   const storage = storageForScreen(shots, { signedIn: false, webStorage: false }, 'light')
   assert.deepEqual(storage, { 'settings.appearance': 'light' })
+})
+
+test('unset animation scales restore to 1, and a previous scale is kept', () => {
+  assert.equal(animationScaleToRestore(null), '1')
+  assert.equal(animationScaleToRestore(''), '1')
+  assert.equal(animationScaleToRestore('null'), '1')
+  assert.equal(animationScaleToRestore('  null  '), '1')
+  assert.equal(animationScaleToRestore('0.5'), '0.5')
+  assert.equal(animationScaleToRestore('1.0\n'), '1.0')
+})
+
+test('night mode parses cmd uimode output and defaults to auto', () => {
+  assert.equal(nightModeFromUimode('Night mode: yes'), 'yes')
+  assert.equal(nightModeFromUimode('Night mode: no'), 'no')
+  assert.equal(nightModeFromUimode('Night mode: auto'), 'auto')
+  assert.equal(nightModeFromUimode('NIGHT MODE: YES'), 'yes')
+  assert.equal(nightModeFromUimode(null), 'auto')
+  assert.equal(nightModeFromUimode(''), 'auto')
+  assert.equal(nightModeFromUimode('something unexpected'), 'auto')
 })
 
 test('launchExtras come from shots.json, not hardcoded restaurant ids', () => {

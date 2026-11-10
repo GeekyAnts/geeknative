@@ -29,7 +29,7 @@ This repo is the geeknative framework itself, not an app built with it.
 The screenshots in `demo-apps/<slug>/previews/` are part of the app. An app without them is not finished.
 
 1. Teach the app to open a named screen from launch arguments: iOS `-screenshotScreen` / `-screenshotAppearance`, Android extras of the same names (see dine-in's `UITesting.swift` and `ScreenshotLaunch.kt`). Read any extra ids from `launchExtras` in `shots.json` (`-screenshotRestaurantId`, `-screenshotDestinationId`, and so on). Seed the same local data the web shots will show.
-2. Write `previews/shots.json`. Put per-app seed data there, not in the publish script: `webStorage` is a localStorage map (`signedIn` / `signedOut` / `always`, or a flat map applied to every screen), and `launchExtras` is extra iOS/Android launch arguments. List every screen from `spec/navigation.md` with real ids (no `$placeholders` in `webPath`). Mark two to four screens with `"showcase": true` so the landing frames and /showcase/ pick them up. Do not edit the showcase catalog or components by hand.
+2. Write `previews/shots.json`. Put per-app seed data there, not in the publish script: `webStorage` is a localStorage map (`signedIn` / `signedOut` / `always`, or a flat map applied to every screen), and `launchExtras` is extra iOS/Android launch arguments. Optional `mark` is the showcase tab color; otherwise the site uses `color.primary`. List every screen from `spec/navigation.md` with real ids (no `$placeholders` in `webPath`). Mark two to four screens with `"showcase": true` so the landing frames and /showcase/ pick them up. Do not edit the showcase catalog or components by hand.
 3. Publish from the repo root, on a Mac with Xcode and an Android emulator:
 
 ```sh
@@ -41,6 +41,10 @@ If the app is already in `demo-apps/<slug>/`:
 ```sh
 node scripts/publish-demo-app.mjs --capture slug-name
 ```
+
+Recapture only the screens that changed (`--screens welcome,discover`) and leave the other webps untouched. A full run rewrites every shot, and captures are not byte-identical between runs, so a full recapture recommits them all.
+
+Capture turns on Reduce Motion, overrides the iOS status bar, sets Android animation scales to 0, and forces night mode. On the way out, including when a capture fails, the script writes those back and leaves Android demo mode.
 
 4. If the script writes a stub `shots.json` and exits, fill in `webStorage`, `launchExtras`, and real ids in `webPath`, then run `--capture` again.
 5. Commit `previews/shots.json` and the webp files under `previews/ios/`, `previews/android/` and `previews/web/` with the app. That folder is the only source for the website. `npm run dev` and `npm run build` in website/ copy the featured shots into `public/showcase/` (gitignored). Do not copy webps into `website/public/screens/`.

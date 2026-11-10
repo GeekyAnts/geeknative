@@ -43,6 +43,7 @@ const SKIP_COPY = new Set([
 ])
 const APPEARANCES = ['light', 'dark']
 const PLATFORMS = ['ios', 'android', 'web']
+const ANDROID_ANIMATION_SCALES = ['animator_duration_scale', 'transition_animation_scale', 'window_animation_scale']
 const WEB_PORT = 4173
 const SETTLE_MS = { ios: 2500, android: 6000, web: 800 }
 const BLANK_STDEV = 12
@@ -393,15 +394,54 @@ function freezeIosStatusBar(udid) {
 }
 
 function freezeAndroidStatusBar(adbPath) {
-  capture(adbPath, ['shell', 'settings', 'put', 'global', 'animator_duration_scale', '0'])
-  capture(adbPath, ['shell', 'settings', 'put', 'global', 'transition_animation_scale', '0'])
-  capture(adbPath, ['shell', 'settings', 'put', 'global', 'window_animation_scale', '0'])
+  for (const key of ANDROID_ANIMATION_SCALES) {
+    capture(adbPath, ['shell', 'settings', 'put', 'global', key, '0'])
+  }
   capture(adbPath, ['shell', 'settings', 'put', 'global', 'sysui_demo_allowed', '1'])
   capture(adbPath, ['shell', 'am', 'broadcast', '-a', 'com.android.systemui.demo', '-e', 'command', 'enter'])
   capture(adbPath, ['shell', 'am', 'broadcast', '-a', 'com.android.systemui.demo', '-e', 'command', 'clock', '-e', 'hhmm', '1500'])
   capture(adbPath, ['shell', 'am', 'broadcast', '-a', 'com.android.systemui.demo', '-e', 'command', 'network', '-e', 'wifi', 'show', '-e', 'level', '4'])
   capture(adbPath, ['shell', 'am', 'broadcast', '-a', 'com.android.systemui.demo', '-e', 'command', 'battery', '-e', 'plugged', 'false', '-e', 'level', '100'])
   capture(adbPath, ['shell', 'am', 'broadcast', '-a', 'com.android.systemui.demo', '-e', 'command', 'notifications', '-e', 'visible', 'false'])
+}
+
+/** `settings get` prints `null` when the global is unset. Those go back to the default scale. */
+function animationScaleToRestore(value) {
+  const trimmed = value == null ? '' : String(value).trim()
+  if (!trimmed || trimmed === 'null') return '1'
+  return trimmed
+}
+
+/** `cmd uimode night` prints `Night mode: yes|no|auto`. Anything else falls back to auto. */
+function nightModeFromUimode(output) {
+  const match = String(output ?? '').match(/\b(yes|no|auto)\b/i)
+  return match ? match[1].toLowerCase() : 'auto'
+}
+
+function snapshotIos(udid) {
+  const value = capture('xcrun', ['simctl', 'spawn', udid, 'defaults', 'read', 'com.apple.Accessibility', 'ReduceMotionEnabled'])
+  return { udid, reduceMotion: value === '1' ? '1' : '0' }
+}
+
+function snapshotAndroid(adbPath) {
+  const scales = {}
+  for (const key of ANDROID_ANIMATION_SCALES) {
+    scales[key] = animationScaleToRestore(capture(adbPath, ['shell', 'settings', 'get', 'global', key]))
+  }
+  return { adbPath, scales, night: nightModeFromUimode(capture(adbPath, ['shell', 'cmd', 'uimode', 'night'])) }
+}
+
+function restoreIos({ udid, reduceMotion }) {
+  capture('xcrun', ['simctl', 'status_bar', udid, 'clear'])
+  capture('xcrun', ['simctl', 'spawn', udid, 'defaults', 'write', 'com.apple.Accessibility', 'ReduceMotionEnabled', '-int', reduceMotion])
+}
+
+function restoreAndroid({ adbPath, scales, night }) {
+  for (const key of ANDROID_ANIMATION_SCALES) {
+    capture(adbPath, ['shell', 'settings', 'put', 'global', key, scales[key]])
+  }
+  capture(adbPath, ['shell', 'cmd', 'uimode', 'night', night])
+  capture(adbPath, ['shell', 'am', 'broadcast', '-a', 'com.android.systemui.demo', '-e', 'command', 'exit'])
 }
 
 async function buildIos(root, udid) {
@@ -482,7 +522,8 @@ async function capturePlatforms({ root, shots, screens, platforms, dest }) {
   const { id: appId } = readApp(root)
   const tmp = mkdtempSync(path.join(os.tmpdir(), 'geeknative-previews-'))
   let web
-  let android
+  let iosRestore
+  let androidRestore
 
   try {
     if (platforms.includes('ios')) {
@@ -494,6 +535,7 @@ async function capturePlatforms({ root, shots, screens, platforms, dest }) {
       }
       capture('open', ['-a', 'Simulator'])
       await buildIos(root, simulator.udid)
+      iosRestore = snapshotIos(simulator.udid)
       freezeIosStatusBar(simulator.udid)
       for (const screen of screens) {
         for (const appearance of APPEARANCES) {
@@ -518,8 +560,9 @@ async function capturePlatforms({ root, shots, screens, platforms, dest }) {
     }
 
     if (platforms.includes('android')) {
-      android = await bootAndroid(root)
+      const android = await bootAndroid(root)
       await buildAndroid(root)
+      androidRestore = snapshotAndroid(android.adbPath)
       freezeAndroidStatusBar(android.adbPath)
       for (const screen of screens) {
         for (const appearance of APPEARANCES) {
@@ -578,7 +621,8 @@ async function capturePlatforms({ root, shots, screens, platforms, dest }) {
   } finally {
     web?.child.kill()
     rmSync(tmp, { recursive: true, force: true })
-    if (android?.adbPath) capture(android.adbPath, ['shell', 'am', 'broadcast', '-a', 'com.android.systemui.demo', '-e', 'command', 'exit'])
+    if (iosRestore) restoreIos(iosRestore)
+    if (androidRestore) restoreAndroid(androidRestore)
   }
 }
 
@@ -606,7 +650,7 @@ async function main() {
   log.ok('previews', path.relative(repo, previews))
 }
 
-export { launchExtrasFor, screensFromNavigation, storageForScreen }
+export { animationScaleToRestore, launchExtrasFor, nightModeFromUimode, screensFromNavigation, storageForScreen }
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
   main().catch((error) => {

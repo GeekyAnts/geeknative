@@ -5,7 +5,7 @@
 // serve them. public/showcase/ is generated; demo-apps/<slug>/previews/ is the source.
 import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const website = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const repo = path.resolve(website, "..");
@@ -56,14 +56,19 @@ function missingShots(dir, screens) {
   return missing;
 }
 
-function brandMark(root) {
+const MARK_FALLBACK = "#4F46E5";
+
+export function brandMark(root, shots) {
+  const fromShots = typeof shots?.mark === "string" ? shots.mark.trim() : "";
+  if (fromShots) return fromShots;
   const tokensFile = path.join(root, "contracts", "tokens.json");
-  if (!existsSync(tokensFile)) return "#4F46E5";
+  if (!existsSync(tokensFile)) return MARK_FALLBACK;
   try {
     const tokens = readJson(tokensFile);
-    return tokens.color?.espresso?.light || tokens.color?.primary?.light || "#4F46E5";
+    const primary = tokens.color?.primary?.light;
+    return typeof primary === "string" && primary.trim() ? primary.trim() : MARK_FALLBACK;
   } catch {
-    return "#4F46E5";
+    return MARK_FALLBACK;
   }
 }
 
@@ -175,7 +180,7 @@ function loadDemoApp(slug) {
     slug,
     name: app.name,
     summary: productSummary(root, app.name),
-    mark: brandMark(root),
+    mark: brandMark(root, shots),
     shotPrefix: `/geeknative/showcase/${slug}`,
     screens,
   });
@@ -206,4 +211,6 @@ function main() {
   console.log(`showcase: ${catalog.apps.map((app) => `${app.slug} (${app.screens.length})`).join(", ")}`);
 }
 
-main();
+if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
+  main();
+}

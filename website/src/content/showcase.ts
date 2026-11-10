@@ -13,7 +13,7 @@ export type ShowcaseApp = {
   slug: string;
   name: string;
   summary: string;
-  /** Espresso (or the app's own dark brand color) for the browser tab mark. */
+  /** Brand color for the browser tab mark, from shots.json `mark` or `color.primary`. */
   mark: string;
   shotPrefix: string;
   screens: ShowcaseScreen[];
