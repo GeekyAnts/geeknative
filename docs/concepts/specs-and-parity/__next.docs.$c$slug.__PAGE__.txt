@@ -1,0 +1,143 @@
+1:"$Sreact.fragment"
+3:I[68989,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/38zk-49d1uomt.js","/geeknative/_next/static/chunks/3c0ewmw70a2jq.js"],"ArticleEnhancer"]
+2:T541,[{"@context":"https://schema.org","@type":"TechArticle","headline":"Specs and parity","description":"The feature spec format, acceptance criteria IDs, platform status, and how make parity reports coverage.","url":"https://geekyants.github.io/geeknative/docs/concepts/specs-and-parity/","mainEntityOfPage":"https://geekyants.github.io/geeknative/docs/concepts/specs-and-parity/","author":{"@type":"Organization","name":"GeekyAnts","url":"https://geekyants.com","sameAs":["https://github.com/GeekyAnts","https://www.linkedin.com/company/geekyants-software-pvt-ltd/","https://x.com/geekyants"]},"publisher":{"@type":"Organization","name":"GeekyAnts","url":"https://geekyants.com","sameAs":["https://github.com/GeekyAnts","https://www.linkedin.com/company/geekyants-software-pvt-ltd/","https://x.com/geekyants"]},"about":{"@type":"SoftwareApplication","name":"geeknative","url":"https://geekyants.github.io/geeknative/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Docs","item":"https://geekyants.github.io/geeknative/docs/"},{"@type":"ListItem","position":2,"name":"Concepts","item":"https://geekyants.github.io/geeknative/docs/"},{"@type":"ListItem","position":3,"name":"Specs and parity","item":"https://geekyants.github.io/geeknative/docs/concepts/specs-and-parity/"}]}]4:T2432,<h2 id="feature-specs">Feature specs<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#feature-specs">#</a></h2>
+<p>Each feature has a spec in <code>spec/features/&#x3C;id>.md</code>, started from <code>.geeknative/templates/feature.md</code>:</p>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="md"><code><span class="line"><span style="color:#686664">---</span></span>
+<span class="line"><span style="color:#0B0B0B">id</span><span style="color:#686664">:</span><span style="color:#0B0B0B"> notes</span><span style="color:#A3A09C;font-style:italic">               # kebab-case; used in file names and acceptance criteria IDs</span></span>
+<span class="line"><span style="color:#0B0B0B">title</span><span style="color:#686664">:</span><span style="color:#0B0B0B"> Notes</span></span>
+<span class="line"><span style="color:#0B0B0B">status</span><span style="color:#686664">:</span><span style="color:#A3A09C;font-style:italic">                 # planned | in-progress | done | n/a (not on this platform)</span></span>
+<span class="line"><span style="color:#0B0B0B">  ios</span><span style="color:#686664">:</span><span style="color:#0B0B0B"> planned</span></span>
+<span class="line"><span style="color:#0B0B0B">  android</span><span style="color:#686664">:</span><span style="color:#0B0B0B"> planned</span></span>
+<span class="line"><span style="color:#0B0B0B">  web</span><span style="color:#686664">:</span><span style="color:#0B0B0B"> planned</span></span>
+<span class="line"><span style="color:#686664">---</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#686664;font-weight:bold">#</span><span style="color:#0B0B0B;font-weight:bold"> Notes</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#686664;font-weight:bold">##</span><span style="color:#0B0B0B;font-weight:bold"> Summary</span></span>
+<span class="line"><span style="color:#686664;font-weight:bold">##</span><span style="color:#0B0B0B;font-weight:bold"> User stories</span></span>
+<span class="line"><span style="color:#686664;font-weight:bold">##</span><span style="color:#0B0B0B;font-weight:bold"> Screens and states        (loading, empty, error and success for each screen)</span></span>
+<span class="line"><span style="color:#686664;font-weight:bold">##</span><span style="color:#0B0B0B;font-weight:bold"> Behavior and rules        (including stored data: keys, values and types)</span></span>
+<span class="line"><span style="color:#686664;font-weight:bold">##</span><span style="color:#0B0B0B;font-weight:bold"> Acceptance criteria</span></span>
+<span class="line"><span style="color:#686664">-</span><span style="color:#0B0B0B"> AC-notes-1: ...</span></span>
+<span class="line"><span style="color:#686664">-</span><span style="color:#0B0B0B"> AC-notes-2: ...</span></span>
+<span class="line"><span style="color:#686664;font-weight:bold">##</span><span style="color:#0B0B0B;font-weight:bold"> Copy</span></span>
+<span class="line"><span style="color:#686664;font-weight:bold">##</span><span style="color:#0B0B0B;font-weight:bold"> Platform notes            (where platforms intentionally differ)</span></span>
+<span class="line"><span style="color:#686664;font-weight:bold">##</span><span style="color:#0B0B0B;font-weight:bold"> Test IDs</span></span>
+<span class="line"><span style="color:#686664;font-weight:bold">##</span><span style="color:#0B0B0B;font-weight:bold"> Assumptions and open questions</span></span></code></pre>
+<p>The front matter <code>status</code> records where each platform stands:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>planned</code></td>
+<td>Specified, not built yet</td>
+</tr>
+<tr>
+<td><code>in-progress</code></td>
+<td>Partly built</td>
+</tr>
+<tr>
+<td><code>done</code></td>
+<td>Built and verified</td>
+</tr>
+<tr>
+<td><code>n/a</code></td>
+<td>Not on this platform, on purpose. Allowed under <code>adapted</code>; <code>make lint</code> fails on it when <code>contracts/app.json</code> <code>consistency</code> is <code>strict</code>.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="acceptance-criteria">Acceptance criteria<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#acceptance-criteria">#</a></h2>
+<p>Criteria are testable and platform-neutral, and numbered <code>AC-&#x3C;feature-id>-&#x3C;n></code>. Every platform's tests put the ID in the test name:</p>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="swift"><code><span class="line"><span style="color:#686664">@</span><span style="color:#CA0515">Test</span><span style="color:#686664">(</span><span style="color:#9F0310">"AC-settings-1: appearance defaults to System"</span><span style="color:#686664">)</span></span></code></pre>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="kotlin"><code><span class="line"><span style="color:#0B0B0B">@Test</span></span>
+<span class="line"><span style="color:#CA0515">fun</span><span style="color:#0B0B0B;font-weight:bold"> `AC-settings-1 appearance defaults to System`</span><span style="color:#0B0B0B">() </span><span style="color:#686664">=</span><span style="color:#0B0B0B;font-weight:bold"> runTest</span><span style="color:#0B0B0B"> { </span><span style="color:#686664">..</span><span style="color:#0B0B0B">. }</span></span></code></pre>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="ts"><code><span class="line"><span style="color:#0B0B0B;font-weight:bold">test</span><span style="color:#686664">(</span><span style="color:#9F0310">'AC-settings-1: appearance defaults to System'</span><span style="color:#686664">,</span><span style="color:#CA0515"> async</span><span style="color:#686664"> ()</span><span style="color:#CA0515"> =></span><span style="color:#686664"> {</span><span style="color:#686664"> ...</span><span style="color:#686664"> })</span></span></code></pre>
+<p>Mark a criterion <code>(ui)</code> when it's about what the user sees or taps:</p>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="markdown"><code><span class="line"><span style="color:#686664">-</span><span style="color:#0B0B0B"> AC-home-3 (ui): Home has an entry point that opens Settings.</span></span></code></pre>
+<p>Only a test that drives the real UI covers a <code>(ui)</code> criterion: an XCUITest in <code>apps/ios/AppUITests</code> (put the ID in <code>XCTContext.runActivity(named:)</code>), a Compose UI test on Android (a file that creates a compose rule, run on Robolectric), or a web test that renders into a DOM (<code>// @vitest-environment happy-dom</code> with <code>createRoot</code>, <code>hydrateRoot</code> or <code>render</code>). A test that checks a view model or a route names the criterion but doesn't cover it.</p>
+<h2 id="make-parity">make parity<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#make-parity">#</a></h2>
+<p><code>make parity</code> reads every spec in <code>spec/features/</code> (files starting with <code>_</code> are skipped), collects the criteria from list items that start with an <code>AC-</code> ID, and searches each app's tests for those IDs:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>App</th>
+<th>Test files searched</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>iOS</td>
+<td>Swift files in <code>apps/ios/*Tests/</code></td>
+</tr>
+<tr>
+<td>Android</td>
+<td>Kotlin files in <code>apps/android/app/src/test/</code> and <code>src/androidTest/</code></td>
+</tr>
+<tr>
+<td>Web</td>
+<td><code>*.test.ts(x)</code> and <code>*.spec.ts(x)</code> files in <code>apps/web/src/</code>, and <code>apps/web/e2e/</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>It writes <code>spec/parity.md</code> and prints the gaps. A gap is a criterion no test names, or a <code>(ui)</code> criterion only non-UI tests name:</p>
+<pre class="shiki geeknative" style="background-color:#f5f4f2;color:#0b0b0b" tabindex="0" data-language="text"><code><span class="line"><span>! cart       iOS done 6/7 · Android done 7/7 · Web done 7/7</span></span>
+<span class="line"><span>             AC-cart-5 needs a UI test on iOS (only other tests name it)</span></span>
+<span class="line"><span>✔ settings   iOS done 4/4 · Android done 4/4 · Web done 4/4</span></span>
+<span class="line"><span>Wrote spec/parity.md</span></span></code></pre>
+<p><code>spec/parity.md</code> starts with a <strong>Consistency:</strong> line (<code>strict</code> or <code>adapted</code>) from <code>contracts/app.json</code>, then a summary table and a per-criterion table:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>iOS</th>
+<th>Android</th>
+<th>Web</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Home</td>
+<td>✅ done · 3/3 tested</td>
+<td>✅ done · 3/3 tested</td>
+<td>✅ done · 3/3 tested</td>
+</tr>
+<tr>
+<td>Settings</td>
+<td>✅ done · 4/4 tested</td>
+<td>✅ done · 4/4 tested</td>
+<td>✅ done · 4/4 tested</td>
+</tr>
+</tbody>
+</table></div>
+<p>In the per-criterion table, ✅ means covered, ❌ untested, and 🟡 a <code>(ui)</code> criterion that only non-UI tests name.</p>a:X
+f:X
+f:C
+0:{"buildId":"e3jjFxh9jXe7sq1CIoebh","data":[{"rsc":["$","$1","c",{"children":[[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"$2"}}],["$","article",null,{"className":"min-w-0 pb-24 pt-10 lg:pt-14","data-pagefind-body":true,"children":[["$","header",null,{"className":"max-w-[46rem] border-b border-line pb-10","children":[["$","p",null,{"className":"label flex items-center gap-3 text-muted","children":[["$","span",null,{"aria-hidden":true,"className":"inline-block size-[7px] shrink-0 rounded-full bg-brand "}],["$","span",null,{"className":"tabular-nums","children":"03"}],["$","span",null,{"className":"h-px w-5 bg-current opacity-30"}],["$","span",null,{"children":"Concepts"}]]}],["$","h1",null,{"className":"mt-6 display-m","data-pagefind-meta":"title","children":"Specs and parity"}],["$","p",null,{"className":"mt-5 max-w-[40rem] text-[1.125rem] leading-[1.55] text-ink/70","children":"The feature spec format, acceptance criteria IDs, platform status, and how make parity reports coverage."}]]}],["$","div",null,{"className":"mt-10 max-w-[46rem]","children":["$","$L3","concepts/specs-and-parity",{"children":[["$","div","0",{"className":"docs-prose","dangerouslySetInnerHTML":{"__html":"$4"}}]]}]}],"$L5"]}],"$L6"],["$L7"],"$L8"]}],"isPartial":"$@9","staleTime":"$a","varyParams":null},{"rsc":"$Lb","isPartial":"$@c","staleTime":"$a","varyParams":null},{"rsc":"$Ld","isPartial":"$@e","staleTime":"$a","varyParams":"$f"}],"isUpgradeableISRFallback":false,"a":"$@10","rootVaryParams":null,"needsRuntimeRequest":"$@11"}
+12:I[54249,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/38zk-49d1uomt.js","/geeknative/_next/static/chunks/3c0ewmw70a2jq.js"],""]
+13:I[35820,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/38zk-49d1uomt.js","/geeknative/_next/static/chunks/3c0ewmw70a2jq.js"],"Toc"]
+14:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"OutletBoundary"]
+15:"$Sreact.suspense"
+17:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"ViewportBoundary"]
+18:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"MetadataBoundary"]
+19:I[18516,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"IconMark"]
+1a:I[87180,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+1b:I[42045,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+5:["$","footer",null,{"className":"mt-20 max-w-[46rem]","data-pagefind-ignore":true,"children":[["$","a",null,{"href":"https://github.com/GeekyAnts/geeknative/edit/main/website/content/docs/concepts/specs-and-parity.md","className":"label inline-flex items-center gap-2 text-muted transition-colors hover:text-ink","rel":"noreferrer","children":["Edit this page on GitHub ",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0 -rotate-45 ","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}],["$","nav",null,{"aria-label":"Previous and next","className":"mt-8 grid gap-px overflow-hidden rounded-2xl bg-line ring-1 ring-line sm:grid-cols-2","children":[["$","$L12",null,{"href":"/docs/concepts/architecture/","className":"group flex flex-col gap-3 bg-white p-6 transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Previous"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":[["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  rotate-180 transition-transform duration-500 ease-[var(--ease-expo)] group-hover:-translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}],"Architecture"]}]]}],["$","$L12",null,{"href":"/docs/concepts/file-ownership/","className":"group flex flex-col items-end gap-3 bg-white p-6 text-right transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Next"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":["File ownership",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  transition-transform duration-500 ease-[var(--ease-expo)] group-hover:translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}]]}]]}]]}]
+6:["$","$L13",null,{"items":[{"depth":2,"id":"feature-specs","text":"Feature specs"},{"depth":2,"id":"acceptance-criteria","text":"Acceptance criteria"},{"depth":2,"id":"make-parity","text":"make parity"}]}]
+7:["$","script","script-0",{"src":"/geeknative/_next/static/chunks/3c0ewmw70a2jq.js","async":true}]
+8:["$","$L14",null,{"children":["$","$15",null,{"name":"Next.MetadataOutlet","children":"$@16"}]}]
+b:["$","$1","h",{"children":[null,["$","$L17",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#ffffff"}]]}],["$","div",null,{"hidden":true,"children":["$","$L18",null,{"children":["$","$15",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Specs and parity · geeknative"}],["$","meta","1",{"name":"description","content":"The feature spec format, acceptance criteria IDs, platform status, and how make parity reports coverage."}],["$","meta","2",{"name":"keywords","content":"native app development,SwiftUI,Jetpack Compose,React,TanStack Start,coding agents,Claude Code,AGENTS.md,iOS Android web app,React Native alternative,Flutter alternative"}],["$","link","3",{"rel":"canonical","href":"https://geekyants.github.io/geeknative/docs/concepts/specs-and-parity/"}],["$","meta","4",{"property":"og:title","content":"Specs and parity · geeknative"}],["$","meta","5",{"property":"og:description","content":"The feature spec format, acceptance criteria IDs, platform status, and how make parity reports coverage."}],["$","meta","6",{"property":"og:url","content":"https://geekyants.github.io/geeknative/docs/concepts/specs-and-parity/"}],["$","meta","7",{"property":"og:image","content":"https://geekyants.github.io/geeknative/opengraph-image.png"}],["$","meta","8",{"property":"og:image:width","content":"1200"}],["$","meta","9",{"property":"og:image:height","content":"630"}],["$","meta","10",{"property":"og:image:alt","content":"geeknative: one prompt, three native apps"}],["$","meta","11",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","12",{"name":"twitter:title","content":"Specs and parity · geeknative"}],["$","meta","13",{"name":"twitter:description","content":"The feature spec format, acceptance criteria IDs, platform status, and how make parity reports coverage."}],["$","meta","14",{"name":"twitter:image","content":"https://geekyants.github.io/geeknative/twitter-image.png?twitter-image.2fjuh4p5ndhng.png"}],["$","meta","15",{"name":"twitter:image:type","content":"image/png"}],["$","meta","16",{"name":"twitter:image:width","content":"1200"}],["$","meta","17",{"name":"twitter:image:height","content":"630"}],["$","link","18",{"rel":"icon","href":"/geeknative/icon.svg?icon.12cpu7ud8w87b.svg","sizes":"any","type":"image/svg+xml"}],["$","link","19",{"rel":"apple-touch-icon","href":"/geeknative/apple-icon.png?apple-icon.1b0eoaalscjqq.png","sizes":"180x180","type":"image/png"}],["$","$L19","20",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}]
+d:["$","$1","c",{"children":[null,["$","$L1a",null,{"parallelRouterKey":"children","template":["$","$L1b",null,{}]}]]}]
+11:true
+16:null
+a:300
+a:C
+10:0
+c:"$undefined"
+e:"$undefined"
+9:"$undefined"

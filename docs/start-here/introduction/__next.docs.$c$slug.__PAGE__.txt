@@ -1,0 +1,92 @@
+1:"$Sreact.fragment"
+3:I[68989,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/38zk-49d1uomt.js","/geeknative/_next/static/chunks/3c0ewmw70a2jq.js"],"ArticleEnhancer"]
+4:I[80332,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/38zk-49d1uomt.js","/geeknative/_next/static/chunks/3c0ewmw70a2jq.js"],"DeviceShowcase"]
+2:T51b,[{"@context":"https://schema.org","@type":"TechArticle","headline":"Introduction","description":"What geeknative is, why it exists, and what you get when you create a project.","url":"https://geekyants.github.io/geeknative/docs/start-here/introduction/","mainEntityOfPage":"https://geekyants.github.io/geeknative/docs/start-here/introduction/","author":{"@type":"Organization","name":"GeekyAnts","url":"https://geekyants.com","sameAs":["https://github.com/GeekyAnts","https://www.linkedin.com/company/geekyants-software-pvt-ltd/","https://x.com/geekyants"]},"publisher":{"@type":"Organization","name":"GeekyAnts","url":"https://geekyants.com","sameAs":["https://github.com/GeekyAnts","https://www.linkedin.com/company/geekyants-software-pvt-ltd/","https://x.com/geekyants"]},"about":{"@type":"SoftwareApplication","name":"geeknative","url":"https://geekyants.github.io/geeknative/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Docs","item":"https://geekyants.github.io/geeknative/docs/"},{"@type":"ListItem","position":2,"name":"Start here","item":"https://geekyants.github.io/geeknative/docs/"},{"@type":"ListItem","position":3,"name":"Introduction","item":"https://geekyants.github.io/geeknative/docs/start-here/introduction/"}]}]5:Tf91,
+<h2 id="cross-platform-apps-without-cross-platform-technology">Cross-platform apps without cross-platform technology<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#cross-platform-apps-without-cross-platform-technology">#</a></h2>
+<p>Native apps use each platform's own language, UI toolkit and conventions. They look and behave the way people on that platform expect, and they get new platform features first. The cost has always been building everything three times and keeping three codebases in step.</p>
+<p>Coding agents make writing three implementations cheap. What's still hard is keeping them consistent: the same features, the same behavior, the same copy and the same brand. geeknative gives the agent the structure to do that:</p>
+<ul>
+<li><strong>A shared source of truth.</strong> PRODUCT.md, DESIGN.md and one spec per feature, with numbered acceptance criteria.</li>
+<li><strong>Contracts compiled into every app.</strong> The app identity, design tokens, copy and icon names live in <code>contracts/</code>, and <code>make gen</code> generates the matching Swift, Kotlin, Android resources, TypeScript and Tailwind theme.</li>
+<li><strong>The same architecture with the same names.</strong> A feature called <code>notes</code> is <code>NotesScreen</code>, <code>NotesViewModel</code> and <code>NotesRepository</code> in every app.</li>
+<li><strong>Checks for every app.</strong> <code>make check</code> builds and tests all three, and <code>make parity</code> shows which acceptance criteria each platform covers.</li>
+</ul>
+<h2 id="what-you-get">What you get<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#what-you-get">#</a></h2>
+<p>A new project contains:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Part</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>apps/ios</code></td>
+<td>A SwiftUI app (iOS 17 and later) with an Xcode project that never needs editing to add files</td>
+</tr>
+<tr>
+<td><code>apps/android</code></td>
+<td>A Kotlin and Jetpack Compose app (Android 7.0 and later)</td>
+</tr>
+<tr>
+<td><code>apps/web</code></td>
+<td>A React app on TanStack Start, with Tailwind CSS</td>
+</tr>
+<tr>
+<td><code>AGENTS.md</code></td>
+<td>Instructions every coding agent follows, plus one per app</td>
+</tr>
+<tr>
+<td><code>PRODUCT.md</code>, <code>DESIGN.md</code>, <code>spec/</code></td>
+<td>What the app does and how it looks</td>
+</tr>
+<tr>
+<td><code>contracts/</code></td>
+<td>App identity, design tokens, copy and icons</td>
+</tr>
+<tr>
+<td><code>Makefile</code></td>
+<td><code>make doctor</code>, <code>make check</code>, <code>make run-ios</code>, and the other commands</td>
+</tr>
+</tbody>
+</table></div>
+<p>Each app starts with the same two screens, Home and Settings, built the same way on all three platforms. They're a working reference for the patterns new features follow, and you can replace them freely.</p>
+<h2 id="what-it-isnt">What it isn't<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#what-it-isnt">#</a></h2>
+<ul>
+<li><strong>Not a runtime.</strong> There's no shared code and no cross-platform layer. Each app is plain SwiftUI, Compose or React.</li>
+<li><strong>Not a UI kit.</strong> Each app uses its platform's own components. Design tokens make them look like one brand.</li>
+<li><strong>Not tied to a backend.</strong> Features read and write through repository interfaces with local implementations. A backend can be added later without changing screens.</li>
+<li><strong>Not tied to one agent.</strong> Any agent that reads AGENTS.md works. Claude Code gets extra integration.</li>
+</ul>
+<h2 id="next-steps">Next steps<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#next-steps">#</a></h2>
+<ul>
+<li><a href="/geeknative/docs/start-here/quick-start/">Quick start</a>: create a project and build all three apps.</li>
+<li><a href="/geeknative/docs/concepts/how-it-works/">How it works</a>: the layers, the loop, and what "done" means.</li>
+</ul>b:X
+10:X
+10:C
+0:{"buildId":"e3jjFxh9jXe7sq1CIoebh","data":[{"rsc":["$","$1","c",{"children":[[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"$2"}}],["$","article",null,{"className":"min-w-0 pb-24 pt-10 lg:pt-14","data-pagefind-body":true,"children":[["$","header",null,{"className":"max-w-[46rem] border-b border-line pb-10","children":[["$","p",null,{"className":"label flex items-center gap-3 text-muted","children":[["$","span",null,{"aria-hidden":true,"className":"inline-block size-[7px] shrink-0 rounded-full bg-brand "}],["$","span",null,{"className":"tabular-nums","children":"01"}],["$","span",null,{"className":"h-px w-5 bg-current opacity-30"}],["$","span",null,{"children":"Start here"}]]}],["$","h1",null,{"className":"mt-6 display-m","data-pagefind-meta":"title","children":"Introduction"}],["$","p",null,{"className":"mt-5 max-w-[40rem] text-[1.125rem] leading-[1.55] text-ink/70","children":"What geeknative is, why it exists, and what you get when you create a project."}]]}],["$","div",null,{"className":"mt-10 max-w-[46rem]","children":["$","$L3","start-here/introduction",{"children":[["$","div","0",{"className":"docs-prose","dangerouslySetInnerHTML":{"__html":"<p>geeknative is a project template and a command-line tool for building the same app natively for iOS, Android and the web, with a coding agent doing the work.</p>\n<p>You describe what you want in plain words. The project's <code>AGENTS.md</code> teaches the agent how to work out what kind of request it is, update a shared spec first, build the change in all three apps, and verify it.</p>\n"}}],["$","figure","1",{"className":"docs-embed my-12","data-pagefind-ignore":true,"children":["$","$L4",null,{"compact":true}]}],["$","div","2",{"className":"docs-prose","dangerouslySetInnerHTML":{"__html":"$5"}}]]}]}],"$L6"]}],"$L7"],["$L8"],"$L9"]}],"isPartial":"$@a","staleTime":"$b","varyParams":null},{"rsc":"$Lc","isPartial":"$@d","staleTime":"$b","varyParams":null},{"rsc":"$Le","isPartial":"$@f","staleTime":"$b","varyParams":"$10"}],"isUpgradeableISRFallback":false,"a":"$@11","rootVaryParams":null,"needsRuntimeRequest":"$@12"}
+13:I[54249,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/38zk-49d1uomt.js","/geeknative/_next/static/chunks/3c0ewmw70a2jq.js"],""]
+14:I[35820,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/38zk-49d1uomt.js","/geeknative/_next/static/chunks/3c0ewmw70a2jq.js"],"Toc"]
+15:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"OutletBoundary"]
+16:"$Sreact.suspense"
+18:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"ViewportBoundary"]
+19:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"MetadataBoundary"]
+1a:I[18516,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"IconMark"]
+1b:I[87180,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+1c:I[42045,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+6:["$","footer",null,{"className":"mt-20 max-w-[46rem]","data-pagefind-ignore":true,"children":[["$","a",null,{"href":"https://github.com/GeekyAnts/geeknative/edit/main/website/content/docs/start-here/introduction.md","className":"label inline-flex items-center gap-2 text-muted transition-colors hover:text-ink","rel":"noreferrer","children":["Edit this page on GitHub ",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0 -rotate-45 ","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}],["$","nav",null,{"aria-label":"Previous and next","className":"mt-8 grid gap-px overflow-hidden rounded-2xl bg-line ring-1 ring-line sm:grid-cols-2","children":[["$","span",null,{"className":"hidden bg-white sm:block"}],["$","$L13",null,{"href":"/docs/start-here/quick-start/","className":"group flex flex-col items-end gap-3 bg-white p-6 text-right transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Next"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":["Quick start",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  transition-transform duration-500 ease-[var(--ease-expo)] group-hover:translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}]]}]]}]]}]
+7:["$","$L14",null,{"items":[{"depth":2,"id":"cross-platform-apps-without-cross-platform-technology","text":"Cross-platform apps without cross-platform technology"},{"depth":2,"id":"what-you-get","text":"What you get"},{"depth":2,"id":"what-it-isnt","text":"What it isn't"},{"depth":2,"id":"next-steps","text":"Next steps"}]}]
+8:["$","script","script-0",{"src":"/geeknative/_next/static/chunks/3c0ewmw70a2jq.js","async":true}]
+9:["$","$L15",null,{"children":["$","$16",null,{"name":"Next.MetadataOutlet","children":"$@17"}]}]
+c:["$","$1","h",{"children":[null,["$","$L18",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#ffffff"}]]}],["$","div",null,{"hidden":true,"children":["$","$L19",null,{"children":["$","$16",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Introduction · geeknative"}],["$","meta","1",{"name":"description","content":"What geeknative is, why it exists, and what you get when you create a project."}],["$","meta","2",{"name":"keywords","content":"native app development,SwiftUI,Jetpack Compose,React,TanStack Start,coding agents,Claude Code,AGENTS.md,iOS Android web app,React Native alternative,Flutter alternative"}],["$","link","3",{"rel":"canonical","href":"https://geekyants.github.io/geeknative/docs/start-here/introduction/"}],["$","meta","4",{"property":"og:title","content":"Introduction · geeknative"}],["$","meta","5",{"property":"og:description","content":"What geeknative is, why it exists, and what you get when you create a project."}],["$","meta","6",{"property":"og:url","content":"https://geekyants.github.io/geeknative/docs/start-here/introduction/"}],["$","meta","7",{"property":"og:image","content":"https://geekyants.github.io/geeknative/opengraph-image.png"}],["$","meta","8",{"property":"og:image:width","content":"1200"}],["$","meta","9",{"property":"og:image:height","content":"630"}],["$","meta","10",{"property":"og:image:alt","content":"geeknative: one prompt, three native apps"}],["$","meta","11",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","12",{"name":"twitter:title","content":"Introduction · geeknative"}],["$","meta","13",{"name":"twitter:description","content":"What geeknative is, why it exists, and what you get when you create a project."}],["$","meta","14",{"name":"twitter:image","content":"https://geekyants.github.io/geeknative/twitter-image.png?twitter-image.2fjuh4p5ndhng.png"}],["$","meta","15",{"name":"twitter:image:type","content":"image/png"}],["$","meta","16",{"name":"twitter:image:width","content":"1200"}],["$","meta","17",{"name":"twitter:image:height","content":"630"}],["$","link","18",{"rel":"icon","href":"/geeknative/icon.svg?icon.12cpu7ud8w87b.svg","sizes":"any","type":"image/svg+xml"}],["$","link","19",{"rel":"apple-touch-icon","href":"/geeknative/apple-icon.png?apple-icon.1b0eoaalscjqq.png","sizes":"180x180","type":"image/png"}],["$","$L1a","20",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}]
+e:["$","$1","c",{"children":[null,["$","$L1b",null,{"parallelRouterKey":"children","template":["$","$L1c",null,{}]}]]}]
+12:true
+17:null
+b:300
+b:C
+11:0
+d:"$undefined"
+f:"$undefined"
+a:"$undefined"

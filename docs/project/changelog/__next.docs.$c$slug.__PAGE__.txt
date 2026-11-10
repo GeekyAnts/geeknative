@@ -1,0 +1,166 @@
+1:"$Sreact.fragment"
+3:I[68989,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/38zk-49d1uomt.js","/geeknative/_next/static/chunks/3c0ewmw70a2jq.js"],"ArticleEnhancer"]
+2:T4cf,[{"@context":"https://schema.org","@type":"TechArticle","headline":"Changelog","description":"Release notes for geeknative.","url":"https://geekyants.github.io/geeknative/docs/project/changelog/","mainEntityOfPage":"https://geekyants.github.io/geeknative/docs/project/changelog/","author":{"@type":"Organization","name":"GeekyAnts","url":"https://geekyants.com","sameAs":["https://github.com/GeekyAnts","https://www.linkedin.com/company/geekyants-software-pvt-ltd/","https://x.com/geekyants"]},"publisher":{"@type":"Organization","name":"GeekyAnts","url":"https://geekyants.com","sameAs":["https://github.com/GeekyAnts","https://www.linkedin.com/company/geekyants-software-pvt-ltd/","https://x.com/geekyants"]},"about":{"@type":"SoftwareApplication","name":"geeknative","url":"https://geekyants.github.io/geeknative/"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Docs","item":"https://geekyants.github.io/geeknative/docs/"},{"@type":"ListItem","position":2,"name":"Project","item":"https://geekyants.github.io/geeknative/docs/"},{"@type":"ListItem","position":3,"name":"Changelog","item":"https://geekyants.github.io/geeknative/docs/project/changelog/"}]}]4:T454b,<h2 id="unreleased">Unreleased<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#unreleased">#</a></h2>
+<ul>
+<li>
+<p><strong>Consistency:</strong> <code>contracts/app.json</code> can set <code>consistency</code> to <code>strict</code> or <code>adapted</code> (default <code>adapted</code>). <code>strict</code> fails <code>make lint</code> when a feature spec uses <code>n/a</code>. Existing projects get a <code>parity</code> lint error after upgrading until they run <code>make parity</code>, because of the new header line. <code>create</code> takes <code>--consistency</code>; there is no setup prompt.</p>
+</li>
+<li>
+<p><strong>One typeface everywhere:</strong> <code>contracts/tokens.json</code> names a font family with one file per weight in <code>contracts/fonts</code>, and <code>make gen</code> bundles the same files into all three apps (registered at launch on iOS, font resources on Android, <code>@font-face</code> on the web). New projects start with Inter. <code>make font FAMILY="Open Sans"</code> switches to any Google Fonts family; <code>FAMILY=system</code> restores each platform's own font, in which case <code>make gen</code> checks that type sizes match their Dynamic Type styles.</p>
+</li>
+<li>
+<p><strong>One icon family everywhere:</strong> <code>contracts/icons.json</code> names Lucide icons (or an SVG of yours in <code>contracts/icons</code>), and <code>make gen</code> draws each one natively: an asset catalog on iOS, vector drawables on Android, inline SVG components on the web. The apps no longer depend on <code>lucide-react</code> or <code>material-icons-core</code>. Icons can be marked <code>mirrored</code> for right-to-left layouts, and icon sizes are tokens (<code>AppIconSize.md</code>, <code>size-icon-md</code>).</p>
+</li>
+<li>
+<p><strong>Environments:</strong> a new <code>contracts/config.json</code> declares environments and typed per-environment values, compiled into <code>AppConfig</code> and <code>AppEnvironment</code> on every platform. Debug builds use <code>development</code> and release builds use <code>production</code>.</p>
+</li>
+<li>
+<p><strong>Secrets:</strong> <code>contracts/config.json</code> can declare secret names. Values come from a git-ignored <code>.env</code>: <code>make gen</code> writes them into git-ignored <code>AppSecrets</code> files on iOS and Android, and the web app reads them on the server. It also writes <code>.env.example</code>, and <code>make doctor</code> warns about missing keys.</p>
+</li>
+<li>
+<p><strong>CLI:</strong> <code>GEEKNATIVE_ENV</code> (or <code>ENV=staging</code> with <code>make</code>) makes <code>check</code> and <code>run</code> build a chosen environment. <code>run</code> now regenerates first, and the Claude Code after-edit hook also regenerates when <code>.env</code> changes.</p>
+</li>
+<li>
+<p><strong>Upgrading a project:</strong> add <code>contracts/config.json</code> (the starter has three environments and no values), set <code>APP_ENVIRONMENT</code> in <code>Config/Debug.xcconfig</code> and <code>Config/Release.xcconfig</code>, add the <code>appEnvironment</code> property and <code>buildConfig = true</code> to <code>app/build.gradle.kts</code>, add the two <code>AppSecrets</code> paths to <code>.gitignore</code>, then run <code>make gen</code>. For icons and fonts: rewrite <code>contracts/icons.json</code> as Lucide names (<code>"settings": "settings"</code>, <code>"back": { "icon": "arrow-left", "mirrored": true }</code>), change <code>Image(systemName: AppIcon.x)</code> to <code>Image(AppIcon.x)</code> on iOS, drop <code>lucide-react</code> from <code>apps/web/package.json</code> and <code>material-icons-core</code> from the Android build, add <code>"icon": { "sm": 16, "md": 24, "lg": 32 }</code> to <code>tokens.json</code>, call <code>AppFonts.register()</code> from <code>AppMain</code>'s <code>init</code>, then run <code>make font FAMILY=Inter</code> (or keep <code>"font": { "family": "system" }</code> and align type sizes with their iOS styles).</p>
+</li>
+<li>
+<p><strong>Consistency audit:</strong></p>
+<ul>
+<li>The feature playbook's Verify step now has a checklist: string keys and icons used on every platform, no raw colors or sizes, matching names and IDs, labels, touch targets, and documented platform differences.</li>
+<li><code>apps/web/AGENTS.md</code> says the browser tab title is web chrome, so its separator is exempt from the no-literal-text rule.</li>
+<li>Home is now tested on the rendered screen on Android and web, for all three criteria including AC-home-3 (the gear opens Settings). Android runs Compose UI tests on the JVM with Robolectric, so no emulator is needed. Web renders into happy-dom. These are test-only dependencies and don't ship in the apps. iOS tests AC-home-1 and AC-home-2 only at the value level, because SwiftUI exposes no accessibility tree to unit tests; AC-home-3 stays untested on iOS and is checked by hand.</li>
+<li>A web test hydrates the server-rendered Settings screen with Dark stored and checks Dark is selected, which catches the Settings bug below.</li>
+<li>On web, the header Settings link and the appearance rows are now 48 px tall (they were 40 px), and the web Settings feature has an <code>InMemorySettingsRepository</code>, like iOS and Android.</li>
+<li>On iOS, the Settings <code>Form</code> now sits on the design tokens (<code>background</code> for the page, <code>surface</code> for the rows) instead of the system grouped background, which was pure black in dark mode. DESIGN.md says so. The section titles still use the system gray.</li>
+<li>On web, opening <code>/settings</code> directly with Dark stored showed a dark page but System as the selected choice. The Settings view model now renders <code>system</code> until hydration is done, then the stored value. iOS and Android were not affected.</li>
+</ul>
+</li>
+<li>
+<p><strong>Known gaps:</strong> raw sizes in app code (<code>48.dp</code> on Android, <code>size-4</code> and <code>size-6</code> on web) and the unused <code>home</code> icon are not fixed yet. The template does not commit a <code>package-lock.json</code>, so web dependencies resolve fresh on each <code>create</code>. That is how the <code>query-core</code> duplicate appeared; <code>@tanstack/query-core</code> and <code>@tanstack/react-query</code> are both pinned to <code>5.105.0</code> so they stay on one copy. Other transitive versions can still drift.</p>
+</li>
+<li>
+<p><strong>Applying the audit changes to an existing project:</strong> <code>geeknative upgrade</code> is not built yet, so copy them by hand. The playbook and the managed block in <code>apps/web/AGENTS.md</code> are framework files. The touch targets, the in-memory repository, the Home tests, DESIGN.md and the Home spec belong to your project. If <code>make check-web</code> fails with a type error in <code>router.tsx</code> (two copies of <code>@tanstack/query-core</code>), set both <code>@tanstack/query-core</code> and <code>@tanstack/react-query</code> to <code>5.105.0</code> in <code>apps/web/package.json</code> and reinstall.</p>
+</li>
+<li>
+<p><strong>Fixes from building a real app (Minutely, a quick commerce app):</strong></p>
+<ul>
+<li><strong>Web widths:</strong> spacing tokens named <code>sm</code>, <code>md</code>, <code>xl</code> (the template's names) took over Tailwind's width utilities, so <code>max-w-md</code> came out as 12px and squeezed text to one word per line. <code>tokens.css</code> now keeps <code>w-*</code>, <code>min-w-*</code> and <code>max-w-*</code> on Tailwind's container sizes.</li>
+<li><strong>Web layout:</strong> the app shell is full width with side padding, instead of a centered 42rem column with wide empty margins on desktop.</li>
+<li><strong>Screen titles:</strong> DESIGN.md requires leading-aligned titles on every platform (iOS large titles, Android <code>TopAppBar</code>, a left-aligned web <code>h1</code>), and the lint flags <code>.navigationBarTitleDisplayMode(.inline)</code> and <code>CenterAlignedTopAppBar</code>.</li>
+<li><strong>Motion and elevation tokens:</strong> <code>tokens.json</code> can define durations, easing curves, springs and shadows. They become <code>AppMotion</code> and <code>AppElevation</code> on iOS and Android, and <code>duration-*</code>, <code>ease-*</code> and <code>shadow-*</code> on the web. A spring is a duration and a bounce, mapped exactly onto Compose's physics and sampled into a CSS <code>linear()</code> curve. New projects get defaults.</li>
+<li><strong><code>make check-ios</code>:</strong> about a minute instead of seven or more. Parallel testing (which cloned and booted a simulator on every run) is off, the build reports its phases and a heartbeat instead of staying silent, and the simulator is always an iPhone on the newest iOS runtime instead of whichever one was booted. <code>check-android</code>, <code>run-ios</code> and <code>run-android</code> report progress too.</li>
+<li><strong>Android tests:</strong> <code>unitTests.isReturnDefaultValues</code> is now <code>false</code>, so a plain unit test that calls an Android API fails instead of silently getting <code>null</code>, <code>0</code> or <code>false</code>.</li>
+<li><strong>iOS UI tests:</strong> the template has an <code>AppUITests</code> target (XCUITest), run by <code>make check-ios</code>. AC-home-3 is now tested by tapping on all three platforms.</li>
+<li><strong>(ui) criteria:</strong> a spec can mark a criterion <code>(ui)</code>. Parity then counts it only when a test drives the real UI, and shows 🟡 when only view-model or route tests name it.</li>
+<li><strong><code>geeknative lint</code></strong> (and <code>make lint</code>, run by <code>make check</code>): fails on user-facing text in code, test IDs no spec lists, centered titles, a <code>planned</code> status with passing tests and a stale <code>spec/parity.md</code>, and warns about spec test IDs a finished app never uses and changes to only some apps.</li>
+<li><strong>Pinned CLI:</strong> a project created from a geeknative checkout is pinned to a snapshot of it (<code>.geeknative/geeknative-&#x3C;version>-&#x3C;commit>.tgz</code>) instead of a symlink that followed whatever branch the checkout had open. <code>create --link</code> keeps the old behavior for working on geeknative. <code>make doctor</code> says where the CLI comes from, and <code>make doctor FIX=1</code> pins a linked project.</li>
+<li><strong>Outside the project folder:</strong> AGENTS.md and the Claude Code guide explain that the hooks and platform agents only load when a session starts in the project folder, and <code>make check</code> now enforces what the hooks did.</li>
+</ul>
+</li>
+<li>
+<p><strong>Fixes from building a second app (Meetly, a meeting calendar):</strong></p>
+<ul>
+<li><strong>Plural <code>zero</code> forms</strong> are used for a count of 0 on every platform. iOS did this already; the web's <code>plural()</code> now does, and Android gets a generated <code>AppPlurals</code> (use it instead of <code>pluralStringResource</code>). Before, "No meetings" on iOS was "0 meetings" on Android and the web.</li>
+<li><strong>Android <code>java.time</code>:</strong> the template enables core library desugaring, so date and time code works on API 24 and 25.</li>
+<li><strong>Web content width:</strong> a <code>Page</code> component centers a screen's content in a readable column (or uses the full width with <code>width="full"</code>), and the template's Home and Settings use it. Forms no longer stretch across the window or hug its left edge.</li>
+<li><strong>Parity</strong> counts UI tests that render through a shared helper (web tests in happy-dom or jsdom, Android tests that find Compose nodes).</li>
+<li><strong>Lint:</strong>
+<ul>
+<li>the web text rules apply to <code>.tsx</code> only, so TypeScript generics are no longer flagged;</li>
+<li>only preview blocks are skipped, not the code after them;</li>
+<li>test IDs passed to helper components are checked;</li>
+<li>test-only changes don't count as one-platform work;</li>
+<li><code>lint ios</code>, <code>lint android</code> and <code>lint web</code> check one app's code;</li>
+<li>a platform check says it skipped the specs, and spec findings say they belong to the lead.</li>
+</ul>
+</li>
+<li><strong>Progress:</strong> the heartbeat names the test that's running, so slow iOS UI tests don't look like a hang.</li>
+<li><strong>Template:</strong>
+<ul>
+<li>a shared <code>renderApp</code> helper for web UI tests;</li>
+<li>iOS Settings tests that clean up their UserDefaults suites;</li>
+<li>the web docs recommend the native <code>&#x3C;dialog></code>;</li>
+<li>the Android docs explain zeroing Material's own elevation under token shadows.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>More fixes from the Meetly test:</strong></p>
+<ul>
+<li><strong>Android splash in Dark mode:</strong> the app registers the chosen appearance with the system (<code>UiModeManager.setApplicationNightMode</code>, Android 12+), so a cold start's splash screen is in it too.</li>
+<li><strong><code>make run-android</code></strong> reports "running" only once the app is on screen, with how long it took.</li>
+<li><strong>Lint:</strong> a web screen that caps its width without centering it is an error. <code>make lint-ios</code>, <code>lint-android</code> and <code>lint-web</code> lint one app.</li>
+<li><strong>Docs:</strong>
+<ul>
+<li>the web AGENTS.md explains which width and size classes use the spacing tokens, and to restart <code>vite preview</code> after a build;</li>
+<li>the iOS AGENTS.md covers confirmation dialogs in iOS 26+ UI tests;</li>
+<li>the feature playbook says to add strings for picker and dialog buttons.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Test IDs a platform can't use:</strong> a spec's Test IDs bullet can say <code>(not on iOS)</code> (or Android, web), and the lint stops expecting that ID there. The lint also no longer lets an all-dynamic string like <code>"${total}"</code> count as every listed ID.</p>
+</li>
+<li>
+<p><strong>Size tokens:</strong> <code>tokens.json</code> can define a <code>size</code> group for touch targets and other fixed sizes, generated as <code>AppSize</code> on iOS and Android and as <code>size-*</code> / <code>min-h-*</code> classes on the web. The template's <code>touchTarget</code> is 48, used for its Android and web touch targets.</p>
+</li>
+<li>
+<p><strong><code>geeknative pin</code></strong> (<code>make pin</code>) moves a project created from a checkout to a fresh snapshot of that checkout, removing the old one. Snapshots record where they came from, and <code>make doctor</code> warns when the checkout has moved past the project's snapshot.</p>
+</li>
+<li>
+<p><strong>Cross-platform consistency fixes from the Sizewise test:</strong></p>
+<ul>
+<li><strong>Text sizes as numbers everywhere:</strong> <code>AppTextSize</code> on iOS, Android and the web, and a web <code>tokens.ts</code> with <code>AppSpacing</code>, <code>AppRadius</code>, <code>AppIconSize</code> and <code>AppSize</code>. Before, only Android exposed text sizes as numbers.</li>
+<li><strong>Android text roles are optional:</strong> a text style can leave out <code>android</code>, so adding a style no longer restyles stock Material components on Android only.</li>
+<li><strong>iOS primary button:</strong> <code>.buttonStyle(.primary)</code> draws <code>onPrimary</code> on <code>primary</code>, readable in dark mode like Android and the web. DESIGN.md points to it instead of plain <code>.borderedProminent</code>.</li>
+<li><strong>Android controls at token sizes:</strong> <code>ControlSize.kt</code> (<code>Modifier.scaledToHeight</code>, <code>ControlContentPadding</code>) draws buttons, segmented buttons, switches and checkboxes at exactly a size token's height. Material's own minimums made them taller than on iOS and the web.</li>
+</ul>
+</li>
+<li>
+<p><strong>Applying these to an existing project:</strong> run <code>make doctor FIX=1</code> from a checkout to pin the CLI, then <code>make gen</code> (new <code>tokens.css</code> mappings) and <code>make parity</code>, and fix what <code>make lint</code> reports. The motion and elevation tokens, the full-width web shell, the iOS UI test target and the Android test setting belong to your project: copy them from the template if you want them.</p>
+</li>
+</ul>
+<h2 id="010-2026-10-10">0.1.0 (2026-10-10)<a class="heading-anchor" aria-hidden="true" tabindex="-1" href="#010-2026-10-10">#</a></h2>
+<p>The first release.</p>
+<ul>
+<li><strong>CLI:</strong> <code>create</code>, <code>gen</code>, <code>check</code>, <code>doctor</code>, <code>parity</code> and <code>run</code>, published as <code>geeknative</code> with <code>npm create geeknative</code> (<code>create-geeknative</code>).</li>
+<li><strong>Template:</strong>
+<ul>
+<li>AGENTS.md that triages plain prompts and routes them to PRODUCT.md, DESIGN.md, specs or contracts, plus one AGENTS.md per app and playbooks for each request type.</li>
+<li>Three apps with matching Home and Settings screens: SwiftUI (iOS 17 and later), Kotlin and Jetpack Compose (Android 7.0 and later), and React on TanStack Start.</li>
+<li>Contracts for app identity, design tokens, strings (with placeholders, plurals and locales) and icons, compiled into every app.</li>
+<li>Feature specs with acceptance criteria IDs, and parity reporting.</li>
+</ul>
+</li>
+<li><strong>Agents:</strong> CLAUDE.md imports, <code>ios-engineer</code>, <code>android-engineer</code> and <code>web-engineer</code> subagents, and hooks for Claude Code; a Gemini CLI setting; Dependabot configuration.</li>
+<li><strong>Ownership:</strong> a lockfile recording framework file hashes, ready for future upgrades.</li>
+<li><strong>License:</strong> Apache 2.0.</li>
+</ul>a:X
+f:X
+f:C
+0:{"buildId":"e3jjFxh9jXe7sq1CIoebh","data":[{"rsc":["$","$1","c",{"children":[[["$","script",null,{"type":"application/ld+json","dangerouslySetInnerHTML":{"__html":"$2"}}],["$","article",null,{"className":"min-w-0 pb-24 pt-10 lg:pt-14","data-pagefind-body":true,"children":[["$","header",null,{"className":"max-w-[46rem] border-b border-line pb-10","children":[["$","p",null,{"className":"label flex items-center gap-3 text-muted","children":[["$","span",null,{"aria-hidden":true,"className":"inline-block size-[7px] shrink-0 rounded-full bg-brand "}],["$","span",null,{"className":"tabular-nums","children":"05"}],["$","span",null,{"className":"h-px w-5 bg-current opacity-30"}],["$","span",null,{"children":"Project"}]]}],["$","h1",null,{"className":"mt-6 display-m","data-pagefind-meta":"title","children":"Changelog"}],["$","p",null,{"className":"mt-5 max-w-[40rem] text-[1.125rem] leading-[1.55] text-ink/70","children":"Release notes for geeknative."}]]}],["$","div",null,{"className":"mt-10 max-w-[46rem]","children":["$","$L3","project/changelog",{"children":[["$","div","0",{"className":"docs-prose","dangerouslySetInnerHTML":{"__html":"$4"}}]]}]}],"$L5"]}],"$L6"],["$L7"],"$L8"]}],"isPartial":"$@9","staleTime":"$a","varyParams":null},{"rsc":"$Lb","isPartial":"$@c","staleTime":"$a","varyParams":null},{"rsc":"$Ld","isPartial":"$@e","staleTime":"$a","varyParams":"$f"}],"isUpgradeableISRFallback":false,"a":"$@10","rootVaryParams":null,"needsRuntimeRequest":"$@11"}
+12:I[54249,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/38zk-49d1uomt.js","/geeknative/_next/static/chunks/3c0ewmw70a2jq.js"],""]
+13:I[35820,["/geeknative/_next/static/chunks/3ylnlcypto1do.js","/geeknative/_next/static/chunks/38zk-49d1uomt.js","/geeknative/_next/static/chunks/3c0ewmw70a2jq.js"],"Toc"]
+14:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"OutletBoundary"]
+15:"$Sreact.suspense"
+17:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"ViewportBoundary"]
+18:I[19400,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"MetadataBoundary"]
+19:I[18516,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"IconMark"]
+1a:I[87180,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+1b:I[42045,["/geeknative/_next/static/chunks/3ylnlcypto1do.js"],"default"]
+5:["$","footer",null,{"className":"mt-20 max-w-[46rem]","data-pagefind-ignore":true,"children":[["$","a",null,{"href":"https://github.com/GeekyAnts/geeknative/edit/main/website/content/docs/project/changelog.md","className":"label inline-flex items-center gap-2 text-muted transition-colors hover:text-ink","rel":"noreferrer","children":["Edit this page on GitHub ",["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0 -rotate-45 ","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}]]}],["$","nav",null,{"aria-label":"Previous and next","className":"mt-8 grid gap-px overflow-hidden rounded-2xl bg-line ring-1 ring-line sm:grid-cols-2","children":[["$","$L12",null,{"href":"/docs/project/contributing/","className":"group flex flex-col gap-3 bg-white p-6 transition-colors hover:bg-mist","children":[["$","span",null,{"className":"label text-muted","children":"Previous"}],["$","span",null,{"className":"flex items-center gap-3 text-[1.35rem] font-[700] leading-[1.1] tracking-[-0.025em] wide","children":[["$","svg",null,{"viewBox":"0 0 16 16","className":"size-[1em] shrink-0  rotate-180 transition-transform duration-500 ease-[var(--ease-expo)] group-hover:-translate-x-1","aria-hidden":true,"fill":"none","stroke":"currentColor","strokeWidth":"1.6","children":["$","path",null,{"d":"M1.5 8h12.5M9 3l5 5-5 5","strokeLinecap":"square"}]}],"Contributing"]}]]}],["$","span",null,{"className":"hidden bg-white sm:block"}]]}]]}]
+6:["$","$L13",null,{"items":[{"depth":2,"id":"unreleased","text":"Unreleased"},{"depth":2,"id":"010-2026-10-10","text":"0.1.0 (2026-10-10)"}]}]
+7:["$","script","script-0",{"src":"/geeknative/_next/static/chunks/3c0ewmw70a2jq.js","async":true}]
+8:["$","$L14",null,{"children":["$","$15",null,{"name":"Next.MetadataOutlet","children":"$@16"}]}]
+b:["$","$1","h",{"children":[null,["$","$L17",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#ffffff"}]]}],["$","div",null,{"hidden":true,"children":["$","$L18",null,{"children":["$","$15",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Changelog · geeknative"}],["$","meta","1",{"name":"description","content":"Release notes for geeknative."}],["$","meta","2",{"name":"keywords","content":"native app development,SwiftUI,Jetpack Compose,React,TanStack Start,coding agents,Claude Code,AGENTS.md,iOS Android web app,React Native alternative,Flutter alternative"}],["$","link","3",{"rel":"canonical","href":"https://geekyants.github.io/geeknative/docs/project/changelog/"}],["$","meta","4",{"property":"og:title","content":"Changelog · geeknative"}],["$","meta","5",{"property":"og:description","content":"Release notes for geeknative."}],["$","meta","6",{"property":"og:url","content":"https://geekyants.github.io/geeknative/docs/project/changelog/"}],["$","meta","7",{"property":"og:image","content":"https://geekyants.github.io/geeknative/opengraph-image.png"}],["$","meta","8",{"property":"og:image:width","content":"1200"}],["$","meta","9",{"property":"og:image:height","content":"630"}],["$","meta","10",{"property":"og:image:alt","content":"geeknative: one prompt, three native apps"}],["$","meta","11",{"name":"twitter:card","content":"summary_large_image"}],["$","meta","12",{"name":"twitter:title","content":"Changelog · geeknative"}],["$","meta","13",{"name":"twitter:description","content":"Release notes for geeknative."}],["$","meta","14",{"name":"twitter:image","content":"https://geekyants.github.io/geeknative/twitter-image.png?twitter-image.2fjuh4p5ndhng.png"}],["$","meta","15",{"name":"twitter:image:type","content":"image/png"}],["$","meta","16",{"name":"twitter:image:width","content":"1200"}],["$","meta","17",{"name":"twitter:image:height","content":"630"}],["$","link","18",{"rel":"icon","href":"/geeknative/icon.svg?icon.12cpu7ud8w87b.svg","sizes":"any","type":"image/svg+xml"}],["$","link","19",{"rel":"apple-touch-icon","href":"/geeknative/apple-icon.png?apple-icon.1b0eoaalscjqq.png","sizes":"180x180","type":"image/png"}],["$","$L19","20",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}]
+d:["$","$1","c",{"children":[null,["$","$L1a",null,{"parallelRouterKey":"children","template":["$","$L1b",null,{}]}]]}]
+11:true
+16:null
+a:300
+a:C
+10:0
+c:"$undefined"
+e:"$undefined"
+9:"$undefined"
