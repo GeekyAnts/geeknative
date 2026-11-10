@@ -57,7 +57,7 @@ Brand elements (color, type, spacing, imagery) change everywhere. Platform conve
 
 Typography tokens are roles: `display`, `headline`, `title`, `body`, `label` and `caption`, each with a size, line height and weight that every app uses. On iOS each also names the Dynamic Type style it scales with, on Android sizes are in sp and on web in rem, so text follows the user's text size setting everywhere. See the [contracts reference](/docs/reference/contracts/#tokensjson).
 
-All three apps share one typeface. New projects start with Inter, and the same font files are bundled into each app. To change it, the agent runs `make font FAMILY="Open Sans"` (any Google Fonts family) and every app picks it up; `make font FAMILY=system` goes back to each platform's own font. Navigation bars and system controls keep the platform's font, as the "native where it counts" table says.
+All three apps share one typeface. New projects start with Inter, and the same font files are bundled into each app. To change it, the agent runs `make font FAMILY="Open Sans"` (any Google Fonts family) and every app picks it up; `make font FAMILY=system` goes back to each platform's own font. Navigation bar titles use that typeface too. Back buttons, tab bars and other system controls keep the platform font, as the "native where it counts" table says.
 
 ## Icons
 

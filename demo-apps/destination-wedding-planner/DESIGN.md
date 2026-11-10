@@ -15,7 +15,7 @@ A **Caldera Navy** editorial system: ivory grounds, deep navy as the brand colou
 | Features, flows and data | Navigation chrome (iOS tab bar, Android navigation bar, web glass site header) |
 | Copy (contracts/strings) | Controls: pickers, switches, radio lists, date fields |
 | Colors, spacing, radii, icon sizes and type scale (contracts/tokens.json) | Gestures, haptics and transitions |
-| The typeface (Playfair Display via contracts/tokens.json `font`) | The font of navigation bars and system controls |
+| The typeface (Playfair Display via contracts/tokens.json `font`), including navigation bar titles | Back buttons, tab bars and other system controls |
 | Icons: the same drawing from one family (contracts/icons.json) | The system back chevron on iOS and other chrome icons |
 | Screen structure and content order, including title alignment (leading on every platform) | Sheets, dialogs and menus |
 | Glass panels over photography, editorial image-led Home | Native backdrop treatment: SwiftUI `.ultraThinMaterial`, Compose translucent surfaces, web `backdrop-blur` |
@@ -65,7 +65,7 @@ Dark mode keeps the same temperature: deep navy grounds, ivory text, a lifted se
 
 **Elevation.** `low` and `high` for floating chrome. `glow` is reserved and kept very quiet — primary actions do not use a coloured halo.
 
-**Typeface.** Playfair Display, files in contracts/fonts. Navigation bar titles and system controls keep the platform font.
+**Typeface.** Playfair Display, files in contracts/fonts. Navigation bar titles use it. Back buttons, the tab bar and other system controls keep the platform font.
 
 **Icons.** Lucide, from contracts/icons.json. Icons in content use the icon size tokens; icons in navigation chrome take the platform's default size.
 

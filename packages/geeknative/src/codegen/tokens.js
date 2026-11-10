@@ -306,6 +306,59 @@ export function tokenOutputs(tokens) {
 
 // ---------- iOS ----------
 
+/**
+ * Navigation bar titles use the shared typeface, so the large title matches Android's app bar
+ * and the web heading. Back buttons, the tab bar and other system controls stay in the
+ * platform font. Empty when the project uses the system family.
+ * Called from the main actor: AppMain.init registers the fonts before the first scene.
+ * @param {FontSpec} font
+ * @param {Record<string, TextToken>} typography
+ */
+function navigationTitles(font, typography) {
+  if (font.family === 'system') return ''
+  // The system large title is 34pt. A project can map a bigger role (a hero) to the same
+  // Dynamic Type style, so pick the role whose size is the large title, not the biggest one.
+  const largeTitleSize = IOS_TEXT_STYLE_SIZES.largeTitle
+  const large = Object.values(typography)
+    .filter((style) => style.ios === 'largeTitle')
+    .sort((a, b) => Math.abs(a.size - largeTitleSize) - Math.abs(b.size - largeTitleSize))[0]
+  const largeWeight = large?.weight ?? 700
+  const largeFace = font.faces[largeWeight] ?? faceEntries(font).at(-1)?.[1]
+  const largeSize = large?.size ?? largeTitleSize
+  // The inline bar is the system headline size. Prefer the title weight, then the nearest face.
+  const inlineWeight = [600, 500, 700, 400].find((weight) => font.faces[weight]) ?? largeWeight
+  const inlineFace = font.faces[inlineWeight]
+  if (!largeFace || !inlineFace) return ''
+  const largeName = swiftString(largeFace.postScriptName)
+  const inlineName = swiftString(inlineFace.postScriptName)
+  return `
+        MainActor.assumeIsolated {
+            // UIFont(name:) misses a face that was just registered. Core Text resolves the PostScript name.
+            func face(_ name: String, size: CGFloat) -> UIFont? {
+                let font = CTFontCreateWithName(name as CFString, size, nil)
+                guard (CTFontCopyPostScriptName(font) as String) == name else { return nil }
+                return font as UIFont
+            }
+            guard let large = face(${largeName}, size: ${largeSize}),
+                  let inline = face(${inlineName}, size: ${IOS_TEXT_STYLE_SIZES.headline}) else { return }
+            let largeFont = UIFontMetrics(forTextStyle: .largeTitle).scaledFont(for: large)
+            let inlineFont = UIFontMetrics(forTextStyle: .headline).scaledFont(for: inline)
+            let scrolled = UINavigationBarAppearance()
+            scrolled.configureWithDefaultBackground()
+            scrolled.largeTitleTextAttributes = [.font: largeFont]
+            scrolled.titleTextAttributes = [.font: inlineFont]
+            let resting = UINavigationBarAppearance()
+            resting.configureWithTransparentBackground()
+            resting.largeTitleTextAttributes = [.font: largeFont]
+            resting.titleTextAttributes = [.font: inlineFont]
+            let bar = UINavigationBar.appearance()
+            bar.standardAppearance = scrolled
+            bar.compactAppearance = scrolled
+            bar.scrollEdgeAppearance = resting
+            bar.compactScrollEdgeAppearance = resting
+        }`
+}
+
 /** @param {Rgba} c */
 const swiftHex = ([r, g, b, a]) => `0x${hex2(r)}${hex2(g)}${hex2(b)}${hex2(a)}`
 
@@ -379,7 +432,7 @@ nonisolated enum AppFonts {
         for file in files {
             guard let url = Bundle.main.url(forResource: file, withExtension: nil) else { continue }
             CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
-        }
+        }${navigationTitles(font, tokens.typography)}
     }
 }
 ${swiftMotion(tokens.motion)}${swiftElevation(tokens.elevation)}
