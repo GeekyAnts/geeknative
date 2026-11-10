@@ -31,6 +31,34 @@ final class AppNavigation {
     var experiencesPath: [Route] = []
     var weddingPath: [Route] = []
 
+    init() {
+        let arguments = ProcessInfo.processInfo.arguments
+        func value(_ flag: String) -> String? {
+            guard let index = arguments.firstIndex(of: flag), index + 1 < arguments.count else { return nil }
+            return arguments[index + 1]
+        }
+        switch value("-screenshotScreen") {
+        case "destinations":
+            selectedTab = .destinations
+        case "venues":
+            selectedTab = .venues
+        case "experiences":
+            selectedTab = .experiences
+        case "wedding":
+            selectedTab = .wedding
+        case "udaipur":
+            selectedTab = .destinations
+            destinationsPath = [.destination(value("-screenshotDestinationId") ?? "udaipur")]
+        case "venue":
+            selectedTab = .venues
+            if let id = value("-screenshotVenueId") { venuesPath = [.venue(id)] }
+        case "settings":
+            homePath = [.settings]
+        default:
+            break
+        }
+    }
+
     func open(_ tab: AppTab) {
         selectedTab = tab
     }

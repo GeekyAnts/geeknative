@@ -15,9 +15,19 @@ final class AppContainer {
 
     static func live() -> AppContainer {
         AppContainer(
-            settingsRepository: UserDefaultsSettingsRepository(defaults: .standard),
+            settingsRepository: screenshotSettings() ?? UserDefaultsSettingsRepository(defaults: .standard),
             weddingRepository: UserDefaultsWeddingRepository(defaults: .standard)
         )
+    }
+
+    /// Screenshot capture passes `-screenshotAppearance light|dark`. Honor it even when a previous
+    /// launch left a different appearance in UserDefaults, and don't write that choice back.
+    private static func screenshotSettings() -> (any SettingsRepository)? {
+        let arguments = ProcessInfo.processInfo.arguments
+        guard let index = arguments.firstIndex(of: "-screenshotAppearance"),
+              index + 1 < arguments.count,
+              let appearance = Appearance(rawValue: arguments[index + 1]) else { return nil }
+        return InMemorySettingsRepository(appearance: appearance)
     }
 
     /// In-memory dependencies, for previews and tests.
