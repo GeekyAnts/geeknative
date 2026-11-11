@@ -57,7 +57,7 @@ On the web, TanStack Start's server functions and API routes are only for web-on
 | Features, flows and data | Navigation chrome (navigation bar, top app bar, site header) |
 | Copy | Controls: pickers, switches, radio lists, segmented controls |
 | Colors, spacing, radii, icon sizes and type scale | Gestures, haptics and transitions |
-| The typeface (Inter by default), including navigation bar titles | Back buttons, tab bars and other system controls |
+| The typeface (Inter by default), including navigation titles, tab labels and bar-button text | The system back chevron glyph |
 | Icons: the same Lucide drawing everywhere | Chrome icons like the iOS back chevron |
 | Screen structure and content order | Sheets, dialogs and menus |
 | Accessibility labels and test IDs | |

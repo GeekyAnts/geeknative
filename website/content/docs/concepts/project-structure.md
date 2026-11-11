@@ -69,8 +69,8 @@ apps/android/
 
 apps/web/src/
 ├── router.tsx                Creates the router with { queryClient, container } as context
-├── routes/                   One file per URL; __root.tsx is the HTML shell and site header
-├── core/                     AppContainer, AppearanceEffect, designsystem/
+├── routes/                   One file per URL; __root.tsx is the HTML shell
+├── core/                     AppContainer, AppearanceEffect, navigation/SiteHeader (desktop-first top bar, side drawer below md), designsystem/
 ├── features/                 home/, settings/
 ├── generated/                From contracts/; never edit
 ├── styles.css                Tailwind entry; imports generated/tokens.css

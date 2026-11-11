@@ -15,7 +15,7 @@ A **Caldera Navy** editorial system: ivory grounds, deep navy as the brand colou
 | Features, flows and data | Navigation chrome (iOS tab bar, Android navigation bar, web glass site header) |
 | Copy (contracts/strings) | Controls: pickers, switches, radio lists, date fields |
 | Colors, spacing, radii, icon sizes and type scale (contracts/tokens.json) | Gestures, haptics and transitions |
-| The typeface (Playfair Display via contracts/tokens.json `font`), including navigation bar titles | Back buttons, tab bars and other system controls |
+| The typeface (Playfair Display via contracts/tokens.json `font`), including navigation titles, tab labels and bar-button text | The system back chevron glyph |
 | Icons: the same drawing from one family (contracts/icons.json) | The system back chevron on iOS and other chrome icons |
 | Screen structure and content order, including title alignment (leading on every platform) | Sheets, dialogs and menus |
 | Glass panels over photography, editorial image-led Home | Native backdrop treatment: SwiftUI `.ultraThinMaterial`, Compose translucent surfaces, web `backdrop-blur` |
@@ -65,7 +65,7 @@ Dark mode keeps the same temperature: deep navy grounds, ivory text, a lifted se
 
 **Elevation.** `low` and `high` for floating chrome. `glow` is reserved and kept very quiet — primary actions do not use a coloured halo.
 
-**Typeface.** Playfair Display, files in contracts/fonts. Navigation bar titles use it. Back buttons, the tab bar and other system controls keep the platform font.
+**Typeface.** Playfair Display, files in contracts/fonts. Navigation titles, tab labels and bar-button text use it and the token colors. The back chevron stays the system glyph.
 
 **Icons.** Lucide, from contracts/icons.json. Icons in content use the icon size tokens; icons in navigation chrome take the platform's default size.
 
@@ -77,7 +77,7 @@ How each platform builds the shared patterns. Add a row whenever a new pattern a
 |---|---|---|---|
 | Screen | Screen in a tab's `NavigationStack`. Home hides the system navigation bar so iOS 26+ Liquid Glass cannot frost the photograph; overlay chrome sits on the image. Inner screens use a leading large title on `background` | `Scaffold` with a `TopAppBar` on `background` (Material's `surface` role maps to `background`; cards use `surface`). Home draws edge-to-edge photography under overlay chrome, not a Material app bar | Page in the app shell. Home and destination/venue detail are full-bleed (`Page width="full"`). Lists and forms use `Page` (`width="readable"` or `full` for grids). The shell does not add side padding; each screen owns its inset |
 | Screen title | Leading-aligned large title on inner screens. Home shows the brand in overlay type on the photograph, not in a system bar | `TopAppBar`, leading-aligned, on inner screens. Home uses overlay type over the hero | `h1` at the start of inner pages, left-aligned. Home's headline is the hero `h1` |
-| Primary navigation | Tab bar: Home, Destinations, Venues, Experiences, My Wedding. Packages is pushed from Home, Destinations, or the Plan CTA | Navigation bar with the same five destinations. Packages is pushed the same way | Glass header: Home, Destinations, Venues, Experiences, Packages, My Wedding, plus Plan Your Wedding. Below `lg`, those destinations drop from a menu control |
+| Primary navigation | Tab bar: Home, Destinations, Venues, Experiences, My Wedding. Packages is pushed from Home, Destinations, or the Plan CTA | Navigation bar with the same five destinations. Packages is pushed the same way | Glass header: Home, Destinations, Venues, Experiences, Packages, My Wedding, plus Plan Your Wedding, in a row. Below `md`, a menu button opens those destinations in a side drawer |
 | Glass panel | `AppColors.surface.opacity(0.82)` plus `.background(.ultraThinMaterial)` and a thin `outline` stroke, `AppRadius.xl` | Translucent `Surface` at `surface` with high alpha, `outline` border, `AppRadius.xl` | `bg-surface/80 backdrop-blur-md border border-outline/80 rounded-xl shadow-high` |
 | Card | `AppCard`: `surface` fill, `AppRadius.lg`, optional image header | `AppCard`: `Surface` in `surface`, `AppRadius.lg` | `AppCard`: `bg-surface rounded-lg`. Editorial destination panels may be full-bleed photographs with a glass caption |
 | Primary action | `.buttonStyle(.primary)`: `onPrimary` on `primary`, capsule | `Button` in `primary` with `onPrimary` label | `button` with `bg-primary text-on-primary rounded-full` |
