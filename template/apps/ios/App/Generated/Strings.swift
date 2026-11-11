@@ -15,6 +15,15 @@ nonisolated enum Strings {
     /// You're all set
     static var homeWelcomeTitle: String { NSLocalizedString("home.welcomeTitle", comment: "") }
 
+    /// Close menu
+    static var navCloseMenu: String { NSLocalizedString("nav.closeMenu", comment: "") }
+
+    /// Home
+    static var navHome: String { NSLocalizedString("nav.home", comment: "") }
+
+    /// Open menu
+    static var navOpenMenu: String { NSLocalizedString("nav.openMenu", comment: "") }
+
     /// About
     static var settingsAboutTitle: String { NSLocalizedString("settings.about.title", comment: "") }
 

@@ -164,15 +164,26 @@ object AppTextSize {
     val caption = 12.sp
 }
 
-/** The text styles mapped onto Material 3 type roles, so stock components use them. */
-val AppMaterialTypography = Typography().copy(
-    displaySmall = AppTypography.display,
-    headlineMedium = AppTypography.headline,
-    titleLarge = AppTypography.title,
-    bodyLarge = AppTypography.body,
-    labelLarge = AppTypography.label,
-    bodySmall = AppTypography.caption,
-)
+/** The text styles mapped onto Material 3 type roles, so stock components use them. Unmapped roles keep Material's size and weight but use the shared typeface when there is one. */
+val AppMaterialTypography = Typography().let { defaults ->
+    defaults.copy(
+        displayLarge = defaults.displayLarge.copy(fontFamily = AppFontFamily),
+        displayMedium = defaults.displayMedium.copy(fontFamily = AppFontFamily),
+        displaySmall = AppTypography.display,
+        headlineLarge = defaults.headlineLarge.copy(fontFamily = AppFontFamily),
+        headlineMedium = AppTypography.headline,
+        headlineSmall = defaults.headlineSmall.copy(fontFamily = AppFontFamily),
+        titleLarge = AppTypography.title,
+        titleMedium = defaults.titleMedium.copy(fontFamily = AppFontFamily),
+        titleSmall = defaults.titleSmall.copy(fontFamily = AppFontFamily),
+        bodyLarge = AppTypography.body,
+        bodyMedium = defaults.bodyMedium.copy(fontFamily = AppFontFamily),
+        bodySmall = AppTypography.caption,
+        labelLarge = AppTypography.label,
+        labelMedium = defaults.labelMedium.copy(fontFamily = AppFontFamily),
+        labelSmall = defaults.labelSmall.copy(fontFamily = AppFontFamily),
+    )
+}
 
 /** The radii mapped onto Material 3 shape roles. */
 val AppShapes = Shapes(

@@ -11,6 +11,11 @@ The app's screens, their route names, and how each platform presents them. Route
 
 - **iOS:** one `NavigationStack` rooted at Home. Screens are pushed by appending a `Route` (apps/ios/App/Core/Navigation/Route.swift).
 - **Android:** one Navigation 3 back stack starting at `Route.Home`. Screens are pushed with `backStack.add(...)` (apps/android/.../core/navigation).
-- **Web:** TanStack Router file routes in apps/web/src/routes. Every screen has a URL.
+- **Web:** TanStack Router file routes in apps/web/src/routes. The site header shows destinations in a row. Below `md`, those destinations move into a side drawer (`nav.menuToggle`, `nav.menu`). Every screen has a URL.
+
+## Test IDs
+
+- `nav.menuToggle`: opens and closes the compact web side drawer
+- `nav.menu`: the side drawer on compact viewports
 
 When you add a screen, add a row here. Use the web path as the mobile deep link path when deep links are added.
