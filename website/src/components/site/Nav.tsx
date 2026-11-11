@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Logo } from "@/components/brand/Logo";
 import { Arrow, Button, wrap } from "@/components/ui/primitives";
 import { hireUrl, links, nav } from "@/content/site";
@@ -17,6 +18,20 @@ export function GitHubIcon({ className = "" }: { className?: string }) {
 export function Nav({ solid = false }: { solid?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const mq = matchMedia("(min-width: 1024px)");
+    const onChange = () => {
+      if (mq.matches) setOpen(false);
+    };
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -26,108 +41,150 @@ export function Nav({ solid = false }: { solid?: boolean }) {
   }, []);
 
   useEffect(() => {
-    document.documentElement.style.overflow = open ? "hidden" : "";
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+
+    if (open) {
+      document.documentElement.dataset.navOpen = "1";
+      document.documentElement.style.overflow = "hidden";
+      for (const child of Array.from(document.body.children)) {
+        if (child.id !== "mobile-menu-root") child.setAttribute("inert", "");
+      }
+    } else {
+      delete document.documentElement.dataset.navOpen;
+      document.documentElement.style.overflow = "";
+      for (const child of Array.from(document.body.children)) {
+        child.removeAttribute("inert");
+      }
+    }
+
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      delete document.documentElement.dataset.navOpen;
+      document.documentElement.style.overflow = "";
+      for (const child of Array.from(document.body.children)) {
+        child.removeAttribute("inert");
+      }
+    };
   }, [open]);
 
-  const filled = solid || scrolled || open;
+  const barFilled = solid || scrolled;
+  const headerSurface = open
+    ? "bg-paper shadow-[0_1px_0_var(--color-line)]"
+    : barFilled
+      ? "bg-white/85 shadow-[0_1px_0_var(--color-line)] backdrop-blur-xl"
+      : "bg-transparent";
+
+  const mobileMenu =
+    mounted && open
+      ? createPortal(
+          <div
+            id="mobile-menu-root"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Site menu"
+            className="fixed inset-x-0 bottom-0 top-16 z-[60] bg-paper lg:hidden"
+          >
+            <nav id="mobile-menu" aria-label="Mobile" className={`${wrap} flex h-full flex-col pb-10 pt-6`}>
+              <ul className="border-t border-line">
+                {nav.map((item, i) => (
+                  <li key={item.label} className="border-b border-line">
+                    <Link
+                      href={item.href}
+                      onClick={() => setOpen(false)}
+                      className="flex items-center justify-between py-5 text-[1.75rem] font-semibold tracking-[-0.03em] wide"
+                    >
+                      <span>{item.label}</span>
+                      <span className="label text-faint">0{i + 1}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-auto space-y-6">
+                <Button href="/docs/start-here/quick-start/" className="w-full justify-between">
+                  Get started
+                </Button>
+                <Button href={hireUrl("nav-mobile")} tone="ghost" className="w-full justify-between">
+                  Talk to the team
+                </Button>
+                <a href={links.github} className="flex items-center justify-between text-lg">
+                  GitHub <Arrow direction="up-right" />
+                </a>
+              </div>
+            </nav>
+          </div>,
+          document.body,
+        )
+      : null;
 
   return (
-    <header
-      className={`fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,backdrop-filter] duration-500 ${
-        filled ? "bg-white/85 shadow-[0_1px_0_var(--color-line)] backdrop-blur-xl" : "bg-transparent"
-      }`}
-    >
-      <div className={`${wrap} flex h-16 items-center justify-between gap-6 lg:h-[72px]`}>
-        <Link href="/" className="relative z-10 -m-2 p-2" aria-label="geeknative home">
-          <Logo className="text-[20px] lg:text-[22px]" />
-        </Link>
-
-        <nav aria-label="Primary" className="hidden lg:block">
-          <ul className="flex items-center gap-9">
-            {nav.map((item) => (
-              <li key={item.label}>
-                <Link
-                  href={item.href}
-                  className="group relative py-2 text-[14.5px] font-medium tracking-[-0.005em] text-ink/80 transition-colors hover:text-ink"
-                >
-                  {item.label}
-                  <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-brand transition-transform duration-500 ease-[var(--ease-expo)] group-hover:scale-x-100" />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        <div className="flex items-center gap-2">
-          <a
-            href={hireUrl("nav")}
-            className="hidden px-3 py-2 text-[14.5px] font-medium tracking-[-0.005em] text-ink/80 transition-colors hover:text-brand xl:inline-flex"
-          >
-            Talk to the team
-          </a>
-          <a
-            href={links.github}
-            className="hidden size-10 items-center justify-center rounded-full text-ink/80 transition-colors hover:text-ink sm:inline-flex"
-            aria-label="geeknative on GitHub"
-          >
-            <GitHubIcon className="size-[19px]" />
-          </a>
-          <div className="hidden sm:block">
-            <Button href="/docs/start-here/quick-start/" className="h-10 px-5 text-[14px]">
-              Get started
-            </Button>
-          </div>
-          <button
-            type="button"
-            onClick={() => setOpen((o) => !o)}
-            aria-expanded={open}
-            aria-controls="mobile-menu"
-            className="relative z-10 -mr-2 inline-flex size-11 items-center justify-center lg:hidden"
-          >
-            <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
-            <span className="relative block h-3 w-6">
-              <span className={`absolute left-0 top-0 h-[1.5px] w-6 bg-ink transition-transform duration-500 ease-[var(--ease-expo)] ${open ? "translate-y-[5.25px] rotate-45" : ""}`} />
-              <span className={`absolute bottom-0 left-0 h-[1.5px] w-6 bg-ink transition-transform duration-500 ease-[var(--ease-expo)] ${open ? "-translate-y-[5.25px] -rotate-45" : ""}`} />
-            </span>
-          </button>
-        </div>
-      </div>
-
-      <div
-        id="mobile-menu"
-        className={`fixed inset-0 top-16 bg-white transition-[opacity,visibility] duration-500 lg:hidden ${open ? "visible opacity-100" : "invisible opacity-0"}`}
+    <>
+      <header
+        className={`fixed inset-x-0 top-0 transition-[background-color,box-shadow,backdrop-filter] duration-500 ${open ? "z-[61]" : "z-50"} ${headerSurface}`}
       >
-        <nav aria-label="Mobile" className={`${wrap} flex h-full flex-col pb-10 pt-6`}>
-          <ul className="border-t border-line">
-            {nav.map((item, i) => (
-              <li key={item.label} className="border-b border-line">
-                <Link
-                  href={item.href}
-                  onClick={() => setOpen(false)}
-                  className="flex items-center justify-between py-5 text-[1.75rem] font-semibold tracking-[-0.03em] wide"
-                >
-                  <span>{item.label}</span>
-                  <span className="label text-faint">0{i + 1}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <div className="mt-auto space-y-6">
-            <Button href="/docs/start-here/quick-start/" className="w-full justify-between">
-              Get started
-            </Button>
-            <Button href={hireUrl("nav-mobile")} tone="ghost" className="w-full justify-between">
+        <div className={`${wrap} flex h-16 items-center justify-between gap-6 lg:h-[72px]`}>
+          <Link href="/" className="relative z-10 -m-2 p-2" aria-label="geeknative home">
+            <Logo className="text-[20px] lg:text-[22px]" />
+          </Link>
+
+          <nav aria-label="Primary" className="hidden lg:block">
+            <ul className="flex items-center gap-9">
+              {nav.map((item) => (
+                <li key={item.label}>
+                  <Link
+                    href={item.href}
+                    className="group relative py-2 text-[14.5px] font-medium tracking-[-0.005em] text-ink/80 transition-colors hover:text-ink"
+                  >
+                    {item.label}
+                    <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-brand transition-transform duration-500 ease-[var(--ease-expo)] group-hover:scale-x-100" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <div className="flex items-center gap-2">
+            <a
+              href={hireUrl("nav")}
+              className="hidden px-3 py-2 text-[14.5px] font-medium tracking-[-0.005em] text-ink/80 transition-colors hover:text-brand xl:inline-flex"
+            >
               Talk to the team
-            </Button>
-            <a href={links.github} className="flex items-center justify-between text-lg">
-              GitHub <Arrow direction="up-right" />
             </a>
+            <a
+              href={links.github}
+              className="hidden size-10 items-center justify-center rounded-full text-ink/80 transition-colors hover:text-ink sm:inline-flex"
+              aria-label="geeknative on GitHub"
+            >
+              <GitHubIcon className="size-[19px]" />
+            </a>
+            <div className="hidden sm:block">
+              <Button href="/docs/start-here/quick-start/" className="h-10 px-5 text-[14px]">
+                Get started
+              </Button>
+            </div>
+            <button
+              type="button"
+              onClick={() => setOpen((o) => !o)}
+              aria-expanded={open}
+              aria-controls="mobile-menu"
+              className="relative z-10 -mr-2 inline-flex size-11 items-center justify-center lg:hidden"
+            >
+              <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
+              <span className="relative block h-3 w-6">
+                <span
+                  className={`absolute left-0 top-0 h-[1.5px] w-6 bg-ink transition-transform duration-500 ease-[var(--ease-expo)] ${open ? "translate-y-[5.25px] rotate-45" : ""}`}
+                />
+                <span
+                  className={`absolute bottom-0 left-0 h-[1.5px] w-6 bg-ink transition-transform duration-500 ease-[var(--ease-expo)] ${open ? "-translate-y-[5.25px] -rotate-45" : ""}`}
+                />
+              </span>
+            </button>
           </div>
-        </nav>
-      </div>
-    </header>
+        </div>
+      </header>
+      {mobileMenu}
+    </>
   );
 }
