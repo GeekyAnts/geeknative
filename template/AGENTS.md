@@ -1,4 +1,5 @@
-<!-- geeknative:begin (managed by geeknative: replaced on upgrade. Add your own rules under "Project rules" at the end.) -->
+
+
 # How to work in this repo
 
 This repo is **one product, built three times, natively**: iOS (SwiftUI), Android (Kotlin + Jetpack Compose) and web (React + TanStack Start). The apps share no code. They behave the same because every change goes through shared docs and contracts first, and you keep all three in step.
@@ -110,8 +111,7 @@ Ask only when a wrong guess is expensive to undo: the data model, the navigation
 **Working from outside this folder.** Claude Code loads this project's hooks and platform agents (.claude/) only when the session starts in this folder. If yours started elsewhere (a parent folder, another repo), they aren't active: run `make gen` yourself after every contract edit, brief general-purpose agents with the platform's AGENTS.md, and rely on `make check`, which enforces the same rules as the hooks. Better: start the session in this folder.
 
 Add `ENV=staging` (or another environment from contracts/config.json) to `make check*` and `make run-*` to build that environment instead of the default.
-<!-- geeknative:end -->
+
+
 
 ## Project rules
-
-<!-- Your own rules go here. They override the defaults above, and geeknative upgrades never touch them. -->
