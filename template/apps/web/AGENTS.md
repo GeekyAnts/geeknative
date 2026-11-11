@@ -43,6 +43,7 @@ Same names and responsibilities as the iOS and Android apps.
 | Motion and shadows | `motion-safe:transition duration-fast ease-standard`; a spring is `ease-snappy duration-snappy`; `shadow-low`. Never raw durations, curves or shadow values, and wrap motion in `motion-safe:`. |
 | Icons | `<AppIcons.settings className="size-icon-md" />` (generated) |
 | Config | `AppConfig.apiBaseUrl`, `environment` from `#/generated/config` (generated from contracts/config.json) |
+| HTTP API | `listStories` / types from `#/generated/api` (generated from contracts/api.json when present) |
 | Secrets | `AppSecrets.mapsApiKey` from `#/generated/secrets.server` (server functions and API routes only) |
 | Test IDs | `data-testid="notes.addButton"` |
 
