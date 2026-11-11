@@ -121,10 +121,15 @@ export function Nav({ solid = false }: { solid?: boolean }) {
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 transition-[background-color,box-shadow,backdrop-filter] duration-500 ${open ? "z-[61]" : "z-50"} ${headerSurface}`}
+        className={`fixed inset-x-0 top-0 transition-[background-color,box-shadow,backdrop-filter] duration-500 ${open ? "z-[62] isolate" : "z-50"} ${headerSurface}`}
       >
-        <div className={`${wrap} flex h-16 items-center justify-between gap-6 lg:h-[72px]`}>
-          <Link href="/" className="relative z-10 -m-2 p-2" aria-label="geeknative home">
+        <div className={`${wrap} relative z-[1] flex h-16 items-center justify-between gap-6 lg:h-[72px]`}>
+          <Link
+            href="/"
+            className="relative -m-2 p-2"
+            aria-label="geeknative home"
+            onClick={() => setOpen(false)}
+          >
             <Logo className="text-[20px] lg:text-[22px]" />
           </Link>
 
