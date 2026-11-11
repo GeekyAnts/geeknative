@@ -255,14 +255,56 @@ The web module throws if it runs in the browser. Use it only in server functions
 
 Mobile apps embed the values they are built with, so treat the built app as readable by anyone who has it. Keep keys that must stay private on a server.
 
+## api/ (TypeScript)
+
+Optional typed HTTP API for the three apps. Omit the folder when there is no backend. When it is present, `contracts/config.json` must declare `values.apiBaseUrl` with type `url`. Base URLs stay in config; `contracts/api/` only describes models and operations. TypeScript here is the **contract language**, not web-app code: `make gen` typechecks it, converts models and clients to Swift and Kotlin, and **copies** the `.ts` files into `apps/web/src/generated/api/` (with a generated banner). Apps import `#/generated/api`, never `contracts/api`.
+
+```ts
+// contracts/api/models.ts
+export interface Story {
+  id: string
+  title: string
+  score?: number
+}
+
+// contracts/api/operations.ts
+import type { Story } from './models'
+
+export const api = {
+  listStories: {
+    method: 'GET',
+    path: '/stories',
+    response: null as unknown as Story[],
+  },
+  getStory: {
+    method: 'GET',
+    path: '/stories/:id',
+    params: null as unknown as { id: string },
+    response: null as unknown as Story,
+  },
+} as const
+```
+
+**Subset (v1).** Allowed: `export interface` / object `export type`, `string` / `number` / `boolean` / string unions / arrays / named models, optional `?` fields, `export const api` with `method`, `path`, `params`, `body`, `response`, and relative imports inside `contracts/api/`. `operation` names and fields are camelCase; model names are PascalCase. `response` / `params` / `body` are written as `null as unknown as Type`. Rejected: `class`, `any`, mapped/conditional types, generics, default exports, runtime/Zod code, and imports from outside the folder. `make gen` typechecks the folder first; a type error fails generation before any platform file is written. TypeScript must be installed (the web app already lists it).
+
+Never edit the generated API files. Change `contracts/api/` and run `make gen`. Hand-written repositories call the generated client.
+
+### Generated
+
+| Platform | Files |
+|---|---|
+| iOS | `App/Generated/ApiModels.swift` (`Codable` models), `App/Generated/ApiClient.swift` (`URLSession` helpers named by each operation, using `AppConfig.apiBaseUrl`) |
+| Android | `generated/ApiModels.kt` (`@Serializable` data classes), `generated/ApiClient.kt` (`HttpURLConnection` helpers using `AppConfig.apiBaseUrl`) |
+| Web | Copy of each `contracts/api/*.ts` into `src/generated/api/`, plus `src/generated/api/client.ts` (`fetch` helpers) and `src/generated/api.ts` (re-exports). Import `#/generated/api`. |
+
 ## All generated files
 
 | Platform | Files |
 |---|---|
-| iOS | `apps/ios/App/Generated/`: `AppIdentity.swift`, `AppConfig.swift`, `AppSecrets.swift` (only with secrets), `Tokens.swift`, `Strings.swift`, `Icons.swift`, `Localizable.xcstrings`, `Colors.xcassets` (accent color), `Icons.xcassets`, `Fonts/`; `apps/ios/Config/Identity.xcconfig` |
+| iOS | `apps/ios/App/Generated/`: `AppIdentity.swift`, `AppConfig.swift`, `AppSecrets.swift` (only with secrets), `ApiModels.swift` / `ApiClient.swift` (only with `contracts/api/`), `Tokens.swift`, `Strings.swift`, `Icons.swift`, `Localizable.xcstrings`, `Colors.xcassets` (accent color), `Icons.xcassets`, `Fonts/`; `apps/ios/Config/Identity.xcconfig` |
 | Project root | `.env.example` (only with secrets) |
-| Android | `apps/android/app/src/main/kotlin/app/generated/`: `AppIdentity.kt`, `AppConfig.kt`, `AppSecrets.kt` (only with secrets), `Tokens.kt`, `Icons.kt`; `res/values/generated_colors.xml`, `res/values-night/generated_colors.xml`, `res/values*/generated_strings.xml`, `res/drawable/generated_icon_*.xml`, `res/font/generated_*`; `apps/android/app/identity.properties` |
-| Web | `apps/web/src/generated/`: `app.ts`, `config.ts`, `secrets.server.ts` (only with secrets), `tokens.css`, `strings.ts`, `icons.tsx`, `fonts/` |
+| Android | `apps/android/app/src/main/kotlin/app/generated/`: `AppIdentity.kt`, `AppConfig.kt`, `AppSecrets.kt` (only with secrets), `ApiModels.kt` / `ApiClient.kt` (only with `contracts/api/`), `Tokens.kt`, `Icons.kt`; `res/values/generated_colors.xml`, `res/values-night/generated_colors.xml`, `res/values*/generated_strings.xml`, `res/drawable/generated_icon_*.xml`, `res/font/generated_*`; `apps/android/app/identity.properties` |
+| Web | `apps/web/src/generated/`: `app.ts`, `config.ts`, `secrets.server.ts` (only with secrets), `api.ts` / `api/` (only with `contracts/api/`), `tokens.css`, `strings.ts`, `icons.tsx`, `fonts/` |
 
 ## Validation errors
 
@@ -272,6 +314,8 @@ Problems are reported with the file and field, so an agent can fix them directly
 ✖ contracts/tokens.json color.primary.light must be a hex color like "#4F46E5" or "#4F46E5CC" (got "#4F46E").
 ✖ contracts/strings/fr.json "settings.about.version" must use the same placeholders and plural shape as en.json.
 ✖ contracts/config.json values.apiBaseUrl is missing a value for "staging". Every value needs every environment.
+✖ contracts/api/models.ts:4:16: Type 'number' is not assignable to type 'string'.
+✖ contracts/api/ requires contracts/config.json values.apiBaseUrl with type "url" (one value per environment).
 ✖ contracts/config.json secrets.mapsApiKey has "value". Secrets are names only: put the value in .env as MAPS_API_KEY.
 ✖ contracts/icons.json "star" "sparkly-star" is not a Lucide icon. Browse https://lucide.dev/icons for names like "settings" or "arrow-left".
 ✖ contracts/fonts/Inter-Regular.ttf has weight 400, but font.files lists it under "500".

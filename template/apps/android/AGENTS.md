@@ -47,6 +47,7 @@ Same names and responsibilities as the iOS and web apps.
 | Motion and shadows | `animationSpec = AppMotion.snappy()`, `AppMotion.standard(AppMotion.fast)`; `Modifier.shadow(AppElevation.low, shape)`. Never raw durations, easings or elevations. Material components draw their own elevation, so set it to 0 when you apply a token shadow (for example `FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp)`), or they draw two. Compose follows the system's animation scale, so "Remove animations" turns motion off. |
 | Icons | `Icon(AppIcons.settings, contentDescription = ...)` (generated vector drawables; never `Icons.Filled.*`) |
 | Config | `AppConfig.apiBaseUrl`, `AppEnvironment.current` (generated from contracts/config.json) |
+| HTTP API | `ApiClient.listStories()` / models in `ApiModels.kt` (generated from contracts/api/ when present) |
 | Secrets | `AppSecrets.mapsApiKey` (generated from .env, git-ignored; never commit values) |
 | Test IDs | `Modifier.testTag("notes.addButton")` |
 

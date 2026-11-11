@@ -40,5 +40,8 @@
     "prepack": "node scripts/prepack.js",
     "postpack": "node scripts/prepack.js --clean",
     "test": "node --test 'test/**/*.test.js'"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
   }
 }

@@ -4,6 +4,8 @@ import { readdirSync, existsSync, readFileSync } from 'node:fs'
 import { walk } from '../lib/fsutil.js'
 import { readEnvFile } from '../lib/env.js'
 import { rel } from '../lib/project.js'
+import { CliError } from '../lib/log.js'
+import { apiOutputs, readApi } from './api.js'
 import { appOutputs, readApp } from './app.js'
 import { configOutputs, ENV_EXAMPLE, readConfig, resolveSecrets } from './config.js'
 import { iconOutputs, readIcons } from './icons.js'
@@ -21,6 +23,12 @@ export function generateAll(root) {
   const app = readApp(root)
   const config = readConfig(root)
   const secrets = resolveSecrets(config, Object.keys(config.secrets).length ? readEnvFile(root) : null)
+  const api = readApi(root)
+  if (api && config.values.apiBaseUrl?.type !== 'url') {
+    throw new CliError(
+      'contracts/api/ requires contracts/config.json values.apiBaseUrl with type "url" (one value per environment).',
+    )
+  }
   return {
     outputs: [
       ...appOutputs(app),
@@ -28,6 +36,7 @@ export function generateAll(root) {
       ...stringOutputs(readStrings(root, app.defaultLocale), app.name),
       ...iconOutputs(readIcons(root)),
       ...configOutputs(config, secrets.values),
+      ...(api ? apiOutputs(api) : []),
     ],
     warnings: secrets.warnings,
   }
