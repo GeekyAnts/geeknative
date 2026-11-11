@@ -6,6 +6,7 @@ export default function NotFound() {
   return (
     <>
       <Nav solid />
+      <div id="site-content">
       <main className={`${wrap} flex min-h-[78svh] flex-col justify-center pb-20 pt-32`}>
         <Eyebrow index="404" className="text-muted">
           Page not found
@@ -24,6 +25,7 @@ export default function NotFound() {
         </div>
       </main>
       <Footer />
+      </div>
     </>
   );
 }

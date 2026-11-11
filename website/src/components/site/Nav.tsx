@@ -46,27 +46,26 @@ export function Nav({ solid = false }: { solid?: boolean }) {
     };
     window.addEventListener("keydown", onKey);
 
+    const pageContent = document.getElementById("site-content");
+
     if (open) {
       document.documentElement.dataset.navOpen = "1";
       document.documentElement.style.overflow = "hidden";
-      for (const child of Array.from(document.body.children)) {
-        if (child.id !== "mobile-menu-root") child.setAttribute("inert", "");
-      }
+      pageContent?.setAttribute("inert", "");
+      pageContent?.setAttribute("aria-hidden", "true");
     } else {
       delete document.documentElement.dataset.navOpen;
       document.documentElement.style.overflow = "";
-      for (const child of Array.from(document.body.children)) {
-        child.removeAttribute("inert");
-      }
+      pageContent?.removeAttribute("inert");
+      pageContent?.removeAttribute("aria-hidden");
     }
 
     return () => {
       window.removeEventListener("keydown", onKey);
       delete document.documentElement.dataset.navOpen;
       document.documentElement.style.overflow = "";
-      for (const child of Array.from(document.body.children)) {
-        child.removeAttribute("inert");
-      }
+      pageContent?.removeAttribute("inert");
+      pageContent?.removeAttribute("aria-hidden");
     };
   }, [open]);
 
