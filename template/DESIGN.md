@@ -23,7 +23,7 @@ _Not described yet. Describe the look you want (for example "calm and minimal" o
 | Features, flows and data | Navigation chrome (navigation bar, top app bar, site header) |
 | Copy (contracts/strings) | Controls: pickers, switches, radio lists, segmented controls |
 | Colors, spacing, radii, icon sizes and type scale (contracts/tokens.json) | Gestures, haptics and transitions |
-| The typeface (contracts/tokens.json `font`, files in contracts/fonts), including navigation bar titles | Back buttons, tab bars and other system controls |
+| The typeface (contracts/tokens.json `font`, files in contracts/fonts), including navigation titles, tab labels and bar-button text | The system back chevron glyph |
 | Icons: the same drawing from one family (contracts/icons.json) | The system back chevron on iOS and other chrome icons |
 | Screen structure and content order, including title alignment (leading on every platform) | Sheets, dialogs and menus |
 | Accessibility labels and test IDs | |
@@ -60,7 +60,7 @@ Defined in contracts/tokens.json and compiled into each app by `make gen`.
 
 **Elevation.** Shadows live in contracts/tokens.json `elevation`. Use them only for things that float above the content (a bottom bar, a floating button, a dragged card). A shadow can be tinted with a color token (`"color": "primary"`), so it follows dark mode.
 
-**Typeface.** One font family for all three apps: `font.family` in contracts/tokens.json, with one file per weight in contracts/fonts. The starter uses Inter. To switch, run `make font FAMILY="Open Sans"` (any Google Fonts family) or `make font FAMILY=system` for each platform's own font; for a font that isn't on Google Fonts, put its .ttf files in contracts/fonts and list them under `font.files`. Every weight the type scale uses must have a file. Navigation bar titles use that typeface. Back buttons, tab bars and other system controls keep the platform font. With `system`, iOS text sizes come from Dynamic Type, so each role's size must match its iOS style (`make gen` says so if not).
+**Typeface.** One font family for all three apps: `font.family` in contracts/tokens.json, with one file per weight in contracts/fonts. The starter uses Inter. To switch, run `make font FAMILY="Open Sans"` (any Google Fonts family) or `make font FAMILY=system` for each platform's own font; for a font that isn't on Google Fonts, put its .ttf files in contracts/fonts and list them under `font.files`. Every weight the type scale uses must have a file. Navigation titles, tab labels and bar-button text use that typeface and the token colors (`background`, `onBackground`, `primary`). The back chevron stays the system glyph. With `system`, iOS text sizes come from Dynamic Type, so each role's size must match its iOS style (`make gen` says so if not); chrome still uses the token colors.
 
 **Icons.** One family, Lucide, drawn identically on every platform from the same shape data: pick a name at https://lucide.dev/icons and add it to contracts/icons.json (`"settings": "settings"`). For artwork Lucide doesn't have, put a simple single-color SVG in contracts/icons and point at it (`"logo": { "svg": "logo.svg" }`). Mark directional icons `"mirrored": true` so they flip in right-to-left layouts. Icons in content use the icon size tokens; icons in navigation chrome take the platform's default size. Icons take the current text color.
 
@@ -70,7 +70,7 @@ How each platform builds the shared patterns. Add a row whenever a new pattern a
 
 | Pattern | iOS | Android | Web |
 |---|---|---|---|
-| Screen | Screen in a `NavigationStack`, with a large navigation title | `Scaffold` with a `TopAppBar`, both on the `background` token (Material's `surface` role is mapped to `background`; only cards use `surface`) | Page in the app shell: the header and page span the window with `px-lg` (`md:px-xl`) side padding, and the screen's content is a `Page`: a centered readable column (`width="readable"`, the default) for forms, settings, lists and detail screens, or the full width (`width="full"`) for content that uses it, like grids and side-by-side panes |
+| Screen | Screen in a `NavigationStack`, with a large navigation title | `Scaffold` with a `TopAppBar`, both on the `background` token (Material's `surface` role is mapped to `background`; only cards use `surface`) | Page in a desktop-first app shell: the header shows destinations in a row; below `md` a menu button opens a side drawer. The header and page span the window with `px-lg` (`md:px-xl`) side padding. Screen content is a `Page`: a centered readable column (`width="readable"`, the default) for forms, settings, lists and detail screens, or the full width (`width="full"`) for grids and side-by-side panes. Unprefixed layout is the wide window; `max-md:` is the shrink. |
 | Screen title | Leading-aligned large title (the default; don't use `.navigationBarTitleDisplayMode(.inline)`) | `TopAppBar`, which is leading-aligned (not `CenterAlignedTopAppBar`) | `h1` at the start of the page, left-aligned |
 | Settings or form | `Form` with sections, on `background` with `surface` rows (`scrollContentBackground(.hidden)`) | Column with section headers | Sections in cards |
 | Single choice | Inline `Picker` (checkmarks) | Radio buttons | Radio group |

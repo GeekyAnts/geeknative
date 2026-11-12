@@ -84,29 +84,62 @@ nonisolated enum AppFonts {
             CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
         }
         MainActor.assumeIsolated {
+            func tokenColor(light: UInt32, dark: UInt32) -> UIColor {
+                UIColor { traits in UIColor(rgba: traits.userInterfaceStyle == .dark ? dark : light) }
+            }
+            func textAttributes(color: UIColor, font: UIFont? = nil) -> [NSAttributedString.Key: Any] {
+                var attrs: [NSAttributedString.Key: Any] = [.foregroundColor: color]
+                if let font { attrs[.font] = font }
+                return attrs
+            }
+
             // UIFont(name:) misses a face that was just registered. Core Text resolves the PostScript name.
             func face(_ name: String, size: CGFloat) -> UIFont? {
                 let font = CTFontCreateWithName(name as CFString, size, nil)
                 guard (CTFontCopyPostScriptName(font) as String) == name else { return nil }
                 return font as UIFont
             }
-            guard let large = face("Inter-Bold", size: 34),
-                  let inline = face("Inter-SemiBold", size: 17) else { return }
-            let largeFont = UIFontMetrics(forTextStyle: .largeTitle).scaledFont(for: large)
-            let inlineFont = UIFontMetrics(forTextStyle: .headline).scaledFont(for: inline)
+            let large = face("Inter-Bold", size: 34).map { UIFontMetrics(forTextStyle: .largeTitle).scaledFont(for: $0) }
+            let inline = face("Inter-SemiBold", size: 17).map { UIFontMetrics(forTextStyle: .headline).scaledFont(for: $0) }
+            let label = face("Inter-Medium", size: 14).map { UIFontMetrics(forTextStyle: .subheadline).scaledFont(for: $0) }
+            let background = tokenColor(light: 0xFFFFFFFF, dark: 0x0B0D12FF)
+            let onBackground = tokenColor(light: 0x0F172AFF, dark: 0xE6E8EEFF)
+            let primary = tokenColor(light: 0x4F46E5FF, dark: 0xA5B4FCFF)
+            let onSurfaceVariant = tokenColor(light: 0x566074FF, dark: 0xA3ABBDFF)
             let scrolled = UINavigationBarAppearance()
-            scrolled.configureWithDefaultBackground()
-            scrolled.largeTitleTextAttributes = [.font: largeFont]
-            scrolled.titleTextAttributes = [.font: inlineFont]
+            scrolled.configureWithOpaqueBackground()
+            scrolled.backgroundColor = background
+            scrolled.shadowColor = .clear
+            scrolled.largeTitleTextAttributes = textAttributes(color: onBackground, font: large)
+            scrolled.titleTextAttributes = textAttributes(color: onBackground, font: inline)
             let resting = UINavigationBarAppearance()
             resting.configureWithTransparentBackground()
-            resting.largeTitleTextAttributes = [.font: largeFont]
-            resting.titleTextAttributes = [.font: inlineFont]
+            resting.largeTitleTextAttributes = textAttributes(color: onBackground, font: large)
+            resting.titleTextAttributes = textAttributes(color: onBackground, font: inline)
             let bar = UINavigationBar.appearance()
             bar.standardAppearance = scrolled
             bar.compactAppearance = scrolled
             bar.scrollEdgeAppearance = resting
             bar.compactScrollEdgeAppearance = resting
+            bar.tintColor = onBackground
+            let tab = UITabBarAppearance()
+            tab.configureWithOpaqueBackground()
+            tab.backgroundColor = background
+            for item in [tab.stackedLayoutAppearance, tab.inlineLayoutAppearance, tab.compactInlineLayoutAppearance] {
+                item.normal.titleTextAttributes = textAttributes(color: onSurfaceVariant, font: label)
+                item.selected.titleTextAttributes = textAttributes(color: primary, font: label)
+                item.normal.iconColor = onSurfaceVariant
+                item.selected.iconColor = primary
+            }
+            let tabBar = UITabBar.appearance()
+            tabBar.standardAppearance = tab
+            tabBar.scrollEdgeAppearance = tab
+            tabBar.tintColor = primary
+            tabBar.unselectedItemTintColor = onSurfaceVariant
+            let buttons = UIBarButtonItem.appearance()
+            let buttonAttrs = textAttributes(color: onBackground, font: label)
+            buttons.setTitleTextAttributes(buttonAttrs, for: .normal)
+            buttons.setTitleTextAttributes(buttonAttrs, for: .highlighted)
         }
     }
 }

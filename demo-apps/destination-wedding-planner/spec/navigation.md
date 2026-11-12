@@ -20,11 +20,11 @@ Query parameters on Destinations (all optional, same names on every platform whe
 
 - **iOS:** a `TabView` with five tabs (Home, Destinations, Venues, Experiences, Wedding). Each tab has its own `NavigationStack`. Packages, destination detail, venue detail and Settings are pushed. Screens are pushed by appending a `Route` (apps/ios/App/Core/Navigation/Route.swift).
 - **Android:** a `Scaffold` with a navigation bar of the same five destinations and a Navigation 3 back stack. Packages and details are pushed with `backStack.add(...)`.
-- **Web:** TanStack Router file routes in apps/web/src/routes. A floating glass header holds every primary destination plus Plan Your Wedding. Below the large breakpoint the destinations fold into a panel that drops from the header (`nav.menuToggle`, `nav.menu`). Every screen has a URL.
+- **Web:** TanStack Router file routes in apps/web/src/routes. A floating glass header holds every primary destination plus Plan Your Wedding in a row. Below `md` those destinations move into a side drawer (`nav.menuToggle`, `nav.menu`). Every screen has a URL.
 
 ## Test IDs
 
-- `nav.menuToggle`: opens and closes the compact web navigation panel
-- `nav.menu`: the dropped navigation panel on compact viewports
+- `nav.menuToggle`: opens and closes the compact web side drawer
+- `nav.menu`: the side drawer on compact viewports
 
 When you add a screen, add a row here. Use the web path as the mobile deep link path when deep links are added.

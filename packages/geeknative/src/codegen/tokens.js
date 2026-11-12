@@ -307,55 +307,104 @@ export function tokenOutputs(tokens) {
 // ---------- iOS ----------
 
 /**
- * Navigation bar titles use the shared typeface, so the large title matches Android's app bar
- * and the web heading. Back buttons, the tab bar and other system controls stay in the
- * platform font. Empty when the project uses the system family.
+ * Navigation chrome uses token colors on every project, and the shared typeface when there is
+ * one, so titles, tab labels and bar-button text match Android and the web. The back chevron
+ * glyph stays the system symbol. A missing PostScript face skips only that font, not the colors.
  * Called from the main actor: AppMain.init registers the fonts before the first scene.
- * @param {FontSpec} font
- * @param {Record<string, TextToken>} typography
+ * @param {Tokens} tokens
  */
-function navigationTitles(font, typography) {
-  if (font.family === 'system') return ''
-  // The system large title is 34pt. A project can map a bigger role (a hero) to the same
-  // Dynamic Type style, so pick the role whose size is the large title, not the biggest one.
-  const largeTitleSize = IOS_TEXT_STYLE_SIZES.largeTitle
-  const large = Object.values(typography)
-    .filter((style) => style.ios === 'largeTitle')
-    .sort((a, b) => Math.abs(a.size - largeTitleSize) - Math.abs(b.size - largeTitleSize))[0]
-  const largeWeight = large?.weight ?? 700
-  const largeFace = font.faces[largeWeight] ?? faceEntries(font).at(-1)?.[1]
-  const largeSize = large?.size ?? largeTitleSize
-  // The inline bar is the system headline size. Prefer the title weight, then the nearest face.
-  const inlineWeight = [600, 500, 700, 400].find((weight) => font.faces[weight]) ?? largeWeight
-  const inlineFace = font.faces[inlineWeight]
-  if (!largeFace || !inlineFace) return ''
-  const largeName = swiftString(largeFace.postScriptName)
-  const inlineName = swiftString(inlineFace.postScriptName)
-  return `
-        MainActor.assumeIsolated {
+function chromeAppearance(tokens) {
+  const { font, typography, colors } = tokens
+  const shared = font.family !== 'system'
+  let faces = ''
+  let fontArg = ''
+  if (shared) {
+    // The system large title is 34pt. A project can map a bigger role (a hero) to the same
+    // Dynamic Type style, so pick the role whose size is the large title, not the biggest one.
+    const largeTitleSize = IOS_TEXT_STYLE_SIZES.largeTitle
+    const large = Object.values(typography)
+      .filter((style) => style.ios === 'largeTitle')
+      .sort((a, b) => Math.abs(a.size - largeTitleSize) - Math.abs(b.size - largeTitleSize))[0]
+    const largeWeight = large?.weight ?? 700
+    const largeFace = font.faces[largeWeight] ?? faceEntries(font).at(-1)?.[1]
+    const largeSize = large?.size ?? largeTitleSize
+    const inlineWeight = [600, 500, 700, 400].find((weight) => font.faces[weight]) ?? largeWeight
+    const inlineFace = font.faces[inlineWeight]
+    const labelStyle = typography.label
+    const labelWeight =
+      (labelStyle && font.faces[labelStyle.weight] && labelStyle.weight) ||
+      [500, 400, 600, 700].find((weight) => font.faces[weight]) ||
+      largeWeight
+    const labelFace = font.faces[labelWeight]
+    const labelSize = labelStyle?.size ?? IOS_TEXT_STYLE_SIZES.subheadline
+    const scaled = (face, size, style) =>
+      face
+        ? `face(${swiftString(face.postScriptName)}, size: ${size}).map { UIFontMetrics(forTextStyle: .${style}).scaledFont(for: $0) }`
+        : 'nil'
+    faces = `
             // UIFont(name:) misses a face that was just registered. Core Text resolves the PostScript name.
             func face(_ name: String, size: CGFloat) -> UIFont? {
                 let font = CTFontCreateWithName(name as CFString, size, nil)
                 guard (CTFontCopyPostScriptName(font) as String) == name else { return nil }
                 return font as UIFont
             }
-            guard let large = face(${largeName}, size: ${largeSize}),
-                  let inline = face(${inlineName}, size: ${IOS_TEXT_STYLE_SIZES.headline}) else { return }
-            let largeFont = UIFontMetrics(forTextStyle: .largeTitle).scaledFont(for: large)
-            let inlineFont = UIFontMetrics(forTextStyle: .headline).scaledFont(for: inline)
+            let large = ${scaled(largeFace, largeSize, 'largeTitle')}
+            let inline = ${scaled(inlineFace, IOS_TEXT_STYLE_SIZES.headline, 'headline')}
+            let label = ${scaled(labelFace, labelSize, 'subheadline')}
+`
+    fontArg = (name) => `, font: ${name}`
+  }
+  const withFont = shared ? fontArg : () => ''
+  const color = (name) =>
+    `tokenColor(light: ${swiftHex(colors[name].light)}, dark: ${swiftHex(colors[name].dark)})`
+  return `
+        MainActor.assumeIsolated {
+            func tokenColor(light: UInt32, dark: UInt32) -> UIColor {
+                UIColor { traits in UIColor(rgba: traits.userInterfaceStyle == .dark ? dark : light) }
+            }
+            func textAttributes(color: UIColor, font: UIFont? = nil) -> [NSAttributedString.Key: Any] {
+                var attrs: [NSAttributedString.Key: Any] = [.foregroundColor: color]
+                if let font { attrs[.font] = font }
+                return attrs
+            }
+${faces}            let background = ${color('background')}
+            let onBackground = ${color('onBackground')}
+            let primary = ${color('primary')}
+            let onSurfaceVariant = ${color('onSurfaceVariant')}
             let scrolled = UINavigationBarAppearance()
-            scrolled.configureWithDefaultBackground()
-            scrolled.largeTitleTextAttributes = [.font: largeFont]
-            scrolled.titleTextAttributes = [.font: inlineFont]
+            scrolled.configureWithOpaqueBackground()
+            scrolled.backgroundColor = background
+            scrolled.shadowColor = .clear
+            scrolled.largeTitleTextAttributes = textAttributes(color: onBackground${withFont('large')})
+            scrolled.titleTextAttributes = textAttributes(color: onBackground${withFont('inline')})
             let resting = UINavigationBarAppearance()
             resting.configureWithTransparentBackground()
-            resting.largeTitleTextAttributes = [.font: largeFont]
-            resting.titleTextAttributes = [.font: inlineFont]
+            resting.largeTitleTextAttributes = textAttributes(color: onBackground${withFont('large')})
+            resting.titleTextAttributes = textAttributes(color: onBackground${withFont('inline')})
             let bar = UINavigationBar.appearance()
             bar.standardAppearance = scrolled
             bar.compactAppearance = scrolled
             bar.scrollEdgeAppearance = resting
             bar.compactScrollEdgeAppearance = resting
+            bar.tintColor = onBackground
+            let tab = UITabBarAppearance()
+            tab.configureWithOpaqueBackground()
+            tab.backgroundColor = background
+            for item in [tab.stackedLayoutAppearance, tab.inlineLayoutAppearance, tab.compactInlineLayoutAppearance] {
+                item.normal.titleTextAttributes = textAttributes(color: onSurfaceVariant${withFont('label')})
+                item.selected.titleTextAttributes = textAttributes(color: primary${withFont('label')})
+                item.normal.iconColor = onSurfaceVariant
+                item.selected.iconColor = primary
+            }
+            let tabBar = UITabBar.appearance()
+            tabBar.standardAppearance = tab
+            tabBar.scrollEdgeAppearance = tab
+            tabBar.tintColor = primary
+            tabBar.unselectedItemTintColor = onSurfaceVariant
+            let buttons = UIBarButtonItem.appearance()
+            let buttonAttrs = textAttributes(color: onBackground${withFont('label')})
+            buttons.setTitleTextAttributes(buttonAttrs, for: .normal)
+            buttons.setTitleTextAttributes(buttonAttrs, for: .highlighted)
         }`
 }
 
@@ -432,7 +481,7 @@ nonisolated enum AppFonts {
         for file in files {
             guard let url = Bundle.main.url(forResource: file, withExtension: nil) else { continue }
             CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
-        }${navigationTitles(font, tokens.typography)}
+        }${chromeAppearance(tokens)}
     }
 }
 ${swiftMotion(tokens.motion)}${swiftElevation(tokens.elevation)}
@@ -519,10 +568,24 @@ ${faces.map(([weight, face]) => `    Font(R.font.${androidFontName(face.file)}, 
 
 `
     : ''
-  const slots = Object.entries(tokens.typography)
-    .filter(([, t]) => t.android)
-    .map(([name, t]) => `    ${t.android} = AppTypography.${name},`)
-    .join('\n')
+  const mapped = Object.fromEntries(Object.entries(tokens.typography).filter(([, t]) => t.android).map(([name, t]) => [t.android, name]))
+  const materialTypography = faces.length
+    ? `Typography().let { defaults ->
+    defaults.copy(
+${[...M3_TEXT_SLOTS]
+  .map((slot) =>
+    mapped[slot]
+      ? `        ${slot} = AppTypography.${mapped[slot]},`
+      : `        ${slot} = defaults.${slot}.copy(fontFamily = AppFontFamily),`,
+  )
+  .join('\n')}
+    )
+}`
+    : `Typography().copy(
+${Object.entries(mapped)
+  .map(([slot, name]) => `    ${slot} = AppTypography.${name},`)
+  .join('\n')}
+)`
   const shape = (/** @type {string} */ key) => (tokens.radius[key] !== undefined ? `RoundedCornerShape(AppRadius.${key})` : null)
   const shapes = [
     ['extraSmall', shape('xs') ?? shape('sm')],
@@ -601,10 +664,8 @@ object AppTextSize {
 ${Object.entries(tokens.typography).map(([name, t]) => `    val ${name} = ${t.size}.sp`).join('\n')}
 }
 
-/** The text styles mapped onto Material 3 type roles, so stock components use them. */
-val AppMaterialTypography = Typography().copy(
-${slots}
-)
+/** The text styles mapped onto Material 3 type roles, so stock components use them. Unmapped roles keep Material's size and weight but use the shared typeface when there is one. */
+val AppMaterialTypography = ${materialTypography}
 
 /** The radii mapped onto Material 3 shape roles. */
 val AppShapes = Shapes(
@@ -735,6 +796,11 @@ ${fixedSizes ? `\n  /* fixed sizes: size-touch-target, min-h-touch-target, ... *
 ${type}
 ${motion ? `\n${motion}\n` : ''}
   --font-sans: ${faces.length ? `'${family}', ` : ''}${systemStack};
+}
+
+button, input, textarea, select {
+  font: inherit;
+  color: inherit;
 }
 
 .dark {
