@@ -378,9 +378,7 @@ ${faces}            let background = ${color('background')}
             scrolled.largeTitleTextAttributes = textAttributes(color: onBackground${withFont('large')})
             scrolled.titleTextAttributes = textAttributes(color: onBackground${withFont('inline')})
             let resting = UINavigationBarAppearance()
-            resting.configureWithOpaqueBackground()
-            resting.backgroundColor = background
-            resting.shadowColor = .clear
+            resting.configureWithTransparentBackground()
             resting.largeTitleTextAttributes = textAttributes(color: onBackground${withFont('large')})
             resting.titleTextAttributes = textAttributes(color: onBackground${withFont('inline')})
             let bar = UINavigationBar.appearance()

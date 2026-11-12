@@ -12,7 +12,6 @@ const drawerLinkClass =
 
 const destinations = [
   { to: '/', label: strings.navHome },
-  { to: '/settings', label: strings.homeOpenSettings },
 ] as const
 
 export function SiteHeader() {

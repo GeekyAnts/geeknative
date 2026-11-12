@@ -14,7 +14,6 @@ describe('Site header', () => {
     expect(toggle?.getAttribute('aria-expanded')).toBe('true')
     expect(menu?.getAttribute('aria-hidden')).toBe('false')
     expect(menu?.textContent).toContain(strings.navHome)
-    expect(menu?.textContent).toContain(strings.homeOpenSettings)
     app.unmount()
   })
 })

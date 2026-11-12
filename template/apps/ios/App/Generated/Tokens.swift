@@ -113,9 +113,7 @@ nonisolated enum AppFonts {
             scrolled.largeTitleTextAttributes = textAttributes(color: onBackground, font: large)
             scrolled.titleTextAttributes = textAttributes(color: onBackground, font: inline)
             let resting = UINavigationBarAppearance()
-            resting.configureWithOpaqueBackground()
-            resting.backgroundColor = background
-            resting.shadowColor = .clear
+            resting.configureWithTransparentBackground()
             resting.largeTitleTextAttributes = textAttributes(color: onBackground, font: large)
             resting.titleTextAttributes = textAttributes(color: onBackground, font: inline)
             let bar = UINavigationBar.appearance()
