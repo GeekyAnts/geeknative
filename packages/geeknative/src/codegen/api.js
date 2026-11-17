@@ -14,7 +14,8 @@ const UNSUPPORTED = new Set(['oneOf', 'anyOf', 'allOf', 'not', 'callbacks', 'lin
  * @typedef {{ kind: 'enum', values: string[] }} EnumType
  * @typedef {{ kind: 'ref', name: string }} RefType
  * @typedef {{ kind: 'array', items: ApiType }} ArrayType
- * @typedef {ScalarType | EnumType | RefType | ArrayType} ApiType
+ * @typedef {{ kind: 'void' }} VoidType
+ * @typedef {ScalarType | EnumType | RefType | ArrayType | VoidType} ApiType
  * @typedef {{ name: string, type: ApiType, required: boolean }} ApiField
  * @typedef {{ name: string, fields: ApiField[] }} ApiModel
  * @typedef {{ name: string, in: 'path' | 'query', type: ApiType, required: boolean }} ApiParam
@@ -100,10 +101,6 @@ export function validateApi(raw) {
   return { models, operations }
 }
 
-/**
- * @param {ApiContract} api
- * @returns {{ path: string, content: string | Buffer, local?: boolean }[]}
- */
 /**
  * @param {ApiContract} api
  * @param {{ includeClient?: boolean }} [opts]
@@ -259,6 +256,11 @@ function readOperation(pathKey, method, operation, schemas, seenIds) {
     }
     const required = param.in === 'path' ? true : Boolean(param.required)
     const type = readType(param.schema ?? { type: 'string' }, `${pWhere}.schema`, schemas)
+    if (type.kind === 'array' || type.kind === 'ref' || type.kind === 'void') {
+      throw new CliError(
+        `${pWhere}: path and query parameters must be string, integer, number, boolean, or a string enum (no arrays).`,
+      )
+    }
     const entry = { name: param.name, in: /** @type {'path' | 'query'} */ (param.in), type, required }
     if (param.in === 'path') pathParams.push(entry)
     else queryParams.push(entry)
@@ -286,11 +288,11 @@ function readOperation(pathKey, method, operation, schemas, seenIds) {
   if (!responses || typeof responses !== 'object' || Array.isArray(responses)) {
     throw new CliError(`${where} needs responses.`)
   }
-  const success = responses['200'] ?? responses['201'] ?? responses.default
+  const success = responses['200'] ?? responses['201'] ?? responses['204'] ?? responses.default
   if (!success) {
-    throw new CliError(`${where} needs a 200, 201, or default response with JSON.`)
+    throw new CliError(`${where} needs a 200, 201, 204, or default response.`)
   }
-  const response = readJsonContent(success, `${where}.responses`, schemas)
+  const response = readSuccessType(success, `${where}.responses`, schemas)
 
   return {
     id: operation.operationId,
@@ -309,6 +311,21 @@ function readOperation(pathKey, method, operation, schemas, seenIds) {
  * @param {Record<string, any>} schemas
  * @returns {ApiType}
  */
+/**
+ * @param {any} container
+ * @param {string} where
+ * @param {Record<string, any>} schemas
+ * @returns {ApiType}
+ */
+function readSuccessType(container, where, schemas) {
+  if (!container || typeof container !== 'object') throw new CliError(`${where} must be an object.`)
+  const json = container.content?.['application/json']
+  if (!json || typeof json !== 'object' || !json.schema) {
+    return { kind: 'void' }
+  }
+  return readType(json.schema, `${where}.content["application/json"].schema`, schemas)
+}
+
 function readJsonContent(container, where, schemas) {
   if (!container || typeof container !== 'object') throw new CliError(`${where} must be an object.`)
   const content = container.content
@@ -340,6 +357,8 @@ function swiftType(type) {
       return type.name
     case 'array':
       return `[${swiftType(type.items)}]`
+    case 'void':
+      return 'Void'
   }
 }
 
@@ -370,7 +389,7 @@ ${structs || '// No models declared.'}
 function swiftPathExpression(op) {
   let result = JSON.stringify(op.path)
   for (const param of op.pathParams) {
-    result = `${result}.replacingOccurrences(of: "{${param.name}}", with: String(${param.name}))`
+    result = `${result}.replacingOccurrences(of: "{${param.name}}", with: encodePathSegment(String(${param.name})))`
   }
   return result
 }
@@ -424,7 +443,11 @@ ${bodyBlock}        let (data, response) = try await URLSession.shared.data(for:
         guard (200..<300).contains(http.statusCode) else {
             throw ApiError.httpStatus(http.statusCode, data)
         }
-        return try JSONDecoder().decode(${responseType}.self, from: data)
+        ${
+          op.response.kind === 'void'
+            ? 'return'
+            : `return try JSONDecoder().decode(${responseType}.self, from: data)`
+        }
     }`
     })
     .join('\n\n')
@@ -451,6 +474,12 @@ ${methods || '    // No operations declared.\n'}
         guard let url = components.url else { throw ApiError.badURL(path) }
         return url
     }
+
+    private static func encodePathSegment(_ value: String) -> String {
+        var allowed = CharacterSet.alphanumerics
+        allowed.insert(charactersIn: "-._~")
+        return value.addingPercentEncoding(withAllowedCharacters: allowed) ?? value
+    }
 }
 `
 }
@@ -462,7 +491,7 @@ function kotlinType(type) {
     case 'enum':
       return 'String'
     case 'integer':
-      return 'Int'
+      return 'Long'
     case 'number':
       return 'Double'
     case 'boolean':
@@ -471,6 +500,8 @@ function kotlinType(type) {
       return type.name
     case 'array':
       return `List<${kotlinType(type.items)}>`
+    case 'void':
+      return 'Unit'
   }
 }
 
@@ -519,7 +550,7 @@ function kotlinDecode(type, expr) {
     case 'enum':
       return `${expr}.toString()`
     case 'integer':
-      return `when (val v = ${expr}) { is Number -> v.toInt(); else -> v.toString().toInt() }`
+      return `when (val v = ${expr}) { is Number -> v.toLong(); else -> v.toString().toLong() }`
     case 'number':
       return `when (val v = ${expr}) { is Number -> v.toDouble(); else -> v.toString().toDouble() }`
     case 'boolean':
@@ -588,7 +619,7 @@ function kotlinClient(api) {
       const responseType = kotlinType(op.response)
       let pathExpr = JSON.stringify(op.path)
       for (const param of op.pathParams) {
-        pathExpr = `${pathExpr}.replace("{${param.name}}", ${param.name}.toString())`
+        pathExpr = `${pathExpr}.replace("{${param.name}}", encodePathSegment(${param.name}.toString()))`
       }
       const queryBuilds = op.queryParams
         .map((param) => {
@@ -623,8 +654,12 @@ ${bodySetup}        try {
             val stream = if (code in 200..299) connection.inputStream else connection.errorStream
             val text = stream?.bufferedReader(Charsets.UTF_8)?.use { it.readText() }.orEmpty()
             if (code !in 200..299) throw ApiException(code, text)
-            val json = org.json.JSONTokener(text).nextValue()
-            ${kotlinDecode(op.response, 'json')}
+            ${
+              op.response.kind === 'void'
+                ? 'Unit'
+                : `val json = org.json.JSONTokener(text).nextValue()
+            ${kotlinDecode(op.response, 'json')}`
+            }
         } finally {
             connection.disconnect()
         }
@@ -642,6 +677,8 @@ class ApiException(val status: Int, val body: String) : Exception("HTTP \$status
 
 object ApiClient {
 ${methods || '    // No operations declared.\n'}
+    private fun encodePathSegment(value: String): String =
+        java.net.URLEncoder.encode(value, Charsets.UTF_8.name()).replace("+", "%20")
 }
 
 ${helpers}
@@ -664,6 +701,8 @@ function tsType(type) {
       return type.name
     case 'array':
       return `Array<${tsType(type.items)}>`
+    case 'void':
+      return 'void'
   }
 }
 
@@ -731,7 +770,11 @@ ${fetchBody}
   if (!response.ok) {
     throw new ApiError(response.status, await response.text())
   }
-  return (await response.json()) as ${tsType(op.response)}
+  ${
+    op.response.kind === 'void'
+      ? 'return'
+      : `return (await response.json()) as ${tsType(op.response)}`
+  }
 }`
     })
     .join('\n\n')

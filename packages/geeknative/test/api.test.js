@@ -90,16 +90,19 @@ test('HN OpenAPI fixture generates Story models and list/get clients on every pl
   assert.match(swiftClient, /static func listStories\(\) async throws -> \[Story\]/)
   assert.match(swiftClient, /static func getStory\(id: String\) async throws -> Story/)
   assert.match(swiftClient, /AppConfig\.apiBaseUrl/)
+  assert.match(swiftClient, /encodePathSegment/)
 
   const kotlinModels = outputOf(outputs, 'ApiModels.kt')
   assert.match(kotlinModels, /data class Story/)
   assert.match(kotlinModels, /val id: String/)
-  assert.match(kotlinModels, /val score: Int\? = null/)
+  assert.match(kotlinModels, /val score: Long\? = null/)
 
   const kotlinClient = outputOf(outputs, 'ApiClient.kt')
   assert.match(kotlinClient, /suspend fun listStories\(\): List<Story>/)
   assert.match(kotlinClient, /suspend fun getStory\(id: String\): Story/)
   assert.match(kotlinClient, /AppConfig\.apiBaseUrl/)
+  assert.match(kotlinClient, /encodePathSegment/)
+  assert.match(kotlinClient, /\.replace\("\+", "%20"\)/)
 
   const ts = outputOf(outputs, 'generated/api.ts')
   assert.match(ts, /export type Story = \{/)
@@ -183,6 +186,60 @@ test('oneOf is rejected', () => {
       return true
     },
   )
+})
+
+test('array path and query parameters are rejected', () => {
+  assert.throws(
+    () =>
+      validateApi({
+        openapi: '3.1.0',
+        info: { title: 'X', version: '1' },
+        paths: {
+          '/x': {
+            get: {
+              operationId: 'listX',
+              parameters: [{ name: 'tags', in: 'query', schema: { type: 'array', items: { type: 'string' } } }],
+              responses: { '200': { content: { 'application/json': { schema: { type: 'string' } } } } },
+            },
+          },
+        },
+      }),
+    (error) => {
+      assert.ok(error instanceof CliError)
+      assert.match(error.message, /no arrays/)
+      return true
+    },
+  )
+})
+
+test('204 generates void clients and Kotlin integers are Long', () => {
+  const dir = projectWithApi({
+    openapi: '3.1.0',
+    info: { title: 'X', version: '1' },
+    paths: {
+      '/items/{id}': {
+        delete: {
+          operationId: 'deleteItem',
+          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
+          responses: { '204': {} },
+        },
+      },
+    },
+    components: {
+      schemas: {
+        Item: {
+          type: 'object',
+          required: ['createdAt'],
+          properties: { createdAt: { type: 'integer' } },
+        },
+      },
+    },
+  })
+  const outputs = generate(dir)
+  assert.match(outputOf(outputs, 'ApiClient.swift'), /throws -> Void/)
+  assert.match(outputOf(outputs, 'ApiClient.kt'), /suspend fun deleteItem\(id: String\): Unit/)
+  assert.match(outputOf(outputs, 'generated/api.ts'), /Promise<void>/)
+  assert.match(outputOf(outputs, 'ApiModels.kt'), /val createdAt: Long/)
 })
 
 test('removing api.json stops producing API files', () => {
