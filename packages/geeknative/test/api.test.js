@@ -108,14 +108,19 @@ test('HN OpenAPI fixture generates Story models and list/get clients on every pl
   assert.match(ts, /AppConfig\.apiBaseUrl/)
 })
 
-test('api.json without apiBaseUrl fails clearly', () => {
+test('api.json without apiBaseUrl generates models only', () => {
   const dir = tempProject()
   writeJson(path.join(dir, 'contracts', 'api.json'), HN)
-  assert.throws(() => generate(dir), (error) => {
-    assert.ok(error instanceof CliError)
-    assert.match(error.message, /apiBaseUrl/)
-    return true
-  })
+  const outputs = generate(dir)
+  const paths = outputs.map((o) => o.path)
+  assert.ok(paths.some((p) => p.endsWith('ApiModels.swift')))
+  assert.ok(paths.some((p) => p.endsWith('ApiModels.kt')))
+  assert.ok(paths.some((p) => p.endsWith('api.ts')))
+  assert.equal(paths.some((p) => p.endsWith('ApiClient.swift') || p.endsWith('ApiClient.kt')), false)
+  const ts = outputOf(outputs, 'generated/api.ts')
+  assert.match(ts, /export type Story = \{/)
+  assert.equal(ts.includes('AppConfig.apiBaseUrl'), false)
+  assert.equal(ts.includes('export async function listStories'), false)
 })
 
 test('missing operationId is rejected', () => {

@@ -10,7 +10,6 @@ import { configOutputs, ENV_EXAMPLE, readConfig, resolveSecrets } from './config
 import { iconOutputs, readIcons } from './icons.js'
 import { readStrings, stringOutputs } from './strings.js'
 import { readTokens, tokenOutputs } from './tokens.js'
-import { CliError } from '../lib/log.js'
 import { OUT } from './util.js'
 
 /**
@@ -24,11 +23,7 @@ export function generateAll(root) {
   const config = readConfig(root)
   const secrets = resolveSecrets(config, Object.keys(config.secrets).length ? readEnvFile(root) : null)
   const api = readApi(root)
-  if (api && (config.values.apiBaseUrl?.type !== 'url')) {
-    throw new CliError(
-      'contracts/api.json requires contracts/config.json values.apiBaseUrl with type "url" (one value per environment).',
-    )
-  }
+  const includeClient = config.values.apiBaseUrl?.type === 'url'
   return {
     outputs: [
       ...appOutputs(app),
@@ -36,7 +31,7 @@ export function generateAll(root) {
       ...stringOutputs(readStrings(root, app.defaultLocale), app.name),
       ...iconOutputs(readIcons(root)),
       ...configOutputs(config, secrets.values),
-      ...(api ? apiOutputs(api) : []),
+      ...(api ? apiOutputs(api, { includeClient }) : []),
     ],
     warnings: secrets.warnings,
   }

@@ -2,7 +2,7 @@
 
 1. **Spec.** For a new feature, copy .geeknative/templates/feature.md to `spec/features/<id>.md` (`id` in kebab-case). For a change, edit the existing spec. Write acceptance criteria that are testable and platform-neutral, numbered `AC-<id>-1`, `AC-<id>-2`, ...
 2. **States.** Cover loading, empty, error and success for every screen that loads or saves data. Missing states are the most common way apps drift apart.
-3. **Data.** Describe what's stored and in what format (keys, values, types), so every app stores it the same way. New data goes through a repository interface with a local implementation; there's no backend yet.
+3. **Data.** Describe what's stored and in what format (keys, values, types), so every app stores it the same way. Put those types and the HTTP operations a future backend would expose in `contracts/api.json`, then `make gen`. New data goes through a repository interface whose **local** implementation is the live backend until a server exists. Use generated model types. Do not wire `ApiClient` / generated fetch helpers until `contracts/config.json` has `apiBaseUrl`.
 4. **Navigation.** If the feature adds a screen, add it to spec/navigation.md.
 5. **Contracts.** Add copy to `contracts/strings/<locale>.json` (every locale), including the labels platform controls need (a `common.done` or `common.ok` for date and time picker dialogs, `common.cancel` for confirmations) rather than reusing a word that means something else, icons to contracts/icons.json and any new design tokens to contracts/tokens.json. Run `make gen`.
 6. **Implement** on iOS, Android and web, each following its `apps/<platform>/AGENTS.md` and using the same names everywhere: `<Name>Screen`, `<Name>ViewModel`, `<Name>Repository`.

@@ -104,14 +104,25 @@ export function validateApi(raw) {
  * @param {ApiContract} api
  * @returns {{ path: string, content: string | Buffer, local?: boolean }[]}
  */
-export function apiOutputs(api) {
-  return [
+/**
+ * @param {ApiContract} api
+ * @param {{ includeClient?: boolean }} [opts]
+ * Models always. HTTP client files only when `apiBaseUrl` is in config (a hosted backend).
+ */
+export function apiOutputs(api, { includeClient = false } = {}) {
+  /** @type {{ path: string, content: string | Buffer, local?: boolean }[]} */
+  const files = [
     { path: `${OUT.iosGenerated}/ApiModels.swift`, content: swiftModels(api) },
-    { path: `${OUT.iosGenerated}/ApiClient.swift`, content: swiftClient(api) },
     { path: `${OUT.androidKotlin}/ApiModels.kt`, content: kotlinModels(api) },
-    { path: `${OUT.androidKotlin}/ApiClient.kt`, content: kotlinClient(api) },
-    { path: `${OUT.webGenerated}/api.ts`, content: typescriptApi(api) },
+    { path: `${OUT.webGenerated}/api.ts`, content: typescriptApi(api, includeClient) },
   ]
+  if (includeClient) {
+    files.push(
+      { path: `${OUT.iosGenerated}/ApiClient.swift`, content: swiftClient(api) },
+      { path: `${OUT.androidKotlin}/ApiClient.kt`, content: kotlinClient(api) },
+    )
+  }
+  return files
 }
 
 /** @param {string} name @param {string} where */
@@ -661,8 +672,8 @@ function argsTypeName(id) {
   return `${id[0].toUpperCase()}${id.slice(1)}Args`
 }
 
-/** @param {ApiContract} api */
-function typescriptApi(api) {
+/** @param {ApiContract} api @param {boolean} includeClient */
+function typescriptApi(api, includeClient) {
   const interfaces = api.models
     .map((model) => {
       const props = model.fields
@@ -725,6 +736,14 @@ ${fetchBody}
     })
     .join('\n\n')
 
+  const typesBlock = interfaces || '/* No models declared. */'
+  if (!includeClient) {
+    return `// ${banner(SOURCE)}
+
+${typesBlock}
+`
+  }
+
   return `// ${banner(SOURCE)}
 import { AppConfig } from "./config"
 
@@ -742,7 +761,7 @@ function ensureTrailingSlash(value: string): string {
   return value.endsWith("/") ? value : \`\${value}/\`
 }
 
-${interfaces || "/* No models declared. */"}
+${typesBlock}
 
 ${methods || "/* No operations declared. */"}
 `

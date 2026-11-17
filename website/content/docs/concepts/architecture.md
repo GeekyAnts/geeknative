@@ -44,9 +44,9 @@ Every app wires its dependencies by hand in an `AppContainer`, with no dependenc
 
 The same idea appears in all three apps, and Gradle builds stay free of annotation processing.
 
-## No backend yet
+## Data and the API contract
 
-Features read and write through repository interfaces with local implementations: UserDefaults on iOS, DataStore on Android, localStorage on web. When a backend arrives, new repository implementations call it, and `AppContainer` swaps them in. Screens and view models don't change.
+As soon as the product has domain data, describe it in `contracts/api.json` (OpenAPI 3.1 subset) so the three apps share the same models and the operations a hosted backend would later expose. Local repository implementations are the live backend until then: UserDefaults on iOS, DataStore on Android, localStorage on web (or in-memory / on-disk JSON). They use the generated model types. Do not call the generated HTTP client until a server exists: add `apiBaseUrl` in `contracts/config.json`, run `make gen`, write remote repository implementations, and swap them in `AppContainer`. Screens and view models don't change.
 
 On the web, TanStack Start's server functions and API routes are only for web-only concerns (rendering, cookies, SEO). Logic the mobile apps need too goes through repositories, so a future backend can serve all three apps.
 

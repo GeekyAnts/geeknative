@@ -257,7 +257,7 @@ Mobile apps embed the values they are built with, so treat the built app as read
 
 ## api.json
 
-Optional OpenAPI 3.1 document for the HTTP API the three apps share. Omit the file when there is no backend. When it is present, `contracts/config.json` must declare `values.apiBaseUrl` with type `url` (one absolute URL per environment). Base URLs stay in config; `api.json` only describes paths, operations, and schemas.
+OpenAPI 3.1 document for the domain models and the HTTP API a backend would expose. Write it as soon as the product has domain data, even when the live backend is still local (UserDefaults, DataStore, localStorage). Omit the file only while the app has no domain entities (the starter Home/Settings shell). Base URLs stay in `contracts/config.json` `values.apiBaseUrl` (type `url`, one absolute URL per environment). `api.json` only describes paths, operations, and schemas. Without `apiBaseUrl`, `make gen` emits **models only**. With `apiBaseUrl`, it also emits the HTTP client. Hand-written local repositories use the generated types; they call the generated client only after a hosted server exists and `AppContainer` swaps in a remote implementation.
 
 ```json
 {
@@ -317,24 +317,24 @@ Optional OpenAPI 3.1 document for the HTTP API the three apps share. Omit the fi
 
 **Subset (v1).** Supported: `openapi` `3.1.x`, `info`, `paths` with `get` / `post` / `put` / `patch` / `delete`, `operationId` (camelCase), path and query parameters, JSON request/response bodies under `application/json`, and `components.schemas` object models whose properties are `string`, `integer`, `number`, `boolean`, string `enum`, `array`, or a local `$ref` to `#/components/schemas/Name`. Schema names are PascalCase; property and `operationId` names follow the same camelCase rules as tokens. Unsupported: `oneOf`, `anyOf`, `allOf`, `not`, `callbacks`, `links`, `webhooks`, inline object schemas (put them in `components.schemas` and `$ref` them), and top-level enum schemas.
 
-Never edit the generated API files. Change `contracts/api.json` and run `make gen`. Hand-written repositories call the generated client.
+Never edit the generated API files. Change `contracts/api.json` and run `make gen`. Local repositories use the generated models. They call the generated client only after `apiBaseUrl` exists.
 
 ### Generated
 
 | Platform | Files |
 |---|---|
-| iOS | `App/Generated/ApiModels.swift` (`Codable` models), `App/Generated/ApiClient.swift` (`URLSession` helpers named by `operationId`, using `AppConfig.apiBaseUrl`) |
-| Android | `generated/ApiModels.kt` (data classes), `generated/ApiClient.kt` (`HttpURLConnection` helpers using `AppConfig.apiBaseUrl`) |
-| Web | `src/generated/api.ts` (types + `fetch` helpers using `AppConfig.apiBaseUrl`) |
+| iOS | `App/Generated/ApiModels.swift` (`Codable` models). `App/Generated/ApiClient.swift` (`URLSession` helpers named by `operationId`) only when `apiBaseUrl` is set |
+| Android | `generated/ApiModels.kt` (data classes). `generated/ApiClient.kt` (`HttpURLConnection` helpers) only when `apiBaseUrl` is set |
+| Web | `src/generated/api.ts` (types always; `fetch` helpers using `AppConfig.apiBaseUrl` only when `apiBaseUrl` is set) |
 
 ## All generated files
 
 | Platform | Files |
 |---|---|
-| iOS | `apps/ios/App/Generated/`: `AppIdentity.swift`, `AppConfig.swift`, `AppSecrets.swift` (only with secrets), `ApiModels.swift` / `ApiClient.swift` (only with `api.json`), `Tokens.swift`, `Strings.swift`, `Icons.swift`, `Localizable.xcstrings`, `Colors.xcassets` (accent color), `Icons.xcassets`, `Fonts/`; `apps/ios/Config/Identity.xcconfig` |
+| iOS | `apps/ios/App/Generated/`: `AppIdentity.swift`, `AppConfig.swift`, `AppSecrets.swift` (only with secrets), `ApiModels.swift` (with `api.json`), `ApiClient.swift` (with `api.json` and `apiBaseUrl`), `Tokens.swift`, `Strings.swift`, `Icons.swift`, `Localizable.xcstrings`, `Colors.xcassets` (accent color), `Icons.xcassets`, `Fonts/`; `apps/ios/Config/Identity.xcconfig` |
 | Project root | `.env.example` (only with secrets) |
-| Android | `apps/android/app/src/main/kotlin/app/generated/`: `AppIdentity.kt`, `AppConfig.kt`, `AppSecrets.kt` (only with secrets), `ApiModels.kt` / `ApiClient.kt` (only with `api.json`), `Tokens.kt`, `Icons.kt`; `res/values/generated_colors.xml`, `res/values-night/generated_colors.xml`, `res/values*/generated_strings.xml`, `res/drawable/generated_icon_*.xml`, `res/font/generated_*`; `apps/android/app/identity.properties` |
-| Web | `apps/web/src/generated/`: `app.ts`, `config.ts`, `secrets.server.ts` (only with secrets), `api.ts` (only with `api.json`), `tokens.css`, `strings.ts`, `icons.tsx`, `fonts/` |
+| Android | `apps/android/app/src/main/kotlin/app/generated/`: `AppIdentity.kt`, `AppConfig.kt`, `AppSecrets.kt` (only with secrets), `ApiModels.kt` (with `api.json`), `ApiClient.kt` (with `api.json` and `apiBaseUrl`), `Tokens.kt`, `Icons.kt`; `res/values/generated_colors.xml`, `res/values-night/generated_colors.xml`, `res/values*/generated_strings.xml`, `res/drawable/generated_icon_*.xml`, `res/font/generated_*`; `apps/android/app/identity.properties` |
+| Web | `apps/web/src/generated/`: `app.ts`, `config.ts`, `secrets.server.ts` (only with secrets), `api.ts` (with `api.json`; fetch helpers only with `apiBaseUrl`), `tokens.css`, `strings.ts`, `icons.tsx`, `fonts/` |
 
 ## Validation errors
 
@@ -345,7 +345,6 @@ Problems are reported with the file and field, so an agent can fix them directly
 ✖ contracts/strings/fr.json "settings.about.version" must use the same placeholders and plural shape as en.json.
 ✖ contracts/config.json values.apiBaseUrl is missing a value for "staging". Every value needs every environment.
 ✖ contracts/api.json paths./stories.get needs an operationId.
-✖ contracts/api.json requires contracts/config.json values.apiBaseUrl with type "url" (one value per environment).
 ✖ contracts/config.json secrets.mapsApiKey has "value". Secrets are names only: put the value in .env as MAPS_API_KEY.
 ✖ contracts/icons.json "star" "sparkly-star" is not a Lucide icon. Browse https://lucide.dev/icons for names like "settings" or "arrow-left".
 ✖ contracts/fonts/Inter-Regular.ttf has weight 400, but font.files lists it under "500".
