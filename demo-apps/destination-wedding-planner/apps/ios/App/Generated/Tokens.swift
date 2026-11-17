@@ -93,31 +93,6 @@ nonisolated enum AppFonts {
             guard let url = Bundle.main.url(forResource: file, withExtension: nil) else { continue }
             CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
         }
-        MainActor.assumeIsolated {
-            // UIFont(name:) misses a face that was just registered. Core Text resolves the PostScript name.
-            func face(_ name: String, size: CGFloat) -> UIFont? {
-                let font = CTFontCreateWithName(name as CFString, size, nil)
-                guard (CTFontCopyPostScriptName(font) as String) == name else { return nil }
-                return font as UIFont
-            }
-            guard let large = face("PlayfairDisplay-Bold", size: 34),
-                  let inline = face("PlayfairDisplay-SemiBold", size: 17) else { return }
-            let largeFont = UIFontMetrics(forTextStyle: .largeTitle).scaledFont(for: large)
-            let inlineFont = UIFontMetrics(forTextStyle: .headline).scaledFont(for: inline)
-            let scrolled = UINavigationBarAppearance()
-            scrolled.configureWithDefaultBackground()
-            scrolled.largeTitleTextAttributes = [.font: largeFont]
-            scrolled.titleTextAttributes = [.font: inlineFont]
-            let resting = UINavigationBarAppearance()
-            resting.configureWithTransparentBackground()
-            resting.largeTitleTextAttributes = [.font: largeFont]
-            resting.titleTextAttributes = [.font: inlineFont]
-            let bar = UINavigationBar.appearance()
-            bar.standardAppearance = scrolled
-            bar.compactAppearance = scrolled
-            bar.scrollEdgeAppearance = resting
-            bar.compactScrollEdgeAppearance = resting
-        }
     }
 }
 

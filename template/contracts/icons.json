@@ -2,5 +2,7 @@
   "$family": "lucide",
   "back": { "icon": "arrow-left", "mirrored": true },
   "home": "house",
-  "settings": "settings"
+  "settings": "settings",
+  "menu": "menu",
+  "close": "x"
 }

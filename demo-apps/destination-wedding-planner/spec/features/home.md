@@ -57,13 +57,13 @@ Keys under `home.*` and `nav.*` in contracts/strings.
 
 - iOS: Home sits in the Home tab with a transparent bar over the hero. The Settings gear is a toolbar button. Packages is not a tab.
 - Android: transparent top app bar over the hero; Settings is an app-bar action.
-- Web: the site header is glass over the hero on Home and is the only place the app name appears (the hero does not repeat it). Settings is a gear link in that header, on every page. Below the large breakpoint, a control drops a navigation panel. Home content is full-bleed; the shell does not add page padding.
+- Web: the site header is glass over the hero on Home and is the only place the app name appears (the hero does not repeat it). Settings is a gear link in that header, on every page. Destinations sit in a row; below `md` a menu button opens a side drawer. Home content is full-bleed; the shell does not add page padding.
 
 ## Test IDs
 
 - `home.openSettings`: the Settings entry point.
-- `nav.menuToggle`: opens and closes the compact web navigation panel.
-- `nav.menu`: the dropped navigation panel on compact viewports.
+- `nav.menuToggle` (not on iOS, Android): opens and closes the compact web side drawer
+- `nav.menu` (not on iOS, Android): the side drawer on compact viewports
 - `home.exploreCta`: Explore Destinations.
 - `home.planCta`: Plan Your Wedding.
 - `home.search`: the search panel.
