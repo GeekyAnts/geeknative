@@ -32,13 +32,14 @@ The first screen. It names the app, welcomes the user and leads to Settings. It'
 
 - iOS: large navigation title; the Settings entry is a gear button in the toolbar.
 - Android: top app bar with the app name; the Settings entry is a gear action in the app bar.
-- Web: the site header shows the app name and destinations in a row (desktop-first). Below `md`, a menu button opens a side drawer. Home content starts with the welcome card. Settings is a gear link in that header, on every page. `nav.home`, `nav.openMenu` and `nav.closeMenu` are web-only.
+- Web: the site header shows the app name as a link to Home. Home content starts with the welcome card. Settings is a gear link in that header, on every page. Extra destinations go in `SiteHeader` once (header row on wide windows, left drawer below `md`). `nav.openMenu` and `nav.closeMenu` are web-only.
 
 ## Test IDs
 
 - `home.openSettings`: the Settings entry point.
-- `nav.menuToggle` (not on iOS, Android): opens and closes the compact web side drawer
-- `nav.menu` (not on iOS, Android): the side drawer on compact viewports
+- `nav.menuToggle` (not on iOS, Android): leading hamburger that opens the compact web left drawer when there is a destination besides Home
+- `nav.menu` (not on iOS, Android): the left drawer on compact viewports
+- `nav.menuClose` (not on iOS, Android): closes the left drawer
 
 ## Assumptions and open questions
 

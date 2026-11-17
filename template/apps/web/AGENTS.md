@@ -16,7 +16,7 @@ Read the root AGENTS.md first. This file covers how the web app is built.
 apps/web/src/
   router.tsx              Creates the router with { queryClient, container } as context
   routes/                 One thin file per URL: head, loader, then render a feature's screen
-    __root.tsx            HTML shell, desktop site header, AppearanceEffect
+    __root.tsx            HTML shell, SiteHeader, AppearanceEffect
   core/                   AppContainer, AppearanceEffect
     designsystem/         Shared components (AppCard, ...)
   features/<name>/        <Name>Screen.tsx, use<Name>ViewModel.ts, <Name>Repository.ts, implementations, tests
@@ -31,11 +31,11 @@ Same names and responsibilities as the iOS and Android apps.
 
 | Concept | Web |
 |---|---|
-| Screen | `NotesScreen` in features/notes/, rendered by routes/notes.tsx, with its content in `<Page>` (core/designsystem/Page.tsx): a centered readable column, or `<Page width="full">` for grids and side-by-side layouts. Never cap a screen's width without centering it. Unprefixed classes are the desktop layout; hide the top-bar links with `max-md:hidden` and open a side drawer below `md`. Do not start from a phone layout and add `lg:` later. |
+| Screen | `NotesScreen` in features/notes/, rendered by routes/notes.tsx, with its content in `<Page>` (core/designsystem/Page.tsx): a centered readable column, or `<Page width="full">` for grids and side-by-side layouts. Never cap a screen's width without centering it. Unprefixed classes are the desktop layout. Primary destinations live once in `core/navigation/SiteHeader.tsx` (header row on wide windows, left drawer below `md`). The app name links to `/`. Do not add a sidebar or a bottom bar. |
 | State and actions | `useNotesViewModel()`: reads data with TanStack Query, returns state and actions |
 | Data | `NotesRepository` interface, plus implementations such as `LocalStorageNotesRepository` |
 | Dependencies | `AppContainer`, in router context: `useRouteContext({ from: '__root__' }).container` |
-| Navigation | A file in routes/ per screen; link with `<Link to="/notes">` |
+| Navigation | A file in routes/ per screen; link with `<Link to="/notes">`. Add the screen to `SiteHeader` `destinations` if it is a primary destination (not Home, not Settings). |
 | Copy | `strings.notesEmptyTitle` (generated) |
 | Colors, spacing, radii, icon sizes, type | Tailwind token classes: `bg-primary`, `p-md`, `rounded-lg`, `size-icon-md`, `min-h-touch-target`, `text-title` (the typeface comes with `font-sans`) |
 | Token values as numbers | `AppTextSize.title`, `AppSpacing.md`, `AppSize.touchTarget` from `#/generated/tokens` (the same numbers iOS and Android get), for showing or computing with a size. Style with the classes, not with these. |

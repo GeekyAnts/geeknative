@@ -1,19 +1,16 @@
 // @vitest-environment happy-dom
 import { describe, expect, test } from 'vitest'
-import { strings } from '#/generated/strings'
+import { AppIdentity } from '#/generated/app'
 import { click, renderApp } from '#/testing/renderApp'
 
 describe('Site header', () => {
-  test('opens a side drawer from the compact menu control', async () => {
-    const app = await renderApp('/')
-    const toggle = app.element.querySelector('[data-testid="nav.menuToggle"]')
-    const menu = app.element.querySelector('[data-testid="nav.menu"]')
-    expect(toggle?.getAttribute('aria-expanded')).toBe('false')
-    expect(menu?.getAttribute('aria-hidden')).toBe('true')
-    await click(toggle)
-    expect(toggle?.getAttribute('aria-expanded')).toBe('true')
-    expect(menu?.getAttribute('aria-hidden')).toBe('false')
-    expect(menu?.textContent).toContain(strings.navHome)
+  test('the app name is a link to Home', async () => {
+    const app = await renderApp('/settings')
+    const name = app.element.querySelector('header a.text-title')
+    expect(name?.textContent).toBe(AppIdentity.name)
+    expect(name?.getAttribute('href')).toBe('/')
+    await click(name)
+    expect(app.router.state.location.pathname).toBe('/')
     app.unmount()
   })
 })
