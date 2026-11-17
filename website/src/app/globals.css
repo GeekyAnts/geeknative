@@ -100,6 +100,9 @@ html[data-colony="off"] .colony-fallback {
 html[data-colony="off"] .colony-canvas {
   opacity: 0;
 }
+html[data-nav-open] .colony-canvas {
+  opacity: 0;
+}
 .colony-canvas {
   transition: opacity 0.5s var(--ease-quint);
 }
