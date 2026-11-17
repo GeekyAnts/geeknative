@@ -5,7 +5,7 @@ description: Release notes for geeknative.
 
 ## Unreleased
 
-- **Chrome fonts and colors:** with a shared typeface, iOS navigation titles, tab labels and bar-button text use that face and the token colors (`background`, `onBackground`, `primary`). Android maps the family onto every Material 3 type slot. Web form controls inherit `--font-sans`. The back chevron stays the system glyph.
+- **Shared typeface in stock Android components:** Material 3 type roles that no text style maps to keep Material's size and weight but use the shared typeface, so stock components no longer fall back to Roboto.
 - **Desktop-first web:** generated websites use one site header. The app name always links to Home. Extra destinations sit in that header on a wide window; below `md` a hamburger opens a left drawer with the same list. No sidebar, bottom bar, or duplicate links. iOS and Android keep native tab and app bars.
 - **Consistency:** `contracts/app.json` can set `consistency` to `strict` or `adapted` (default `adapted`). `strict` fails `make lint` when a feature spec uses `n/a`. Existing projects get a `parity` lint error after upgrading until they run `make parity`, because of the new header line. `create` takes `--consistency`; there is no setup prompt.
 - **One typeface everywhere:** `contracts/tokens.json` names a font family with one file per weight in `contracts/fonts`, and `make gen` bundles the same files into all three apps (registered at launch on iOS, font resources on Android, `@font-face` on the web). New projects start with Inter. `make font FAMILY="Open Sans"` switches to any Google Fonts family; `FAMILY=system` restores each platform's own font, in which case `make gen` checks that type sizes match their Dynamic Type styles.
