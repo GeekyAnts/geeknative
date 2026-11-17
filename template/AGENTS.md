@@ -51,7 +51,7 @@ Before changing anything, decide what kind of request it is. State it as the fir
 | App name, ID, version and consistency | contracts/app.json |
 | Backend URLs, feature flags and other per-environment settings | contracts/config.json |
 | Secret keys (names only; values live in .env and are never committed) | contracts/config.json `secrets` |
-| Domain models and the HTTP API a backend would expose (OpenAPI 3.1) | contracts/api.json, then `make gen` |
+| Domain models and the HTTP API a backend would expose (OpenAPI 3.1) | contracts/api.json (optional until a hosted backend is planned), then `make gen` |
 | Colors, spacing, radii, icon sizes and type | contracts/tokens.json |
 | The typeface, one for all three apps | contracts/tokens.json `font`, with the files in contracts/fonts (`make font FAMILY=...`) |
 | All user-facing text | `contracts/strings/<locale>.json` |
@@ -80,7 +80,7 @@ Before changing anything, decide what kind of request it is. State it as the fir
 - **Native, not identical.** Features, flows, data, copy and brand match. Navigation chrome, controls, gestures and system conventions follow each platform. DESIGN.md says which is which. How far layouts may diverge is Consistency above.
 - **One feature at a time.** Finish a feature on every platform before starting the next, unless Consistency allows shipping one platform first.
 - **Spec changes ripple.** If building one platform changes the spec, recheck the platforms you already did.
-- **Local data, contracted API.** As soon as the product has domain data (accounts, posts, bookings, …), write `contracts/api.json` (OpenAPI 3.1 subset) for those models and the operations a future backend would expose. Run `make gen`. Local repository implementations are the live backend (UserDefaults, DataStore, localStorage, in-memory, on-disk JSON). Use the generated model types in those repositories. Do not call the generated HTTP client until there is a hosted server: add `apiBaseUrl` in `contracts/config.json`, run `make gen` (that is when `ApiClient` / fetch helpers appear), write remote repository implementations, and swap them in `AppContainer`. Never edit generated API files by hand. Omit `api.json` only while the app has no domain entities (the starter Home/Settings shell).
+- **No backend yet.** Features read and write through a repository interface with local implementations (UserDefaults, DataStore, localStorage, in-memory, on-disk JSON). When a backend arrives, only the repositories change. Put its URLs in contracts/config.json, one per environment. If a hosted server is planned, describe its models and operations in `contracts/api.json` (OpenAPI 3.1 subset) and run `make gen`; omit the file until then. With `apiBaseUrl`, `make gen` also emits the HTTP client. Never edit generated API files by hand.
 
 ## 6. Ask or assume
 

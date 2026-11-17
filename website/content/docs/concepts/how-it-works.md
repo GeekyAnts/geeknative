@@ -29,7 +29,7 @@ These are written for agents and people alike. When an implementation reveals so
 | Colors, spacing, radii, icon sizes and type | `contracts/tokens.json` |
 | The typeface, with its font files | `contracts/tokens.json` `font` and `contracts/fonts/` |
 | Backend URLs and other per-environment settings | `contracts/config.json` |
-| Domain models and HTTP operations (OpenAPI 3.1) | `contracts/api.json` |
+| Domain models and HTTP operations (OpenAPI 3.1) | `contracts/api.json` (optional until a hosted backend is planned) |
 | All user-facing text | `contracts/strings/<locale>.json` |
 | Icons (Lucide names, or your own SVGs) | `contracts/icons.json` and `contracts/icons/` |
 
