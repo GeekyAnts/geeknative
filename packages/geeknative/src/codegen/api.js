@@ -306,12 +306,7 @@ function readOperation(pathKey, method, operation, schemas, seenIds) {
 }
 
 /**
- * @param {any} container
- * @param {string} where
- * @param {Record<string, any>} schemas
- * @returns {ApiType}
- */
-/**
+ * Success with no JSON body (including 204) is void.
  * @param {any} container
  * @param {string} where
  * @param {Record<string, any>} schemas

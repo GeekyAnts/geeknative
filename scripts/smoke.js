@@ -6,6 +6,7 @@ import { mkdtempSync } from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { applyApiFixture } from './apply-api-fixture.js'
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const cli = path.join(repo, 'packages', 'geeknative', 'bin', 'geeknative.js')
@@ -24,4 +25,6 @@ function geeknative(args, cwd) {
 geeknative(['create', project, '--name', 'Smoke Test', '--id', 'com.example.smoketest', '--no-git'])
 geeknative(['check', ...(targets.length ? targets : ['all'])], project)
 geeknative(['parity'], project)
+applyApiFixture(project)
+geeknative(['check', ...(targets.length ? targets : ['all'])], project)
 console.log(`\nSmoke test passed. Project: ${project}`)
