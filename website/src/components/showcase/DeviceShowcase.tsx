@@ -1,10 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { deviceShowcaseCatalog, type DeviceShowcaseApp } from "@/lib/showcase-catalog";
 import { AndroidPhone, ChromeWindow, IPhone, PlatformCaption, Segmented, type Mode, type Platform } from "./frames";
 
-const APPS = deviceShowcaseCatalog.apps;
+const STARTER = deviceShowcaseCatalog.apps[0];
 
 const SIZES: Record<Platform, { width: number; height: number; label: string }> = {
   ios: { width: 600, height: 1304, label: "iOS" },
@@ -43,26 +44,16 @@ function Layers({ app, platform, screen, mode }: { app: DeviceShowcaseApp; platf
   );
 }
 
-function Mark({ color }: { color: string }) {
-  return (
-    <svg viewBox="0 0 64 64" className="size-[14px] shrink-0" aria-hidden>
-      <rect width="64" height="64" rx="14" fill={color} />
-    </svg>
-  );
-}
-
 function cycle(screens: DeviceShowcaseApp["screens"]) {
   return MODES.flatMap((mode) => screens.map((screen) => ({ id: screen.id, mode })));
 }
 
 export function DeviceShowcase({ className = "", compact = false }: { className?: string; compact?: boolean }) {
-  const first = APPS[0];
-  const [appSlug, setAppSlug] = useState(first?.slug ?? "");
   const [cursor, setCursor] = useState(0);
   const [auto, setAuto] = useState(!compact);
   const root = useRef<HTMLDivElement>(null);
 
-  const app = APPS.find((item) => item.slug === appSlug) ?? first;
+  const app = STARTER;
   const frames = app ? cycle(app.screens) : [];
   const frame = frames[cursor] ?? frames[0];
   const screen = app?.screens.find((item) => item.id === frame?.id) ?? app?.screens[0];
@@ -84,16 +75,6 @@ export function DeviceShowcase({ className = "", compact = false }: { className?
   }, [auto, frames.length]);
 
   if (!app || !screen) return null;
-
-  const pickApp = (slug: string) => {
-    const next = APPS.find((item) => item.slug === slug);
-    if (!next) return;
-    const nextFrames = cycle(next.screens);
-    const index = nextFrames.findIndex((item) => item.id === next.screens[0]?.id && item.mode === mode);
-    setAuto(false);
-    setAppSlug(slug);
-    setCursor(index < 0 ? 0 : index);
-  };
 
   const pickScreen = (id: string) => {
     const index = frames.findIndex((item) => item.id === id && item.mode === mode);
@@ -123,7 +104,6 @@ export function DeviceShowcase({ className = "", compact = false }: { className?
             mode={mode}
             path={screen.webPath}
             title={screen.title}
-            favicon={app.slug === "starter" ? undefined : <Mark color={app.mark} />}
           >
             <Layers key={app.slug} app={app} platform="web" screen={screen.id} mode={mode} />
           </ChromeWindow>
@@ -138,14 +118,6 @@ export function DeviceShowcase({ className = "", compact = false }: { className?
       </div>
 
       <div className={`flex flex-wrap items-center justify-center gap-3 ${compact ? "mt-8" : "mt-12"}`}>
-        {APPS.length > 1 ? (
-          <Segmented
-            label="App"
-            value={app.slug}
-            options={APPS.map((item): [string, string] => [item.slug, item.name])}
-            onChange={pickApp}
-          />
-        ) : null}
         <Segmented
           label="Screen"
           value={screen.id}
@@ -162,6 +134,18 @@ export function DeviceShowcase({ className = "", compact = false }: { className?
           onChange={pickMode}
         />
       </div>
+      {compact ? null : (
+        <p className="mt-5 text-center text-[14px] text-muted">
+          See other demo apps created using GeekNative in the{" "}
+          <Link
+            href="/showcase/"
+            className="font-medium text-ink underline decoration-line-strong underline-offset-4 transition-colors hover:text-brand hover:decoration-brand"
+          >
+            Showcase
+          </Link>
+          .
+        </p>
+      )}
     </div>
   );
 }
