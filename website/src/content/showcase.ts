@@ -46,6 +46,19 @@ export const showcaseApps: ShowcaseApp[] = [
       { id: "wedding", label: "Wedding", path: "/wedding", title: "My Wedding · ORLÈVE" },
     ],
   },
+  {
+    slug: "tripadvisor",
+    name: "Wanderly",
+    summary: "Travelers discover a city from a photograph, open a place, and keep their trip preferences in one profile.",
+    mark: "#1F4D3A",
+    screens: [
+      { id: "home", label: "Home", path: "/", title: "Wanderly" },
+      { id: "explore", label: "Explore", path: "/explore", title: "Explore · Wanderly" },
+      { id: "bali", label: "Trips", path: "/city/bali", title: "Bali · Wanderly" },
+      { id: "tegalalang", label: "Saved", path: "/place/bali-tegalalang", title: "Tegalalang Rice Terraces · Wanderly" },
+      { id: "profile", label: "Profile", path: "/profile", title: "Profile · Wanderly" },
+    ],
+  },
 ];
 
 export const showcaseHref = (slug: string) => `/showcase/${slug}/`;
