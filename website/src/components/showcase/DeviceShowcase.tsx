@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { TextLink } from "@/components/ui/primitives";
 import { deviceShowcaseCatalog, type DeviceShowcaseApp } from "@/lib/showcase-catalog";
 import { AndroidPhone, ChromeWindow, IPhone, PlatformCaption, Segmented, type Mode, type Platform } from "./frames";
 
@@ -135,15 +135,11 @@ export function DeviceShowcase({ className = "", compact = false }: { className?
         />
       </div>
       {compact ? null : (
-        <p className="mt-5 text-center text-[14px] text-muted">
+        <p className="mt-7 text-center text-base text-ink/70">
           See other demo apps created using GeekNative in the{" "}
-          <Link
-            href="/showcase/"
-            className="font-medium text-ink underline decoration-line-strong underline-offset-4 transition-colors hover:text-brand hover:decoration-brand"
-          >
+          <TextLink href="/geeknative/showcase/" className="text-base text-brand">
             Showcase
-          </Link>
-          .
+          </TextLink>
         </p>
       )}
     </div>
