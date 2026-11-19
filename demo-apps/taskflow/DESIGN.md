@@ -1,0 +1,99 @@
+# Design
+
+<!--
+How the app looks and feels on every platform. Your coding agent updates this when you ask for
+design changes. Token values live in contracts/tokens.json; this file explains how they're used.
+-->
+
+## Direction
+
+Calm and focused. Quiet neutral surfaces, one indigo accent for actions and selection, and color used only where it carries meaning: priority (High in `error`, Medium in `warning`, Low neutral), done (`success`) and overdue (`error`). Tasks sit on cards with generous spacing so a long list stays scannable. Inter throughout.
+
+## Consistency
+
+`contracts/app.json` `"consistency"` is `strict` or `adapted` (default `adapted`). See AGENTS.md, Consistency, for what the agent does under each tier.
+
+- **strict:** the same features, screens and behavior on every platform, with no `n/a`. Controls and navigation chrome stay native.
+- **adapted:** same flows, data, copy and brand. `n/a` and shipping one platform first are allowed when the spec says so.
+
+## Same everywhere, native where it counts
+
+| Same on every platform | Native to each platform |
+|---|---|
+| Features, flows and data | Navigation chrome (navigation bar, top app bar, site header) |
+| Copy (contracts/strings) | Controls: pickers, switches, radio lists, segmented controls |
+| Colors, spacing, radii, icon sizes and type scale (contracts/tokens.json) | Gestures, haptics and transitions |
+| The typeface (contracts/tokens.json `font`, files in contracts/fonts), including navigation bar titles | Back buttons, tab bars and other system controls |
+| Icons: the same drawing from one family (contracts/icons.json) | The system back chevron on iOS and other chrome icons |
+| Screen structure and content order, including title alignment (leading on every platform) | Sheets, dialogs and menus |
+| Accessibility labels and test IDs | |
+
+## Tokens
+
+Defined in contracts/tokens.json and compiled into each app by `make gen`.
+
+| Token | iOS | Android | Web (Tailwind) |
+|---|---|---|---|
+| Color `primary` | `AppColors.primary` | `AppTheme.colors.primary` | `bg-primary`, `text-primary` |
+| Color `onPrimary` | `AppColors.onPrimary` | `AppTheme.colors.onPrimary` | `text-on-primary` |
+| Spacing `md` | `AppSpacing.md` | `AppSpacing.md` | `p-md`, `gap-md` |
+| Radius `lg` | `AppRadius.lg` | `AppRadius.lg` | `rounded-lg` |
+| Icon size `md` | `AppIconSize.md` | `AppIconSize.md` | `size-icon-md` |
+| Size `touchTarget` | `AppSize.touchTarget` | `AppSize.touchTarget` | `size-touch-target`, `min-h-touch-target` |
+| Type `title` | `AppTypography.title` | `AppTypography.title` | `text-title` |
+| Motion `snappy` (a spring) | `AppMotion.snappy` | `AppMotion.snappy()` | `ease-snappy duration-snappy` |
+| Motion `standard` curve, `fast` duration | `AppMotion.standard(AppMotion.fast)` | `AppMotion.standard(AppMotion.fast)` | `ease-standard duration-fast` |
+| Elevation `low` | `.shadow(AppElevation.low)` | `Modifier.shadow(AppElevation.low, shape)` | `shadow-low` |
+
+**Color roles.** Every color has a light and a dark value. Add new colors by role (what they're for), not by hue.
+
+- `background` / `onBackground`: screens.
+- `surface` / `onSurface`: cards and grouped content on a screen.
+- `surfaceVariant` / `onSurfaceVariant`: subtle fills and secondary text.
+- `primary` / `onPrimary`: the brand color, for primary actions and selection.
+- `outline`: borders and dividers.
+- `error` / `onError`: errors and destructive actions, High priority and overdue dates.
+- `warning`: Medium priority. Text and icons only, on `surface` or `background`.
+- `success`: the done status icon. Text and icons only, on `surface` or `background`.
+
+**Type roles.** `display`, `headline`, `title`, `body`, `label`, `caption`. Each has a size, line height and weight that every app uses. On iOS each role also names the Dynamic Type style it scales with; on Android sizes are sp and on web rem, so text follows the user's text size setting everywhere. Line height applies on Android and web (SwiftUI text takes its line spacing from the font).
+
+**Motion.** Durations, easing curves and springs live in contracts/tokens.json `motion`, so an animation takes the same time and feels the same on every platform. Use a spring for things the user moves or toggles, `standard` for things that change on their own, `decelerate` for things that enter and `accelerate` for things that leave. Every animation respects the system's reduce-motion setting: iOS passes it through `AppMotion.reduced(_:_:)`, Android follows the system animation scale, and web wraps motion in `motion-safe:`. Which transitions a screen uses (push, sheet, fade) stays native.
+
+**Elevation.** Shadows live in contracts/tokens.json `elevation`. Use them only for things that float above the content (a bottom bar, a floating button, a dragged card). A shadow can be tinted with a color token (`"color": "primary"`), so it follows dark mode.
+
+**Typeface.** One font family for all three apps: `font.family` in contracts/tokens.json, with one file per weight in contracts/fonts. The starter uses Inter. To switch, run `make font FAMILY="Open Sans"` (any Google Fonts family) or `make font FAMILY=system` for each platform's own font; for a font that isn't on Google Fonts, put its .ttf files in contracts/fonts and list them under `font.files`. Every weight the type scale uses must have a file. Navigation bar titles use that typeface. Back buttons, tab bars and other system controls keep the platform font. With `system`, iOS text sizes come from Dynamic Type, so each role's size must match its iOS style (`make gen` says so if not).
+
+**Icons.** One family, Lucide, drawn identically on every platform from the same shape data: pick a name at https://lucide.dev/icons and add it to contracts/icons.json (`"settings": "settings"`). For artwork Lucide doesn't have, put a simple single-color SVG in contracts/icons and point at it (`"logo": { "svg": "logo.svg" }`). Mark directional icons `"mirrored": true` so they flip in right-to-left layouts. Icons in content use the icon size tokens; icons in navigation chrome take the platform's default size. Icons take the current text color.
+
+## Components
+
+How each platform builds the shared patterns. Add a row whenever a new pattern appears.
+
+| Pattern | iOS | Android | Web |
+|---|---|---|---|
+| Screen | Screen in a `NavigationStack`, with a large navigation title | `Scaffold` with a `TopAppBar`, both on the `background` token (Material's `surface` role is mapped to `background`; only cards use `surface`) | Page in the app shell: the header and page span the window with `px-lg` (`md:px-xl`) side padding, and the screen's content is a `Page`: a centered readable column (`width="readable"`, the default) for forms, settings, lists and detail screens, or the full width (`width="full"`) for content that uses it, like grids and side-by-side panes |
+| Screen title | Leading-aligned large title (the default; don't use `.navigationBarTitleDisplayMode(.inline)`) | `TopAppBar`, which is leading-aligned (not `CenterAlignedTopAppBar`) | `h1` at the start of the page, left-aligned |
+| Settings or form | `Form` with sections, on `background` with `surface` rows (`scrollContentBackground(.hidden)`) | Column with section headers | Sections in cards |
+| Single choice | Inline `Picker` (checkmarks) | Radio buttons | Radio group |
+| Card | `AppColors.surface` fill, `AppRadius.lg` corners | `Surface` in `AppTheme.colors.surface`, `AppRadius.lg` corners | `bg-surface rounded-lg` |
+| Primary action | `.buttonStyle(.primary)` (Core/DesignSystem/PrimaryButtonStyle.swift): `onPrimary` on `primary`. Not plain `.borderedProminent`, whose white text is unreadable on a light dark-mode `primary` | `Button` | `button` with `bg-primary text-on-primary` |
+| Icon | `Image(AppIcon.settings)` (a template image) | `Icon(AppIcons.settings, contentDescription = ...)` | `<AppIcons.settings className="size-icon-md" />` |
+| Add action | `+` toolbar button (`AppIcon.add`) | `ExtendedFloatingActionButton` with the `add` icon and label | Primary button next to the page's `h1` |
+| Segmented single choice (status filter, status, priority) | Segmented `Picker` | `SingleChoiceSegmentedButtonRow` | Radio group drawn as a segmented control (`role="radiogroup"`, `bg-surface-variant` track, selected segment `bg-surface`) |
+| Menu choice (priority filter) | `Menu` with an inline `Picker` | Button with a `DropdownMenu` | Native `<select>` |
+| Task row | Card in a `ScrollView`/`LazyVStack`, leading status toggle button | Card in a `LazyColumn`, leading status `IconButton` | Card in a `<ul>`, leading status `<button>`; the row is a link |
+| Priority and due labels | Icon + caption text in the role color | Same | Same |
+| Loading | Centered `ProgressView` | Centered `CircularProgressIndicator` | Centered spinner with `role="status"` |
+| Empty and error states | Centered icon (`AppIconSize.lg`), title, body, and a button | Same | Same |
+| Destructive confirmation | `.confirmationDialog` | `AlertDialog` | Native `<dialog>` |
+| Transient failure message | Alert | `Snackbar` | Inline `role="alert"` banner |
+| Refresh | Pull to refresh (`.refreshable`) | `PullToRefreshBox` | Refetch when the window regains focus |
+| Create/edit form | Sheet with its own `NavigationStack` and a `Form` | Full-screen route with a `TopAppBar` (close + Save) | Page with the form in a card |
+
+## Accessibility
+
+- Support Dynamic Type (iOS), font scaling (Android) and browser zoom (web).
+- Every icon-only button has a label from contracts/strings.
+- Touch targets are at least `touchTarget` (48) on every platform: above 44 pt on iOS and 44 px on web, and exactly 48 dp on Android. Use the token instead of a number. On web, aim for 44 px or more (WCAG 2.5.8 requires 24 px at least), as the header link and the radio rows do.
+- Text meets WCAG AA contrast (4.5:1 for body text) in light and dark mode.
