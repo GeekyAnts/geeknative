@@ -61,5 +61,27 @@ test('readLock returns null when the file is missing, and the written lock other
   writeLock(dir, '0.1.1')
   const lock = readLock(dir)
   assert.equal(lock?.geeknative, '0.1.1')
+  assert.deepEqual(lock?.migrations, [])
   assert.match(lock?.blocks['AGENTS.md'] ?? '', /^sha256-/)
+})
+
+test('writeLock preserves migrations unless overridden', () => {
+  const dir = tempProject(['AGENTS.md'])
+  mkdirSync(path.join(dir, '.geeknative'), { recursive: true })
+  writeLock(dir, '0.1.0', dir, { migrations: ['alpha', 'beta'] })
+  writeLock(dir, '0.1.1')
+  assert.deepEqual(readLock(dir)?.migrations, ['alpha', 'beta'])
+  writeLock(dir, '0.1.2', dir, { migrations: ['alpha'] })
+  assert.deepEqual(readLock(dir)?.migrations, ['alpha'])
+})
+
+test('readLock treats a missing migrations field as an empty list', () => {
+  const dir = tempProject(['AGENTS.md'])
+  mkdirSync(path.join(dir, '.geeknative'), { recursive: true })
+  writeLock(dir, '0.1.0')
+  const file = path.join(dir, '.geeknative', 'lock.json')
+  const raw = JSON.parse(readFileSync(file, 'utf8'))
+  delete raw.migrations
+  writeFileSync(file, `${JSON.stringify(raw, null, 2)}\n`)
+  assert.deepEqual(readLock(dir)?.migrations, [])
 })
