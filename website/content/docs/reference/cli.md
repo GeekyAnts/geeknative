@@ -181,7 +181,7 @@ The previous template comes from the project's snapshot tarball, `node_modules/g
 On success it rewrites `.geeknative/lock.json` with this CLI's version and the incoming hashes (so your local edits are still seen as edits next time), then:
 
 - a project that depends on geeknative from npm gets `^<version>` and `npm install`;
-- a project pinned to a checkout snapshot is [pinned](#pin) again when you run upgrade from that checkout.
+- a project pinned to a checkout snapshot is [pinned](#pin) again when you run upgrade from that checkout, including when only the CLI changed and the version number is the same. Framework files that already match still count as up to date.
 
 `--no-install` skips `npm install`. Conflicts skip the lock rewrite, the dependency bump and `gen`, so you can fix `*.geeknative-new` and run upgrade again.
 
