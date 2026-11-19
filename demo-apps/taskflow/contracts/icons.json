@@ -1,0 +1,19 @@
+{
+  "$family": "lucide",
+  "back": { "icon": "arrow-left", "mirrored": true },
+  "settings": "settings",
+  "add": "plus",
+  "close": "x",
+  "edit": "pencil",
+  "trash": "trash",
+  "statusTodo": "circle",
+  "statusInProgress": "circle-dot",
+  "statusDone": "circle-check",
+  "priority": "flag",
+  "dueDate": "calendar",
+  "filter": "list-filter",
+  "error": "circle-alert",
+  "retry": "refresh-cw",
+  "emptyTasks": "clipboard-list",
+  "chevron": { "icon": "chevron-right", "mirrored": true }
+}

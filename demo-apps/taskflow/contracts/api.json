@@ -1,0 +1,193 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Taskflow API",
+    "version": "1.0.0",
+    "description": "Tasks with a status, a priority and an optional due date. Served by backend/ (Node.js, Express, SQLite)."
+  },
+  "paths": {
+    "/tasks": {
+      "get": {
+        "operationId": "listTasks",
+        "summary": "List tasks, optionally filtered by status and priority. Sorted with open tasks before done ones, then by priority (high first), then due date (earliest first, none last), then newest first.",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "enum": ["todo", "inProgress", "done"] }
+          },
+          {
+            "name": "priority",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "enum": ["low", "medium", "high"] }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The matching tasks.",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/TaskItem" } }
+              }
+            }
+          },
+          "400": {
+            "description": "An unknown status or priority.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createTask",
+        "summary": "Create a task.",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TaskInput" } } }
+        },
+        "responses": {
+          "201": {
+            "description": "The created task.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TaskItem" } } }
+          },
+          "400": {
+            "description": "The input is invalid.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          }
+        }
+      }
+    },
+    "/tasks/{taskId}": {
+      "get": {
+        "operationId": "getTask",
+        "summary": "Get one task.",
+        "parameters": [
+          { "name": "taskId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "The task.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TaskItem" } } }
+          },
+          "404": {
+            "description": "No task has this id.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateTask",
+        "summary": "Replace a task's editable fields. A missing dueDate clears it.",
+        "parameters": [
+          { "name": "taskId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TaskInput" } } }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated task.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TaskItem" } } }
+          },
+          "400": {
+            "description": "The input is invalid.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "404": {
+            "description": "No task has this id.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteTask",
+        "summary": "Delete a task.",
+        "parameters": [
+          { "name": "taskId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "204": { "description": "Deleted." },
+          "404": {
+            "description": "No task has this id.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          }
+        }
+      }
+    },
+    "/tasks/{taskId}/status": {
+      "patch": {
+        "operationId": "updateTaskStatus",
+        "summary": "Change only a task's status.",
+        "parameters": [
+          { "name": "taskId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TaskStatusInput" } } }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated task.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TaskItem" } } }
+          },
+          "400": {
+            "description": "An unknown status.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          },
+          "404": {
+            "description": "No task has this id.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TaskItem": {
+        "type": "object",
+        "description": "A task. Named TaskItem so it doesn't shadow Swift's Task.",
+        "required": ["id", "title", "notes", "status", "priority", "createdAt", "updatedAt"],
+        "properties": {
+          "id": { "type": "string", "description": "UUID assigned by the server." },
+          "title": { "type": "string", "description": "1 to 120 characters, trimmed." },
+          "notes": { "type": "string", "description": "Up to 2000 characters. Empty when there are none." },
+          "status": { "type": "string", "enum": ["todo", "inProgress", "done"] },
+          "priority": { "type": "string", "enum": ["low", "medium", "high"] },
+          "dueDate": { "type": "string", "description": "Calendar date, YYYY-MM-DD. Absent when there is none." },
+          "createdAt": { "type": "string", "description": "ISO 8601 UTC timestamp." },
+          "updatedAt": { "type": "string", "description": "ISO 8601 UTC timestamp." }
+        }
+      },
+      "TaskInput": {
+        "type": "object",
+        "description": "The editable fields of a task, for create and replace.",
+        "required": ["title", "notes", "status", "priority"],
+        "properties": {
+          "title": { "type": "string" },
+          "notes": { "type": "string" },
+          "status": { "type": "string", "enum": ["todo", "inProgress", "done"] },
+          "priority": { "type": "string", "enum": ["low", "medium", "high"] },
+          "dueDate": { "type": "string", "description": "YYYY-MM-DD. Omit for no due date." }
+        }
+      },
+      "TaskStatusInput": {
+        "type": "object",
+        "required": ["status"],
+        "properties": {
+          "status": { "type": "string", "enum": ["todo", "inProgress", "done"] }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["code", "message"],
+        "properties": {
+          "code": { "type": "string", "enum": ["validation", "notFound", "internal"] },
+          "message": { "type": "string" }
+        }
+      }
+    }
+  }
+}

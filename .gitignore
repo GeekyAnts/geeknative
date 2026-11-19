@@ -1,6 +1,15 @@
 node_modules/
 .DS_Store
 
+# Tripadvisor is a local app checkout. The showcase tracks its name, summary, and
+# previews; the rest of that folder stays out of this repo.
+demo-apps/tripadvisor/*
+!demo-apps/tripadvisor/previews/
+!demo-apps/tripadvisor/contracts/
+!demo-apps/tripadvisor/PRODUCT.md
+demo-apps/tripadvisor/contracts/*
+!demo-apps/tripadvisor/contracts/app.json
+
 # Bundled copy of template/, created only while packing
 packages/geeknative/template/
 
