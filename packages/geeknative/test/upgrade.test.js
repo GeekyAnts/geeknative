@@ -76,6 +76,35 @@ test('upgrade replaces an untouched framework file and leaves project rules', as
   assert.equal(readLock(dir)?.geeknative, packageVersion())
 })
 
+test('upgrade leaves project-owned files alone when migrations are pending', async () => {
+  const dir = path.join(tempDir(), 'no-migrate')
+  await create(dir, { install: false, git: false })
+  const product = path.join(dir, 'PRODUCT.md')
+  const original = readFileSync(product, 'utf8')
+  writeLock(dir, '0.0.1', dir, { migrations: [] })
+
+  const incoming = copyManaged(tempDir())
+  writeFileSync(path.join(incoming, '.geeknative', 'framework.mk'), '# incoming framework\n')
+
+  const pendingList = [
+    {
+      id: 'would-rewrite-product',
+      since: '0.1.0',
+      kind: /** @type {const} */ ('scripted'),
+      title: 'Should not run on upgrade',
+      run: (root) => {
+        writeFileSync(path.join(root, 'PRODUCT.md'), 'migrated\n')
+        return { changed: ['PRODUCT.md'] }
+      },
+    },
+  ]
+
+  const result = await upgrade(dir, { ...quiet, incoming, previous: TEMPLATE, migrationsList: pendingList })
+  assert.ok(result.changed.includes('.geeknative/framework.mk'))
+  assert.equal(readFileSync(product, 'utf8'), original)
+  assert.deepEqual(readLock(dir)?.migrations, [])
+})
+
 test('upgrade dry-run reports changes and writes nothing', async () => {
   const dir = path.join(tempDir(), 'dry')
   await create(dir, { install: false, git: false })

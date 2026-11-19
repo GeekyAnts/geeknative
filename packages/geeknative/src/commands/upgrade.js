@@ -6,6 +6,7 @@ import path from 'node:path'
 import { capture, runInherit } from '../lib/exec.js'
 import { CliError, log } from '../lib/log.js'
 import { hashContent, managedContents, readLock, replaceBlock, writeLock } from '../lib/managed.js'
+import { MIGRATIONS, pending } from '../migrations/registry.js'
 import { isLocalCheckout, packageVersion, snapshotFileName, templateDir } from '../lib/project.js'
 import { geeknativeSource } from './doctor.js'
 import { gen } from './gen.js'
@@ -29,18 +30,35 @@ import { pin } from './pin.js'
  *   install?: boolean,
  *   pin?: boolean,
  *   gen?: boolean,
+ *   migrationsList?: import('../migrations/registry.js').Migration[],
  * }} [options]
  *   `incoming` / `previous` are template roots (tests pass fixtures). `pin` and `gen` default on.
+ *   `migrationsList` is for tests; production uses the empty registry.
  */
 export async function upgrade(
   root,
-  { incoming = templateDir(), previous, dryRun = false, force = false, install = true, pin: doPin = true, gen: doGen = true } = {},
+  {
+    incoming = templateDir(),
+    previous,
+    dryRun = false,
+    force = false,
+    install = true,
+    pin: doPin = true,
+    gen: doGen = true,
+    migrationsList = MIGRATIONS,
+  } = {},
 ) {
   const lock = readLock(root)
   if (!lock) {
     throw new CliError(
       'No .geeknative/lock.json. This folder was not created by geeknative (or the lockfile was deleted).',
     )
+  }
+
+  /** @param {{ changed: string[], conflicts: string[] }} result */
+  const finish = (result) => {
+    announcePendingMigrations(root, migrationsList)
+    return result
   }
 
   const version = packageVersion()
@@ -57,13 +75,13 @@ export async function upgrade(
       writeLock(root, version, incoming)
       await bumpDependency(root, { install, pin: doPin })
       log.ok('upgrade', `already at ${version}`)
-      return { changed: [], conflicts: [] }
+      return finish({ changed: [], conflicts: [] })
     }
     // CLI-only changes (same version, same framework files) still need a new snapshot,
     // or the project keeps running the previous tarball.
     const pinned = !dryRun && doPin ? await pinStaleSnapshot(root, { install }) : false
     log.ok('upgrade', pinned ? `files already at ${version}; CLI snapshot updated` : `already at ${version}`)
-    return { changed: [], conflicts: [] }
+    return finish({ changed: [], conflicts: [] })
   }
 
   log.step('upgrade', `${lock.geeknative ?? 'unknown'} → ${version}`)
@@ -144,7 +162,7 @@ export async function upgrade(
       if (conflicts.length && !dryRun) {
         log.detail('Incoming copies are next to the files as *.geeknative-new. Fix them, then run upgrade again.')
       }
-      return { changed, conflicts }
+      return finish({ changed, conflicts })
     }
 
     writeLock(root, version, incoming)
@@ -152,10 +170,24 @@ export async function upgrade(
     await bumpDependency(root, { install, pin: doPin })
     if (doGen) gen(root, { quiet: true })
     log.ok('upgrade', `${lock.geeknative} → ${version}`)
-    return { changed, conflicts }
+    return finish({ changed, conflicts })
   } finally {
     if (cleanup) rmSync(cleanup, { recursive: true, force: true })
   }
+}
+
+/**
+ * Upgrade never runs migrations; it only points at `geeknative migrate` when any are waiting.
+ * @param {string} root
+ * @param {import('../migrations/registry.js').Migration[]} list
+ */
+function announcePendingMigrations(root, list) {
+  const waiting = pending(readLock(root), packageVersion(), list)
+  if (!waiting.length) return
+  log.warn(
+    'migrate',
+    `${waiting.length} migration(s) waiting. Run geeknative migrate (or --dry-run first). Framework files only were updated.`,
+  )
 }
 
 /**

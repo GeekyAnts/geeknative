@@ -180,6 +180,7 @@ function checkLockVersion(root) {
   if (lock.geeknative === version) return
   log.warn('upgrade', `project is on geeknative ${lock.geeknative}; this CLI is ${version}`)
   log.detail('Run `npx geeknative@latest upgrade` to replace framework files (then `make upgrade` works too).')
+  log.detail('Project-owned catch-up is separate: `geeknative migrate` (or `make migrate`) after upgrade.')
 }
 
 /** The sdkmanager package for the compile SDK: newer platforms carry a minor version ("android-37.0"). @param {string} sdk */

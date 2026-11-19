@@ -9,6 +9,7 @@ import { lint } from './commands/lint.js'
 import { parity } from './commands/parity.js'
 import { pin } from './commands/pin.js'
 import { run } from './commands/run.js'
+import { migrate } from './commands/migrate.js'
 import { upgrade } from './commands/upgrade.js'
 import { CliError, color } from './lib/log.js'
 import { findProjectRoot, packageVersion } from './lib/project.js'
@@ -29,6 +30,7 @@ Usage: geeknative <command>
   dev                  Same as run all: web stays up, and keys launch iOS and Android
   pin                  Pin the project to a fresh snapshot of the geeknative checkout it came from
   upgrade              Replace framework files from this CLI; merge ones you edited. Options: --dry-run --force --no-install
+  migrate              Apply pending project-owned migrations (specs, contracts, apps). Options: --dry-run
   version              Print the version
 `
 
@@ -97,6 +99,8 @@ export async function main(argv) {
       if (result.conflicts.length) process.exitCode = 1
       return
     }
+    case 'migrate':
+      return void (await migrate(findProjectRoot(), { dryRun: values['dry-run'] }))
     case 'dev':
       return run(findProjectRoot(), 'all')
     case 'run':
