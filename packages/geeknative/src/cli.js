@@ -24,7 +24,8 @@ Usage: geeknative <command>
   doctor [--fix]       Check Xcode, the Android SDK and Node; --fix installs what it can
   parity               Update spec/parity.md from feature specs and tests
   lint [platforms]     Find hardcoded text, unknown test IDs, centered titles and stale specs (or one app's code)
-  run <platform>       Build and launch: ios (simulator), android (emulator or device), web (dev server)
+  run <platform>       Build and launch: ios (simulator), android (emulator or device), web (dev server), all (web plus keys)
+  dev                  Same as run all: web stays up, and keys launch iOS and Android
   pin                  Pin the project to a fresh snapshot of the geeknative checkout it came from
   version              Print the version
 `
@@ -83,6 +84,8 @@ export async function main(argv) {
     }
     case 'pin':
       return pin(findProjectRoot(), { install: !values['no-install'] })
+    case 'dev':
+      return run(findProjectRoot(), 'all')
     case 'run':
       return run(findProjectRoot(), rest[0])
     default:
