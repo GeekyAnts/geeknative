@@ -6,7 +6,7 @@ import path from 'node:path'
 import { capture, runInherit } from '../lib/exec.js'
 import { CliError, log } from '../lib/log.js'
 import { hashContent, managedContents, readLock, replaceBlock, writeLock } from '../lib/managed.js'
-import { isLocalCheckout, packageVersion, templateDir } from '../lib/project.js'
+import { isLocalCheckout, packageVersion, snapshotFileName, templateDir } from '../lib/project.js'
 import { geeknativeSource } from './doctor.js'
 import { gen } from './gen.js'
 import { pin } from './pin.js'
@@ -56,8 +56,13 @@ export async function upgrade(
     if (!dryRun && lock.geeknative !== version) {
       writeLock(root, version, incoming)
       await bumpDependency(root, { install, pin: doPin })
+      log.ok('upgrade', `already at ${version}`)
+      return { changed: [], conflicts: [] }
     }
-    log.ok('upgrade', `already at ${version}`)
+    // CLI-only changes (same version, same framework files) still need a new snapshot,
+    // or the project keeps running the previous tarball.
+    const pinned = !dryRun && doPin ? await pinStaleSnapshot(root, { install }) : false
+    log.ok('upgrade', pinned ? `files already at ${version}; CLI snapshot updated` : `already at ${version}`)
     return { changed: [], conflicts: [] }
   }
 
@@ -314,6 +319,24 @@ function packFromRegistry(version) {
   const unpacked = unpackTarballTemplate(path.join(dest, name))
   rmSync(dest, { recursive: true, force: true })
   return unpacked
+}
+
+/**
+ * Packs this checkout again when the project is pinned to an older snapshot of it.
+ * @param {string} root
+ * @param {{ install: boolean }} options
+ * @returns {Promise<boolean>}
+ */
+async function pinStaleSnapshot(root, { install }) {
+  if (!isLocalCheckout()) return false
+  const pkgFile = path.join(root, 'package.json')
+  if (!existsSync(pkgFile)) return false
+  const pkg = JSON.parse(readFileSync(pkgFile, 'utf8'))
+  const spec = pkg.devDependencies?.geeknative
+  if (geeknativeSource(spec, root).kind !== 'snapshot') return false
+  if (spec === `file:.geeknative/${snapshotFileName()}`) return false
+  await pin(root, { install })
+  return true
 }
 
 /** @param {string} root @param {{ install: boolean, pin: boolean }} options */

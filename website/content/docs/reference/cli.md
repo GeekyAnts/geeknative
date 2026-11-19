@@ -14,7 +14,8 @@ geeknative <command>
   check [targets]      Verify contracts, then build and test. Targets: all (default), contracts, ios, android, web
   doctor [--fix]       Check Xcode, the Android SDK and Node; --fix installs what it can
   parity               Update spec/parity.md from feature specs and tests
-  run <platform>       Build and launch: ios (simulator), android (emulator or device), web (dev server)
+  run <platform>       Build and launch: ios (simulator), android (emulator or device), web (dev server), all (web plus keys)
+  dev                  Same as run all: web stays up, and keys launch iOS and Android
   pin                  Pin the project to a fresh snapshot of the geeknative checkout it came from
   upgrade              Replace framework files from this CLI; merge ones you edited. Options: --dry-run --force --no-install
   version              Print the version
@@ -180,14 +181,15 @@ The previous template comes from the project's snapshot tarball, `node_modules/g
 On success it rewrites `.geeknative/lock.json` with this CLI's version and the incoming hashes (so your local edits are still seen as edits next time), then:
 
 - a project that depends on geeknative from npm gets `^<version>` and `npm install`;
-- a project pinned to a checkout snapshot is [pinned](#pin) again when you run upgrade from that checkout.
+- a project pinned to a checkout snapshot is [pinned](#pin) again when you run upgrade from that checkout, including when only the CLI changed and the version number is the same. Framework files that already match still count as up to date.
 
 `--no-install` skips `npm install`. Conflicts skip the lock rewrite, the dependency bump and `gen`, so you can fix `*.geeknative-new` and run upgrade again.
 
 ## run
 
 ```sh
-npx geeknative run ios | android | web   # or: make run-ios, make run-android, make run-web
+npx geeknative run ios | android | web | all   # or: make run-ios, make run-android, make run-web, make run-all
+npx geeknative dev                            # same as run all
 ```
 
 | Platform | What happens |
@@ -195,8 +197,21 @@ npx geeknative run ios | android | web   # or: make run-ios, make run-android, m
 | `ios` | Boots the chosen simulator if needed, opens Simulator, builds, installs and launches the app by its bundle ID. |
 | `android` | Uses a connected device or running emulator. If there's none, it starts the first emulator from `emulator -list-avds` and waits for it to boot. Then `./gradlew :app:installDebug` and launches `app.MainActivity`. |
 | `web` | Starts the TanStack Start dev server at `http://localhost:3000`, with the values in `.env` available to server code. |
+| `all` | Starts that same web server and stays open. Keys launch the other apps. `dev` is the same command. |
 
 `run` runs `gen` first, so a launch never uses stale generated code or an old `.env`. It takes `GEEKNATIVE_ENV` the same way `check` does.
+
+`run all` needs a terminal. Piped input fails with a message, because the keys cannot be read. Web output is prefixed with `web`. iOS and Android builds log to `.geeknative/logs/` and run one at a time. Pressing a key while a build is already going prints "already building".
+
+| Key | What it does |
+|---|---|
+| `a` | Build, install and launch Android. |
+| `i` | Build, install and launch iOS. |
+| `r` | Web hot-reloads on its own, so this restarts web only if it has exited. iOS and Android that you already launched in this session are rebuilt, reinstalled and relaunched. That is a full build, not live reload. |
+| `w` | Restart the web dev server. Also offered if web exits on its own. |
+| `c` | Clear the screen and print the menu again. |
+| `?` | Print the menu. |
+| `q` or Ctrl-C | Stop the web server and exit. The Android emulator keeps running, as it does after `run android`. |
 
 ## make targets
 
@@ -217,6 +232,7 @@ The project's Makefile includes `.geeknative/framework.mk`:
 | `make lint` | `geeknative lint` |
 | `make lint-ios`, `lint-android`, `lint-web` | `geeknative lint <platform>` |
 | `make run-ios`, `run-android`, `run-web` | `geeknative run <platform>` |
+| `make run-all` | `geeknative run all` (same as `geeknative dev`) |
 
 Add `ENV=<name>` to a `check` or `run` target to set `GEEKNATIVE_ENV` for it, for example `make check-ios ENV=staging`.
 

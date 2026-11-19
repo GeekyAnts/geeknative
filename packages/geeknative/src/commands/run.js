@@ -16,7 +16,12 @@ import { gen } from './gen.js'
  * @param {string} platform
  */
 export async function run(root, platform) {
-  if (!['web', 'ios', 'android'].includes(platform)) throw new CliError('Usage: geeknative run <ios|android|web>')
+  if (platform === 'all') {
+    // Loaded lazily so this module and the session do not import each other at startup.
+    const { dev } = await import('./dev.js')
+    return dev(root)
+  }
+  if (!['web', 'ios', 'android'].includes(platform)) throw new CliError('Usage: geeknative run <ios|android|web|all>')
   // Regenerate first, so a launch never uses stale code or an old .env (AppSecrets).
   gen(root, { quiet: true })
   // GEEKNATIVE_ENV picks the environment from contracts/config.json; unset means development.
@@ -37,7 +42,7 @@ async function runWeb(root, environment) {
 }
 
 /** @param {string} root @param {string} [environment] */
-async function runIos(root, environment) {
+export async function runIos(root, environment) {
   const simulator = pickSimulator()
   if (!simulator) throw new CliError('No iPhone simulator found. Run `make doctor`.')
   const { id } = readApp(root)
@@ -66,7 +71,7 @@ async function runIos(root, environment) {
 }
 
 /** @param {string} root @param {string} [environment] */
-async function runAndroid(root, environment) {
+export async function runAndroid(root, environment) {
   const sdk = findAndroidSdk(root)
   if (!sdk) throw new CliError('Android SDK not found. Run `make doctor`.')
   writeLocalProperties(root, sdk)

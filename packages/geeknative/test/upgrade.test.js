@@ -5,7 +5,7 @@ import { test } from 'node:test'
 import { create } from '../src/commands/create.js'
 import { decide, upgrade } from '../src/commands/upgrade.js'
 import { hashContent, MANAGED_BLOCK_FILES, MANAGED_DIRS, MANAGED_FILES, readLock, writeLock } from '../src/lib/managed.js'
-import { packageVersion } from '../src/lib/project.js'
+import { packageVersion, snapshotFileName } from '../src/lib/project.js'
 import { editJson, readJson, TEMPLATE, tempDir } from './helpers.js'
 
 const quiet = { install: false, pin: false, gen: false }
@@ -36,6 +36,20 @@ test('upgrade is a no-op when the project already matches this CLI', async () =>
   const result = await upgrade(dir, quiet)
   assert.deepEqual(result, { changed: [], conflicts: [] })
   assert.equal(readFileSync(path.join(dir, '.geeknative', 'lock.json'), 'utf8'), before)
+})
+
+test('upgrade re-pins a snapshot when the checkout moved and framework files match', async () => {
+  const dir = path.join(tempDir(), 'stale-snapshot')
+  await create(dir, { install: false, git: false })
+  editJson(path.join(dir, 'package.json'), (pkg) => {
+    pkg.devDependencies.geeknative = 'file:.geeknative/geeknative-0.1.1-oldcommit.tgz'
+  })
+
+  const result = await upgrade(dir, { install: false, pin: true, gen: false })
+  assert.deepEqual(result, { changed: [], conflicts: [] })
+  const file = snapshotFileName()
+  assert.equal(readJson(path.join(dir, 'package.json')).devDependencies.geeknative, `file:.geeknative/${file}`)
+  assert.ok(existsSync(path.join(dir, '.geeknative', file)))
 })
 
 test('upgrade replaces an untouched framework file and leaves project rules', async () => {

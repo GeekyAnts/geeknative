@@ -103,6 +103,7 @@ Ask only when a wrong guess is expensive to undo: the data model, the navigation
 | `make check` | Validates contracts, then builds and tests all three apps |
 | `make check-ios`, `make check-android`, `make check-web` | One app; full logs go to .geeknative/logs/ |
 | `make run-ios`, `make run-android`, `make run-web` | Builds and launches one app |
+| `make run-all` | Starts the web dev server and launches iOS or Android from the same terminal (`r` rebuilds native apps; it is not live reload) |
 | `make parity` | Updates spec/parity.md |
 | `make pin` | For a project created from a geeknative checkout: moves it to a fresh snapshot of that checkout (`make doctor` says when there's a newer one) |
 | `make upgrade` | Replaces framework files from the installed geeknative, merging ones you edited (`npx geeknative@latest upgrade` the first time) |
