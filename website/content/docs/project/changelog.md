@@ -5,6 +5,7 @@ description: Release notes for geeknative.
 
 ## Unreleased
 
+- **`geeknative migrate`** (`make migrate`) applies pending project-owned migrations (scripted transforms, plus written guides for an agent). It refuses a dirty git tree, supports `--dry-run`, records ids in `lock.migrations`, and never commits. `upgrade` stays framework-only and announces when migrations are waiting. The production registry starts empty; concrete migrations land per release.
 - **`geeknative upgrade`** (`make upgrade`) replaces framework-owned files from the CLI you are running, three-way merges ones you edited, and rewrites `.geeknative/lock.json`. First run: `npx geeknative@latest upgrade`. `--dry-run` prints the plan; `--force` takes incoming on conflict. Project docs, specs, contracts and app code are not touched.
 - **Shared typeface in stock Android components:** Material 3 type roles that no text style maps to keep Material's size and weight but use the shared typeface, so stock components no longer fall back to Roboto.
 - **Desktop-first web:** generated websites use one site header. The app name always links to Home. Extra destinations sit in that header on a wide window; below `md` a hamburger opens a left drawer with the same list. No sidebar, bottom bar, or duplicate links. iOS and Android keep native tab and app bars.

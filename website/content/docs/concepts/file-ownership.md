@@ -38,6 +38,7 @@ The same applies to `apps/ios/AGENTS.md`, `apps/android/AGENTS.md`, `apps/web/AG
 ```json
 {
   "geeknative": "0.1.0",
+  "migrations": [],
   "files": {
     ".claude/agents/android-engineer.md": "sha256-3a8f...",
     ".geeknative/framework.mk": "sha256-fc52...",
@@ -50,6 +51,8 @@ The same applies to `apps/ios/AGENTS.md`, `apps/android/AGENTS.md`, `apps/web/AG
 }
 ```
 
+`migrations` lists project-owned migration ids that `geeknative migrate` has already applied (or that `create` marked current for a new project). `upgrade` rewrites the hashes and version but keeps this list.
+
 ## Upgrades
 
 `geeknative upgrade` (or `make upgrade`) applies this CLI's template to the framework-owned files, using the lockfile:
@@ -59,7 +62,11 @@ The same applies to `apps/ios/AGENTS.md`, `apps/android/AGENTS.md`, `apps/web/AG
 - your files are never touched;
 - generated files are rebuilt by `gen` after a clean apply.
 
-Run `npx geeknative@latest upgrade` so the command and the template come from the release you want. See [upgrade](/docs/reference/cli/#upgrade). Scripted migrations for project-owned files are still on the [roadmap](/docs/project/roadmap/).
+Run `npx geeknative@latest upgrade` so the command and the template come from the release you want. See [upgrade](/docs/reference/cli/#upgrade).
+
+## Migrations
+
+Project-owned catch-up is opt-in: `geeknative migrate` (or `make migrate`). It applies scripted transforms and prints written migrations for an agent. It refuses a dirty git tree, supports `--dry-run`, and never commits. If you prefer the project as it was, restore the previous commit (including `.geeknative/lock.json`). See [migrate](/docs/reference/cli/#migrate).
 
 ## Generated files
 
