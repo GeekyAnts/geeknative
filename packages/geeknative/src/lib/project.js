@@ -13,6 +13,23 @@ export const PACKAGE_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.u
 /** The repo's template/ folder, which exists only when running from a git checkout. */
 const REPO_TEMPLATE_DIR = path.resolve(PACKAGE_DIR, '../../template')
 
+/**
+ * Tarball name `pin` writes for this checkout: version, commit, and `-dirty` when the tree has changes.
+ * @param {string | null} [commit]
+ * @param {boolean} [dirty]
+ */
+export function snapshotFileName(commit, dirty) {
+  const repo = path.dirname(REPO_TEMPLATE_DIR)
+  const at = commit === undefined ? capture('git', ['rev-parse', '--short', 'HEAD'], { cwd: repo }) : commit
+  const changed = dirty === undefined ? checkoutDirty(repo) : dirty
+  return `geeknative-${packageVersion()}${at ? `-${at}${changed ? '-dirty' : ''}` : ''}.tgz`
+}
+
+/** @param {string} repo */
+function checkoutDirty(repo) {
+  return Boolean(capture('git', ['status', '--porcelain'], { cwd: repo }))
+}
+
 /** True when this CLI runs from a checkout of the geeknative repo rather than from npm. */
 export function isLocalCheckout() {
   return !existsSync(path.join(PACKAGE_DIR, 'template')) && existsSync(REPO_TEMPLATE_DIR)
@@ -46,7 +63,7 @@ export function packCheckout(destDir) {
 
     const commit = capture('git', ['rev-parse', '--short', 'HEAD'], { cwd: repo })
     const branch = capture('git', ['branch', '--show-current'], { cwd: repo }) || null
-    const dirty = Boolean(capture('git', ['status', '--porcelain'], { cwd: repo }))
+    const dirty = checkoutDirty(repo)
     // Where the snapshot came from, so `pin` can find the checkout again and `doctor` can tell
     // when it has moved on.
     /** @type {SnapshotSource} */
@@ -59,7 +76,7 @@ export function packCheckout(destDir) {
     const packed = capture('npm', ['pack', '--ignore-scripts', '--silent', '--pack-destination', destDir], { cwd: stage })
     const tarball = packed?.split('\n').pop()
     if (!tarball) throw new CliError('Could not pack the local geeknative checkout with `npm pack`.')
-    const file = `geeknative-${packageVersion()}${commit ? `-${commit}${dirty ? '-dirty' : ''}` : ''}.tgz`
+    const file = snapshotFileName(commit, dirty)
     renameSync(path.join(destDir, tarball), path.join(destDir, file))
     return { file, commit, branch, dirty }
   } finally {
