@@ -106,6 +106,7 @@ Ask only when a wrong guess is expensive to undo: the data model, the navigation
 | `make parity` | Updates spec/parity.md |
 | `make pin` | For a project created from a geeknative checkout: moves it to a fresh snapshot of that checkout (`make doctor` says when there's a newer one) |
 | `make upgrade` | Replaces framework files from the installed geeknative, merging ones you edited (`npx geeknative@latest upgrade` the first time) |
+| `make migrate` | Applies pending project-owned migrations (`--dry-run` / `DRY_RUN=1` to preview). Opt-in; restore the previous commit if you prefer the old project |
 | `make lint` | Finds hardcoded text, test IDs no spec lists, centered titles, stale statuses and a stale parity.md (`make check` runs it too) |
 
 **Working from outside this folder.** Claude Code loads this project's hooks and platform agents (.claude/) only when the session starts in this folder. If yours started elsewhere (a parent folder, another repo), they aren't active: run `make gen` yourself after every contract edit, brief general-purpose agents with the platform's AGENTS.md, and rely on `make check`, which enforces the same rules as the hooks. Better: start the session in this folder.

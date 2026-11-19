@@ -184,6 +184,33 @@ On success it rewrites `.geeknative/lock.json` with this CLI's version and the i
 
 `--no-install` skips `npm install`. Conflicts skip the lock rewrite, the dependency bump and `gen`, so you can fix `*.geeknative-new` and run upgrade again.
 
+On success (and when the project is already current), upgrade announces any pending [migrations](#migrate). It does not run them.
+
+## migrate
+
+```sh
+npx geeknative migrate
+npx geeknative migrate --dry-run
+# or: make migrate   DRY_RUN=1
+```
+
+Applies **project-owned** catch-up for the versions between `.geeknative/lock.json` and this CLI. Specs, contracts, docs and app code can change here; framework files stay with [`upgrade`](#upgrade).
+
+| Kind | What happens |
+|---|---|
+| Scripted | A deterministic transform edits project files (for example a new spec format). Fail closed if a file does not match the expected shape. |
+| Written | Printed as instructions for an agent to apply across iOS, Android and web. geeknative does not rewrite the three apps itself. |
+
+Rules:
+
+- Requires `.geeknative/lock.json` and a **clean** git working tree (so you can restore if you dislike the result).
+- `--dry-run` prints the plan and writes nothing.
+- Successful ids are appended to `lock.migrations`. Upgrade preserves that list when it rewrites hashes.
+- Never creates a git commit. Prefer the old project? Restore the previous commit, including the lockfile.
+- Fresh `create` marks every known migration as already applied, so new projects have nothing to catch up.
+
+When a scripted migration regenerates contracts, `migrate` runs `gen` once at the end.
+
 ## run
 
 ```sh
