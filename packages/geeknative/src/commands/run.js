@@ -37,7 +37,7 @@ async function runWeb(root, environment) {
 }
 
 /** @param {string} root @param {string} [environment] */
-async function runIos(root, environment) {
+export async function runIos(root, environment) {
   const simulator = pickSimulator()
   if (!simulator) throw new CliError('No iPhone simulator found. Run `make doctor`.')
   const { id } = readApp(root)
@@ -66,7 +66,7 @@ async function runIos(root, environment) {
 }
 
 /** @param {string} root @param {string} [environment] */
-async function runAndroid(root, environment) {
+export async function runAndroid(root, environment) {
   const sdk = findAndroidSdk(root)
   if (!sdk) throw new CliError('Android SDK not found. Run `make doctor`.')
   writeLocalProperties(root, sdk)
