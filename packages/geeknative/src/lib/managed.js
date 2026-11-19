@@ -120,11 +120,14 @@ export function readLock(root) {
 
 /**
  * Writes .geeknative/lock.json: the framework version and the hashes of what it installed.
+ * `from` is the tree to hash (the project after create, or the incoming template after upgrade,
+ * so local edits to managed files are not recorded as the new base).
  * @param {string} root
  * @param {string} version
+ * @param {string} [from]
  */
-export function writeLock(root, version) {
-  const lock = { geeknative: version, ...managedHashes(root) }
+export function writeLock(root, version, from = root) {
+  const lock = { geeknative: version, ...managedHashes(from) }
   writeFileSync(path.join(root, '.geeknative', 'lock.json'), `${JSON.stringify(lock, null, 2)}\n`)
 }
 
