@@ -4,7 +4,7 @@ GEEKNATIVE ?= ./node_modules/.bin/geeknative
 # `make check ENV=staging` builds the staging environment from contracts/config.json.
 ENV_PREFIX = $(if $(ENV),GEEKNATIVE_ENV=$(ENV) )
 
-.PHONY: help doctor gen font pin check check-contracts check-ios check-android check-web lint lint-ios lint-android lint-web parity run-ios run-android run-web
+.PHONY: help doctor gen font pin check check-contracts check-ios check-android check-web lint lint-ios lint-android lint-web parity run-ios run-android run-web run-all
 
 help: ## List the commands
 	@grep -hE '^[a-zA-Z_-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "  make %-16s %s\n", $$1, $$2}'
@@ -59,3 +59,6 @@ run-android: ## Build and launch the Android app on an emulator or device
 
 run-web: ## Start the web dev server
 	@$(ENV_PREFIX)$(GEEKNATIVE) run web
+
+run-all: ## Start web and drive iOS/Android from one terminal
+	@$(ENV_PREFIX)$(GEEKNATIVE) run all
