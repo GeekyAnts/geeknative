@@ -1,8 +1,9 @@
 // @ts-check
 import { spawn } from 'node:child_process'
+import { readApp } from '../codegen/app.js'
 import { readConfig } from '../codegen/config.js'
 import { dotenvForChild, requestedEnvironment } from '../lib/env.js'
-import { CliError, log } from '../lib/log.js'
+import { CliError, color, log } from '../lib/log.js'
 import { gen } from './gen.js'
 import { runAndroid, runIos } from './run.js'
 
@@ -38,17 +39,47 @@ export function keyToAction(key) {
   }
 }
 
+/** Slanted GeekNative wordmark. Widest line is 72 columns. */
+const WORDMARK = [
+  '   ______                __      _   __           __     _',
+  '  / ____/  ___   ___    / /__   / | / /  ____ _  / /_   (_) _   __  ___',
+  ' / / __   / _ \\ / _ \\  / //_/  /  |/ /  / __ `/ / __/  / / | | / / / _ \\',
+  '/ /_/ /  /  __//  __/ / ,<    / /|  /  / /_/ / / /_   / /  | |/ / /  __/',
+  '\\____/   \\___/ \\___/ /_/|_|  /_/ |_/   \\__,_/  \\__/  /_/   |___/  \\___/',
+].join('\n')
+
 /** Key list for the session. Native reload is a full rebuild, not live reload. */
 export function menu() {
-  return [
-    'a  Android   build, install and launch',
-    'i  iOS       build, install and launch',
-    'r  reload    web hot-reloads; iOS and Android already launched are rebuilt and relaunched',
-    'w  web       restart the web dev server',
-    'c  clear     clear the screen',
-    '?  help      show this menu',
-    'q  quit      stop web and exit',
+  const rows = [
+    ['a', 'Android', 'build, install and launch'],
+    ['i', 'iOS', 'build, install and launch'],
+    ['r', 'reload', 'rebuild and relaunch iOS and Android already launched'],
+    ['w', 'web', 'restart the dev server'],
+    ['c', 'clear', 'clear the screen'],
+    ['?', 'help', 'show this menu'],
+    ['q', 'quit', 'stop web and exit'],
+  ]
+  const width = Math.max(...rows.map((row) => row[1].length))
+  const lines = rows.map(([key, label, detail]) => `${color.bold(key)}  ${label.padEnd(width)}  ${color.dim(detail)}`)
+  lines.push('', color.dim('web hot-reloads on its own. r does not live-reload iOS or Android.'))
+  return lines.join('\n')
+}
+
+/**
+ * Wordmark, app name, what is running, and the key menu.
+ * @param {{ name: string, url: string, environment?: string, webUp: boolean, ios: boolean, android: boolean }} state
+ */
+export function sessionBanner(state) {
+  const title = [color.bold(state.name), state.environment ? color.dim(state.environment) : ''].filter(Boolean).join('  ')
+  const labelWidth = 'android'.length
+  /** @param {string} label @param {string} value */
+  const row = (label, value) => `${label.padEnd(labelWidth)}   ${value}`
+  const status = [
+    row('web', state.webUp ? color.cyan(state.url) : color.dim('exited')),
+    row('ios', state.ios ? 'launched' : color.dim('not launched')),
+    row('android', state.android ? 'launched' : color.dim('not launched')),
   ].join('\n')
+  return `${color.cyan(color.bold(WORDMARK))}\n\n${title}\n\n${status}\n\n${menu()}`
 }
 
 /**
@@ -63,7 +94,7 @@ export async function dev(root) {
 
   gen(root, { quiet: true })
   const environment = requestedEnvironment(readConfig(root).environments)
-  if (environment) log.step('config', `running the ${environment} environment`)
+  const appName = readApp(root).name
 
   /** @type {Set<'ios' | 'android'>} */
   const launched = new Set()
@@ -77,8 +108,16 @@ export async function dev(root) {
   let webAlive = false
 
   const banner = () => {
-    log.info(`web  ${WEB_URL}`)
-    log.info(menu())
+    log.info(
+      sessionBanner({
+        name: appName,
+        url: WEB_URL,
+        environment,
+        webUp: webAlive,
+        ios: launched.has('ios'),
+        android: launched.has('android'),
+      }),
+    )
   }
 
   /** @param {import('node:stream').Readable | null | undefined} stream @param {{ text: string }} pending */
@@ -237,7 +276,7 @@ export async function dev(root) {
       return
     }
     if (action === 'help') {
-      log.info(menu())
+      banner()
       return
     }
     if (action === 'quit') shutdown()
@@ -254,6 +293,6 @@ export async function dev(root) {
   process.on('SIGINT', shutdown)
   process.on('SIGTERM', shutdown)
 
-  banner()
   startWeb()
+  banner()
 }
