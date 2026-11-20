@@ -60,8 +60,8 @@ const APPS = [
 
 export function ArchitectureDiagram({ className = "" }: { className?: string }) {
   return (
-    <div className={`overflow-x-auto [scrollbar-width:thin] ${className}`}>
-      <svg viewBox="0 0 1240 600" className="h-auto w-full min-w-[980px]" role="img" aria-labelledby="arch-title arch-desc">
+    <div className={`overflow-x-auto pb-3 [scrollbar-width:thin] ${className}`}>
+      <svg viewBox="0 0 1240 610" className="h-auto w-full min-w-[980px]" role="img" aria-labelledby="arch-title arch-desc">
         <title id="arch-title">How a prompt becomes three native apps</title>
         <desc id="arch-desc">
           A prompt goes to AGENTS.md, which triages it and updates the spec and contracts. make gen compiles the contracts into
@@ -79,7 +79,7 @@ export function ArchitectureDiagram({ className = "" }: { className?: string }) 
             <circle cx="1" cy="1" r="1" fill="rgb(11 11 11 / 0.07)" />
           </pattern>
         </defs>
-        <rect width="1240" height="600" fill="url(#dots)" />
+        <rect width="1240" height="610" fill="url(#dots)" />
 
         <Step x={24} n="01" title="Prompt" />
         <Step x={228} n="02" title="Triage" />
@@ -214,7 +214,7 @@ export function ArchitectureDiagram({ className = "" }: { className?: string }) 
         <Flow d="M1072 492 C1092 492 1086 258 1098 254" />
         <Flow d="M1158 270 L1158 298" />
 
-        <text x={858} y={588} fontSize={11} fill={MUTED} style={mono}>
+        <text x={820} y={592} fontSize={11} fill={MUTED} style={mono}>
           Dashed: built from the spec. Solid: compiled from contracts.
         </text>
       </svg>
