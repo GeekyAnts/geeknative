@@ -5,6 +5,8 @@ import SwiftUI
 /// Icons, drawn from Icons.xcassets as template images. Use with `Image(AppIcon.settings)`.
 nonisolated enum AppIcon {
     static let back = ImageResource(name: "icon/back", bundle: .main)
+    static let close = ImageResource(name: "icon/close", bundle: .main)
     static let home = ImageResource(name: "icon/home", bundle: .main)
+    static let menu = ImageResource(name: "icon/menu", bundle: .main)
     static let settings = ImageResource(name: "icon/settings", bundle: .main)
 }

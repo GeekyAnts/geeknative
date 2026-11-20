@@ -4,7 +4,7 @@ import { strings } from '#/generated/strings'
 import { click, renderApp } from '#/testing/renderApp'
 
 describe('Site header', () => {
-  test('drops a navigation panel from the compact menu control', async () => {
+  test('opens a side drawer from the compact menu control', async () => {
     const app = await renderApp('/')
     const toggle = app.element.querySelector('[data-testid="nav.menuToggle"]')
     const menu = app.element.querySelector('[data-testid="nav.menu"]')

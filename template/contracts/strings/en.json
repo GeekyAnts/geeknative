@@ -1,5 +1,8 @@
 {
   "common.back": "Back",
+  "nav.home": "Home",
+  "nav.openMenu": "Open menu",
+  "nav.closeMenu": "Close menu",
   "home.openSettings": "Settings",
   "home.welcomeTitle": "You're all set",
   "home.welcomeBody": "This app is built natively for iOS, Android and the web from one shared spec. Describe what you want to build to your coding agent, and it will build it for all three.",

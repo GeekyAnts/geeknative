@@ -12,6 +12,9 @@ const messages: Record<Locale, Record<string, string | Plural>> = {
     "home.openSettings": "Settings",
     "home.welcomeBody": "This app is built natively for iOS, Android and the web from one shared spec. Describe what you want to build to your coding agent, and it will build it for all three.",
     "home.welcomeTitle": "You're all set",
+    "nav.closeMenu": "Close menu",
+    "nav.home": "Home",
+    "nav.openMenu": "Open menu",
     "settings.about.title": "About",
     "settings.about.version": "Version {version} ({build:int})",
     "settings.appearance.dark": "Dark",
@@ -58,6 +61,18 @@ export const strings = {
   /** You're all set */
   get homeWelcomeTitle() {
     return text("home.welcomeTitle")
+  },
+  /** Close menu */
+  get navCloseMenu() {
+    return text("nav.closeMenu")
+  },
+  /** Home */
+  get navHome() {
+    return text("nav.home")
+  },
+  /** Open menu */
+  get navOpenMenu() {
+    return text("nav.openMenu")
   },
   /** About */
   get settingsAboutTitle() {

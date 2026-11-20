@@ -11,13 +11,15 @@ export default function DocsLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <Nav solid />
-      <div className={`${wrap} pt-16 lg:pt-[72px]`}>
-        <div className="grid grid-cols-1 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-x-12 xl:grid-cols-[15rem_minmax(0,1fr)_13rem] xl:gap-x-14">
-          <DocsSidebar sections={sidebar()} />
-          {children}
+      <div id="site-content">
+        <div className={`${wrap} pt-16 lg:pt-[72px]`}>
+          <div className="grid grid-cols-1 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-x-12 xl:grid-cols-[15rem_minmax(0,1fr)_13rem] xl:gap-x-14">
+            <DocsSidebar sections={sidebar()} />
+            {children}
+          </div>
         </div>
+        <Footer />
       </div>
-      <Footer />
       <SearchDialog />
     </>
   );

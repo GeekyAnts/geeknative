@@ -13,23 +13,25 @@ export default function Home() {
     <div className="relative">
       <JsonLd data={[softwareApplication, { "@context": "https://schema.org", ...publisher }]} />
       <Nav />
-      <main>
-        <Hero />
-        <Idea />
-        <Apps />
-        <HowItWorks />
-        <Triage />
-        <Contracts />
-        <Parity />
-        <Agents />
-        <WhoItsFor />
-        <Closing />
-      </main>
-      <Footer colony />
-      <ColonyCanvas />
-      <noscript>
-        <style>{`.colony-fallback{opacity:1!important}`}</style>
-      </noscript>
+      <div id="site-content">
+        <main>
+          <Hero />
+          <Idea />
+          <Apps />
+          <HowItWorks />
+          <Triage />
+          <Contracts />
+          <Parity />
+          <Agents />
+          <WhoItsFor />
+          <Closing />
+        </main>
+        <Footer colony />
+        <ColonyCanvas />
+        <noscript>
+          <style>{`.colony-fallback{opacity:1!important}`}</style>
+        </noscript>
+      </div>
     </div>
   );
 }
