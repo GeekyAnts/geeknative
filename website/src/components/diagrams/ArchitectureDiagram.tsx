@@ -53,9 +53,9 @@ function Flow({ d, hot = false, dashed = false }: { d: string; hot?: boolean; da
 
 const TRIAGE = ["Product", "Feature", "Behavior", "Design", "Copy", "Bug", "Platform-specific", "Engineering", "Question"];
 const APPS = [
-  { y: 96, dir: "apps/ios", stack: "SwiftUI", files: "NotesScreen.swift · NotesViewModel.swift" },
-  { y: 262, dir: "apps/android", stack: "Jetpack Compose", files: "NotesScreen.kt · NotesViewModel.kt" },
-  { y: 428, dir: "apps/web", stack: "TanStack Start", files: "NotesScreen.tsx · useNotesViewModel.ts" },
+  { y: 96, dir: "apps/ios", stack: "SwiftUI", files: ["NotesScreen.swift", "NotesViewModel.swift"] },
+  { y: 262, dir: "apps/android", stack: "Jetpack Compose", files: ["NotesScreen.kt", "NotesViewModel.kt"] },
+  { y: 428, dir: "apps/web", stack: "TanStack Start", files: ["NotesScreen.tsx", "useNotesViewModel.ts"] },
 ];
 
 export function ArchitectureDiagram({ className = "" }: { className?: string }) {
@@ -157,18 +157,22 @@ export function ArchitectureDiagram({ className = "" }: { className?: string }) 
         {APPS.map((a) => (
           <g key={a.dir}>
             <rect x={858} y={a.y} width={214} height={130} rx={12} fill="#fff" stroke={LINE} />
-            <text x={876} y={a.y + 28} fontSize={15} fontWeight={700} fill={INK} style={sans}>
+            <text x={876} y={a.y + 24} fontSize={15} fontWeight={700} fill={INK} style={sans}>
               {a.stack}
             </text>
-            <text x={876} y={a.y + 48} fontSize={11} fill={MUTED} style={mono}>
+            <text x={876} y={a.y + 42} fontSize={11} fill={MUTED} style={mono}>
               {a.dir} · AGENTS.md
             </text>
-            <text x={876} y={a.y + 76} fontSize={10.5} fill={INK} style={mono}>
-              {a.files}
+            <text x={876} y={a.y + 62} fontSize={10.5} fill={INK} style={mono}>
+              {a.files.map((file, i) => (
+                <tspan key={file} x={876} dy={i === 0 ? 0 : 14}>
+                  {file}
+                </tspan>
+              ))}
             </text>
-            <rect x={876} y={a.y + 92} width={110} height={22} rx={11} fill={MIST} />
-            <circle cx={889} cy={a.y + 103} r={3} fill={RED} />
-            <text x={898} y={a.y + 107} fontSize={10.5} fill={INK} style={mono}>
+            <rect x={876} y={a.y + 96} width={110} height={22} rx={11} fill={MIST} />
+            <circle cx={889} cy={a.y + 107} r={3} fill={RED} />
+            <text x={898} y={a.y + 111} fontSize={10.5} fill={INK} style={mono}>
               AC-notes tests
             </text>
           </g>
