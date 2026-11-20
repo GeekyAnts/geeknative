@@ -216,13 +216,14 @@ export function ScreenMenu({
   };
 
   return (
-    <div ref={root} className="relative w-full">
+    <div ref={root} className="relative inline-flex max-w-full min-w-0">
       <button
         ref={buttonRef}
         type="button"
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={listId}
+        aria-label={`${label}, ${current}`}
         onClick={() => {
           if (!open) place();
           setOpen((isOpen) => !isOpen);
@@ -242,14 +243,10 @@ export function ScreenMenu({
             setOpen(false);
           }
         }}
-        className="flex h-12 w-full items-center gap-3 rounded-full bg-white pl-4 pr-1.5 text-left ring-1 ring-inset ring-line-strong"
+        className="flex h-10 max-w-full min-w-0 items-center gap-2 rounded-full bg-white py-1 pl-3.5 pr-1 text-left ring-1 ring-inset ring-line-strong"
       >
-        <span className="label shrink-0 text-muted">{label}</span>
-        <span className="min-w-0 flex-1 truncate text-[15px] font-medium tracking-[-0.01em]">{current}</span>
-        <span className="label shrink-0 tabular-nums text-faint">
-          {String(index + 1).padStart(2, "0")} / {String(options.length).padStart(2, "0")}
-        </span>
-        <span className="grid size-9 shrink-0 place-items-center rounded-full bg-ink text-white">
+        <span className="min-w-0 truncate text-[14.5px] font-medium tracking-[-0.01em]">{current}</span>
+        <span className="grid size-7 shrink-0 place-items-center rounded-full bg-ink text-white">
           <Chevron open={open} />
         </span>
       </button>
@@ -259,7 +256,7 @@ export function ScreenMenu({
           id={listId}
           role="listbox"
           aria-label={label}
-          className={`absolute left-0 right-0 z-30 max-h-[min(22rem,50vh)] overflow-y-auto rounded-2xl bg-white p-1.5 shadow-[0_18px_50px_-20px_rgb(11_11_11/0.4)] ring-1 ring-line [scrollbar-width:thin] ${above ? "bottom-full mb-2" : "top-full mt-2"}`}
+          className={`absolute left-0 z-30 w-[min(16.5rem,calc(100vw-2.5rem))] max-h-[min(22rem,50vh)] overflow-y-auto rounded-2xl bg-white p-1.5 shadow-[0_18px_50px_-20px_rgb(11_11_11/0.4)] ring-1 ring-line [scrollbar-width:thin] ${above ? "bottom-full mb-2" : "top-full mt-2"}`}
         >
           {options.map(([id, text], i) => {
             const selected = id === value;
@@ -306,14 +303,14 @@ export function ShowcaseControls({
   className?: string;
 }) {
   return (
-    <div className={`flex flex-col items-stretch gap-3 md:flex-row md:flex-wrap md:items-center md:justify-center ${className}`}>
-      <div className="md:hidden">
+    <div className={`flex items-center justify-between gap-3 md:flex-wrap md:justify-center ${className}`}>
+      <div className="flex min-w-0 flex-1 justify-start md:hidden">
         <ScreenMenu label="Screen" value={screen} options={screens} onChange={onScreen} />
       </div>
       <div className="hidden md:block">
         <Segmented label="Screen" value={screen} options={screens} onChange={onScreen} />
       </div>
-      <div className="flex justify-center">
+      <div className="shrink-0">
         <Segmented<Mode>
           label="Appearance"
           value={mode}
