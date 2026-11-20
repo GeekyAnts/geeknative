@@ -276,6 +276,7 @@ test('fonts: the shared typeface reaches every platform from the same files', ()
   const kotlin = outputOf(outputs, 'Tokens.kt')
   assert.match(kotlin, /^import app\.R$/m)
   assert.match(kotlin, /val AppFontFamily = FontFamily\(\n\s+Font\(R\.font\.generated_inter_regular, FontWeight\.Normal\),\n\s+Font\(R\.font\.generated_inter_medium, FontWeight\.Medium\),/)
+  assert.match(kotlin, /labelMedium = defaults\.labelMedium\.copy\(fontFamily = AppFontFamily\)/)
 
   const css = outputOf(outputs, 'tokens.css')
   assert.match(css, /@font-face \{\n  font-family: 'Inter';\n  font-style: normal;\n  font-weight: 600;\n  font-display: swap;\n  src: url\('\.\/fonts\/Inter-SemiBold\.ttf'\) format\('truetype'\);\n\}/)

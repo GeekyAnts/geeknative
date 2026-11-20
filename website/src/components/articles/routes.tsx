@@ -17,8 +17,10 @@ export function CollectionLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <Nav solid />
-      <main className={`${wrap} pt-16 lg:pt-[72px]`}>{children}</main>
-      <Footer />
+      <div id="site-content">
+        <main className={`${wrap} pt-16 lg:pt-[72px]`}>{children}</main>
+        <Footer />
+      </div>
     </>
   );
 }

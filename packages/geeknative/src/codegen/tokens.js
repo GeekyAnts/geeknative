@@ -519,10 +519,24 @@ ${faces.map(([weight, face]) => `    Font(R.font.${androidFontName(face.file)}, 
 
 `
     : ''
-  const slots = Object.entries(tokens.typography)
-    .filter(([, t]) => t.android)
-    .map(([name, t]) => `    ${t.android} = AppTypography.${name},`)
-    .join('\n')
+  const mapped = Object.fromEntries(Object.entries(tokens.typography).filter(([, t]) => t.android).map(([name, t]) => [t.android, name]))
+  const materialTypography = faces.length
+    ? `Typography().let { defaults ->
+    defaults.copy(
+${[...M3_TEXT_SLOTS]
+  .map((slot) =>
+    mapped[slot]
+      ? `        ${slot} = AppTypography.${mapped[slot]},`
+      : `        ${slot} = defaults.${slot}.copy(fontFamily = AppFontFamily),`,
+  )
+  .join('\n')}
+    )
+}`
+    : `Typography().copy(
+${Object.entries(mapped)
+  .map(([slot, name]) => `    ${slot} = AppTypography.${name},`)
+  .join('\n')}
+)`
   const shape = (/** @type {string} */ key) => (tokens.radius[key] !== undefined ? `RoundedCornerShape(AppRadius.${key})` : null)
   const shapes = [
     ['extraSmall', shape('xs') ?? shape('sm')],
@@ -601,10 +615,8 @@ object AppTextSize {
 ${Object.entries(tokens.typography).map(([name, t]) => `    val ${name} = ${t.size}.sp`).join('\n')}
 }
 
-/** The text styles mapped onto Material 3 type roles, so stock components use them. */
-val AppMaterialTypography = Typography().copy(
-${slots}
-)
+/** The text styles mapped onto Material 3 type roles, so stock components use them. Unmapped roles keep Material's size and weight but use the shared typeface when there is one. */
+val AppMaterialTypography = ${materialTypography}
 
 /** The radii mapped onto Material 3 shape roles. */
 val AppShapes = Shapes(

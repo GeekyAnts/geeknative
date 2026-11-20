@@ -10,8 +10,12 @@ import app.R
 object AppIcons {
     val back: ImageVector
         @Composable get() = ImageVector.vectorResource(R.drawable.generated_icon_back)
+    val close: ImageVector
+        @Composable get() = ImageVector.vectorResource(R.drawable.generated_icon_close)
     val home: ImageVector
         @Composable get() = ImageVector.vectorResource(R.drawable.generated_icon_home)
+    val menu: ImageVector
+        @Composable get() = ImageVector.vectorResource(R.drawable.generated_icon_menu)
     val settings: ImageVector
         @Composable get() = ImageVector.vectorResource(R.drawable.generated_icon_settings)
 }

@@ -18,7 +18,7 @@ import app.generated.toColorScheme
 
 private val LocalAppColors = staticCompositionLocalOf { LightAppColors }
 
-/** Applies the design tokens: [AppTheme.colors] for token colors, and Material 3 theming for stock components. */
+/** Applies the design tokens: [AppTheme.colors] for token colors, and Material 3 theming so stock chrome uses the shared typeface. */
 @Composable
 fun AppTheme(darkTheme: Boolean, content: @Composable () -> Unit) {
     val colors = if (darkTheme) DarkAppColors else LightAppColors
