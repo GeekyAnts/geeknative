@@ -47,6 +47,7 @@ Same names and responsibilities as the iOS and web apps.
 | Motion and shadows | `animationSpec = AppMotion.snappy()`, `AppMotion.standard(AppMotion.fast)`; `Modifier.shadow(AppElevation.low, shape)`. Never raw durations, easings or elevations. Material components draw their own elevation, so set it to 0 when you apply a token shadow (for example `FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp)`), or they draw two. Compose follows the system's animation scale, so "Remove animations" turns motion off. |
 | Icons | `Icon(AppIcons.settings, contentDescription = ...)` (generated vector drawables; never `Icons.Filled.*`) |
 | Config | `AppConfig.apiBaseUrl`, `AppEnvironment.current` (generated from contracts/config.json) |
+| HTTP API | Local repositories are the live backend until a server exists. After the user drops an OpenAPI document or a full route list, models come from `contracts/api.json` (`ApiModels.kt`). `ApiClient` helpers are generated only when `apiBaseUrl` is in config. Call them from a remote repository, not from a screen. The client sends no Authorization header. |
 | Secrets | `AppSecrets.mapsApiKey` (generated from .env, git-ignored; never commit values) |
 | Test IDs | `Modifier.testTag("notes.addButton")` |
 

@@ -50,6 +50,11 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Type-check, test and build
         run: node ../packages/geeknative/bin/geeknative.js check contracts web
+      - name: Compile generated API clients
+        run: |
+          node ../scripts/apply-api-fixture.js .
+          node ../packages/geeknative/bin/geeknative.js gen
+          node ../packages/geeknative/bin/geeknative.js check contracts web
       - name: Upload logs
         if: failure()
         uses: actions/upload-artifact@v7
@@ -77,6 +82,11 @@ jobs:
         run: (yes || true) | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "platforms;android-37.0" > /dev/null
       - name: Build and run unit tests
         run: node ../packages/geeknative/bin/geeknative.js check contracts android
+      - name: Compile generated API clients
+        run: |
+          node ../scripts/apply-api-fixture.js .
+          node ../packages/geeknative/bin/geeknative.js gen
+          node ../packages/geeknative/bin/geeknative.js check contracts android
       - name: Upload logs
         if: failure()
         uses: actions/upload-artifact@v7
@@ -99,6 +109,11 @@ jobs:
         run: xcodebuild -version
       - name: Build and run tests on a simulator
         run: node ../packages/geeknative/bin/geeknative.js check contracts ios
+      - name: Compile generated API clients
+        run: |
+          node ../scripts/apply-api-fixture.js .
+          node ../packages/geeknative/bin/geeknative.js gen
+          node ../packages/geeknative/bin/geeknative.js check contracts ios
       - name: Upload logs
         if: failure()
         uses: actions/upload-artifact@v7
