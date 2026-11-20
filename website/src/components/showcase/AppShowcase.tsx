@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { ShowcaseApp } from "@/content/showcase";
-import { AndroidPhone, ChromeWindow, IPhone, PlatformCaption, Segmented, type Mode, type Platform } from "./frames";
+import { AndroidPhone, ChromeWindow, DeviceStage, IPhone, Segmented, type Mode, type Platform } from "./frames";
 
 const SIZES: Record<Platform, { width: number; height: number; label: string }> = {
   ios: { width: 600, height: 1304, label: "iOS" },
@@ -121,26 +121,23 @@ export function AppShowcase({ app, shots }: { app: ShowcaseApp; shots: readonly 
 
   return (
     <div ref={root}>
-      <div className="grid grid-cols-2 items-end gap-x-[6%] gap-y-12 md:flex md:justify-center md:gap-x-[3.2%]">
-        <div className="md:w-[18.5%]">
+      <DeviceStage
+        ios={
           <IPhone>
             <Layers app={app} platform="ios" screen={screen.id} mode={mode} shots={shots} />
           </IPhone>
-          <PlatformCaption platform="ios" />
-        </div>
-        <div className="order-first col-span-2 md:order-none md:w-[56%]">
+        }
+        web={
           <ChromeWindow mode={mode} path={screen.path} title={screen.title} favicon={<Mark color={app.mark} />}>
             <Layers app={app} platform="web" screen={screen.id} mode={mode} shots={shots} />
           </ChromeWindow>
-          <PlatformCaption platform="web" />
-        </div>
-        <div className="md:w-[18.5%]">
+        }
+        android={
           <AndroidPhone>
             <Layers app={app} platform="android" screen={screen.id} mode={mode} shots={shots} />
           </AndroidPhone>
-          <PlatformCaption platform="android" />
-        </div>
-      </div>
+        }
+      />
 
       <div className="mt-12 flex flex-wrap items-center justify-center gap-3">
         <Segmented
