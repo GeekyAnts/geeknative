@@ -26,5 +26,6 @@ geeknative(['create', project, '--name', 'Smoke Test', '--id', 'com.example.smok
 geeknative(['check', ...(targets.length ? targets : ['all'])], project)
 geeknative(['parity'], project)
 applyApiFixture(project)
+geeknative(['gen'], project)
 geeknative(['check', ...(targets.length ? targets : ['all'])], project)
 console.log(`\nSmoke test passed. Project: ${project}`)
