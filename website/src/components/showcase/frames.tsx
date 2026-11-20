@@ -151,12 +151,58 @@ const CAPTIONS: Record<Platform, [string, string]> = {
   android: ["Android 15", "Jetpack Compose"],
 };
 
-export function PlatformCaption({ platform }: { platform: Platform }) {
+export function PlatformCaption({ platform, className = "" }: { platform: Platform; className?: string }) {
   return (
-    <p className="label mt-5 flex items-center justify-center gap-2 text-muted">
+    <p className={`label mt-5 flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 text-center text-muted ${className}`}>
       <span className="text-ink">{CAPTIONS[platform][0]}</span>
       <span className="text-faint">/</span>
       <span>{CAPTIONS[platform][1]}</span>
     </p>
+  );
+}
+
+// Android captures are 1333px tall against the iPhone's 1304, and the bezel is thinner,
+// so the same column width makes that frame taller. 97% width brings the outer heights together.
+const androidFrame = "mx-auto w-[97%] md:mx-0 md:w-full";
+
+// Web on top at small sizes, then the two phones on one line. From md up, the three sit in a row.
+export function DeviceStage({
+  ios,
+  web,
+  android,
+  captions = true,
+}: {
+  ios: ReactNode;
+  web: ReactNode;
+  android: ReactNode;
+  captions?: boolean;
+}) {
+  return (
+    <div className="flex flex-col gap-12 md:flex-row md:items-end md:justify-center md:gap-x-[3.2%]">
+      <div className="min-w-0 md:order-2 md:w-[56%]">
+        {web}
+        {captions ? <PlatformCaption platform="web" /> : null}
+      </div>
+      <div className="grid grid-cols-2 items-start gap-x-[6%] md:contents">
+        <div className="min-w-0 md:order-1 md:w-[18.5%]">
+          {ios}
+          {captions ? (
+            <div className="hidden md:block">
+              <PlatformCaption platform="ios" />
+            </div>
+          ) : null}
+        </div>
+        <div className="min-w-0 md:order-3 md:w-[18.5%]">
+          <div className={androidFrame}>{android}</div>
+          {captions ? (
+            <div className="hidden md:block">
+              <PlatformCaption platform="android" />
+            </div>
+          ) : null}
+        </div>
+        {captions ? <PlatformCaption platform="ios" className="md:hidden" /> : null}
+        {captions ? <PlatformCaption platform="android" className="md:hidden" /> : null}
+      </div>
+    </div>
   );
 }

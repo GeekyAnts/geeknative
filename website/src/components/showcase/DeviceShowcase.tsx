@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { TextLink } from "@/components/ui/primitives";
 import { deviceShowcaseCatalog, type DeviceShowcaseApp } from "@/lib/showcase-catalog";
-import { AndroidPhone, ChromeWindow, IPhone, PlatformCaption, Segmented, type Mode, type Platform } from "./frames";
+import { AndroidPhone, ChromeWindow, DeviceStage, IPhone, Segmented, type Mode, type Platform } from "./frames";
 
 const STARTER = deviceShowcaseCatalog.apps[0];
 
@@ -92,30 +92,24 @@ export function DeviceShowcase({ className = "", compact = false }: { className?
 
   return (
     <div ref={root} className={className}>
-      <div className="grid grid-cols-2 items-end gap-x-[6%] gap-y-12 md:flex md:justify-center md:gap-x-[3.2%]">
-        <div className="md:w-[18.5%]">
+      <DeviceStage
+        captions={!compact}
+        ios={
           <IPhone>
             <Layers key={app.slug} app={app} platform="ios" screen={screen.id} mode={mode} />
           </IPhone>
-          {compact ? null : <PlatformCaption platform="ios" />}
-        </div>
-        <div className="order-first col-span-2 md:order-none md:w-[56%]">
-          <ChromeWindow
-            mode={mode}
-            path={screen.webPath}
-            title={screen.title}
-          >
+        }
+        web={
+          <ChromeWindow mode={mode} path={screen.webPath} title={screen.title}>
             <Layers key={app.slug} app={app} platform="web" screen={screen.id} mode={mode} />
           </ChromeWindow>
-          {compact ? null : <PlatformCaption platform="web" />}
-        </div>
-        <div className="md:w-[18.5%]">
+        }
+        android={
           <AndroidPhone>
             <Layers key={app.slug} app={app} platform="android" screen={screen.id} mode={mode} />
           </AndroidPhone>
-          {compact ? null : <PlatformCaption platform="android" />}
-        </div>
-      </div>
+        }
+      />
 
       <div className={`flex flex-wrap items-center justify-center gap-3 ${compact ? "mt-8" : "mt-12"}`}>
         <Segmented
