@@ -39,6 +39,7 @@ The same applies to `apps/ios/AGENTS.md`, `apps/android/AGENTS.md`, `apps/web/AG
 {
   "geeknative": "0.1.0",
   "migrations": [],
+  "migrationsPrepared": [],
   "files": {
     ".claude/agents/android-engineer.md": "sha256-3a8f...",
     ".geeknative/framework.mk": "sha256-fc52...",
@@ -51,7 +52,7 @@ The same applies to `apps/ios/AGENTS.md`, `apps/android/AGENTS.md`, `apps/web/AG
 }
 ```
 
-`migrations` lists project-owned migration ids that `geeknative migrate` has already applied (or that `create` marked current for a new project). `upgrade` rewrites the hashes and version but keeps this list.
+`migrations` lists **completed** project-owned migration ids (or every known id after `create`). `migrationsPrepared` lists agent-assisted ids whose instructions were written to `.geeknative/migrations/pending/MIGRATION.md` but not yet completed with `migrate --complete`. Older lockfiles without `migrationsPrepared` are read as `[]`. `upgrade` rewrites the hashes and version but keeps both lists.
 
 ## Upgrades
 
@@ -66,7 +67,7 @@ Run `npx geeknative@latest upgrade` so the command and the template come from th
 
 ## Migrations
 
-Project-owned catch-up is opt-in: `geeknative migrate` (or `make migrate`). It applies scripted transforms and prints written migrations for an agent. It refuses a dirty git tree, supports `--dry-run`, and never commits. If you prefer the project as it was, restore the previous commit (including `.geeknative/lock.json`). See [migrate](/docs/reference/cli/#migrate).
+Project-owned catch-up is opt-in: `geeknative migrate` (or `make migrate`). It applies scripted transforms and prepares agent-assisted work in `.geeknative/migrations/pending/MIGRATION.md` for you to hand to an agent. It does not call an agent. Use `--status` and `--complete <id>` to track agent-assisted work. Apply / prepare refuse a dirty git tree, support `--dry-run`, and never commit. If you prefer the project as it was, restore the previous commit (including `.geeknative/lock.json`). See [migrate](/docs/reference/cli/#migrate).
 
 ## Generated files
 
