@@ -30,7 +30,7 @@ Usage: geeknative <command>
   dev                  Same as run all: web stays up, and keys launch iOS and Android
   pin                  Pin the project to a fresh snapshot of the geeknative checkout it came from
   upgrade              Replace framework files from this CLI; merge ones you edited. Options: --dry-run --force --no-install
-  migrate              Apply pending project-owned migrations (specs, contracts, apps). Options: --dry-run
+  migrate              Apply/prepare project-owned migrations. Options: --dry-run --status --complete <id>
   version              Print the version
 `
 
@@ -49,6 +49,8 @@ export async function main(argv) {
       fix: { type: 'boolean' },
       'dry-run': { type: 'boolean' },
       force: { type: 'boolean' },
+      status: { type: 'boolean' },
+      complete: { type: 'string' },
       help: { type: 'boolean', short: 'h' },
       version: { type: 'boolean', short: 'v' },
     },
@@ -100,7 +102,11 @@ export async function main(argv) {
       return
     }
     case 'migrate':
-      return void (await migrate(findProjectRoot(), { dryRun: values['dry-run'] }))
+      return void (await migrate(findProjectRoot(), {
+        dryRun: values['dry-run'],
+        status: values.status,
+        complete: values.complete,
+      }))
     case 'dev':
       return run(findProjectRoot(), 'all')
     case 'run':

@@ -192,23 +192,36 @@ On success (and when the project is already current), upgrade announces any pend
 ```sh
 npx geeknative migrate
 npx geeknative migrate --dry-run
+npx geeknative migrate --status
+npx geeknative migrate --complete <id>
 # or: make migrate   DRY_RUN=1
 ```
 
-Applies **project-owned** catch-up for the versions between `.geeknative/lock.json` and this CLI. Specs, contracts, docs and app code can change here; framework files stay with [`upgrade`](#upgrade).
+Applies **project-owned** catch-up for the versions between `.geeknative/lock.json` and this CLI. Specs, contracts, docs and app code can change here; framework files stay with [`upgrade`](#upgrade). geeknative never invokes Cursor, Claude, Gemini, or any other agent.
 
 | Kind | What happens |
 |---|---|
-| Scripted | A deterministic transform edits project files (for example a new spec format). Fail closed if a file does not match the expected shape. |
-| Written | Printed as instructions for an agent to apply across iOS, Android and web. geeknative does not rewrite the three apps itself. |
+| Scripted | A deterministic transform edits project files (for example a new spec format). Fail closed if a file does not match the expected shape. Marked **completed** when `run()` succeeds. |
+| Agent-assisted | Writes structured instructions to `.geeknative/migrations/pending/MIGRATION.md` (objective, platforms, required changes, validation). Marked **prepared** only. You ask an agent to apply the file, then run `--complete <id>`. |
+
+Status on the lockfile:
+
+| Status | Meaning |
+|---|---|
+| `pending` | Known to this CLI, not prepared and not completed |
+| `prepared` | Instructions are in `MIGRATION.md`; listed in `lock.migrationsPrepared` |
+| `completed` | Listed in `lock.migrations`. Scripted reach this automatically; agent-assisted only via `--complete` |
 
 Rules:
 
-- Requires `.geeknative/lock.json` and a **clean** git working tree (so you can restore if you dislike the result).
-- `--dry-run` prints the plan and writes nothing.
-- Successful ids are appended to `lock.migrations`. Upgrade preserves that list when it rewrites hashes.
+- Requires `.geeknative/lock.json`. Apply / prepare / `--complete` need a **clean** git working tree. `--status` does not.
+- `--dry-run` prints the plan and writes nothing (including no `MIGRATION.md` and no lock changes).
+- `--status` prints every migration for this CLI version and its status.
+- `--complete <id>` is for agent-assisted ids only. It moves the id to `lock.migrations`, drops it from `migrationsPrepared`, and refreshes or removes `MIGRATION.md`.
+- Generating instructions never marks a migration completed.
 - Never creates a git commit. Prefer the old project? Restore the previous commit, including the lockfile.
-- Fresh `create` marks every known migration as already applied, so new projects have nothing to catch up.
+- Fresh `create` marks every known migration as completed, so new projects have nothing to catch up.
+- Upgrade preserves `migrations` and `migrationsPrepared` when it rewrites hashes.
 
 When a scripted migration regenerates contracts, `migrate` runs `gen` once at the end.
 

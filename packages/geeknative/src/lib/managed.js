@@ -111,33 +111,43 @@ export function managedContents(root) {
 
 /**
  * @param {string} root
- * @returns {{ geeknative: string, migrations: string[], files: Record<string, string>, blocks: Record<string, string> } | null}
+ * @returns {{
+ *   geeknative: string,
+ *   migrations: string[],
+ *   migrationsPrepared: string[],
+ *   files: Record<string, string>,
+ *   blocks: Record<string, string>,
+ * } | null}
  */
 export function readLock(root) {
   const file = path.join(root, '.geeknative', 'lock.json')
   if (!existsSync(file)) return null
   const lock = JSON.parse(readFileSync(file, 'utf8'))
+  // Older lockfiles only had `migrations` (completed ids). Missing prepared stays [].
   if (!Array.isArray(lock.migrations)) lock.migrations = []
+  if (!Array.isArray(lock.migrationsPrepared)) lock.migrationsPrepared = []
   return lock
 }
 
 /**
- * Writes .geeknative/lock.json: the framework version, applied migration ids, and the hashes of
- * what it installed. `from` is the tree to hash (the project after create, or the incoming
- * template after upgrade, so local edits to managed files are not recorded as the new base).
- * Existing `migrations` are preserved unless `options.migrations` is passed.
+ * Writes .geeknative/lock.json: the framework version, migration state, and the hashes of what
+ * it installed. `from` is the tree to hash (the project after create, or the incoming template
+ * after upgrade, so local edits to managed files are not recorded as the new base).
+ * Existing migration lists are preserved unless overridden in `options`.
  * @param {string} root
  * @param {string} version
  * @param {string} [from]
- * @param {{ migrations?: string[] }} [options]
+ * @param {{ migrations?: string[], migrationsPrepared?: string[] }} [options]
  */
 export function writeLock(root, version, from = root, options = {}) {
   const previous = readLock(root)
   const migrations = options.migrations ?? previous?.migrations ?? []
+  const migrationsPrepared = options.migrationsPrepared ?? previous?.migrationsPrepared ?? []
   const hashes = managedHashes(from)
   const lock = {
     geeknative: version,
     migrations: [...migrations],
+    migrationsPrepared: [...migrationsPrepared],
     files: hashes.files,
     blocks: hashes.blocks,
   }
@@ -145,17 +155,28 @@ export function writeLock(root, version, from = root, options = {}) {
 }
 
 /**
- * Updates only the applied migration ids on the lockfile. Leaves version and hashes alone.
+ * Updates migration tracking on the lockfile. Leaves version and framework hashes alone.
+ * `migrations` = completed ids. `migrationsPrepared` = agent-assisted ids with instructions written.
  * @param {string} root
- * @param {string[]} migrations
+ * @param {{ migrations?: string[], migrationsPrepared?: string[] }} state
  */
-export function setLockMigrations(root, migrations) {
+export function setLockMigrationState(root, state) {
   const lock = readLock(root)
   if (!lock) {
     throw new Error('No .geeknative/lock.json. This folder was not created by geeknative (or the lockfile was deleted).')
   }
-  lock.migrations = [...migrations]
+  if (state.migrations !== undefined) lock.migrations = [...state.migrations]
+  if (state.migrationsPrepared !== undefined) lock.migrationsPrepared = [...state.migrationsPrepared]
   writeFileSync(path.join(root, '.geeknative', 'lock.json'), `${JSON.stringify(lock, null, 2)}\n`)
+}
+
+/**
+ * @deprecated Prefer setLockMigrationState. Updates completed migration ids only.
+ * @param {string} root
+ * @param {string[]} migrations
+ */
+export function setLockMigrations(root, migrations) {
+  setLockMigrationState(root, { migrations })
 }
 
 /** @param {Record<string, string>} object */
