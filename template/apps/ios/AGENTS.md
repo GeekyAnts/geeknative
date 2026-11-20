@@ -43,7 +43,7 @@ Same names and responsibilities as the Android and web apps.
 | Motion and shadows | `withAnimation(AppMotion.reduced(AppMotion.snappy, reduceMotion))` with `@Environment(\.accessibilityReduceMotion)`, `AppMotion.standard(AppMotion.fast)`; `.shadow(AppElevation.low)`. Never raw durations, curves or shadow values. |
 | Icons | `Image(AppIcon.settings)` (generated template images in Icons.xcassets; color with `.foregroundStyle`) |
 | Config | `AppConfig.apiBaseUrl`, `AppEnvironment.current` (generated from contracts/config.json) |
-| HTTP API | Local repositories are the live backend until a server exists. When a backend is planned, models come from `contracts/api.json` (`ApiModels.swift`). `ApiClient` helpers are generated only when `apiBaseUrl` is in config; wire them then. |
+| HTTP API | Local repositories are the live backend until a server exists. After the user drops an OpenAPI document or a full route list, models come from `contracts/api.json` (`ApiModels.swift`). `ApiClient` helpers are generated only when `apiBaseUrl` is in config. Call them from a remote repository, not from a screen. The client sends no Authorization header. |
 | Secrets | `AppSecrets.mapsApiKey` (generated from .env, git-ignored; never commit values) |
 | Test IDs | `.accessibilityIdentifier("notes.addButton")` |
 

@@ -43,7 +43,7 @@ Same names and responsibilities as the iOS and Android apps.
 | Motion and shadows | `motion-safe:transition duration-fast ease-standard`; a spring is `ease-snappy duration-snappy`; `shadow-low`. Never raw durations, curves or shadow values, and wrap motion in `motion-safe:`. |
 | Icons | `<AppIcons.settings className="size-icon-md" />` (generated) |
 | Config | `AppConfig.apiBaseUrl`, `environment` from `#/generated/config` (generated from contracts/config.json) |
-| HTTP API | Local repositories are the live backend until a server exists. When a backend is planned, types come from `contracts/api.json` (`#/generated/api`). Fetch helpers are generated only when `apiBaseUrl` is in config; wire them then. |
+| HTTP API | Local repositories are the live backend until a server exists. After the user drops an OpenAPI document or a full route list, types come from `contracts/api.json` (`#/generated/api`). Fetch helpers are generated only when `apiBaseUrl` is in config. Call them from a remote repository, not from a screen. The client sends no Authorization header. |
 | Secrets | `AppSecrets.mapsApiKey` from `#/generated/secrets.server` (server functions and API routes only) |
 | Test IDs | `data-testid="notes.addButton"` |
 
