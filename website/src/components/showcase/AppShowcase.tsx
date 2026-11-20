@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { ShowcaseApp } from "@/content/showcase";
-import { AndroidPhone, ChromeWindow, DeviceStage, IPhone, Segmented, type Mode, type Platform } from "./frames";
+import { AndroidPhone, ChromeWindow, DeviceStage, IPhone, ShowcaseControls, type Mode, type Platform } from "./frames";
 
 const SIZES: Record<Platform, { width: number; height: number; label: string }> = {
   ios: { width: 600, height: 1304, label: "iOS" },
@@ -139,23 +139,14 @@ export function AppShowcase({ app, shots }: { app: ShowcaseApp; shots: readonly 
         }
       />
 
-      <div className="mt-12 flex flex-wrap items-center justify-center gap-3">
-        <Segmented
-          label="Screen"
-          value={screen.id}
-          options={app.screens.map((s): [string, string] => [s.id, s.label])}
-          onChange={(id) => show(app.screens.findIndex((s) => s.id === id), mode)}
-        />
-        <Segmented
-          label="Appearance"
-          value={mode}
-          options={[
-            ["light", "Light"],
-            ["dark", "Dark"],
-          ]}
-          onChange={(next) => show(frame.index, next)}
-        />
-      </div>
+      <ShowcaseControls
+        className="mt-12"
+        screens={app.screens.map((s): [string, string] => [s.id, s.label])}
+        screen={screen.id}
+        mode={mode}
+        onScreen={(id) => show(app.screens.findIndex((s) => s.id === id), mode)}
+        onMode={(next) => show(frame.index, next)}
+      />
     </div>
   );
 }

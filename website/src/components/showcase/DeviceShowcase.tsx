@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { TextLink } from "@/components/ui/primitives";
 import { deviceShowcaseCatalog, type DeviceShowcaseApp } from "@/lib/showcase-catalog";
-import { AndroidPhone, ChromeWindow, DeviceStage, IPhone, Segmented, type Mode, type Platform } from "./frames";
+import { AndroidPhone, ChromeWindow, DeviceStage, IPhone, ShowcaseControls, type Mode, type Platform } from "./frames";
 
 const STARTER = deviceShowcaseCatalog.apps[0];
 
@@ -111,23 +111,14 @@ export function DeviceShowcase({ className = "", compact = false }: { className?
         }
       />
 
-      <div className={`flex flex-wrap items-center justify-center gap-3 ${compact ? "mt-8" : "mt-12"}`}>
-        <Segmented
-          label="Screen"
-          value={screen.id}
-          options={app.screens.map((item): [string, string] => [item.id, item.label])}
-          onChange={pickScreen}
-        />
-        <Segmented
-          label="Appearance"
-          value={mode}
-          options={[
-            ["light", "Light"],
-            ["dark", "Dark"],
-          ]}
-          onChange={pickMode}
-        />
-      </div>
+      <ShowcaseControls
+        className={compact ? "mt-8" : "mt-12"}
+        screens={app.screens.map((item): [string, string] => [item.id, item.label])}
+        screen={screen.id}
+        mode={mode}
+        onScreen={pickScreen}
+        onMode={pickMode}
+      />
       {compact ? null : (
         <p className="mt-7 text-center text-base text-ink/70">
           See other demo apps created using GeekNative in the{" "}
