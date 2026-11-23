@@ -14,7 +14,9 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.core.AppContainer
 import app.core.LocalAppContainer
+import app.core.ScreenshotLaunch
 import app.core.designsystem.AppTheme
 import app.core.navigation.AppNavigation
 import app.features.settings.Appearance
@@ -23,11 +25,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val container = (application as App).container
+        val launch = ScreenshotLaunch.from(intent)
+        val container = if (launch != null) AppContainer.screenshot(launch) else (application as App).container
 
         setContent {
             // Null until the stored choice loads. Skip that first frame rather than flash the wrong theme.
-            val appearance by container.settingsRepository.appearance.collectAsStateWithLifecycle(initialValue = null)
+            val appearance by container.settingsRepository.appearance.collectAsStateWithLifecycle(initialValue = launch?.appearance)
             val systemIsDark = isSystemInDarkTheme()
 
             appearance?.let { chosen ->
@@ -35,7 +38,9 @@ class MainActivity : ComponentActivity() {
 
                 // Tell the system too, so the next cold start (the splash screen before any app code
                 // runs) is already in the chosen appearance instead of flashing the system's.
-                LaunchedEffect(chosen) { applyToSystem(chosen) }
+                // Skip this while capturing screenshots: it restarts the activity, and that restart
+                // lands on the next shot, so light and dark frames swap.
+                LaunchedEffect(chosen) { if (launch == null) applyToSystem(chosen) }
 
                 // Keep the system bar icons readable when the app's appearance differs from the system's.
                 DisposableEffect(dark) {
