@@ -1,0 +1,57 @@
+# Decisions
+
+A dated log of product and technical decisions, and of assumptions made along the way. Newest first.
+
+## 2026-10-30: Closing spec gaps after the first build
+
+- A cart stored with the same product on two lines (`cart.items`) loads as one line at the first line's position, with the quantities added. Invalid lines are dropped first (spec/features/cart.md, AC-cart-2).
+- The bill card's item total reads price first, then the struck-through MRP total, as DESIGN.md (Money) requires everywhere. The spec said the opposite and is fixed.
+- Order placed summary lines use the string `order.lineQuantity` ("{name} × {count}") instead of a literal in code. The timeline's done step draws the new `check` icon (Lucide `check`).
+- `common.mrp` is the accessibility label of every struck-through MRP; `common.inCart` is the accessibility value of the stepper's count (spec/features/catalog.md).
+- Category is reached from category tiles only; there is no "See all" on Home (spec/navigation.md).
+- Web-only layout: Home's category grid is 6 columns from the `md` breakpoint, and Search's `h1` is visually hidden (spec/features/home.md, search.md).
+- iOS now tests navigation through its `Router` (the route each action pushes, replaces or pops) instead of only checking values. Taps themselves are still hand-checked, because there's no UI test target; each spec lists those checks. This replaces the iOS note in the consistency audit below.
+- Web keeps `max-w-(--container-*)` for max widths: the spacing tokens `sm`, `md` and `xl` shadow Tailwind's container sizes, so `max-w-sm` would resolve to a spacing value. The generated tokens.css stays as it is; this is a framework issue.
+
+## 2026-10-30: Minutely, a quick commerce app
+
+- The product is Minutely: groceries and essentials delivered in about 10 minutes (PRODUCT.md). Version one is the core loop: browse or search, add to cart, place an order.
+- Navigation is one stack rooted at Home, not tabs (spec/navigation.md). Sessions are short and linear; tabs can come with order history and accounts.
+- No backend yet. The catalog is bundled in each app's `LocalCatalogRepository`, with identical data from spec/features/catalog.md. The cart (`cart.items`) and orders (`orders.history`) are stored on the device as JSON with the same shape on every platform.
+- The delivery time, free-delivery threshold and delivery fee are values in contracts/config.json (10 minutes, ₹199, ₹25), so a backend or an environment can change them without code changes.
+- Product artwork is emoji on category tints, so the app needs no image hosting. Product names, units and emoji are catalog data, not copy, so they aren't in contracts/strings.
+- Prices are whole rupees. The address is fixed copy and payment is on delivery, so placing an order needs no form.
+- The typeface is Plus Jakarta Sans (`make font`), replacing Inter.
+
+## 2026-10-30: Cross-platform consistency audit
+
+Intentional differences between the apps, found while auditing them against each other:
+
+- iOS Settings was a `Form` on the system grouped background, which in dark mode is pure black, not the app's `background` token. It now hides that background and uses `background` for the page and `surface` for the rows, like the other two apps. The form keeps its native layout (DESIGN.md, Components). The section titles still use the system gray, not `onSurfaceVariant`.
+- On Android, Material's `surface` role is mapped to the `background` token, so `Scaffold` and `TopAppBar` use `background` while cards use `surface` (DESIGN.md, Components).
+- `common.back` is used on Android only, for the explicit back button. iOS and web get back from the system and the site header (spec/features/settings.md).
+- The web browser tab title is built in a route's `head` as `<screen title> · <app name>`. It is web chrome, so its separator is exempt from the no-literal-text rule (apps/web/AGENTS.md).
+- Web touch targets are 48 px (the header gear and the appearance rows), above the 24 px WCAG minimum and matching Android's 48 dp.
+- Android and web test the Home screen as rendered, including AC-home-3 (Home opens Settings): Android with Compose UI tests on Robolectric, web by rendering into happy-dom. All are test-only dependencies and don't ship in the apps. iOS keeps value-level tests and checks AC-home-3 by hand, because SwiftUI exposes no accessibility tree to unit tests and a UI test target would mean editing the Xcode project (spec/features/home.md).
+- The `home` icon is defined in contracts/icons.json for all three platforms and used by none. It stays as a ready-made icon for new features.
+
+Hand checks of the Settings behavior (spec/features/settings.md), run on 2026-10-30 on the iOS simulator, an Android emulator and headless Chrome. Not run means not checked yet, not failed.
+
+| Check | iOS | Android | Web |
+|---|---|---|---|
+| With System chosen, the app follows a device appearance change while it is open | Pass | Pass | Pass |
+| With Dark chosen and the device in light mode, a cold start has no flash of the light theme | Not run | Pass: every frame captured was dark, but capture started shortly after launch | Pass: the dark class is set when the document finishes parsing |
+| Choosing Dark applies to the whole screen at once, including system bars | Not run | Pass | Pass |
+| Back from Settings returns to Home with its state intact | Not run | Pass | Pass: browser back and the header home link both return to Home |
+| After a restart with Dark stored, the Settings screen shows Dark as selected | Pass | Pass | Pass, after a fix (see below) |
+
+Sheets and dialogs were not checked, because the starter has none.
+
+Found by that check: on web, opening `/settings` directly with Dark stored showed a dark page but System as the selected choice. The server renders without localStorage, so the first client render disagreed with the server's HTML and React left the server's checked radio in place. The Settings view model now renders "system" until hydration is done, then the stored value. iOS and Android were not affected.
+
+## 2026-10-10: Starter app
+
+- The starter app has two screens, Home and Settings, implemented the same way on all three platforms as a reference for new features.
+- The appearance setting is stored locally under `settings.appearance` as `system`, `light` or `dark`, on every platform.
+- There's no backend yet. Each feature reads and writes through a repository interface with a local implementation.
+- Dependencies are wired by hand in an `AppContainer` on every platform, with no DI framework.
