@@ -3,8 +3,8 @@ import type { ComponentProps, ReactNode } from "react";
 
 export const wrap = "mx-auto w-full max-w-[1480px] px-5 sm:px-8 lg:px-12";
 
-export function Arrow({ className = "", direction = "right" }: { className?: string; direction?: "right" | "up-right" | "down" }) {
-  const rotate = direction === "up-right" ? "-rotate-45" : direction === "down" ? "rotate-90" : "";
+export function Arrow({ className = "", direction = "right" }: { className?: string; direction?: "right" | "left" | "up-right" | "down" }) {
+  const rotate = direction === "up-right" ? "-rotate-45" : direction === "down" ? "rotate-90" : direction === "left" ? "rotate-180" : "";
   return (
     <svg viewBox="0 0 16 16" className={`size-[1em] shrink-0 ${rotate} ${className}`} aria-hidden fill="none" stroke="currentColor" strokeWidth="1.6">
       <path d="M1.5 8h12.5M9 3l5 5-5 5" strokeLinecap="square" />

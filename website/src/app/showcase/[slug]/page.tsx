@@ -5,7 +5,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/articles/JsonLd";
 import { AppShowcase } from "@/components/showcase/AppShowcase";
-import { Eyebrow, Stop } from "@/components/ui/primitives";
+import { Arrow, Stop } from "@/components/ui/primitives";
 import { getShowcase, showcaseApps, showcaseHref, type ShowcaseApp } from "@/content/showcase";
 import { absoluteUrl, breadcrumbs, ogImage } from "@/lib/seo";
 
@@ -67,11 +67,12 @@ export default async function Page({ params }: Props) {
         ]}
       />
       <header className="max-w-[46rem]">
-        <Eyebrow className="text-muted">
-          <Link href="/showcase/" className="hover:text-ink">
-            Showcase
-          </Link>
-        </Eyebrow>
+        <Link href="/showcase/" className="group label inline-flex items-center gap-2 text-muted transition-colors hover:text-ink">
+          <span className="inline-flex transition-transform duration-500 ease-[var(--ease-expo)] group-hover:-translate-x-1">
+            <Arrow direction="left" />
+          </span>
+          Back
+        </Link>
         <h1 className="mt-6 display-l">
           {app.name}
           <Stop />
