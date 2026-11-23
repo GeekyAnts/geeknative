@@ -3,7 +3,7 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { brandMark } from "./sync-showcase.mjs";
+import { brandMark, consistencyLevel } from "./sync-showcase.mjs";
 
 function withTokens(tokens, check) {
   const root = mkdtempSync(path.join(os.tmpdir(), "geeknative-mark-"));
@@ -29,6 +29,13 @@ test("primary is used and espresso is ignored", () => {
     assert.equal(brandMark(root, {}), "#1F3A4D");
     assert.equal(brandMark(root, { mark: "   " }), "#1F3A4D");
   });
+});
+
+test("consistency is strict or adapted, and anything else is adapted", () => {
+  assert.equal(consistencyLevel("strict"), "strict");
+  assert.equal(consistencyLevel("adapted"), "adapted");
+  assert.equal(consistencyLevel(undefined), "adapted");
+  assert.equal(consistencyLevel("loose"), "adapted");
 });
 
 test("espresso alone falls back, and so does a missing tokens file", () => {

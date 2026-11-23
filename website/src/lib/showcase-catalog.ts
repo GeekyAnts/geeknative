@@ -13,6 +13,8 @@ export type DeviceShowcaseApp = {
   summary: string;
   mark: string;
   shotPrefix: string;
+  /** From contracts/app.json. The starter has none. */
+  consistency?: "strict" | "adapted";
   screens: DeviceShowcaseScreen[];
 };
 
