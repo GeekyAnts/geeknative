@@ -72,7 +72,8 @@ export default async function Page({ params }: Props) {
             Showcase
           </Link>
         </Eyebrow>
-        <h1 className="mt-6 display-l">
+        <p className="label mt-6 text-brand">Consistency · {app.consistency}</p>
+        <h1 className="mt-4 display-l">
           {app.name}
           <Stop />
         </h1>
