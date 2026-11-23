@@ -45,7 +45,7 @@ const APPEARANCES = ['light', 'dark']
 const PLATFORMS = ['ios', 'android', 'web']
 const ANDROID_ANIMATION_SCALES = ['animator_duration_scale', 'transition_animation_scale', 'window_animation_scale']
 const WEB_PORT = 4173
-const SETTLE_MS = { ios: 2500, android: 6000, web: 800 }
+const SETTLE_MS = { ios: 3000, android: 6000, web: 3000 }
 const BLANK_STDEV = 12
 const CAPTURE_RETRIES = 8
 
