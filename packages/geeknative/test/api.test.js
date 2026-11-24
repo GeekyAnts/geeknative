@@ -109,8 +109,8 @@ test('HN OpenAPI fixture generates Story models and list/get clients on every pl
   assert.match(kotlinClient, /object ApiStories/)
   assert.match(kotlinClient, /suspend fun listStories\(\): List<Story>/)
   assert.match(kotlinClient, /suspend fun getStory\(id: String\): Story/)
-  assert.match(kotlinClient, /AppConfig\.apiBaseUrl/)
   assert.match(kotlinClient, /ApiTransport\.encodePathSegment/)
+  assert.match(outputOf(outputs, 'api/ApiTransport.kt'), /AppConfig\.apiBaseUrl/)
   assert.match(outputOf(outputs, 'api/ApiTransport.kt'), /\.replace\("\+", "%20"\)/)
 
   const ts = outputOf(outputs, 'generated/api/stories.ts')
@@ -118,6 +118,31 @@ test('HN OpenAPI fixture generates Story models and list/get clients on every pl
   assert.match(ts, /export async function listStories/)
   assert.match(ts, /export async function getStory/)
   assert.match(outputOf(outputs, 'generated/api/transport.ts'), /AppConfig\.apiBaseUrl/)
+})
+
+test('HTTP code lives in the shared transport, not in each operation', () => {
+  const outputs = generate(projectWithApi())
+
+  const swiftTransport = outputOf(outputs, 'api/ApiTransport.swift')
+  assert.match(swiftTransport, /static func send\(method: String/)
+  assert.match(swiftTransport, /URLSession\.shared\.data/)
+  const swiftTask = outputOf(outputs, 'api/Stories.swift')
+  assert.match(swiftTask, /ApiTransport\.send\(/)
+  assert.equal(swiftTask.includes('URLSession'), false)
+
+  const kotlinTransport = outputOf(outputs, 'api/ApiTransport.kt')
+  assert.match(kotlinTransport, /suspend fun request\(/)
+  assert.match(kotlinTransport, /HttpURLConnection/)
+  const kotlinTask = outputOf(outputs, 'api/Stories.kt')
+  assert.match(kotlinTask, /ApiTransport\.request\(/)
+  assert.equal(kotlinTask.includes('HttpURLConnection'), false)
+
+  const tsTransport = outputOf(outputs, 'generated/api/transport.ts')
+  assert.match(tsTransport, /export async function request<T>/)
+  assert.match(tsTransport, /await fetch\(/)
+  const tsTask = outputOf(outputs, 'generated/api/stories.ts')
+  assert.match(tsTask, /import \{ request \} from "\.\/transport"/)
+  assert.equal(tsTask.includes('fetch('), false)
 })
 
 test('task files without apiBaseUrl generate models only', () => {

@@ -54,6 +54,42 @@ export function ensureTrailingSlash(value: string): string {
 export function apiBaseUrl(): string {
   return ensureTrailingSlash(String(AppConfig.apiBaseUrl))
 }
+
+export type RequestOptions = {
+  query?: Record<string, string | number | boolean | undefined>
+  body?: unknown
+  init?: RequestInit
+}
+
+async function send(method: string, path: string, options: RequestOptions): Promise<Response> {
+  const init = options.init ?? {}
+  const url = new URL(path.replace(/^\\//, ""), apiBaseUrl())
+  const query = new URLSearchParams()
+  for (const [name, value] of Object.entries(options.query ?? {})) {
+    if (value !== undefined) query.set(name, String(value))
+  }
+  url.search = query.toString()
+  const hasBody = options.body !== undefined
+  const response = await fetch(url, {
+    ...init,
+    method,
+    headers: hasBody ? { "Content-Type": "application/json", ...(init.headers ?? {}) } : init.headers,
+    ...(hasBody ? { body: JSON.stringify(options.body) } : {}),
+  })
+  if (!response.ok) {
+    throw new ApiError(response.status, await response.text())
+  }
+  return response
+}
+
+export async function request<T>(method: string, path: string, options: RequestOptions = {}): Promise<T> {
+  const response = await send(method, path, options)
+  return (await response.json()) as T
+}
+
+export async function requestVoid(method: string, path: string, options: RequestOptions = {}): Promise<void> {
+  await send(method, path, options)
+}
 `
 }
 
@@ -113,55 +149,30 @@ export function tsTask(slice, allModels, includeClient) {
       const typeName = argsTypeName(op.id)
       const argsAlias = fields.length ? `export type ${typeName} = {\n${fields.join('\n')}\n}\n\n` : ''
       const argsParam = fields.length ? `args: ${typeName}, ` : ''
-      const pathDecls = op.pathParams.map((p) => `  const ${p.name} = args.${p.name}`).join('\n')
-      const queryDecls = op.queryParams.map((p) => `  const ${p.name} = args.${p.name}`).join('\n')
-      const bodyDecl = op.requestBody ? `  const body = args.body` : ''
       let pathExpr = JSON.stringify(op.path)
       for (const param of op.pathParams) {
-        pathExpr = `${pathExpr}.replaceAll(${JSON.stringify('{' + param.name + '}')}, encodeURIComponent(String(${param.name})))`
+        pathExpr = `${pathExpr}.replaceAll(${JSON.stringify('{' + param.name + '}')}, encodeURIComponent(String(args.${param.name})))`
       }
-      const queryLines = op.queryParams
-        .map((param) => {
-          if (param.required) {
-            return `  query.set(${JSON.stringify(param.name)}, String(${param.name}))`
-          }
-          return `  if (${param.name} !== undefined) query.set(${JSON.stringify(param.name)}, String(${param.name}))`
-        })
-        .join('\n')
-      const fetchBody =
-        op.requestBody == null
-          ? `    headers: init.headers,`
-          : `    headers: { "Content-Type": "application/json", ...(init.headers ?? {}) },
-    body: JSON.stringify(body),`
+      const options = []
+      if (op.queryParams.length) {
+        options.push(`query: { ${op.queryParams.map((p) => `${p.name}: args.${p.name}`).join(', ')} }`)
+      }
+      if (op.requestBody) options.push('body: args.body')
+      options.push('init')
+      const call = op.response.kind === 'void' ? 'requestVoid' : `request<${tsType(op.response)}>`
       return `${argsAlias}export async function ${op.id}(${argsParam}init: RequestInit = {}): Promise<${tsType(op.response)}> {
-${pathDecls}
-${queryDecls}
-${bodyDecl}
-  const query = new URLSearchParams()
-${queryLines}
-  const path = ${pathExpr}
-  const url = new URL(path.replace(/^\\//, ""), apiBaseUrl())
-  url.search = query.toString()
-  const response = await fetch(url, {
-    ...init,
-    method: ${JSON.stringify(op.method)},
-${fetchBody}
-  })
-  if (!response.ok) {
-    throw new ApiError(response.status, await response.text())
-  }
-  ${
-    op.response.kind === 'void'
-      ? 'return'
-      : `return (await response.json()) as ${tsType(op.response)}`
-  }
+  return ${call}(${JSON.stringify(op.method)}, ${pathExpr}, { ${options.join(', ')} })
 }`
     })
     .join('\n\n')
 
   const typesBlock = interfaces
   const typeImports = tsTypeImports(slice, allModels)
-  const clientImports = includeClient ? `import { ApiError, apiBaseUrl } from "./transport"` : ''
+  const used = [
+    api.operations.some((op) => op.response.kind !== 'void') ? 'request' : '',
+    api.operations.some((op) => op.response.kind === 'void') ? 'requestVoid' : '',
+  ].filter(Boolean)
+  const clientImports = includeClient && used.length ? `import { ${used.join(', ')} } from "./transport"` : ''
   const imports = [clientImports, typeImports].filter(Boolean).join('\n')
   return `// ${banner(SOURCE)}
 ${imports ? `${imports}\n\n` : ''}${[typesBlock, includeClient ? methods : ''].filter(Boolean).join('\n\n')}

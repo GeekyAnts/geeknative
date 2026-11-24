@@ -140,48 +140,27 @@ function kotlinClient(api, name) {
       for (const param of op.pathParams) {
         pathExpr = `${pathExpr}.replace("{${param.name}}", ApiTransport.encodePathSegment(${param.name}.toString()))`
       }
-      const queryBuilds = op.queryParams
-        .map((param) => {
-          if (param.required) {
-            return `        query += (if (query.isEmpty()) "?" else "&") + "${param.name}=" + java.net.URLEncoder.encode(${param.name}.toString(), Charsets.UTF_8.name())`
-          }
-          return `        if (${param.name} != null) query += (if (query.isEmpty()) "?" else "&") + "${param.name}=" + java.net.URLEncoder.encode(${param.name}.toString(), Charsets.UTF_8.name())`
-        })
-        .join('\n')
-      const bodySetup =
-        op.requestBody == null
-          ? `        connection.doOutput = false\n`
-          : `        connection.doOutput = true
-        connection.setRequestProperty("Content-Type", "application/json")
-        connection.outputStream.use { stream ->
-            val payload = ${kotlinEncode(op.requestBody, 'body')}.toString().toByteArray(Charsets.UTF_8)
-            stream.write(payload)
-        }
-`
-      return `    suspend fun ${op.id}(${params}): ${responseType} = withContext(Dispatchers.IO) {
-        var query = ""
-${queryBuilds}
-        val path = ${pathExpr}
-        val url = java.net.URL(AppConfig.apiBaseUrl.trimEnd('/') + path + query)
-        val connection = (url.openConnection() as java.net.HttpURLConnection).apply {
-            requestMethod = ${JSON.stringify(op.method)}
-            connectTimeout = 15_000
-            readTimeout = 15_000
-        }
-${bodySetup}        try {
-            val code = connection.responseCode
-            val stream = if (code in 200..299) connection.inputStream else connection.errorStream
-            val text = stream?.bufferedReader(Charsets.UTF_8)?.use { it.readText() }.orEmpty()
-            if (code !in 200..299) throw ApiException(code, text)
-            ${
-              op.response.kind === 'void'
-                ? 'Unit'
-                : `val json = org.json.JSONTokener(text).nextValue()
-            ${kotlinDecode(op.response, 'json')}`
-            }
-        } finally {
-            connection.disconnect()
-        }
+      const queryItems = op.queryParams.map((param) =>
+        param.required
+          ? `${JSON.stringify(param.name)} to ${param.name}.toString()`
+          : `${param.name}?.let { ${JSON.stringify(param.name)} to it.toString() }`,
+      )
+      const queryArg = queryItems.length
+        ? `,\n            query = listOfNotNull(\n${queryItems.map((item) => `                ${item},`).join('\n')}\n            )`
+        : ''
+      const bodyArg = op.requestBody == null ? '' : `,\n            body = ${kotlinEncode(op.requestBody, 'body')}.toString()`
+      const request = `ApiTransport.request(
+            method = ${JSON.stringify(op.method)},
+            path = ${pathExpr}${queryArg}${bodyArg}
+        )`
+      if (op.response.kind === 'void') {
+        return `    suspend fun ${op.id}(${params}): ${responseType} {
+        ${request}
+    }`
+      }
+      return `    suspend fun ${op.id}(${params}): ${responseType} {
+        val json = org.json.JSONTokener(${request}).nextValue()
+        return ${kotlinDecode(op.response, 'json')}
     }`
     })
     .join('\n\n')
@@ -195,9 +174,42 @@ export function kotlinTransport() {
   return `// ${banner(SOURCE)}
 package app.generated.api
 
+import app.generated.AppConfig
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
 class ApiException(val status: Int, val body: String) : Exception("HTTP \$status: \$body")
 
 object ApiTransport {
+    suspend fun request(
+        method: String,
+        path: String,
+        query: List<Pair<String, String>> = emptyList(),
+        body: String? = null,
+    ): String = withContext(Dispatchers.IO) {
+        val queryString = if (query.isEmpty()) "" else query.joinToString("&", prefix = "?") { (name, value) ->
+            name + "=" + java.net.URLEncoder.encode(value, Charsets.UTF_8.name())
+        }
+        val url = java.net.URL(AppConfig.apiBaseUrl.trimEnd('/') + path + queryString)
+        val connection = (url.openConnection() as java.net.HttpURLConnection).apply {
+            requestMethod = method
+            connectTimeout = 15_000
+            readTimeout = 15_000
+            doOutput = body != null
+            if (body != null) setRequestProperty("Content-Type", "application/json")
+        }
+        try {
+            if (body != null) connection.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
+            val code = connection.responseCode
+            val stream = if (code in 200..299) connection.inputStream else connection.errorStream
+            val text = stream?.bufferedReader(Charsets.UTF_8)?.use { it.readText() }.orEmpty()
+            if (code !in 200..299) throw ApiException(code, text)
+            text
+        } finally {
+            connection.disconnect()
+        }
+    }
+
     fun encodePathSegment(value: String): String =
         java.net.URLEncoder.encode(value, Charsets.UTF_8.name()).replace("+", "%20")
 }
@@ -208,16 +220,9 @@ object ApiTransport {
 export function kotlinTask(slice, withClient) {
   const models = kotlinModels(slice)
   const client = withClient ? kotlinClient(slice, clientName(slice.task)) : ''
-  const imports = withClient
-    ? `import app.generated.AppConfig
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-
-`
-    : ''
   return `// ${banner(SOURCE)}
 package app.generated.api
 
-${imports}${[models, client].filter(Boolean).join('\n\n')}
+${[models, client].filter(Boolean).join('\n\n')}
 `
 }

@@ -77,38 +77,29 @@ function swiftClient(api, name) {
       const queryLines = op.queryParams
         .map((param) => {
           if (param.required) {
-            return `        items.append(URLQueryItem(name: ${JSON.stringify(param.name)}, value: String(${param.name})))`
+            return `                items.append(URLQueryItem(name: ${JSON.stringify(param.name)}, value: String(${param.name})))`
           }
-          return `        if let ${param.name} { items.append(URLQueryItem(name: ${JSON.stringify(param.name)}, value: String(${param.name}))) }`
+          return `                if let ${param.name} { items.append(URLQueryItem(name: ${JSON.stringify(param.name)}, value: String(${param.name}))) }`
         })
         .join('\n')
-      const bodyBlock =
-        op.requestBody == null
-          ? `        request.httpMethod = ${JSON.stringify(op.method)}
-`
-          : `        request.httpMethod = ${JSON.stringify(op.method)}
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try JSONEncoder().encode(body)
-`
       const queryArg = op.queryParams.length
-        ? `, query: {
-        var items: [URLQueryItem] = []
+        ? `,
+            query: {
+                var items: [URLQueryItem] = []
 ${queryLines}
-        return items
-        }()`
+                return items
+            }()`
         : ''
+      const bodyArg = op.requestBody == null ? '' : `,\n            body: JSONEncoder().encode(body)`
+      const send = `ApiTransport.send(
+            method: ${JSON.stringify(op.method)},
+            path: ${pathExpr}${queryArg}${bodyArg}
+        )`
       return `    static func ${op.id}(${params}) async throws -> ${responseType} {
-        let url = try ApiTransport.makeURL(path: ${pathExpr}${queryArg})
-        var request = URLRequest(url: url)
-${bodyBlock}        let (data, response) = try await URLSession.shared.data(for: request)
-        guard let http = response as? HTTPURLResponse else { throw ApiError.invalidResponse }
-        guard (200..<300).contains(http.statusCode) else {
-            throw ApiError.httpStatus(http.statusCode, data)
-        }
         ${
           op.response.kind === 'void'
-            ? 'return'
-            : `return try JSONDecoder().decode(${responseType}.self, from: data)`
+            ? `_ = try await ${send}`
+            : `return try JSONDecoder().decode(${responseType}.self, from: await ${send})`
         }
     }`
     })
@@ -140,6 +131,21 @@ nonisolated enum ApiTransport {
         components.queryItems = query.isEmpty ? nil : query
         guard let url = components.url else { throw ApiError.badURL(path) }
         return url
+    }
+
+    static func send(method: String, path: String, query: [URLQueryItem] = [], body: Data? = nil) async throws -> Data {
+        var request = URLRequest(url: try makeURL(path: path, query: query))
+        request.httpMethod = method
+        if let body {
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.httpBody = body
+        }
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let http = response as? HTTPURLResponse else { throw ApiError.invalidResponse }
+        guard (200..<300).contains(http.statusCode) else {
+            throw ApiError.httpStatus(http.statusCode, data)
+        }
+        return data
     }
 
     static func encodePathSegment(_ value: String) -> String {

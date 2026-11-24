@@ -318,7 +318,9 @@ Never edit the generated API files. Change the task file and run `make gen`. An 
 |---|---|
 | iOS | `App/Generated/api/<Task>.swift` (models and `Api<Task>` helpers for that task). `ApiTransport.swift` only when `apiBaseUrl` is set |
 | Android | `generated/api/<Task>.kt` (models and `Api<Task>` helpers). `ApiTransport.kt` only when `apiBaseUrl` is set |
-| Web | `src/generated/api/<task>.ts` (types, and fetch helpers only when `apiBaseUrl` is set). `transport.ts` only when `apiBaseUrl` is set |
+| Web | `src/generated/api/<task>.ts` (types, and request helpers only when `apiBaseUrl` is set). `transport.ts` only when `apiBaseUrl` is set |
+
+The transport file holds the HTTP request, status check and error type once per platform. Each operation in a task file only names its method, path, query and body, so a task file stays short however many operations it has.
 
 ## All generated files
 
