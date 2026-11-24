@@ -17,7 +17,7 @@ Recent versions of Claude Code read AGENTS.md on their own, but only when the pr
 
 The root CLAUDE.md also has a Claude-specific section, managed by geeknative:
 
-- When a change touches more than one app, Claude hands the platform work to three subagents in parallel and stays the lead. The lead owns `spec/`, `contracts/`, PRODUCT.md and DESIGN.md.
+- When a change touches more than one app, Claude hands the platform work to three subagents in parallel and stays the lead. Each brief is the feature id, the spec path, the acceptance criteria IDs and what changed in `contracts/`. The lead owns `spec/`, `contracts/`, PRODUCT.md and DESIGN.md, and runs `make check` once after the platform agents finish.
 - A hook regenerates code whenever a file in `contracts/` is edited.
 - A stop hook reminds Claude once if a turn changed some apps but not the others.
 
@@ -27,18 +27,18 @@ The root CLAUDE.md also has a Claude-specific section, managed by geeknative:
 
 | Subagent | Works in | Verifies with |
 |---|---|---|
-| `ios-engineer` | `apps/ios/` | `make check-ios` |
-| `android-engineer` | `apps/android/` | `make check-android` |
-| `web-engineer` | `apps/web/` | `make check-web` |
+| `ios-engineer` | `apps/ios/` | `geeknative check ios --feature <id>` |
+| `android-engineer` | `apps/android/` | `geeknative check android --feature <id>` |
+| `web-engineer` | `apps/web/` | `geeknative check web --feature <id>` |
 
-Each one gets a brief from the lead (the spec path, the acceptance criteria IDs and what changed in `contracts/`) and:
+Each one gets a brief from the lead (the feature id, the spec path, the acceptance criteria IDs and what changed in `contracts/`) and:
 
-1. reads the spec and follows the existing Settings feature as the pattern;
-2. implements from the spec, without porting code from the other apps;
+1. runs `geeknative context <id> --platform <platform>` and reads the spec, the one reference folder and the listed files;
+2. implements from the spec, without porting code from the other apps or searching the repo;
 3. edits only its own app, never `spec/`, `contracts/`, PRODUCT.md, DESIGN.md or generated files, and reports spec gaps instead of guessing;
 4. names tests after acceptance criteria;
-5. runs its platform's check until it passes;
-6. reports the files it changed, the criteria its tests cover, the check result, and any gaps.
+5. runs the targeted check, reads `.geeknative/logs/<platform>.json` on failure, and stops when it passes;
+6. reports file paths, the criteria its tests cover, and the check status, without pasting source or logs.
 
 ## Hooks
 
@@ -47,7 +47,7 @@ Each one gets a brief from the lead (the spec path, the acceptance criteria IDs 
 | Event | Script | What it does |
 |---|---|---|
 | `PostToolUse` on Edit, Write and MultiEdit | `after-edit.mjs` | If the edited file is in `contracts/`, runs `geeknative gen` right away. If the contract is invalid, it reports the error to Claude so it can fix the contract. |
-| `SubagentStart` for each platform subagent | `subagent-context.mjs <platform>` | Adds that platform's `apps/<platform>/AGENTS.md` to the subagent's context when it starts. |
+| `SubagentStart` for each platform subagent | `subagent-context.mjs <platform>` | Adds that platform's `apps/<platform>/AGENTS.md` to the subagent's context when it starts, and tells it not to read the other apps, generated output or check logs. |
 | `Stop` | `parity-guard.mjs` | If the uncommitted changes touch some apps but not the others, it asks Claude once to finish the other apps or explain why the change is platform-specific. |
 
 The stop hook ignores generated files and agent docs, and remembers the set of changes it already flagged (in `.git/geeknative-parity-guard`), so it reminds once and then lets Claude finish. It does nothing outside a git repository or before the first commit.

@@ -11,7 +11,9 @@ geeknative <command>
   create <folder>      Create a project. Options: --name "My App" --id com.acme.myapp --consistency <strict|adapted> --no-install --no-git
   gen                  Regenerate platform code from contracts/
   font <family>        Switch the shared typeface: a Google Fonts family ("Open Sans") or system
+  context <feature>    Print one platform's feature pack. Requires --platform ios|android|web
   check [targets]      Verify contracts, then build and test. Targets: all (default), contracts, ios, android, web
+                       --feature <id> tests one feature on one platform. --json prints the result object
   doctor [--fix]       Check Xcode, the Android SDK and Node; --fix installs what it can
   parity               Update spec/parity.md from feature specs and tests
   run <platform>       Build and launch: ios (simulator), android (emulator or device), web (dev server), all (web plus keys)
@@ -75,20 +77,48 @@ Any family on [Google Fonts](https://fonts.google.com) works; a name it doesn't 
 
 ```sh
 npx geeknative check [all | contracts | ios | android | web ...]   # or: make check, make check-ios, ...
+npx geeknative check ios --feature settings                        # or: make check-ios-feature FEATURE=settings
+npx geeknative check ios --feature settings --json
 ```
 
-Always validates the contracts first and fails if generated files are out of date. Then it runs [`lint`](#lint): for every app with a full `check`, with the spec rules too, or only for the app you name (`check ios`). Then it builds and tests each requested app. While iOS and Android build, it prints each phase as it starts (compiling, linking, running tests) and a line every 30 seconds with the time so far, then one result line per app. Full output goes to `.geeknative/logs/<platform>.log`; on failure, the most relevant lines are printed (up to 25). The exit code is 1 if anything failed.
+Always validates the contracts first and fails if generated files are out of date. Then it runs [`lint`](#lint): for every app with a full `check`, with the spec rules too, or only for the app you name (`check ios`). Then it builds and tests each requested app. While iOS and Android build, it prints each phase as it starts (compiling, linking, running tests) and a line every 30 seconds with the time so far, then one result line per app. The full output goes to `.geeknative/logs/<platform>.log`. A compact result is always written to `.geeknative/logs/<platform>.json`:
+
+```json
+{
+  "status": "failed",
+  "platform": "ios",
+  "feature": "settings",
+  "summary": "build or tests failed",
+  "errors": [{ "file": "apps/ios/App/Features/Settings/SettingsViewModel.swift", "line": 42, "message": "cannot find SettingsRepository" }],
+  "log": ".geeknative/logs/ios.log"
+}
+```
+
+On failure the terminal prints up to eight `file:line message` lines from that file. `"unparsed": true` means the failure had no recognized compiler line, which is the only time to open the `.log`. `--json` prints the same object and skips those human lines. The exit code is 1 if anything failed.
+
+`--feature <id>` takes one platform (`check ios android --feature settings` is an error) and the id of a file in `spec/features/`. It still compiles the app. It runs that feature's tests instead of the whole suite, and on web it skips the production build.
 
 | Target | What runs |
 |---|---|
 | `ios` | `xcodebuild test` for the `App` scheme on an iPhone simulator, with derived data in `apps/ios/.build/` and parallel testing off, so it runs on the simulator itself instead of booting a copy. macOS only. |
+| `ios --feature <id>` | The same build, then only `AppTests/<Name>Tests` and `AppUITests/<Name>UITests` when those files exist. With neither file yet, it builds and does not run tests. |
 | `android` | `./gradlew :app:testDebugUnitTest :app:assembleDebug` in `apps/android`. Writes `local.properties` if it's missing. |
+| `android --feature <id>` | `./gradlew :app:testDebugUnitTest --tests app.features.<id>.*` when that test directory exists, otherwise `:app:compileDebugKotlin`. It does not run `assembleDebug`. |
 | `web` | `npm run check` in `apps/web`: route generation and `tsc`, then Vitest, then a production build. Needs `npm install` first. |
+| `web --feature <id>` | Route generation, `tsc`, and Vitest on `src/features/<id>`. No production build. With no feature folder yet, type-check only. |
 | `contracts` | Only the contract validation. |
 
 To build another environment, set `GEEKNATIVE_ENV` (or pass `ENV=staging` to `make`). iOS gets `APP_ENVIRONMENT=<name>`, Android gets `-PappEnvironment=<name>`, and the web build gets `VITE_APP_ENVIRONMENT=<name>`. A name `config.json` doesn't declare is an error. The web build also gets the values in `.env`, so server code can read `process.env`.
 
 The simulator is the one named in `GEEKNATIVE_IOS_SIMULATOR` (a name or UDID) if set, otherwise an iPhone on the newest installed iOS runtime, preferring one that's already booted. An older booted simulator is never picked on its own, so every run uses the same iOS version.
+
+## context
+
+```sh
+npx geeknative context settings --platform ios
+```
+
+Prints a short pack for one feature on one platform: the spec path, acceptance-criteria IDs, the string keys and icon names that belong to the feature, one reference feature folder, the files to edit, and the check to run. `--platform` is `ios`, `android` or `web`, and it is required. The command writes nothing. An unknown id fails with `No spec at spec/features/<id>.md.`
 
 ## doctor
 
@@ -226,6 +256,7 @@ The project's Makefile includes `.geeknative/framework.mk`:
 | `make check` | `geeknative check all` |
 | `make check-contracts` | `geeknative check contracts` |
 | `make check-ios`, `check-android`, `check-web` | `geeknative check <platform>` |
+| `make check-ios-feature FEATURE=settings` (and android, web) | `geeknative check <platform> --feature settings` |
 | `make pin` | `geeknative pin` |
 | `make upgrade` | `geeknative upgrade` (`DRY_RUN=1` adds `--dry-run`, `FORCE=1` adds `--force`) |
 | `make parity` | `geeknative parity` |

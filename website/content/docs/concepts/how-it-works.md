@@ -44,8 +44,8 @@ Every change follows the same steps, from AGENTS.md:
 
 1. **Update the source of truth**: the spec, DESIGN.md, PRODUCT.md or a contract.
 2. **Regenerate** with `make gen` if contracts changed.
-3. **Implement on each platform**, reading `apps/<platform>/AGENTS.md` first. Agents with sub-agents give each platform its own; only the lead edits `spec/`, `contracts/`, PRODUCT.md and DESIGN.md.
-4. **Verify** with `make check-ios`, `make check-android` and `make check-web`, or `make check` for everything, and fix until they pass.
+3. **Implement on each platform**, reading `apps/<platform>/AGENTS.md` first. Agents with sub-agents give each platform its own brief (the feature id, the spec path, the acceptance criteria and what changed in contracts). Each platform reads `geeknative context <id> --platform <platform>` and does not read the other apps. Only the lead edits `spec/`, `contracts/`, PRODUCT.md and DESIGN.md.
+4. **Verify.** Each platform runs `geeknative check <platform> --feature <id>` while implementing and reads `.geeknative/logs/<platform>.json` on failure. The lead then runs `make check` once.
 5. **Record** each platform's status in the feature's front matter, then run `make parity`.
 6. **Report** one line per platform, the checks run, and the assumptions made.
 

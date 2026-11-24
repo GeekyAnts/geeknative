@@ -31,6 +31,12 @@ Gemini CLI reads `GEMINI.md` by default. The project's `.gemini/settings.json` p
 }
 ```
 
+## One platform at a time
+
+Before editing an app, run `geeknative context <feature> --platform <ios|android|web>`. The pack names the spec, one reference folder and the files to change. Read those. Do not read the other two apps, generated output, or `.geeknative/logs/*.log`.
+
+While implementing, run `geeknative check <platform> --feature <feature>`. On failure, read `.geeknative/logs/<platform>.json`. Open the `.log` only when that file has `"unparsed": true`. After it passes, stop. `make check` is still the final gate, once all three apps are done.
+
 ## Agents without sub-agents
 
 The loop in AGENTS.md works with or without sub-agents. If your agent can run sub-agents in parallel, it gives each platform its own. Otherwise it does the platforms one after another. Either way, the request isn't done until all three apps do it (or the spec marks the difference).
