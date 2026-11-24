@@ -255,14 +255,24 @@ The web module throws if it runs in the browser. Use it only in server functions
 
 Mobile apps embed the values they are built with, so treat the built app as readable by anyone who has it. Keep keys that must stay private on a server.
 
-## api.json
+## API (`contracts/api/`)
 
-OpenAPI 3.1 document for the domain models and the HTTP API a hosted backend would expose. Optional until a server is planned: local repositories (UserDefaults, DataStore, localStorage) are enough for products that stay on-device. Base URLs stay in `contracts/config.json` `values.apiBaseUrl` (type `url`, one absolute URL per environment). `api.json` only describes paths, operations, and schemas. Without `apiBaseUrl`, `make gen` emits **models only**. With `apiBaseUrl`, it also emits the HTTP client. Hand-written local repositories use the generated types; they call the generated client only after a hosted server exists and `AppContainer` swaps in a remote implementation. Android also needs `android.permission.INTERNET` (already in the template manifest).
+One JSON file per task for the domain models and the HTTP API a hosted backend would expose. Optional until a server is planned: local repositories (UserDefaults, DataStore, localStorage) are enough for products that stay on-device. There is no `contracts/api.json`. `make gen` rejects that file and tells you to split it.
+
+```text
+contracts/api/common.json     schemas used by more than one task
+contracts/api/stories.json    /stories paths and the Story schema
+contracts/api/users.json
+```
+
+A task file contains only `paths` and `components.schemas`. `make gen` stamps the OpenAPI version and `info` from `contracts/app.json`, merges every file, and writes the same models (and, with `apiBaseUrl`, the same client) on iOS, Android and the web. A `$ref` of `#/components/schemas/Name` can point at a schema in another task file, including `common.json`. File names are the task id in kebab-case, or `common.json`. The same path or schema name in two files is an error.
+
+Base URLs stay in `contracts/config.json` `values.apiBaseUrl` (type `url`, one absolute URL per environment). Without `apiBaseUrl`, `make gen` emits **models only**. With `apiBaseUrl`, it also emits the HTTP client. Hand-written local repositories use the generated types; they call the generated client only after a hosted server exists and `AppContainer` swaps in a remote implementation. Android also needs `android.permission.INTERNET` (already in the template manifest).
+
+`contracts/api/stories.json`:
 
 ```json
 {
-  "openapi": "3.1.0",
-  "info": { "title": "App API", "version": "1.0.0" },
   "paths": {
     "/stories": {
       "get": {
@@ -275,23 +285,6 @@ OpenAPI 3.1 document for the domain models and the HTTP API a hosted backend wou
                   "type": "array",
                   "items": { "$ref": "#/components/schemas/Story" }
                 }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/stories/{id}": {
-      "get": {
-        "operationId": "getStory",
-        "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/Story" }
               }
             }
           }
@@ -315,26 +308,26 @@ OpenAPI 3.1 document for the domain models and the HTTP API a hosted backend wou
 }
 ```
 
-**Subset (v1).** Supported: `openapi` `3.1.x`, `info`, `paths` with `get` / `post` / `put` / `patch` / `delete`, `operationId` (camelCase), path and query parameters that are `string`, `integer`, `number`, `boolean`, or a string `enum` (no arrays), JSON request/response bodies under `application/json`, empty success responses (`204` or any success with no JSON, generated as `Void` / `Unit` / `void`), and `components.schemas` object models whose properties are `string`, `integer` (64-bit: Swift `Int`, Kotlin `Long`, TypeScript `number`), `number`, `boolean`, string `enum`, `array`, or a local `$ref` to `#/components/schemas/Name`. Path parameters are percent-encoded the same way on every platform (`encodeURIComponent` / RFC 3986 unreserved). Schema names are PascalCase; property and `operationId` names follow the same camelCase rules as tokens. Unsupported: `oneOf`, `anyOf`, `allOf`, `not`, `callbacks`, `links`, `webhooks`, inline object schemas (put them in `components.schemas` and `$ref` them), and top-level enum schemas.
+**Subset (v1).** Supported: `paths` with `get` / `post` / `put` / `patch` / `delete`, `operationId` (camelCase), path and query parameters that are `string`, `integer`, `number`, `boolean`, or a string `enum` (no arrays), JSON request/response bodies under `application/json`, empty success responses (`204` or any success with no JSON, generated as `Void` / `Unit` / `void`), and `components.schemas` object models whose properties are `string`, `integer` (64-bit: Swift `Int`, Kotlin `Long`, TypeScript `number`), `number`, `boolean`, string `enum`, `array`, or a local `$ref` to `#/components/schemas/Name`. Path parameters are percent-encoded the same way on every platform (`encodeURIComponent` / RFC 3986 unreserved). Schema names are PascalCase; property and `operationId` names follow the same camelCase rules as tokens. Unsupported: `oneOf`, `anyOf`, `allOf`, `not`, `callbacks`, `links`, `webhooks`, inline object schemas (put them in `components.schemas` and `$ref` them), and top-level enum schemas.
 
-Never edit the generated API files. Change `contracts/api.json` and run `make gen`. Local repositories use the generated models. They call the generated client only after `apiBaseUrl` exists.
+Never edit the generated API files. Change the task file and run `make gen`. An agent wiring one task reads that file only, plus `common.json` when the task uses a shared schema, and calls the generated function by `operationId`. Local repositories use the generated models. They call the generated client only after `apiBaseUrl` exists.
 
 ### Generated
 
 | Platform | Files |
 |---|---|
-| iOS | `App/Generated/ApiModels.swift` (`Codable` models). `App/Generated/ApiClient.swift` (`URLSession` helpers named by `operationId`) only when `apiBaseUrl` is set |
-| Android | `generated/ApiModels.kt` (data classes). `generated/ApiClient.kt` (`HttpURLConnection` helpers) only when `apiBaseUrl` is set |
-| Web | `src/generated/api.ts` (types always; `fetch` helpers using `AppConfig.apiBaseUrl` only when `apiBaseUrl` is set) |
+| iOS | `App/Generated/api/<Task>.swift` (models and `Api<Task>` helpers for that task). `ApiTransport.swift` only when `apiBaseUrl` is set |
+| Android | `generated/api/<Task>.kt` (models and `Api<Task>` helpers). `ApiTransport.kt` only when `apiBaseUrl` is set |
+| Web | `src/generated/api/<task>.ts` (types, and fetch helpers only when `apiBaseUrl` is set). `transport.ts` only when `apiBaseUrl` is set |
 
 ## All generated files
 
 | Platform | Files |
 |---|---|
-| iOS | `apps/ios/App/Generated/`: `AppIdentity.swift`, `AppConfig.swift`, `AppSecrets.swift` (only with secrets), `ApiModels.swift` (with `api.json`), `ApiClient.swift` (with `api.json` and `apiBaseUrl`), `Tokens.swift`, `Strings.swift`, `Icons.swift`, `Localizable.xcstrings`, `Colors.xcassets` (accent color), `Icons.xcassets`, `Fonts/`; `apps/ios/Config/Identity.xcconfig` |
+| iOS | `apps/ios/App/Generated/`: `AppIdentity.swift`, `AppConfig.swift`, `AppSecrets.swift` (only with secrets), `api/<Task>.swift` and `api/ApiTransport.swift` (with `contracts/api/`), `Tokens.swift`, `Strings.swift`, `Icons.swift`, `Localizable.xcstrings`, `Colors.xcassets` (accent color), `Icons.xcassets`, `Fonts/`; `apps/ios/Config/Identity.xcconfig` |
 | Project root | `.env.example` (only with secrets) |
-| Android | `apps/android/app/src/main/kotlin/app/generated/`: `AppIdentity.kt`, `AppConfig.kt`, `AppSecrets.kt` (only with secrets), `ApiModels.kt` (with `api.json`), `ApiClient.kt` (with `api.json` and `apiBaseUrl`), `Tokens.kt`, `Icons.kt`; `res/values/generated_colors.xml`, `res/values-night/generated_colors.xml`, `res/values*/generated_strings.xml`, `res/drawable/generated_icon_*.xml`, `res/font/generated_*`; `apps/android/app/identity.properties` |
-| Web | `apps/web/src/generated/`: `app.ts`, `config.ts`, `secrets.server.ts` (only with secrets), `api.ts` (with `api.json`; fetch helpers only with `apiBaseUrl`), `tokens.css`, `strings.ts`, `icons.tsx`, `fonts/` |
+| Android | `apps/android/app/src/main/kotlin/app/generated/`: `AppIdentity.kt`, `AppConfig.kt`, `AppSecrets.kt` (only with secrets), `api/<Task>.kt` and `api/ApiTransport.kt` (with `contracts/api/`), `Tokens.kt`, `Icons.kt`; `res/values/generated_colors.xml`, `res/values-night/generated_colors.xml`, `res/values*/generated_strings.xml`, `res/drawable/generated_icon_*.xml`, `res/font/generated_*`; `apps/android/app/identity.properties` |
+| Web | `apps/web/src/generated/`: `app.ts`, `config.ts`, `secrets.server.ts` (only with secrets), `api/<task>.ts` and `api/transport.ts` (with `contracts/api/`), `tokens.css`, `strings.ts`, `icons.tsx`, `fonts/` |
 
 ## Validation errors
 
@@ -344,7 +337,7 @@ Problems are reported with the file and field, so an agent can fix them directly
 ✖ contracts/tokens.json color.primary.light must be a hex color like "#4F46E5" or "#4F46E5CC" (got "#4F46E").
 ✖ contracts/strings/fr.json "settings.about.version" must use the same placeholders and plural shape as en.json.
 ✖ contracts/config.json values.apiBaseUrl is missing a value for "staging". Every value needs every environment.
-✖ contracts/api.json paths./stories.get needs an operationId.
+✖ contracts/api paths./stories.get needs an operationId.
 ✖ contracts/config.json secrets.mapsApiKey has "value". Secrets are names only: put the value in .env as MAPS_API_KEY.
 ✖ contracts/icons.json "star" "sparkly-star" is not a Lucide icon. Browse https://lucide.dev/icons for names like "settings" or "arrow-left".
 ✖ contracts/fonts/Inter-Regular.ttf has weight 400, but font.files lists it under "500".

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { rmSync } from 'node:fs'
+import { mkdirSync, rmSync } from 'node:fs'
 import path from 'node:path'
 import { test } from 'node:test'
 import { validateApi } from '../src/codegen/api.js'
@@ -56,9 +56,16 @@ const HN = {
   },
 }
 
-function projectWithApi(api = HN) {
+/** Writes one task file. Slices hold paths and schemas; make gen adds the OpenAPI envelope. */
+function writeSlice(dir, name, api) {
+  const folder = path.join(dir, 'contracts', 'api')
+  mkdirSync(folder, { recursive: true })
+  writeJson(path.join(folder, name), { paths: api.paths ?? {}, components: api.components ?? {} })
+}
+
+function projectWithApi(api = HN, name = 'stories.json') {
   const dir = tempProject()
-  writeJson(path.join(dir, 'contracts', 'api.json'), api)
+  writeSlice(dir, name, api)
   editJson(path.join(dir, 'contracts', 'config.json'), (config) => {
     config.values = {
       apiBaseUrl: {
@@ -73,54 +80,56 @@ function projectWithApi(api = HN) {
   return dir
 }
 
-test('missing api.json produces no API outputs', () => {
+test('missing contracts/api produces no API outputs', () => {
   const paths = generate(tempProject()).map((o) => o.path)
-  assert.equal(paths.some((p) => p.includes('ApiModels') || p.endsWith('api.ts')), false)
+  assert.equal(paths.some((p) => p.includes('/api/') && (p.endsWith('.swift') || p.endsWith('.kt') || p.endsWith('.ts'))), false)
 })
 
 test('HN OpenAPI fixture generates Story models and list/get clients on every platform', () => {
   const outputs = generate(projectWithApi())
 
-  const swiftModels = outputOf(outputs, 'ApiModels.swift')
+  const swiftModels = outputOf(outputs, 'api/Stories.swift')
   assert.match(swiftModels, /struct Story/)
   assert.match(swiftModels, /var id: String/)
   assert.match(swiftModels, /var score: Int\?/)
 
-  const swiftClient = outputOf(outputs, 'ApiClient.swift')
+  const swiftClient = outputOf(outputs, 'api/Stories.swift')
+  assert.match(swiftClient, /enum ApiStories/)
   assert.match(swiftClient, /static func listStories\(\) async throws -> \[Story\]/)
   assert.match(swiftClient, /static func getStory\(id: String\) async throws -> Story/)
-  assert.match(swiftClient, /AppConfig\.apiBaseUrl/)
-  assert.match(swiftClient, /encodePathSegment/)
+  assert.match(outputOf(outputs, 'api/ApiTransport.swift'), /AppConfig\.apiBaseUrl/)
+  assert.match(swiftClient, /ApiTransport\.encodePathSegment/)
 
-  const kotlinModels = outputOf(outputs, 'ApiModels.kt')
+  const kotlinModels = outputOf(outputs, 'api/Stories.kt')
   assert.match(kotlinModels, /data class Story/)
   assert.match(kotlinModels, /val id: String/)
   assert.match(kotlinModels, /val score: Long\? = null/)
 
-  const kotlinClient = outputOf(outputs, 'ApiClient.kt')
+  const kotlinClient = outputOf(outputs, 'api/Stories.kt')
+  assert.match(kotlinClient, /object ApiStories/)
   assert.match(kotlinClient, /suspend fun listStories\(\): List<Story>/)
   assert.match(kotlinClient, /suspend fun getStory\(id: String\): Story/)
   assert.match(kotlinClient, /AppConfig\.apiBaseUrl/)
-  assert.match(kotlinClient, /encodePathSegment/)
-  assert.match(kotlinClient, /\.replace\("\+", "%20"\)/)
+  assert.match(kotlinClient, /ApiTransport\.encodePathSegment/)
+  assert.match(outputOf(outputs, 'api/ApiTransport.kt'), /\.replace\("\+", "%20"\)/)
 
-  const ts = outputOf(outputs, 'generated/api.ts')
+  const ts = outputOf(outputs, 'generated/api/stories.ts')
   assert.match(ts, /export type Story = \{/)
   assert.match(ts, /export async function listStories/)
   assert.match(ts, /export async function getStory/)
-  assert.match(ts, /AppConfig\.apiBaseUrl/)
+  assert.match(outputOf(outputs, 'generated/api/transport.ts'), /AppConfig\.apiBaseUrl/)
 })
 
-test('api.json without apiBaseUrl generates models only', () => {
+test('task files without apiBaseUrl generate models only', () => {
   const dir = tempProject()
-  writeJson(path.join(dir, 'contracts', 'api.json'), HN)
+  writeSlice(dir, 'stories.json', HN)
   const outputs = generate(dir)
   const paths = outputs.map((o) => o.path)
-  assert.ok(paths.some((p) => p.endsWith('ApiModels.swift')))
-  assert.ok(paths.some((p) => p.endsWith('ApiModels.kt')))
-  assert.ok(paths.some((p) => p.endsWith('api.ts')))
-  assert.equal(paths.some((p) => p.endsWith('ApiClient.swift') || p.endsWith('ApiClient.kt')), false)
-  const ts = outputOf(outputs, 'generated/api.ts')
+  assert.ok(paths.some((p) => p.endsWith('api/Stories.swift')))
+  assert.ok(paths.some((p) => p.endsWith('api/Stories.kt')))
+  assert.ok(paths.some((p) => p.endsWith('api/stories.ts')))
+  assert.equal(paths.some((p) => p.includes('ApiTransport') || p.endsWith('transport.ts')), false)
+  const ts = outputOf(outputs, 'generated/api/stories.ts')
   assert.match(ts, /export type Story = \{/)
   assert.equal(ts.includes('AppConfig.apiBaseUrl'), false)
   assert.equal(ts.includes('export async function listStories'), false)
@@ -234,20 +243,72 @@ test('204 generates void clients and Kotlin integers are Long', () => {
         },
       },
     },
-  })
+  }, 'items.json')
   const outputs = generate(dir)
-  assert.match(outputOf(outputs, 'ApiClient.swift'), /throws -> Void/)
-  assert.match(outputOf(outputs, 'ApiClient.kt'), /suspend fun deleteItem\(id: String\): Unit/)
-  assert.match(outputOf(outputs, 'generated/api.ts'), /Promise<void>/)
-  assert.match(outputOf(outputs, 'ApiModels.kt'), /val createdAt: Long/)
+  assert.match(outputOf(outputs, 'api/Items.swift'), /throws -> Void/)
+  assert.match(outputOf(outputs, 'api/Items.kt'), /suspend fun deleteItem\(id: String\): Unit/)
+  assert.match(outputOf(outputs, 'generated/api/items.ts'), /Promise<void>/)
+  assert.match(outputOf(outputs, 'api/Items.kt'), /val createdAt: Long/)
 })
 
-test('removing api.json stops producing API files', () => {
+test('removing the task files stops producing API files', () => {
   const dir = projectWithApi()
   const withApi = generate(dir).map((o) => o.path)
-  assert.ok(withApi.some((p) => p.endsWith('ApiModels.swift')))
+  assert.ok(withApi.some((p) => p.endsWith('api/Stories.swift')))
 
-  rmSync(path.join(dir, 'contracts', 'api.json'))
+  rmSync(path.join(dir, 'contracts', 'api'), { recursive: true })
   const withoutApi = generate(dir).map((o) => o.path)
-  assert.equal(withoutApi.some((p) => p.includes('ApiModels') || p.endsWith('api.ts')), false)
+  assert.equal(withoutApi.some((p) => p.includes('/api/')), false)
+})
+
+test('a shared schema in common.json is visible to a task file', () => {
+  const dir = tempProject()
+  writeSlice(dir, 'common.json', { components: { schemas: HN.components.schemas } })
+  writeSlice(dir, 'stories.json', { paths: HN.paths })
+  editJson(path.join(dir, 'contracts', 'config.json'), (config) => {
+    config.values = {
+      apiBaseUrl: {
+        type: 'url',
+        description: 'Backend API.',
+        development: 'http://localhost:8080',
+        staging: 'https://staging.example.com',
+        production: 'https://api.example.com',
+      },
+    }
+  })
+  const outputs = generate(dir)
+  assert.match(outputOf(outputs, 'api/Common.swift'), /struct Story/)
+  assert.match(outputOf(outputs, 'api/Stories.swift'), /static func listStories\(\)/)
+  assert.doesNotMatch(outputOf(outputs, 'api/Stories.swift'), /struct Story/)
+  assert.match(outputOf(outputs, 'api/Stories.kt'), /suspend fun getStory/)
+  assert.match(outputOf(outputs, 'generated/api/stories.ts'), /export async function listStories/)
+  assert.match(outputOf(outputs, 'generated/api/stories.ts'), /from "\.\/common"/)
+})
+
+test('a single contracts/api.json is rejected', () => {
+  const dir = tempProject()
+  writeJson(path.join(dir, 'contracts', 'api.json'), HN)
+  assert.throws(
+    () => generate(dir),
+    (error) => {
+      assert.ok(error instanceof CliError)
+      assert.match(error.message, /contracts\/api\.json is not a contract/)
+      return true
+    },
+  )
+})
+
+test('two task files cannot define the same schema', () => {
+  const dir = tempProject()
+  const story = { components: { schemas: HN.components.schemas } }
+  writeSlice(dir, 'posts.json', story)
+  writeSlice(dir, 'feed.json', story)
+  assert.throws(
+    () => generate(dir),
+    (error) => {
+      assert.ok(error instanceof CliError)
+      assert.match(error.message, /both define schema "Story"/)
+      return true
+    },
+  )
 })

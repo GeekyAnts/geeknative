@@ -14,7 +14,7 @@ The first prompt in a new project usually describes the app. The agent treats it
 3. **Sets the design direction.** If you described a look, it writes the direction in DESIGN.md and updates `contracts/tokens.json` (colors in light and dark, type, spacing and radii), then runs `make gen`.
 4. **Plans navigation.** It updates `spec/navigation.md` with the screens and how people move between them: tabs, stacks and modals. The starter Settings screen stays unless you say otherwise.
 5. **Writes feature specs.** One spec per feature in `spec/features/`, from `.geeknative/templates/feature.md`, with every platform's status set to `planned`. The first version is kept small: the core loop first.
-6. **Keeps data local.** Features use repository interfaces with local implementations. It writes `contracts/api.json` only when a hosted backend is planned, then runs `make gen`. Local repositories stay the live backend until `apiBaseUrl` exists.
+6. **Keeps data local.** Features use repository interfaces with local implementations. It writes `contracts/api/<task>.json` only when a hosted backend is planned, one file per task, then runs `make gen`. Local repositories stay the live backend until `apiBaseUrl` exists.
 7. **Builds in vertical slices.** It takes the first feature through the whole loop on all three apps (spec, contracts, implementation, checks, status), then starts the next. It never builds every screen on one platform first.
 8. **Replaces the starter content.** Once real features exist, it updates or removes Home's welcome card and updates `spec/features/home.md` to match.
 9. **Reports** what it built on each platform, what's planned next, and the assumptions it made.
