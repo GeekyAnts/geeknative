@@ -1,6 +1,7 @@
 // @ts-check
 import { parseArgs } from 'node:util'
 import { check } from './commands/check.js'
+import { context } from './commands/context.js'
 import { create } from './commands/create.js'
 import { doctor } from './commands/doctor.js'
 import { font } from './commands/font.js'
@@ -21,7 +22,9 @@ Usage: geeknative <command>
                        (from a geeknative checkout, --link follows the checkout instead of pinning a snapshot)
   gen                  Regenerate platform code from contracts/
   font <family>        Switch the shared typeface: a Google Fonts family ("Open Sans") or system
+  context <feature>    Print one platform's feature pack. Requires --platform ios|android|web
   check [targets]      Verify contracts, then build and test. Targets: all (default), contracts, ios, android, web
+                       --feature <id> tests one feature on one platform. --json prints the result object
   doctor [--fix]       Check Xcode, the Android SDK and Node; --fix installs what it can
   parity               Update spec/parity.md from feature specs and tests
   lint [platforms]     Find hardcoded text, unknown test IDs, centered titles and stale specs (or one app's code)
@@ -47,6 +50,9 @@ export async function main(argv) {
       fix: { type: 'boolean' },
       'dry-run': { type: 'boolean' },
       force: { type: 'boolean' },
+      platform: { type: 'string' },
+      feature: { type: 'string' },
+      json: { type: 'boolean' },
       help: { type: 'boolean', short: 'h' },
       version: { type: 'boolean', short: 'v' },
     },
@@ -66,12 +72,14 @@ export async function main(argv) {
         git: !values['no-git'],
         link: values.link,
       })
+    case 'context':
+      return context(findProjectRoot(), rest[0], values.platform)
     case 'gen':
       return void gen(findProjectRoot())
     case 'font':
       return font(findProjectRoot(), rest.join(' '))
     case 'check':
-      return check(findProjectRoot(), rest)
+      return check(findProjectRoot(), rest, { feature: values.feature, json: values.json })
     case 'doctor':
       return doctor(findProjectRoot(), { fix: values.fix })
     case 'parity':
