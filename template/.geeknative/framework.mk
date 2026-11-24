@@ -4,10 +4,10 @@ GEEKNATIVE ?= ./node_modules/.bin/geeknative
 # `make check ENV=staging` builds the staging environment from contracts/config.json.
 ENV_PREFIX = $(if $(ENV),GEEKNATIVE_ENV=$(ENV) )
 
-.PHONY: help doctor gen font pin upgrade check check-contracts check-ios check-android check-web lint lint-ios lint-android lint-web parity run-ios run-android run-web run-all
+.PHONY: help doctor gen font pin upgrade check check-contracts check-ios check-android check-web check-ios-feature check-android-feature check-web-feature lint lint-ios lint-android lint-web parity run-ios run-android run-web run-all
 
 help: ## List the commands
-	@grep -hE '^[a-zA-Z_-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "  make %-16s %s\n", $$1, $$2}'
+	@grep -hE '^[a-zA-Z_-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "  make %-22s %s\n", $$1, $$2}'
 
 doctor: ## Check toolchains (FIX=1 installs what it can)
 	@$(GEEKNATIVE) doctor $(if $(FIX),--fix)
@@ -38,6 +38,15 @@ check-android: ## Build and test the Android app
 
 check-web: ## Type-check, test and build the web app
 	@$(ENV_PREFIX)$(GEEKNATIVE) check web
+
+check-ios-feature: ## Build and test one iOS feature (FEATURE=settings)
+	@$(ENV_PREFIX)$(GEEKNATIVE) check ios --feature $(FEATURE)
+
+check-android-feature: ## Build and test one Android feature (FEATURE=settings)
+	@$(ENV_PREFIX)$(GEEKNATIVE) check android --feature $(FEATURE)
+
+check-web-feature: ## Type-check and test one web feature (FEATURE=settings)
+	@$(ENV_PREFIX)$(GEEKNATIVE) check web --feature $(FEATURE)
 
 parity: ## Update spec/parity.md from feature specs and tests
 	@$(GEEKNATIVE) parity

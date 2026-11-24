@@ -8,14 +8,15 @@ import path from 'node:path'
  * Agents get a short summary on screen and can open the log when they need detail.
  * @param {string} cmd
  * @param {string[]} args
- * @param {{ cwd?: string, logFile: string, env?: Record<string, string>, onLine?: (line: string) => void }} options
+ * @param {{ cwd?: string, logFile: string, env?: Record<string, string>, onLine?: (line: string) => void, append?: boolean }} options
  *   `onLine` sees each line as it arrives, for progress reporting.
+ *   `append` keeps an earlier command's output in the same log.
  * @returns {Promise<{ code: number, lines: string[] }>}
  */
-export function runLogged(cmd, args, { cwd, logFile, env, onLine }) {
+export function runLogged(cmd, args, { cwd, logFile, env, onLine, append = false }) {
   mkdirSync(path.dirname(logFile), { recursive: true })
   return new Promise((resolve) => {
-    const out = createWriteStream(logFile)
+    const out = createWriteStream(logFile, { flags: append ? 'a' : 'w' })
     out.write(`$ ${[cmd, ...args].join(' ')}\n\n`)
     const child = spawn(cmd, args, { cwd, env: { ...process.env, ...env } })
     /** @type {string[]} */
