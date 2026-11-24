@@ -18,7 +18,7 @@ console.log(
   JSON.stringify({
     hookSpecificOutput: {
       hookEventName: 'SubagentStart',
-      additionalContext: `Conventions for this app, from apps/${platform}/AGENTS.md:\n\n${guide}`,
+      additionalContext: `Conventions for this app, from apps/${platform}/AGENTS.md.\n\nDo not read the other apps, generated output, or check logs. Read the spec and the pack from \`geeknative context <feature> --platform ${platform}\`.\n\n${guide}`,
     },
   }),
 )

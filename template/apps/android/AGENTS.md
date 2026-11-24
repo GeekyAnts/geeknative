@@ -62,7 +62,7 @@ Follow features/settings as the reference implementation.
 
 ## Commands
 
-- `make check-android`: builds the app and runs the unit tests. Full log: .geeknative/logs/android.log.
+- `make check-android`: builds the app and runs every unit test. `make check-android-feature FEATURE=settings` builds and runs that feature's tests. Both write `.geeknative/logs/android.json`. Open `.geeknative/logs/android.log` only when that file has `"unparsed": true`.
 - `make run-android`: installs and launches the app on a running emulator or connected device.
 - Open apps/android in Android Studio to use previews and the layout inspector.
 <!-- geeknative:end -->

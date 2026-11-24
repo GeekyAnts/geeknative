@@ -58,7 +58,7 @@ Follow Features/Settings as the reference implementation.
 
 ## Commands
 
-- `make check-ios`: builds the app and runs the tests on a simulator. Full log: .geeknative/logs/ios.log.
+- `make check-ios`: builds the app and runs every test. `make check-ios-feature FEATURE=settings` builds and runs that feature's tests. Both write `.geeknative/logs/ios.json`. Open `.geeknative/logs/ios.log` only when that file has `"unparsed": true`.
 - `make run-ios`: builds, installs and launches the app on a simulator.
 - `open apps/ios/App.xcodeproj` opens it in Xcode.
 

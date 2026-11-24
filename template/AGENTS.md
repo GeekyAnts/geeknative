@@ -64,9 +64,9 @@ Before changing anything, decide what kind of request it is. State it as the fir
 1. **Update the source of truth** (section 3).
 2. **Regenerate** with `make gen` if contracts changed.
 3. **Implement on each platform.** Before editing under `apps/<platform>/`, read `apps/<platform>/AGENTS.md`.
-   - If you can run sub-agents in parallel, give each platform its own, with the spec path, the acceptance criteria IDs and what changed in contracts/. Only you, the lead, edit `spec/`, `contracts/`, PRODUCT.md and DESIGN.md; platform agents report gaps back to you.
-   - Otherwise, do the platforms one after another.
-4. **Verify** with `make check-ios`, `make check-android` and `make check-web` (or `make check` for everything). Fix until they pass. Each one also lints that app's code: user-facing text written in code, test IDs no spec lists, and centered screen titles.
+   - If you can run sub-agents in parallel, give each platform its own. Pass only the feature id, the spec path, the acceptance criteria IDs and what changed in contracts/. Each agent runs `geeknative context <id> --platform <platform>` and does not read the other apps. Only you, the lead, edit `spec/`, `contracts/`, PRODUCT.md and DESIGN.md; platform agents report gaps back to you.
+   - Otherwise, do the platforms one after another, and read one platform's context pack at a time.
+4. **Verify.** While implementing, each platform runs `geeknative check <platform> --feature <id>` (or `make check-<platform>-feature FEATURE=<id>`). On failure, read `.geeknative/logs/<platform>.json`. Open the `.log` only when that file has `"unparsed": true`. After the targeted check passes, stop: do not open the log and do not run it again. Then you, the lead, run `make check` once and fix until it passes. Targeted and full checks both lint that app's code: user-facing text written in code, test IDs no spec lists, and centered screen titles. `make check` also lints the specs.
 5. **Record** each platform's status in the feature's front matter, then run `make parity`.
 6. **Report** one line per platform (done, partial or skipped, and why), the checks you ran, and any assumptions you made.
 
@@ -100,8 +100,10 @@ Ask only when a wrong guess is expensive to undo: the data model, the navigation
 | `make doctor` | Checks Xcode, the Android SDK, Java and Node (`make doctor FIX=1` installs what it can) |
 | `make gen` | Regenerates app code from contracts/ |
 | `make font FAMILY="Open Sans"` | Switches the typeface of all three apps to a Google Fonts family (`FAMILY=system` for each platform's own) |
-| `make check` | Validates contracts, then builds and tests all three apps |
-| `make check-ios`, `make check-android`, `make check-web` | One app; full logs go to .geeknative/logs/ |
+| `make check` | Validates contracts, then builds and tests all three apps. This is the final gate |
+| `geeknative context <id> --platform ios` | Prints the spec, files, reference and contract keys for one feature. `android` and `web` work the same way |
+| `make check-ios`, `make check-android`, `make check-web` | One app. A compact result is written to `.geeknative/logs/ios.json` (and `android.json`, `web.json`); the full log stays beside it |
+| `make check-ios-feature FEATURE=<id>` (and android, web) | Builds and runs that feature's tests. The lead still runs `make check` at the end |
 | `make run-ios`, `make run-android`, `make run-web` | Builds and launches one app |
 | `make run-all` | Starts the web dev server and launches iOS or Android from the same terminal (`r` rebuilds native apps; it is not live reload) |
 | `make parity` | Updates spec/parity.md |
