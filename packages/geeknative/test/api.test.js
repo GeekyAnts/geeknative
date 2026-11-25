@@ -141,8 +141,44 @@ test('HTTP code lives in the shared transport, not in each operation', () => {
   assert.match(tsTransport, /export async function request<T>/)
   assert.match(tsTransport, /await fetch\(/)
   const tsTask = outputOf(outputs, 'generated/api/stories.ts')
-  assert.match(tsTask, /import \{ request \} from "\.\/transport"/)
+  assert.match(tsTask, /import \{ request, encodePathSegment \} from "\.\/transport"/)
   assert.equal(tsTask.includes('fetch('), false)
+})
+
+test('iOS path parameters are encoded once, with an ASCII-only set', () => {
+  const transport = outputOf(generate(projectWithApi()), 'api/ApiTransport.swift')
+  assert.match(transport, /components\.percentEncodedPath = basePath \+ suffix/)
+  assert.equal(transport.includes('components.path ='), false)
+  assert.match(transport, /CharacterSet\(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-\._~"\)/)
+  assert.equal(transport.includes('CharacterSet.alphanumerics'), false)
+
+  assert.throws(
+    () => validateApi({ ...HN, paths: { '/my items': HN.paths['/stories'] } }),
+    (error) => error instanceof CliError && /not valid in a URL path/.test(error.message),
+  )
+})
+
+test('web transport keeps headers passed as a Headers instance', () => {
+  const transport = outputOf(generate(projectWithApi()), 'generated/api/transport.ts')
+  assert.match(transport, /const headers = new Headers\(init\.headers\)/)
+  assert.match(transport, /headers\.has\("Content-Type"\)/)
+  assert.equal(transport.includes('...(init.headers'), false)
+})
+
+test('Kotlin and web path encoding match RFC 3986 unreserved', () => {
+  const outputs = generate(projectWithApi())
+  const kotlin = outputOf(outputs, 'api/ApiTransport.kt')
+  assert.match(kotlin, /\.replace\("\*", "%2A"\)/)
+  assert.match(kotlin, /\.replace\("%7E", "~"\)/)
+  const ts = outputOf(outputs, 'generated/api/transport.ts')
+  assert.match(ts, /export function encodePathSegment/)
+  assert.match(ts, /encodeURIComponent\(value\)/)
+  assert.match(outputOf(outputs, 'generated/api/stories.ts'), /encodePathSegment\(String\(args\.id\)\)/)
+})
+
+test('iOS query values encode + as %2B', () => {
+  const transport = outputOf(generate(projectWithApi()), 'api/ApiTransport.swift')
+  assert.match(transport, /percentEncodedQuery\?\.replacingOccurrences\(of: "\+", with: "%2B"\)/)
 })
 
 test('task files without apiBaseUrl generate models only', () => {
@@ -335,5 +371,47 @@ test('two task files cannot define the same schema', () => {
       assert.match(error.message, /both define schema "Story"/)
       return true
     },
+  )
+})
+
+test('a task file cannot overwrite the transport', () => {
+  for (const name of ['transport.json', 'api-transport.json', 'error.json', 'exception.json']) {
+    const dir = tempProject()
+    writeSlice(dir, name, { paths: HN.paths, components: HN.components })
+    assert.throws(
+      () => generate(dir),
+      (error) => error instanceof CliError && /would overwrite a generated transport/.test(error.message),
+      name,
+    )
+  }
+})
+
+test('a schema cannot shadow a platform type or a generated client', () => {
+  for (const name of ['Image', 'Text', 'Date', 'Task', 'Pair', 'ApiError']) {
+    assert.throws(
+      () =>
+        validateApi({
+          openapi: '3.1.0',
+          info: { title: 'X', version: '1' },
+          paths: {},
+          components: {
+            schemas: { [name]: { type: 'object', required: ['id'], properties: { id: { type: 'string' } } } },
+          },
+        }),
+      (error) => error instanceof CliError && /PhotoImage or EventDate/.test(error.message),
+      name,
+    )
+  }
+
+  const dir = tempProject()
+  writeSlice(dir, 'common.json', {
+    components: {
+      schemas: { ApiStories: { type: 'object', required: ['id'], properties: { id: { type: 'string' } } } },
+    },
+  })
+  writeSlice(dir, 'stories.json', { paths: HN.paths })
+  assert.throws(
+    () => generate(dir),
+    (error) => error instanceof CliError && /"ApiStories"/.test(error.message),
   )
 })

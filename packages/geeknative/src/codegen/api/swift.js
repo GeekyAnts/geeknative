@@ -125,10 +125,14 @@ nonisolated enum ApiTransport {
         guard var components = URLComponents(url: AppConfig.apiBaseUrl, resolvingAgainstBaseURL: false) else {
             throw ApiError.badURL(AppConfig.apiBaseUrl.absoluteString)
         }
-        let basePath = components.path.hasSuffix("/") ? String(components.path.dropLast()) : components.path
+        // percentEncodedPath, not path: the segment is already encoded, and assigning path encodes the "%" again.
+        let encodedBase = components.percentEncodedPath
+        let basePath = encodedBase.hasSuffix("/") ? String(encodedBase.dropLast()) : encodedBase
         let suffix = path.hasPrefix("/") ? path : "/" + path
-        components.path = basePath + suffix
+        components.percentEncodedPath = basePath + suffix
         components.queryItems = query.isEmpty ? nil : query
+        // URLQueryItem leaves "+" literal, and servers read a literal "+" as a space.
+        components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
         guard let url = components.url else { throw ApiError.badURL(path) }
         return url
     }
@@ -149,8 +153,8 @@ nonisolated enum ApiTransport {
     }
 
     static func encodePathSegment(_ value: String) -> String {
-        var allowed = CharacterSet.alphanumerics
-        allowed.insert(charactersIn: "-._~")
+        // ASCII only. The alphanumerics set also keeps letters like é, which the web encodes.
+        let allowed = CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~")
         return value.addingPercentEncoding(withAllowedCharacters: allowed) ?? value
     }
 }

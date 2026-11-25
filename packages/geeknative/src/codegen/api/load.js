@@ -4,7 +4,7 @@ import path from 'node:path'
 import { readJson } from '../../lib/fsutil.js'
 import { CliError } from '../../lib/log.js'
 import { readApp } from '../app.js'
-import { SOURCE } from './names.js'
+import { clientName, pascalTask, SOURCE, taskName } from './names.js'
 import { validateApi } from './validate.js'
 
 /** @typedef {import('./types.js').ApiContract} ApiContract */
@@ -12,6 +12,18 @@ import { validateApi } from './validate.js'
 const SINGLE = 'contracts/api.json'
 /** One file per task, plus common.json for schemas shared across tasks. Not api.json. */
 const TASK_FILE = /^(common|[a-z0-9]+(?:-[a-z0-9]+)*)\.json$/
+
+/** Generated transport files and types a task file must not replace. */
+const RESERVED_GENERATED = new Set(['ApiError', 'ApiException', 'ApiTransport'])
+
+/** @param {string} task @param {string} file */
+function assertTaskName(task, file) {
+  if (task === 'transport' || pascalTask(task) === 'ApiTransport' || RESERVED_GENERATED.has(clientName(task))) {
+    throw new CliError(
+      `${file} would overwrite a generated transport file or type (transport.ts, ApiTransport, ApiError, ApiException). Name the task after what it does, like posts.json.`,
+    )
+  }
+}
 
 /**
  * Reads every task file in contracts/api/ and merges them into one contract.
@@ -36,6 +48,7 @@ export function readApi(root) {
       throw new CliError(`${SOURCE}/${name} must be named after the task, like posts.json, or common.json for shared schemas.`)
     }
     const file = `${SOURCE}/${name}`
+    assertTaskName(taskName(file), file)
     return { file, raw: readJson(path.join(dir, name), file) }
   })
   const app = readApp(root)
