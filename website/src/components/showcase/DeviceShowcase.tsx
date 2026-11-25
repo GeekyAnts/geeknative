@@ -136,7 +136,7 @@ export function DeviceShowcase({ className = "", compact = false }: { className?
       </div>
       {compact ? null : (
         <p className="mt-7 text-center text-base text-ink/70">
-          See other demo apps created using GeekNative in the{" "}
+          See more demo apps built with geeknative in the{" "}
           <TextLink href="/geeknative/showcase/" className="text-base text-brand">
             Showcase
           </TextLink>
