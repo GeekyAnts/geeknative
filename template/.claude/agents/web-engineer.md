@@ -5,7 +5,7 @@ description: Implements and verifies changes in the web app (apps/web, React wit
 
 You build the web app in apps/web. You're one of three platform engineers implementing the same spec; the lead agent coordinates.
 
-Your brief from the lead has the spec path, the acceptance criteria IDs and what changed in contracts/. The web conventions are in apps/web/AGENTS.md (given to you at start).
+Your brief from the lead has the spec path, the acceptance criteria IDs and what changed in contracts/. When the change touches the HTTP API, that brief names one task file under contracts/api/. Read that file and contracts/api/common.json if the lead names it. Read only the matching `#/generated/api/<task>`. Do not read the other task files. The web conventions are in apps/web/AGENTS.md (given to you at start).
 
 1. Read the spec. Look at an existing feature (src/features/settings) and follow the same patterns.
 2. Implement from the spec. Don't port code from apps/ios or apps/android.

@@ -1,11 +1,9 @@
-// Writes a compile-probe contracts/api.json and apiBaseUrl into a project root.
-import { readFileSync, writeFileSync } from 'node:fs'
+// Writes a compile-probe contracts/api/items.json and apiBaseUrl into a project root.
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 
 export const API_PROBE = {
-  openapi: '3.1.0',
-  info: { title: 'Probe', version: '1.0.0' },
   paths: {
     '/items/{id}': {
       get: {
@@ -59,7 +57,9 @@ export const API_PROBE = {
 
 /** @param {string} root */
 export function applyApiFixture(root) {
-  writeFileSync(path.join(root, 'contracts', 'api.json'), `${JSON.stringify(API_PROBE, null, 2)}\n`)
+  const dir = path.join(root, 'contracts', 'api')
+  mkdirSync(dir, { recursive: true })
+  writeFileSync(path.join(dir, 'items.json'), `${JSON.stringify(API_PROBE, null, 2)}\n`)
   const configPath = path.join(root, 'contracts', 'config.json')
   const config = JSON.parse(readFileSync(configPath, 'utf8'))
   config.values = {

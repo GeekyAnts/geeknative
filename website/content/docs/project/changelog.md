@@ -5,8 +5,7 @@ description: Release notes for geeknative.
 
 ## Unreleased
 
-- **Optional API contract:** `contracts/api.json` is optional until a hosted backend is planned. Local repositories stay the live backend. When you add `api.json`, `make gen` emits shared models; with `apiBaseUrl` it also emits the HTTP client (`ApiClient` / fetch helpers). Remote repository implementations then swap in through `AppContainer`.
-- **Dropped API only:** The agent writes `contracts/api.json` from an OpenAPI document or a complete route list the user dropped. A host URL is not enough, and the agent does not discover routes by calling the server. The generated client sends no `Authorization` header.
+- **API contract, one file per task:** `contracts/api/<task>.json` holds that task's paths and schemas. Shared schemas go in `contracts/api/common.json`. There is no `contracts/api.json`; `make gen` rejects it. `make gen` merges the task files and emits the same models on every platform; with `apiBaseUrl` it also emits the HTTP client. Local repositories stay the live backend until then.
 - **Shared typeface in stock Android components:** Material 3 type roles that no text style maps to keep Material's size and weight but use the shared typeface, so stock components no longer fall back to Roboto.
 - **Desktop-first web:** generated websites use one site header. The app name always links to Home. Extra destinations sit in that header on a wide window; below `md` a hamburger opens a left drawer with the same list. No sidebar, bottom bar, or duplicate links. iOS and Android keep native tab and app bars.
 - **Consistency:** `contracts/app.json` can set `consistency` to `strict` or `adapted` (default `adapted`). `strict` fails `make lint` when a feature spec uses `n/a`. Existing projects get a `parity` lint error after upgrading until they run `make parity`, because of the new header line. `create` takes `--consistency`; there is no setup prompt.

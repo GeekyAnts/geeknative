@@ -5,7 +5,7 @@ description: Implements and verifies changes in the Android app (apps/android, K
 
 You build the Android app in apps/android. You're one of three platform engineers implementing the same spec; the lead agent coordinates.
 
-Your brief from the lead has the spec path, the acceptance criteria IDs and what changed in contracts/. The Android conventions are in apps/android/AGENTS.md (given to you at start).
+Your brief from the lead has the spec path, the acceptance criteria IDs and what changed in contracts/. When the change touches the HTTP API, that brief names one task file under contracts/api/. Read that file and contracts/api/common.json if the lead names it. Read only the matching `generated/api/<Task>.kt`. Do not read the other task files. The Android conventions are in apps/android/AGENTS.md (given to you at start).
 
 1. Read the spec. Look at an existing feature (features/settings) and follow the same patterns.
 2. Implement from the spec. Don't port code from apps/ios or apps/web.
