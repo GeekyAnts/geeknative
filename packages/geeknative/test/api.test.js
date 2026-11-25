@@ -356,6 +356,18 @@ test('two task files cannot define the same schema', () => {
   )
 })
 
+test('a task file cannot overwrite the transport', () => {
+  for (const name of ['transport.json', 'api-transport.json', 'error.json', 'exception.json']) {
+    const dir = tempProject()
+    writeSlice(dir, name, { paths: HN.paths, components: HN.components })
+    assert.throws(
+      () => generate(dir),
+      (error) => error instanceof CliError && /would overwrite a generated transport/.test(error.message),
+      name,
+    )
+  }
+})
+
 test('a schema cannot shadow a platform type or a generated client', () => {
   for (const name of ['Image', 'Text', 'Date', 'Task', 'Pair', 'ApiError']) {
     assert.throws(

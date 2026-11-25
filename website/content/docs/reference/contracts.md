@@ -265,7 +265,7 @@ contracts/api/stories.json    /stories paths and the Story schema
 contracts/api/users.json
 ```
 
-A task file contains only `paths` and `components.schemas`. `make gen` stamps the OpenAPI version and `info` from `contracts/app.json`, merges every file, and writes the same models (and, with `apiBaseUrl`, the same client) on iOS, Android and the web. A `$ref` of `#/components/schemas/Name` can point at a schema in another task file, including `common.json`. File names are the task id in kebab-case, or `common.json`. The same path or schema name in two files is an error.
+A task file contains only `paths` and `components.schemas`. `make gen` stamps the OpenAPI version and `info` from `contracts/app.json`, merges every file, and writes the same models (and, with `apiBaseUrl`, the same client) on iOS, Android and the web. A `$ref` of `#/components/schemas/Name` can point at a schema in another task file, including `common.json`. File names are the task id in kebab-case, or `common.json`. `transport.json`, `api-transport.json`, `error.json` and `exception.json` are rejected, because they would overwrite the generated transport. The same path or schema name in two files is an error.
 
 Base URLs stay in `contracts/config.json` `values.apiBaseUrl` (type `url`, one absolute URL per environment). Without `apiBaseUrl`, `make gen` emits **models only**. With `apiBaseUrl`, it also emits the HTTP client. Hand-written local repositories use the generated types; they call the generated client only after a hosted server exists and `AppContainer` swaps in a remote implementation. Android also needs `android.permission.INTERNET` (already in the template manifest).
 
