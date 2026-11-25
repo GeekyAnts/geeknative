@@ -43,7 +43,7 @@ export function Apps() {
           eyebrow="Real apps"
           id="apps-title"
           title="The same app, built three times"
-          aside="These frames show one product at a time on iOS, Android and web. The control includes the starter every project begins with, plus every published demo app."
+          aside="These frames show the starter app every project begins with, running on iOS, Android and web."
         />
       </div>
       <div className="mt-16 bg-mist py-16 lg:mt-20 lg:py-24">
