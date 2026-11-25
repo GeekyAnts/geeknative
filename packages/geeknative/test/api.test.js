@@ -355,3 +355,33 @@ test('two task files cannot define the same schema', () => {
     },
   )
 })
+
+test('a schema cannot shadow a platform type or a generated client', () => {
+  for (const name of ['Image', 'Text', 'Date', 'Task', 'Pair', 'ApiError']) {
+    assert.throws(
+      () =>
+        validateApi({
+          openapi: '3.1.0',
+          info: { title: 'X', version: '1' },
+          paths: {},
+          components: {
+            schemas: { [name]: { type: 'object', required: ['id'], properties: { id: { type: 'string' } } } },
+          },
+        }),
+      (error) => error instanceof CliError && /PhotoImage or EventDate/.test(error.message),
+      name,
+    )
+  }
+
+  const dir = tempProject()
+  writeSlice(dir, 'common.json', {
+    components: {
+      schemas: { ApiStories: { type: 'object', required: ['id'], properties: { id: { type: 'string' } } } },
+    },
+  })
+  writeSlice(dir, 'stories.json', { paths: HN.paths })
+  assert.throws(
+    () => generate(dir),
+    (error) => error instanceof CliError && /"ApiStories"/.test(error.message),
+  )
+})

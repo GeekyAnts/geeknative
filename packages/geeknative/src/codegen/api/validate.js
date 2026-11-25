@@ -1,7 +1,7 @@
 // @ts-check
 import { CliError } from '../../lib/log.js'
 import { assertIdentifier } from '../util.js'
-import { SOURCE, taskName } from './names.js'
+import { clientName, SOURCE, taskName } from './names.js'
 
 /** @typedef {import('./types.js').ApiType} ApiType */
 /** @typedef {import('./types.js').ApiField} ApiField */
@@ -40,10 +40,16 @@ export function validateApi(raw, owners = {}) {
     throw new CliError(`${SOURCE} components.schemas must be an object.`)
   }
 
+  const tasks = new Set(
+    [...Object.values(owners.schemas ?? {}), ...Object.values(owners.paths ?? {})].map((file) => taskName(file)),
+  )
+  if (!tasks.size) tasks.add('api')
+
   /** @type {ApiModel[]} */
   const models = []
   for (const [name, schema] of Object.entries(schemaEntries)) {
     assertTypeName(name, `${SOURCE} components.schemas`)
+    assertNotShadowing(name, `${SOURCE} components.schemas`, tasks)
     const model = readModel(name, schema, `${SOURCE} components.schemas.${name}`, schemaEntries)
     model.task = taskName(owners.schemas?.[name])
     models.push(model)
@@ -89,11 +95,34 @@ export function validateApi(raw, owners = {}) {
   return { models, operations }
 }
 
+/**
+ * Names that already exist as top-level types in the generated app: Swift, SwiftUI and Foundation
+ * in the iOS module, and the Kotlin and TypeScript types the generated files use unqualified.
+ * A schema called Image makes `Image(...).frame` fail to compile.
+ */
+const RESERVED_SCHEMAS = new Set([
+  'Image', 'Text', 'Color', 'Font', 'Button', 'List', 'View', 'NavigationLink',
+  'Data', 'Date', 'URL', 'URLRequest', 'Error', 'Notification', 'Task', 'Result',
+  'Void', 'Set', 'Array', 'String', 'Int', 'Double', 'Bool',
+  'Unit', 'Pair', 'Map', 'Long', 'Boolean', 'Exception',
+  'Promise', 'Record', 'Request', 'Response', 'Headers',
+  'ApiError', 'ApiException', 'ApiTransport',
+])
+
 /** @param {string} name @param {string} where */
 function assertTypeName(name, where) {
   if (!/^[A-Z][a-zA-Z0-9]*$/.test(name)) {
     throw new CliError(`${where} "${name}": schema names must be PascalCase letters and digits.`)
   }
+}
+
+/** @param {string} name @param {string} where @param {Set<string>} tasks */
+function assertNotShadowing(name, where, tasks) {
+  const client = [...tasks].some((task) => clientName(task) === name)
+  if (!RESERVED_SCHEMAS.has(name) && !client) return
+  throw new CliError(
+    `${where} "${name}" clashes with a Swift, SwiftUI, Foundation or Kotlin type, or with a generated client. Rename it with a prefix, like PhotoImage or EventDate.`,
+  )
 }
 
 /** @param {any} node @param {string} where */
