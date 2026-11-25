@@ -77,10 +77,13 @@ async function send(method: string, path: string, options: RequestOptions): Prom
   }
   url.search = query.toString()
   const hasBody = options.body !== undefined
+  // new Headers copies a Headers instance, a tuple array and a plain object. Spreading one drops it.
+  const headers = new Headers(init.headers)
+  if (hasBody && !headers.has("Content-Type")) headers.set("Content-Type", "application/json")
   const response = await fetch(url, {
     ...init,
     method,
-    headers: hasBody ? { "Content-Type": "application/json", ...(init.headers ?? {}) } : init.headers,
+    headers,
     ...(hasBody ? { body: JSON.stringify(options.body) } : {}),
   })
   if (!response.ok) {

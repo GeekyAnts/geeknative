@@ -158,6 +158,13 @@ test('iOS path parameters are encoded once, with an ASCII-only set', () => {
   )
 })
 
+test('web transport keeps headers passed as a Headers instance', () => {
+  const transport = outputOf(generate(projectWithApi()), 'generated/api/transport.ts')
+  assert.match(transport, /const headers = new Headers\(init\.headers\)/)
+  assert.match(transport, /headers\.has\("Content-Type"\)/)
+  assert.equal(transport.includes('...(init.headers'), false)
+})
+
 test('Kotlin and web path encoding match RFC 3986 unreserved', () => {
   const outputs = generate(projectWithApi())
   const kotlin = outputOf(outputs, 'api/ApiTransport.kt')
