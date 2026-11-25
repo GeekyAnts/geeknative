@@ -55,6 +55,13 @@ export function apiBaseUrl(): string {
   return ensureTrailingSlash(String(AppConfig.apiBaseUrl))
 }
 
+const extra: Record<string, string> = { "!": "%21", "'": "%27", "(": "%28", ")": "%29", "*": "%2A" }
+
+/** RFC 3986 unreserved characters stay literal. encodeURIComponent also leaves ! ' ( ) * literal. */
+export function encodePathSegment(value: string): string {
+  return encodeURIComponent(value).replace(/[!'()*]/g, (char) => extra[char] ?? char)
+}
+
 export type RequestOptions = {
   query?: Record<string, string | number | boolean | undefined>
   body?: unknown
@@ -151,7 +158,7 @@ export function tsTask(slice, allModels, includeClient) {
       const argsParam = fields.length ? `args: ${typeName}, ` : ''
       let pathExpr = JSON.stringify(op.path)
       for (const param of op.pathParams) {
-        pathExpr = `${pathExpr}.replaceAll(${JSON.stringify('{' + param.name + '}')}, encodeURIComponent(String(args.${param.name})))`
+        pathExpr = `${pathExpr}.replaceAll(${JSON.stringify('{' + param.name + '}')}, encodePathSegment(String(args.${param.name})))`
       }
       const options = []
       if (op.queryParams.length) {
@@ -171,6 +178,7 @@ export function tsTask(slice, allModels, includeClient) {
   const used = [
     api.operations.some((op) => op.response.kind !== 'void') ? 'request' : '',
     api.operations.some((op) => op.response.kind === 'void') ? 'requestVoid' : '',
+    api.operations.some((op) => op.pathParams.length > 0) ? 'encodePathSegment' : '',
   ].filter(Boolean)
   const clientImports = includeClient && used.length ? `import { ${used.join(', ')} } from "./transport"` : ''
   const imports = [clientImports, typeImports].filter(Boolean).join('\n')

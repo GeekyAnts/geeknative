@@ -211,7 +211,10 @@ object ApiTransport {
     }
 
     fun encodePathSegment(value: String): String =
-        java.net.URLEncoder.encode(value, Charsets.UTF_8.name()).replace("+", "%20")
+        java.net.URLEncoder.encode(value, Charsets.UTF_8.name())
+            .replace("+", "%20")
+            .replace("*", "%2A")
+            .replace("%7E", "~")
 }
 `
 }

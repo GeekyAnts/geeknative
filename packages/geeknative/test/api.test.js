@@ -141,7 +141,7 @@ test('HTTP code lives in the shared transport, not in each operation', () => {
   assert.match(tsTransport, /export async function request<T>/)
   assert.match(tsTransport, /await fetch\(/)
   const tsTask = outputOf(outputs, 'generated/api/stories.ts')
-  assert.match(tsTask, /import \{ request \} from "\.\/transport"/)
+  assert.match(tsTask, /import \{ request, encodePathSegment \} from "\.\/transport"/)
   assert.equal(tsTask.includes('fetch('), false)
 })
 
@@ -156,6 +156,17 @@ test('iOS path parameters are encoded once, with an ASCII-only set', () => {
     () => validateApi({ ...HN, paths: { '/my items': HN.paths['/stories'] } }),
     (error) => error instanceof CliError && /not valid in a URL path/.test(error.message),
   )
+})
+
+test('Kotlin and web path encoding match RFC 3986 unreserved', () => {
+  const outputs = generate(projectWithApi())
+  const kotlin = outputOf(outputs, 'api/ApiTransport.kt')
+  assert.match(kotlin, /\.replace\("\*", "%2A"\)/)
+  assert.match(kotlin, /\.replace\("%7E", "~"\)/)
+  const ts = outputOf(outputs, 'generated/api/transport.ts')
+  assert.match(ts, /export function encodePathSegment/)
+  assert.match(ts, /encodeURIComponent\(value\)/)
+  assert.match(outputOf(outputs, 'generated/api/stories.ts'), /encodePathSegment\(String\(args\.id\)\)/)
 })
 
 test('iOS query values encode + as %2B', () => {
