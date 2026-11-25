@@ -59,6 +59,9 @@ export function replaceBlock(text, nextBlock) {
 /** @param {string | Buffer} content */
 export const hashContent = (content) => `sha256-${createHash('sha256').update(content).digest('hex')}`
 
+/** Incoming copy written beside a conflict. It is not a framework file. @param {string} file */
+const isIncomingCopy = (file) => file.endsWith('.geeknative-new')
+
 /**
  * Hashes every framework-owned file and block in a project.
  * @param {string} root
@@ -67,7 +70,10 @@ export function managedHashes(root) {
   /** @type {Record<string, string>} */
   const files = {}
   for (const dir of MANAGED_DIRS) {
-    for (const file of walk(path.join(root, dir))) files[rel(root, file)] = hashContent(readFileSync(file))
+    for (const file of walk(path.join(root, dir))) {
+      if (isIncomingCopy(file)) continue
+      files[rel(root, file)] = hashContent(readFileSync(file))
+    }
   }
   for (const file of MANAGED_FILES) {
     const full = path.join(root, file)
@@ -92,7 +98,10 @@ export function managedContents(root) {
   /** @type {Record<string, Buffer>} */
   const files = {}
   for (const dir of MANAGED_DIRS) {
-    for (const file of walk(path.join(root, dir))) files[rel(root, file)] = readFileSync(file)
+    for (const file of walk(path.join(root, dir))) {
+      if (isIncomingCopy(file)) continue
+      files[rel(root, file)] = readFileSync(file)
+    }
   }
   for (const file of MANAGED_FILES) {
     const full = path.join(root, file)

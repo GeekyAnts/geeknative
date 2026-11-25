@@ -111,6 +111,30 @@ test('upgrade records a conflict and writes a sibling incoming file', async () =
   assert.equal(readLock(dir)?.geeknative, '0.0.1')
 })
 
+test('upgrade keeps a hand-resolved file and drops the sibling on rerun', async () => {
+  const dir = path.join(tempDir(), 'resolved')
+  await create(dir, { install: false, git: false })
+  const relative = '.geeknative/playbooks/bug.md'
+  const previous = copyManaged(tempDir())
+  writeFileSync(path.join(previous, relative), 'shared\n')
+  writeFileSync(path.join(dir, relative), 'ours\n')
+  const incoming = copyManaged(tempDir())
+  writeFileSync(path.join(incoming, relative), 'theirs\n')
+  writeLock(dir, '0.0.1', previous)
+
+  const conflict = await upgrade(dir, { ...quiet, incoming, previous })
+  assert.deepEqual(conflict.conflicts, [relative])
+  assert.equal(readLock(dir)?.geeknative, '0.0.1')
+
+  writeFileSync(path.join(dir, relative), 'ours and theirs\n')
+  const result = await upgrade(dir, { ...quiet, incoming, previous })
+  assert.deepEqual(result.conflicts, [])
+  assert.equal(readFileSync(path.join(dir, relative), 'utf8'), 'ours and theirs\n')
+  assert.ok(!existsSync(path.join(dir, `${relative}.geeknative-new`)))
+  assert.equal(readLock(dir)?.geeknative, packageVersion())
+  assert.equal(readLock(dir)?.files[relative], hashContent('theirs\n'))
+})
+
 test('upgrade --force takes the incoming file on conflict', async () => {
   const dir = path.join(tempDir(), 'force')
   await create(dir, { install: false, git: false })

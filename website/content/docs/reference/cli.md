@@ -175,7 +175,7 @@ For each managed file and AGENTS.md / CLAUDE.md block, it compares three hashes 
 | New in this release | Copied in |
 | Removed from the framework, and you never edited it | Deleted (the managed block is stripped from AGENTS.md, the file stays) |
 
-The previous template comes from the project's snapshot tarball, `node_modules/geeknative` when that install still matches `lock.json`, or `npm pack geeknative@<lock version>`. If a merge needs a base and none is found, or `git merge-file` conflicts, the project file is left as it is, incoming content is written next to it as `<path>.geeknative-new`, and the exit code is 1. `--force` writes the incoming file instead. `--dry-run` prints the plan and writes nothing.
+The previous template comes from the project's snapshot tarball, `node_modules/geeknative` when that install still matches `lock.json`, or `npm pack geeknative@<lock version>`. If a merge needs a base and none is found, or `git merge-file` conflicts, the project file is left as it is, incoming content is written next to it as `<path>.geeknative-new`, and the exit code is 1. The next `upgrade` keeps that file when the sibling is still there, deletes the sibling, and records the incoming hashes. `--force` writes the incoming file instead. `--dry-run` prints the plan and writes nothing.
 
 On success it rewrites `.geeknative/lock.json` with this CLI's version and the incoming hashes (so your local edits are still seen as edits next time), then:
 

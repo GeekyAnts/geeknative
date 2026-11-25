@@ -55,7 +55,7 @@ The same applies to `apps/ios/AGENTS.md`, `apps/android/AGENTS.md`, `apps/web/AG
 `geeknative upgrade` (or `make upgrade`) applies this CLI's template to the framework-owned files, using the lockfile:
 
 - framework files you never touched (their hash still matches) get replaced;
-- framework files you edited get a three-way merge with the new version; a conflict leaves your file in place and writes `<path>.geeknative-new`;
+- framework files you edited get a three-way merge with the new version; a conflict leaves your file in place and writes `<path>.geeknative-new`. The next upgrade keeps your resolved file, deletes that copy, and records the incoming hashes;
 - your files are never touched;
 - generated files are rebuilt by `gen` after a clean apply.
 

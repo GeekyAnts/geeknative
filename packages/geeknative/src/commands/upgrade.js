@@ -50,12 +50,16 @@ export async function upgrade(
     ...planKind('file', lock.files ?? {}, current.files, next.files),
     ...planKind('block', lock.blocks ?? {}, current.blocks, next.blocks),
   ]
+  const resolved = new Set(steps.filter((step) => existsSync(incomingSibling(root, step.path))).map((step) => step.path))
   const work = steps.filter((step) => step.action !== 'skip')
 
   if (!work.length) {
-    if (!dryRun && lock.geeknative !== version) {
-      writeLock(root, version, incoming)
-      await bumpDependency(root, { install, pin: doPin })
+    if (!dryRun) {
+      clearIncomingSiblings(root, resolved)
+      if (lock.geeknative !== version) {
+        writeLock(root, version, incoming)
+        await bumpDependency(root, { install, pin: doPin })
+      }
     }
     log.ok('upgrade', `already at ${version}`)
     return { changed: [], conflicts: [] }
@@ -66,7 +70,7 @@ export async function upgrade(
   let previousRoot = previous ?? null
   /** @type {string | null} */
   let cleanup = null
-  const needsMerge = !force && work.some((step) => step.action === 'merge')
+  const needsMerge = !force && work.some((step) => step.action === 'merge' && !resolved.has(step.path))
   if (needsMerge && !previousRoot) {
     const found = findPreviousTemplate(root, lock.geeknative)
     previousRoot = found.template
@@ -90,6 +94,10 @@ export async function upgrade(
 
     for (const step of work) {
       const label = step.kind === 'block' ? `${step.path} (block)` : step.path
+      if (!force && resolved.has(step.path)) {
+        log.ok('upgrade', dryRun ? `would keep resolved ${label}` : `kept resolved ${label}`)
+        continue
+      }
       if (step.action === 'keep') {
         log.warn('upgrade', `kept local ${label}`)
         continue
@@ -142,6 +150,7 @@ export async function upgrade(
       return { changed, conflicts }
     }
 
+    clearIncomingSiblings(root, resolved)
     writeLock(root, version, incoming)
     log.ok('lock', `geeknative ${version}`)
     await bumpDependency(root, { install, pin: doPin })
@@ -238,10 +247,20 @@ function applyRemove(root, step) {
   if (existsSync(full)) rmSync(full)
 }
 
+/** @param {string} root @param {string} relPath */
+function incomingSibling(root, relPath) {
+  return path.join(root, `${relPath}.geeknative-new`)
+}
+
+/** @param {string} root @param {Iterable<string>} paths */
+function clearIncomingSiblings(root, paths) {
+  for (const relPath of paths) rmSync(incomingSibling(root, relPath), { force: true })
+}
+
 /** @param {string} root @param {Step} step */
 function writeIncomingSibling(root, step) {
   if (step.incoming == null) return
-  const dest = path.join(root, `${step.path}.geeknative-new`)
+  const dest = incomingSibling(root, step.path)
   mkdirSync(path.dirname(dest), { recursive: true })
   if (step.kind === 'block') {
     const full = path.join(root, step.path)

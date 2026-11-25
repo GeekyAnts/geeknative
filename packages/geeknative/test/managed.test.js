@@ -21,6 +21,14 @@ test('the managed block is found between its markers', () => {
   assert.equal(extractBlock('no markers here'), null)
 })
 
+test('managed hashes skip incoming conflict copies', () => {
+  const dir = tempProject(['.geeknative/playbooks'])
+  writeFileSync(path.join(dir, '.geeknative', 'playbooks', 'feature.md.geeknative-new'), 'incoming\n')
+  const files = managedHashes(dir).files
+  assert.equal(files['.geeknative/playbooks/feature.md.geeknative-new'], undefined)
+  assert.match(files['.geeknative/playbooks/feature.md'], /^sha256-/)
+})
+
 test('project rules can change without touching the framework block hash', () => {
   const dir = tempProject(['AGENTS.md'])
   const file = path.join(dir, 'AGENTS.md')
