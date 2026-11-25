@@ -176,9 +176,11 @@ test('Kotlin and web path encoding match RFC 3986 unreserved', () => {
   assert.match(outputOf(outputs, 'generated/api/stories.ts'), /encodePathSegment\(String\(args\.id\)\)/)
 })
 
-test('iOS query values encode + as %2B', () => {
+test('iOS query values match the web and Kotlin', () => {
   const transport = outputOf(generate(projectWithApi()), 'api/ApiTransport.swift')
-  assert.match(transport, /percentEncodedQuery\?\.replacingOccurrences\(of: "\+", with: "%2B"\)/)
+  assert.match(transport, /replacingOccurrences\(of: "\+", with: "%2B"\)/)
+  assert.match(transport, /replacingOccurrences\(of: "%20", with: "\+"\)/)
+  assert.match(transport, /replacingOccurrences\(of: "@", with: "%40"\)/)
 })
 
 test('task files without apiBaseUrl generate models only', () => {
