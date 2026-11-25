@@ -158,6 +158,11 @@ test('iOS path parameters are encoded once, with an ASCII-only set', () => {
   )
 })
 
+test('iOS query values encode + as %2B', () => {
+  const transport = outputOf(generate(projectWithApi()), 'api/ApiTransport.swift')
+  assert.match(transport, /percentEncodedQuery\?\.replacingOccurrences\(of: "\+", with: "%2B"\)/)
+})
+
 test('task files without apiBaseUrl generate models only', () => {
   const dir = tempProject()
   writeSlice(dir, 'stories.json', HN)

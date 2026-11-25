@@ -131,6 +131,8 @@ nonisolated enum ApiTransport {
         let suffix = path.hasPrefix("/") ? path : "/" + path
         components.percentEncodedPath = basePath + suffix
         components.queryItems = query.isEmpty ? nil : query
+        // URLQueryItem leaves "+" literal, and servers read a literal "+" as a space.
+        components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
         guard let url = components.url else { throw ApiError.badURL(path) }
         return url
     }
