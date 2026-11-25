@@ -145,6 +145,19 @@ test('HTTP code lives in the shared transport, not in each operation', () => {
   assert.equal(tsTask.includes('fetch('), false)
 })
 
+test('iOS path parameters are encoded once, with an ASCII-only set', () => {
+  const transport = outputOf(generate(projectWithApi()), 'api/ApiTransport.swift')
+  assert.match(transport, /components\.percentEncodedPath = basePath \+ suffix/)
+  assert.equal(transport.includes('components.path ='), false)
+  assert.match(transport, /CharacterSet\(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-\._~"\)/)
+  assert.equal(transport.includes('CharacterSet.alphanumerics'), false)
+
+  assert.throws(
+    () => validateApi({ ...HN, paths: { '/my items': HN.paths['/stories'] } }),
+    (error) => error instanceof CliError && /not valid in a URL path/.test(error.message),
+  )
+})
+
 test('task files without apiBaseUrl generate models only', () => {
   const dir = tempProject()
   writeSlice(dir, 'stories.json', HN)

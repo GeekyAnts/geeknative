@@ -11,6 +11,8 @@ import { SOURCE, taskName } from './names.js'
 /** @typedef {import('./types.js').ApiContract} ApiContract */
 
 const METHODS = new Set(['get', 'post', 'put', 'patch', 'delete'])
+/** RFC 3986 path characters, plus {name} placeholders. Anything else breaks percentEncodedPath on iOS. */
+const PATH_KEY = /^\/(?:[A-Za-z0-9\-._~!$&'()*+,;=:@/]|%[0-9A-Fa-f]{2}|\{[A-Za-z][A-Za-z0-9]*\})*$/
 const UNSUPPORTED = new Set(['oneOf', 'anyOf', 'allOf', 'not', 'callbacks', 'links', 'webhooks'])
 
 /**
@@ -59,6 +61,12 @@ export function validateApi(raw, owners = {}) {
   for (const [pathKey, item] of Object.entries(paths)) {
     if (typeof pathKey !== 'string' || !pathKey.startsWith('/')) {
       throw new CliError(`${SOURCE} paths keys must start with "/" (got ${JSON.stringify(pathKey)}).`)
+    }
+    // iOS assigns the path to percentEncodedPath, which traps on a character that still needs encoding.
+    if (!PATH_KEY.test(pathKey)) {
+      throw new CliError(
+        `${SOURCE} paths key ${JSON.stringify(pathKey)} has characters that are not valid in a URL path. Percent-encode them in the path, or put them in a {parameter}.`,
+      )
     }
     if (!item || typeof item !== 'object' || Array.isArray(item)) {
       throw new CliError(`${SOURCE} paths.${pathKey} must be an object.`)
