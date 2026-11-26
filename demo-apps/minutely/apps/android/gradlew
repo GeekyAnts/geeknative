@@ -1,0 +1,2 @@
+#!/bin/sh
+exec "$HOME/.gradle/wrapper/dists/gradle-9.8.1-bin/a2l6ltp3k1vth6lwipzm5p2jp/gradle-9.8.1/bin/gradle" "$@"

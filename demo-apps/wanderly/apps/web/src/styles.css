@@ -1,0 +1,13 @@
+@import 'tailwindcss';
+@import './generated/tokens.css';
+
+/* `dark:` utilities follow the "dark" class on <html>, which AppearanceEffect sets. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+html {
+  font-family: var(--font-sans);
+}
+
+dialog::backdrop {
+  background: color-mix(in srgb, var(--color-overlay) 60%, transparent);
+}

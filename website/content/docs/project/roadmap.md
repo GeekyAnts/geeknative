@@ -5,12 +5,12 @@ description: What's planned for geeknative after 0.1.0.
 
 geeknative 0.1.0 is the foundation: three apps that build and test from the command line, contracts and codegen, the agent instructions, Claude Code integration, and the `create`, `gen`, `check`, `doctor`, `parity` and `run` commands.
 
-Everything below is planned, not built.
+`geeknative upgrade` has shipped (see below). Everything else is planned, not built.
 
 ## Upgrades and agent evaluation
 
-- **`geeknative upgrade`.** Replace framework files that you haven't changed, three-way merge the ones you have, and list conflicts, using the hashes in `.geeknative/lock.json`. See [File ownership](/docs/concepts/file-ownership/).
-- **Migrations.** Scripted migrations for mechanical changes (such as a new spec format), and written migrations an agent applies across all three apps for changes that need judgment.
+- **`geeknative upgrade`.** Shipped: it replaces framework files you have not changed, three-way merges the ones you have, and lists conflicts, using the hashes in `.geeknative/lock.json`. See [File ownership](/docs/concepts/file-ownership/) and [upgrade](/docs/reference/cli/#upgrade).
+- **`geeknative migrate`.** Shipped as the opt-in runner: scripted migrations for mechanical project-owned changes, and agent-assisted migrations that write `.geeknative/migrations/pending/MIGRATION.md` for the user to hand to an agent (`--status` / `--complete`). `upgrade` never rewrites project-owned files; it only announces when migrations are waiting. Concrete migrations land in the registry per release (the list starts empty).
 - **Agent evaluation.** A set of real prompts (a feature, a design change, a bug, a platform-only tweak) run through several agents, used to tune AGENTS.md and the playbooks wherever agents go wrong.
 
 ## Visual and end-to-end parity

@@ -3,6 +3,7 @@ node_modules/
 
 # geeknative logs
 .geeknative/logs/
+*.geeknative-new
 
 # iOS
 apps/ios/.build/

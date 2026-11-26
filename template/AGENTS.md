@@ -51,13 +51,14 @@ Before changing anything, decide what kind of request it is. State it as the fir
 | App name, ID, version and consistency | contracts/app.json |
 | Backend URLs, feature flags and other per-environment settings | contracts/config.json |
 | Secret keys (names only; values live in .env and are never committed) | contracts/config.json `secrets` |
+| Domain models and the HTTP API a backend would expose (OpenAPI 3.1 subset) | `contracts/api/<task>.json`, one file per task, plus `contracts/api/common.json` for shared schemas (optional until a hosted backend is planned), then `make gen` |
 | Colors, spacing, radii, icon sizes and type | contracts/tokens.json |
 | The typeface, one for all three apps | contracts/tokens.json `font`, with the files in contracts/fonts (`make font FAMILY=...`) |
 | All user-facing text | `contracts/strings/<locale>.json` |
 | Icons (Lucide names, or your own SVGs in contracts/icons) | contracts/icons.json |
 | Which platform has what | feature front matter → `make parity` → spec/parity.md |
 
-`make gen` compiles contracts/ into each app (`Generated/` with `Icons.xcassets` and `Fonts/`, `generated/` including `AppConfig`, `generated_*.xml`, `res/drawable/generated_*`, `res/font/generated_*`, `Identity.xcconfig`, `identity.properties`, `.env.example`). `AppSecrets.swift` and `AppSecrets.kt` are built from `.env` and git-ignored. Never edit generated files: change the contract and regenerate.
+`make gen` compiles contracts/ into each app (`Generated/` with `Icons.xcassets` and `Fonts/`, `generated/` including `AppConfig`, optional `generated/api/<Task>` files, one per `contracts/api/<task>.json`, `generated_*.xml`, `res/drawable/generated_*`, `res/font/generated_*`, `Identity.xcconfig`, `identity.properties`, `.env.example`). `AppSecrets.swift` and `AppSecrets.kt` are built from `.env` and git-ignored. Never edit generated files: change the contract and regenerate.
 
 ## 4. The loop
 
@@ -79,7 +80,7 @@ Before changing anything, decide what kind of request it is. State it as the fir
 - **Native, not identical.** Features, flows, data, copy and brand match. Navigation chrome, controls, gestures and system conventions follow each platform. DESIGN.md says which is which. How far layouts may diverge is Consistency above.
 - **One feature at a time.** Finish a feature on every platform before starting the next, unless Consistency allows shipping one platform first.
 - **Spec changes ripple.** If building one platform changes the spec, recheck the platforms you already did.
-- **No backend yet.** Features read and write through a repository interface with local implementations. When a backend arrives, only the repositories change. Put its URLs in contracts/config.json, one per environment.
+- **No backend yet.** Features read and write through a repository interface with local implementations (UserDefaults, DataStore, localStorage, in-memory, on-disk JSON). When a backend arrives, only the repositories change. Put its URLs in contracts/config.json, one per environment. If a hosted server is planned, write one file per task under `contracts/api/<task>.json` (paths and the schemas only that task uses). Put a schema used by more than one task in `contracts/api/common.json`. Do not write `contracts/api.json`. When the user drops a route list or an OpenAPI document, split it by the first path segment into those task files, then run `make gen`. `make gen` writes one generated file per task on each platform (`Generated/api/<Task>.swift`, `generated/api/<Task>.kt`, `generated/api/<task>.ts`), and a shared transport when `apiBaseUrl` is set. To wire a feature, read that task's contract and call `Api<Task>.<operationId>` (web: the function exported from `#/generated/api/<task>`). Do not read the other task files. Never edit generated API files by hand.
 
 ## 6. Ask or assume
 
@@ -106,6 +107,8 @@ Ask only when a wrong guess is expensive to undo: the data model, the navigation
 | `make run-all` | Starts the web dev server and launches iOS or Android from the same terminal (`r` rebuilds native apps; it is not live reload) |
 | `make parity` | Updates spec/parity.md |
 | `make pin` | For a project created from a geeknative checkout: moves it to a fresh snapshot of that checkout (`make doctor` says when there's a newer one) |
+| `make upgrade` | Replaces framework files from the installed geeknative, merging ones you edited (`npx geeknative@latest upgrade` the first time) |
+| `make migrate` | Applies/prepares pending project-owned migrations (`DRY_RUN=1` to preview). Agent-assisted work lands in `.geeknative/migrations/pending/MIGRATION.md`; mark done with `geeknative migrate --complete <id>`. Opt-in; restore the previous commit if you prefer the old project |
 | `make lint` | Finds hardcoded text, test IDs no spec lists, centered titles, stale statuses and a stale parity.md (`make check` runs it too) |
 
 **Working from outside this folder.** Claude Code loads this project's hooks and platform agents (.claude/) only when the session starts in this folder. If yours started elsewhere (a parent folder, another repo), they aren't active: run `make gen` yourself after every contract edit, brief general-purpose agents with the platform's AGENTS.md, and rely on `make check`, which enforces the same rules as the hooks. Better: start the session in this folder.

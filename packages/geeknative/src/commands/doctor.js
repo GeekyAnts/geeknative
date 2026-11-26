@@ -5,7 +5,8 @@ import { readConfig, resolveSecrets } from '../codegen/config.js'
 import { readEnvFile } from '../lib/env.js'
 import { capture, runInherit, runLogged } from '../lib/exec.js'
 import { log } from '../lib/log.js'
-import { isLocalCheckout, packCheckout, snapshotSource } from '../lib/project.js'
+import { readLock } from '../lib/managed.js'
+import { isLocalCheckout, packCheckout, packageVersion, snapshotSource } from '../lib/project.js'
 import {
   ANDROID_COMPILE_SDK,
   findAndroidSdk,
@@ -109,6 +110,7 @@ export async function doctor(root, { fix = false }) {
   } else problem('deps', 'not installed', 'Run `npm install` (or `make doctor FIX=1`).')
 
   await checkGeeknativeSource(root, fix)
+  checkLockVersion(root)
 
   // Contracts
   try {
@@ -168,6 +170,17 @@ export async function doctor(root, { fix = false }) {
   } else {
     log.info('All set. Try `make check`, then describe what you want to build to your coding agent.')
   }
+}
+
+/** Warns when `.geeknative/lock.json` was written by an older geeknative than this CLI. @param {string} root */
+function checkLockVersion(root) {
+  const lock = readLock(root)
+  if (!lock?.geeknative) return
+  const version = packageVersion()
+  if (lock.geeknative === version) return
+  log.warn('upgrade', `project is on geeknative ${lock.geeknative}; this CLI is ${version}`)
+  log.detail('Run `npx geeknative@latest upgrade` to replace framework files (then `make upgrade` works too).')
+  log.detail('Project-owned catch-up is separate: `geeknative migrate` (or `make migrate`) after upgrade.')
 }
 
 /** The sdkmanager package for the compile SDK: newer platforms carry a minor version ("android-37.0"). @param {string} sdk */

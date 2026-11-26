@@ -16,6 +16,8 @@ geeknative <command>
   parity               Update spec/parity.md from feature specs and tests
   run <platform>       Build and launch: ios (simulator), android (emulator or device), web (dev server), all (web plus keys)
   dev                  Same as run all: web stays up, and keys launch iOS and Android
+  pin                  Pin the project to a fresh snapshot of the geeknative checkout it came from
+  upgrade              Replace framework files from this CLI; merge ones you edited. Options: --dry-run --force --no-install
   version              Print the version
 ```
 
@@ -98,7 +100,7 @@ npx geeknative doctor [--fix]   # or: make doctor, make doctor FIX=1
 |---|---|---|
 | node | Node 22 or later | |
 | deps | `node_modules/` exists | Runs `npm install` |
-| geeknative | Says where the CLI comes from: npm, a pinned snapshot, or a checkout. A live link to a checkout is a warning, naming the branch and commit it's on now. | Pins the project to a snapshot of that checkout and runs `npm install` |
+| geeknative | Says where the CLI comes from: npm, a pinned snapshot, or a checkout. A live link to a checkout is a warning, naming the branch and commit it's on now. If `.geeknative/lock.json` is from an older version, it warns to run `npx geeknative@latest upgrade`. | Pins the project to a snapshot of that checkout and runs `npm install` |
 | contracts | Contracts are valid and generated files are current | |
 | xcode | Xcode 26 or later (macOS only) | |
 | simulator | An iPhone simulator is available | |
@@ -147,7 +149,81 @@ It skips generated code, tests, and the body of each iOS `#Preview` block and An
 npx geeknative pin   # or: make pin
 ```
 
-For a project created from a geeknative checkout, which is pinned to a snapshot of it (see [create](#create)). Packs the checkout the project came from, as it is now, into `.geeknative/`, points `package.json` at the new snapshot, deletes the old one and runs `npm install`. Each snapshot records its checkout, branch and commit, so `pin` finds the checkout on its own, and `make doctor` warns when the checkout has moved past the snapshot. Run `make gen` and `make check` afterwards. A project that uses geeknative from npm updates with `npm install --save-dev geeknative@latest` instead.
+For a project created from a geeknative checkout, which is pinned to a snapshot of it (see [create](#create)). Packs the checkout the project came from, as it is now, into `.geeknative/`, points `package.json` at the new snapshot, deletes the old one and runs `npm install`. Each snapshot records its checkout, branch and commit, so `pin` finds the checkout on its own, and `make doctor` warns when the checkout has moved past the snapshot. Run `make gen` and `make check` afterwards. A project that uses geeknative from npm updates with `npm install --save-dev geeknative@latest` instead. To also replace framework files, run [`upgrade`](#upgrade).
+
+## upgrade
+
+```sh
+npx geeknative@latest upgrade            # first time, or to take a newer CLI
+npx geeknative upgrade                   # after the project depends on that CLI
+npx geeknative upgrade --dry-run
+npx geeknative upgrade --force           # take incoming files on conflict
+# or: make upgrade   DRY_RUN=1   FORCE=1
+```
+
+Replaces **framework-owned** files from the CLI you are running. Project docs, specs, contracts, app code and the Project rules sections of AGENTS.md are never touched. Generated files are rebuilt with `gen` after a clean apply.
+
+The first run of an older project must use `npx geeknative@latest upgrade`, because the command lives in the new package. After that, `make upgrade` works.
+
+For each managed file and AGENTS.md / CLAUDE.md block, it compares three hashes from `.geeknative/lock.json` (what create installed), the file on disk, and this CLI's template:
+
+| Disk vs lock vs incoming | What happens |
+|---|---|
+| Incoming matches disk | Skipped |
+| Disk still matches the lock, incoming differs | Replaced |
+| Incoming still matches the lock, you edited disk | Kept |
+| Both sides changed | Three-way merge (`git merge-file`) using the previous template as base |
+| New in this release | Copied in |
+| Removed from the framework, and you never edited it | Deleted (the managed block is stripped from AGENTS.md, the file stays) |
+
+The previous template comes from the project's snapshot tarball, `node_modules/geeknative` when that install still matches `lock.json`, or `npm pack geeknative@<lock version>`. If a merge needs a base and none is found, or `git merge-file` conflicts, the project file is left as it is, incoming content is written next to it as `<path>.geeknative-new`, and the exit code is 1. The next `upgrade` keeps that file when the sibling is still there, deletes the sibling, and records the incoming hashes. `--force` writes the incoming file instead. `--dry-run` prints the plan and writes nothing.
+
+On success it rewrites `.geeknative/lock.json` with this CLI's version and the incoming hashes (so your local edits are still seen as edits next time), then:
+
+- a project that depends on geeknative from npm gets `^<version>` and `npm install`;
+- a project pinned to a checkout snapshot is [pinned](#pin) again when you run upgrade from that checkout, including when only the CLI changed and the version number is the same. Framework files that already match still count as up to date.
+
+`--no-install` skips `npm install`. Conflicts skip the lock rewrite, the dependency bump and `gen`, so you can fix `*.geeknative-new` and run upgrade again.
+
+On success (and when the project is already current), upgrade announces any pending [migrations](#migrate). It does not run them.
+
+## migrate
+
+```sh
+npx geeknative migrate
+npx geeknative migrate --dry-run
+npx geeknative migrate --status
+npx geeknative migrate --complete <id>
+# or: make migrate   DRY_RUN=1
+```
+
+Applies **project-owned** catch-up for the versions between `.geeknative/lock.json` and this CLI. Specs, contracts, docs and app code can change here; framework files stay with [`upgrade`](#upgrade). geeknative never invokes Cursor, Claude, Gemini, or any other agent.
+
+| Kind | What happens |
+|---|---|
+| Scripted | A deterministic transform edits project files (for example a new spec format). Fail closed if a file does not match the expected shape. Marked **completed** when `run()` succeeds. |
+| Agent-assisted | Writes structured instructions to `.geeknative/migrations/pending/MIGRATION.md` (objective, platforms, required changes, validation). Marked **prepared** only. You ask an agent to apply the file, then run `--complete <id>`. |
+
+Status on the lockfile:
+
+| Status | Meaning |
+|---|---|
+| `pending` | Known to this CLI, not prepared and not completed |
+| `prepared` | Instructions are in `MIGRATION.md`; listed in `lock.migrationsPrepared` |
+| `completed` | Listed in `lock.migrations`. Scripted reach this automatically; agent-assisted only via `--complete` |
+
+Rules:
+
+- Requires `.geeknative/lock.json`. Apply and prepare need a **clean** git working tree. `--status` and `--complete` do not.
+- `--dry-run` prints the plan and writes nothing (including no `MIGRATION.md` and no lock changes).
+- `--status` prints every migration for this CLI version and its status.
+- `--complete <id>` is for agent-assisted ids only. It moves the id to `lock.migrations`, drops it from `migrationsPrepared`, and refreshes or removes `MIGRATION.md`.
+- Generating instructions never marks a migration completed.
+- Never creates a git commit. Prefer the old project? Restore the previous commit, including the lockfile.
+- Fresh `create` marks every known migration as completed, so new projects have nothing to catch up.
+- Upgrade preserves `migrations` and `migrationsPrepared` when it rewrites hashes.
+
+When a scripted migration regenerates contracts, `migrate` runs `gen` once at the end.
 
 ## run
 
@@ -193,6 +269,7 @@ The project's Makefile includes `.geeknative/framework.mk`:
 | `make check-contracts` | `geeknative check contracts` |
 | `make check-ios`, `check-android`, `check-web` | `geeknative check <platform>` |
 | `make pin` | `geeknative pin` |
+| `make upgrade` | `geeknative upgrade` (`DRY_RUN=1` adds `--dry-run`, `FORCE=1` adds `--force`) |
 | `make parity` | `geeknative parity` |
 | `make lint` | `geeknative lint` |
 | `make lint-ios`, `lint-android`, `lint-web` | `geeknative lint <platform>` |

@@ -1,4 +1,6 @@
-import type { ReactNode } from "react";
+"use client";
+
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 
 export type Mode = "light" | "dark";
 export type Platform = "ios" | "android" | "web";
@@ -145,18 +147,242 @@ export function Segmented<T extends string>({
   );
 }
 
+function Chevron({ open }: { open: boolean }) {
+  return (
+    <svg viewBox="0 0 16 16" className={`size-3.5 transition-transform duration-300 ${open ? "rotate-180" : ""}`} aria-hidden fill="none" stroke="currentColor" strokeWidth="1.6">
+      <path d="M3 6l5 5 5-5" strokeLinecap="square" />
+    </svg>
+  );
+}
+
+// Small screens can't fit a project's screens in one row. This holds the whole list in a panel.
+export function ScreenMenu({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: [string, string][];
+  onChange: (value: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [above, setAbove] = useState(false);
+  const root = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+  const listId = useId();
+  const index = Math.max(0, options.findIndex(([id]) => id === value));
+  const current = options[index]?.[1] ?? "";
+
+  const place = () => {
+    const button = buttonRef.current;
+    if (!button) return;
+    const rect = button.getBoundingClientRect();
+    const needed = Math.min(window.innerHeight * 0.5, 352, options.length * 46 + 16);
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const spaceAbove = rect.top;
+    setAbove(spaceBelow < needed && spaceAbove > spaceBelow);
+  };
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointer = (event: PointerEvent) => {
+      if (!root.current?.contains(event.target as Node)) setOpen(false);
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+        buttonRef.current?.focus();
+      }
+    };
+    document.addEventListener("pointerdown", onPointer);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onPointer);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    listRef.current?.querySelector<HTMLElement>("[aria-selected='true']")?.scrollIntoView({ block: "nearest" });
+  }, [open, value]);
+
+  const move = (delta: number) => {
+    const next = options[(index + delta + options.length) % options.length];
+    if (next) onChange(next[0]);
+  };
+
+  return (
+    <div ref={root} className="relative w-full min-w-0">
+      <button
+        ref={buttonRef}
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={listId}
+        aria-label={`${label}, ${current}`}
+        onClick={() => {
+          if (!open) place();
+          setOpen((isOpen) => !isOpen);
+        }}
+        onKeyDown={(event) => {
+          if (event.key === "ArrowDown") {
+            event.preventDefault();
+            if (!open) {
+              place();
+              setOpen(true);
+            } else move(1);
+          } else if (event.key === "ArrowUp" && open) {
+            event.preventDefault();
+            move(-1);
+          } else if ((event.key === "Enter" || event.key === " ") && open) {
+            event.preventDefault();
+            setOpen(false);
+          }
+        }}
+        className="flex h-10 w-full min-w-0 items-center gap-2 rounded-full bg-white py-1 pl-3.5 pr-1 text-left ring-1 ring-inset ring-line-strong"
+      >
+        <span className="min-w-0 flex-1 truncate text-[14.5px] font-medium tracking-[-0.01em]">{current}</span>
+        <span className="grid size-7 shrink-0 place-items-center rounded-full bg-ink text-white">
+          <Chevron open={open} />
+        </span>
+      </button>
+      {open ? (
+        <div
+          ref={listRef}
+          id={listId}
+          role="listbox"
+          aria-label={label}
+          className={`absolute left-0 right-0 z-30 max-h-[min(22rem,50vh)] overflow-y-auto rounded-2xl bg-white p-1.5 shadow-[0_18px_50px_-20px_rgb(11_11_11/0.4)] ring-1 ring-line [scrollbar-width:thin] ${above ? "bottom-full mb-2" : "top-full mt-2"}`}
+        >
+          {options.map(([id, text], i) => {
+            const selected = id === value;
+            return (
+              <button
+                key={id}
+                type="button"
+                role="option"
+                aria-selected={selected}
+                onClick={() => {
+                  onChange(id);
+                  setOpen(false);
+                  buttonRef.current?.focus();
+                }}
+                className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors ${selected ? "bg-ink text-white" : "text-ink hover:bg-mist"}`}
+              >
+                <span className={`label w-7 shrink-0 tabular-nums ${selected ? "text-white/70" : "text-faint"}`}>
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span className="min-w-0 flex-1 truncate text-[15px]">{text}</span>
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+// Pills from md up, where a row has room. Below that, every screen lives in the menu.
+export function ShowcaseControls({
+  screens,
+  screen,
+  mode,
+  onScreen,
+  onMode,
+  className = "",
+}: {
+  screens: [string, string][];
+  screen: string;
+  mode: Mode;
+  onScreen: (id: string) => void;
+  onMode: (mode: Mode) => void;
+  className?: string;
+}) {
+  return (
+    <div className={`flex items-center justify-between gap-3 md:flex-wrap md:justify-center ${className}`}>
+      <div className="min-w-0 flex-1 md:hidden">
+        <ScreenMenu label="Screen" value={screen} options={screens} onChange={onScreen} />
+      </div>
+      <div className="hidden md:block">
+        <Segmented label="Screen" value={screen} options={screens} onChange={onScreen} />
+      </div>
+      <div className="shrink-0">
+        <Segmented<Mode>
+          label="Appearance"
+          value={mode}
+          options={[
+            ["light", "Light"],
+            ["dark", "Dark"],
+          ]}
+          onChange={onMode}
+        />
+      </div>
+    </div>
+  );
+}
+
 const CAPTIONS: Record<Platform, [string, string]> = {
   ios: ["iOS 26", "SwiftUI"],
   web: ["Chrome", "TanStack Start"],
   android: ["Android 15", "Jetpack Compose"],
 };
 
-export function PlatformCaption({ platform }: { platform: Platform }) {
+export function PlatformCaption({ platform, className = "" }: { platform: Platform; className?: string }) {
   return (
-    <p className="label mt-5 flex items-center justify-center gap-2 text-muted">
+    <p className={`label mt-5 flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 text-center text-muted ${className}`}>
       <span className="text-ink">{CAPTIONS[platform][0]}</span>
       <span className="text-faint">/</span>
       <span>{CAPTIONS[platform][1]}</span>
     </p>
+  );
+}
+
+// Android captures are 1333px tall against the iPhone's 1304, and the bezel is thinner,
+// so the same column width makes that frame taller. 97% width brings the outer heights together.
+const androidFrame = "mx-auto w-[97%] md:mx-0 md:w-full";
+
+// Web on top at small sizes, then the two phones on one line. From md up, the three sit in a row.
+export function DeviceStage({
+  ios,
+  web,
+  android,
+  captions = true,
+}: {
+  ios: ReactNode;
+  web: ReactNode;
+  android: ReactNode;
+  captions?: boolean;
+}) {
+  return (
+    <div className="flex flex-col gap-12 md:flex-row md:items-end md:justify-center md:gap-x-[3.2%]">
+      <div className="min-w-0 md:order-2 md:w-[56%]">
+        {web}
+        {captions ? <PlatformCaption platform="web" /> : null}
+      </div>
+      <div className="grid grid-cols-2 items-start gap-x-[6%] md:contents">
+        <div className="min-w-0 md:order-1 md:w-[18.5%]">
+          {ios}
+          {captions ? (
+            <div className="hidden md:block">
+              <PlatformCaption platform="ios" />
+            </div>
+          ) : null}
+        </div>
+        <div className="min-w-0 md:order-3 md:w-[18.5%]">
+          <div className={androidFrame}>{android}</div>
+          {captions ? (
+            <div className="hidden md:block">
+              <PlatformCaption platform="android" />
+            </div>
+          ) : null}
+        </div>
+        {captions ? <PlatformCaption platform="ios" className="md:hidden" /> : null}
+        {captions ? <PlatformCaption platform="android" className="md:hidden" /> : null}
+      </div>
+    </div>
   );
 }
