@@ -1,0 +1,19 @@
+{
+  "name": "task-management-app",
+  "private": true,
+  "workspaces": [
+    "apps/web",
+    "backend"
+  ],
+  "scripts": {
+    "gen": "geeknative gen",
+    "check": "geeknative check",
+    "doctor": "geeknative doctor",
+    "parity": "geeknative parity",
+    "dev": "npm run dev --workspace apps/web",
+    "backend": "npm start --workspace backend"
+  },
+  "devDependencies": {
+    "geeknative": "file:.geeknative/geeknative-0.1.1-48f4a46-dirty.tgz"
+  }
+}

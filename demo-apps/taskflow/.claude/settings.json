@@ -1,0 +1,65 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(make *)",
+      "Bash(npx geeknative *)",
+      "Bash(./node_modules/.bin/geeknative *)",
+      "Bash(npm run *)",
+      "Bash(xcodebuild *)",
+      "Bash(xcrun simctl *)",
+      "Bash(./gradlew *)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.geeknative/hooks/after-edit.mjs\""
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "matcher": "ios-engineer",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.geeknative/hooks/subagent-context.mjs\" ios"
+          }
+        ]
+      },
+      {
+        "matcher": "android-engineer",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.geeknative/hooks/subagent-context.mjs\" android"
+          }
+        ]
+      },
+      {
+        "matcher": "web-engineer",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.geeknative/hooks/subagent-context.mjs\" web"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.geeknative/hooks/parity-guard.mjs\""
+          }
+        ]
+      }
+    ]
+  }
+}
