@@ -47,7 +47,8 @@ import app.generated.AppTypography
 @Composable
 fun AppNavigation() {
     val container = LocalAppContainer.current
-    val backStack = rememberNavBackStack(Route.Home)
+    val start = container.screenshot?.backStack() ?: listOf(Route.Home)
+    val backStack = rememberNavBackStack(*start.toTypedArray())
     val selectedTab = backStack.selectedTab()
 
     Scaffold(

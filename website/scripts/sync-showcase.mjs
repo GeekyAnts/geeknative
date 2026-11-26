@@ -84,13 +84,18 @@ function productSummary(root, fallback) {
   return paragraph || fallback;
 }
 
-function entryFromScreens({ slug, name, summary, mark, shotPrefix, screens }) {
+export function consistencyLevel(value) {
+  return value === "strict" || value === "adapted" ? value : "adapted";
+}
+
+function entryFromScreens({ slug, name, summary, mark, shotPrefix, consistency, screens }) {
   return {
     slug,
     name,
     summary,
     mark,
     shotPrefix,
+    ...(consistency ? { consistency } : {}),
     screens: screens.map((screen) => {
       const webPath = (screen.webPath ?? "/").split(/\s+/)[0] || "/";
       return {
@@ -182,6 +187,7 @@ function loadDemoApp(slug) {
     summary: productSummary(root, app.name),
     mark: brandMark(root, shots),
     shotPrefix: `/geeknative/showcase/${slug}`,
+    consistency: consistencyLevel(app.consistency),
     screens,
   });
 }

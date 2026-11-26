@@ -16,8 +16,39 @@ final class AppContainer {
     static func live() -> AppContainer {
         AppContainer(
             settingsRepository: screenshotSettings() ?? UserDefaultsSettingsRepository(defaults: .standard),
-            weddingRepository: UserDefaultsWeddingRepository(defaults: .standard)
+            weddingRepository: screenshotPlan() ?? UserDefaultsWeddingRepository(defaults: .standard)
         )
+    }
+
+    /// The plan web shots store under `wedding.plan` and Android seeds for capture, so the wedding
+    /// screen shows the same date, destination, venue and guest count.
+    private static func screenshotPlan() -> (any WeddingRepository)? {
+        let arguments = ProcessInfo.processInfo.arguments
+        guard arguments.contains("-screenshotScreen") else { return nil }
+        func value(_ flag: String) -> String? {
+            guard let index = arguments.firstIndex(of: flag), index + 1 < arguments.count else { return nil }
+            return arguments[index + 1]
+        }
+        let destinationId = value("-screenshotDestinationId") ?? "udaipur"
+        let venueId = value("-screenshotVenueId") ?? "udaipur-taj-lake"
+        let plan = WeddingPlan(
+            date: "2027-02-14",
+            destinationId: destinationId,
+            venueId: venueId,
+            guestCount: 120,
+            budget: 180000,
+            packageId: "royal",
+            bookingStatus: .enquirySent,
+            savedDestinationIds: [destinationId, "santorini"],
+            savedVenueIds: [venueId],
+            completedTaskIds: ["venue"],
+            selectedExperienceIds: ["photography", "florals"],
+            searchLocation: "",
+            searchDate: "",
+            searchGuests: 0,
+            searchBudget: 0
+        )
+        return InMemoryWeddingRepository(plan: plan)
     }
 
     /// Screenshot capture passes `-screenshotAppearance light|dark`. Honor it even when a previous

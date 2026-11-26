@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import test from 'node:test'
-import { animationScaleToRestore, launchExtrasFor, nightModeFromUimode, screensFromNavigation, storageForScreen } from './publish-demo-app.mjs'
+import { animationScaleToRestore, launchExtrasFor, nightModeFromUimode, screensFromNavigation, settleFor, storageForScreen } from './publish-demo-app.mjs'
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -95,6 +95,15 @@ test('night mode parses cmd uimode output and defaults to auto', () => {
   assert.equal(nightModeFromUimode(null), 'auto')
   assert.equal(nightModeFromUimode(''), 'auto')
   assert.equal(nightModeFromUimode('something unexpected'), 'auto')
+})
+
+test('web waits 800 ms unless a screen sets settleMs', () => {
+  assert.equal(settleFor({ id: 'settings' }, 'web'), 800)
+  assert.equal(settleFor({ id: 'restaurant', settleMs: 3000 }, 'web'), 3000)
+  assert.equal(settleFor({ id: 'welcome', settleMs: 0 }, 'web'), 0)
+  assert.equal(settleFor({ id: 'home', settleMs: 50 }, 'ios'), 3000)
+  assert.throws(() => settleFor({ id: 'home', settleMs: -1 }, 'web'), /settleMs/)
+  assert.throws(() => settleFor({ id: 'home', settleMs: '3000' }, 'web'), /settleMs/)
 })
 
 test('launchExtras come from shots.json, not hardcoded restaurant ids', () => {

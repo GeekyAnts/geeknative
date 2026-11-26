@@ -1,0 +1,56 @@
+{
+  "mark": "#0A7A3F",
+  "launchExtras": {
+    "screenshotCategoryId": "fruits",
+    "screenshotOrderId": "MN123456"
+  },
+  "webStorage": {
+    "signedIn": {
+      "cart.items": [
+        { "productId": "banana", "quantity": 2 },
+        { "productId": "milk", "quantity": 1 }
+      ],
+      "orders.history": [
+        {
+          "id": "MN123456",
+          "placedAt": 1761800123456,
+          "lines": [
+            {
+              "productId": "banana",
+              "name": "Robusta Banana",
+              "unit": "6 pcs",
+              "emoji": "🍌",
+              "categoryId": "fruits",
+              "price": 49,
+              "mrp": 60,
+              "quantity": 2
+            },
+            {
+              "productId": "milk",
+              "name": "Toned Milk",
+              "unit": "500 ml",
+              "emoji": "🥛",
+              "categoryId": "dairy",
+              "price": 28,
+              "mrp": 28,
+              "quantity": 1
+            }
+          ],
+          "itemCount": 3,
+          "itemTotal": 126,
+          "savings": 22,
+          "deliveryFee": 25,
+          "toPay": 151
+        }
+      ]
+    }
+  },
+  "screens": [
+    { "id": "home", "label": "Home", "signedIn": true, "webPath": "/", "showcase": true },
+    { "id": "category", "label": "Category", "signedIn": true, "webPath": "/category/fruits", "showcase": true },
+    { "id": "search", "label": "Search", "signedIn": true, "webPath": "/search" },
+    { "id": "cart", "label": "Cart", "signedIn": true, "webPath": "/cart", "showcase": true },
+    { "id": "order-placed", "label": "Order placed", "signedIn": true, "webPath": "/orders/MN123456", "showcase": true },
+    { "id": "settings", "label": "Settings", "signedIn": true, "webPath": "/settings" }
+  ]
+}
