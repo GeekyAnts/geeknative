@@ -4,7 +4,7 @@ import path from 'node:path'
 import { readApp } from '../codegen/app.js'
 import { readConfig } from '../codegen/config.js'
 import { dotenvForChild, requestedEnvironment } from '../lib/env.js'
-import { capture, runInherit, runLogged } from '../lib/exec.js'
+import { capture, captureAsync, runInherit, runLogged } from '../lib/exec.js'
 import { CliError, log } from '../lib/log.js'
 import { createProgress, GRADLE_PHASES, XCODE_PHASES } from '../lib/progress.js'
 import { adb, emulator, findAndroidSdk, pickSimulator, writeLocalProperties } from '../lib/toolchains.js'
@@ -50,9 +50,9 @@ export async function runIos(root, environment) {
 
   if (simulator.state !== 'Booted') {
     log.step('ios', `booting ${simulator.name}…`)
-    capture('xcrun', ['simctl', 'boot', simulator.udid])
+    await captureAsync('xcrun', ['simctl', 'boot', simulator.udid])
   }
-  capture('open', ['-a', 'Simulator'])
+  await captureAsync('open', ['-a', 'Simulator'])
 
   log.step('ios', 'building…')
   const progress = createProgress({ phases: XCODE_PHASES })
@@ -65,8 +65,8 @@ export async function runIos(root, environment) {
   if (build.code !== 0) throw new CliError(`Build failed. Run \`make check-ios\` for details (log: ${path.relative(root, logFile)}).`)
 
   const app = path.join(root, 'apps', 'ios', '.build', 'DerivedData', 'Build', 'Products', 'Debug-iphonesimulator', 'App.app')
-  if (capture('xcrun', ['simctl', 'install', simulator.udid, app]) === null) throw new CliError('Could not install the app on the simulator.')
-  if (capture('xcrun', ['simctl', 'launch', simulator.udid, id]) === null) throw new CliError(`Could not launch ${id}.`)
+  if ((await captureAsync('xcrun', ['simctl', 'install', simulator.udid, app])) === null) throw new CliError('Could not install the app on the simulator.')
+  if ((await captureAsync('xcrun', ['simctl', 'launch', simulator.udid, id])) === null) throw new CliError(`Could not launch ${id}.`)
   log.ok('ios', `running on ${simulator.name} (${simulator.runtime})`)
 }
 
@@ -87,8 +87,9 @@ export async function runAndroid(root, environment) {
     }
     log.step('android', `starting emulator ${avds[0]}…`)
     spawn(emulator(sdk), ['-avd', avds[0]], { detached: true, stdio: 'ignore' }).unref()
-    capture(adbPath, ['wait-for-device'], { timeout: 180_000 })
-    for (let i = 0; i < 90 && capture(adbPath, ['shell', 'getprop', 'sys.boot_completed']) !== '1'; i++) {
+    await captureAsync(adbPath, ['wait-for-device'], { timeout: 180_000 })
+    for (let i = 0; i < 90; i++) {
+      if ((await captureAsync(adbPath, ['shell', 'getprop', 'sys.boot_completed'])) === '1') break
       await new Promise((resolve) => setTimeout(resolve, 2000))
     }
   }
@@ -104,7 +105,7 @@ export async function runAndroid(root, environment) {
   progress.stop()
   if (install.code !== 0) throw new CliError(`Install failed. Run \`make check-android\` for details (log: ${path.relative(root, logFile)}).`)
   // -W waits until the app has drawn its first frame, so "running" means it's on screen.
-  const launch = capture(adbPath, ['shell', 'am', 'start', '-W', '-n', `${id}/app.MainActivity`], { timeout: 120_000 })
+  const launch = await captureAsync(adbPath, ['shell', 'am', 'start', '-W', '-n', `${id}/app.MainActivity`], { timeout: 120_000 })
   if (launch === null || /Error|Status: (?!ok)/.test(launch)) throw new CliError(`Could not launch ${id}.${launch ? `\n${launch}` : ''}`)
   const shown = launch.match(/TotalTime: (\d+)/)?.[1]
   log.ok('android', `running ${id}${shown ? ` (on screen after ${(Number(shown) / 1000).toFixed(1)}s)` : ''}`)
