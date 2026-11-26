@@ -23,10 +23,10 @@
     }
   },
   "screens": [
-    { "id": "home", "label": "Home", "signedIn": false, "webPath": "/", "showcase": true },
-    { "id": "destinations", "label": "Destinations", "signedIn": false, "webPath": "/destinations", "showcase": true },
-    { "id": "udaipur", "label": "Udaipur", "signedIn": false, "webPath": "/destinations/udaipur", "showcase": true },
-    { "id": "venue", "label": "Venue", "signedIn": false, "webPath": "/venues/udaipur-taj-lake", "showcase": true },
-    { "id": "wedding", "label": "Wedding", "signedIn": false, "webPath": "/wedding", "showcase": true }
+    { "id": "home", "label": "Home", "signedIn": false, "webPath": "/", "showcase": true, "settleMs": 3000 },
+    { "id": "destinations", "label": "Destinations", "signedIn": false, "webPath": "/destinations", "showcase": true, "settleMs": 3000 },
+    { "id": "udaipur", "label": "Udaipur", "signedIn": false, "webPath": "/destinations/udaipur", "showcase": true, "settleMs": 3000 },
+    { "id": "venue", "label": "Venue", "signedIn": false, "webPath": "/venues/udaipur-taj-lake", "showcase": true, "settleMs": 3000 },
+    { "id": "wedding", "label": "Wedding", "signedIn": false, "webPath": "/wedding", "showcase": true, "settleMs": 3000 }
   ]
 }

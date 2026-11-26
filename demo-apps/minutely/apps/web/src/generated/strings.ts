@@ -98,7 +98,9 @@ function fill(template: string, args: Record<string, string | number>): string {
 
 function plural(key: string, count: number): string {
   const forms = lookup(key) as Plural
-  return fill(forms[new Intl.PluralRules(currentLocale).select(count)] ?? forms.other, { count })
+  // A "zero" form is for a count of 0 in every language, as on iOS: Intl.PluralRules has no zero category in English.
+  const form = count === 0 && forms.zero !== undefined ? forms.zero : forms[new Intl.PluralRules(currentLocale).select(count)]
+  return fill(form ?? forms.other, { count })
 }
 
 /** User-facing copy. Keys and placeholders match the iOS and Android apps. */

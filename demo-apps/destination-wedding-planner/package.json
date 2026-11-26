@@ -12,6 +12,6 @@
     "dev": "npm run dev --workspace apps/web"
   },
   "devDependencies": {
-    "geeknative": "file:.geeknative/geeknative-0.1.1-d7da5d3.tgz"
+    "geeknative": "file:.geeknative/geeknative-0.1.1-e5ee0c9.tgz"
   }
 }
