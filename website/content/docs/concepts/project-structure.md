@@ -19,6 +19,7 @@ my-app/
 │   ├── tokens.json           Colors (light and dark), spacing, radii, icon sizes, type, the font family
 │   ├── fonts/                The typeface's files, one per weight (Inter to start)
 │   ├── config.json           Environments and their per-environment values
+│   ├── api/                  One JSON file per task (optional until a hosted backend is planned)
 │   ├── strings/en.json       All user-facing copy (one file per locale)
 │   └── icons.json            Each icon's Lucide name, or an SVG of yours in contracts/icons/
 ├── spec/
