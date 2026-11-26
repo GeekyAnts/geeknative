@@ -7,6 +7,7 @@ import { rel } from '../lib/project.js'
 import { apiOutputs, readApi } from './api.js'
 import { appOutputs, readApp } from './app.js'
 import { configOutputs, ENV_EXAMPLE, readConfig, resolveSecrets } from './config.js'
+import { realtimeOutputs } from './realtime.js'
 import { iconOutputs, readIcons } from './icons.js'
 import { readStrings, stringOutputs } from './strings.js'
 import { readTokens, tokenOutputs } from './tokens.js'
@@ -32,6 +33,7 @@ export function generateAll(root) {
       ...iconOutputs(readIcons(root)),
       ...configOutputs(config, secrets.values),
       ...(api ? apiOutputs(api, { includeClient }) : []),
+      ...realtimeOutputs(root, config),
     ],
     warnings: secrets.warnings,
   }

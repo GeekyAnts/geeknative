@@ -2,6 +2,14 @@
   "$comment": "Settings that differ per environment, and the names of secrets whose values live in .env (never here).",
   "$example": "values: { \"apiBaseUrl\": { \"type\": \"url\", \"description\": \"Backend API.\", \"development\": \"http://localhost:8080\", \"staging\": \"https://staging.example.com\", \"production\": \"https://api.example.com\" } }. Types: string, url, boolean, int. secrets: { \"mapsApiKey\": { \"type\": \"string\", \"description\": \"Maps SDK key\" } }.",
   "environments": ["development", "staging", "production"],
-  "values": {},
+  "values": {
+    "realtimeEnabled": {
+      "type": "boolean",
+      "description": "Open the WebSocket while this build is in the foreground.",
+      "development": false,
+      "staging": false,
+      "production": false
+    }
+  },
   "secrets": {}
 }

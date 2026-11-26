@@ -18,4 +18,11 @@ enum class AppEnvironment(val key: String) {
 }
 
 /** Settings that differ per environment, shared with the iOS and web apps. */
-object AppConfig {}
+object AppConfig {
+    /** Open the WebSocket while this build is in the foreground. */
+    val realtimeEnabled: Boolean = when (AppEnvironment.current) {
+        AppEnvironment.DEVELOPMENT -> false
+        AppEnvironment.STAGING -> false
+        AppEnvironment.PRODUCTION -> false
+    }
+}
