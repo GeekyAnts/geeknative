@@ -5,6 +5,7 @@ description: Release notes for geeknative.
 
 ## Unreleased
 
+- **`run all` stays responsive:** booting a simulator or emulator, installing, and launching no longer freeze the session. Quit and web output keep working. `a`, `i` and `r` still wait their turn.
 - **Shared typeface in stock Android components:** Material 3 type roles that no text style maps to keep Material's size and weight but use the shared typeface, so stock components no longer fall back to Roboto.
 - **Desktop-first web:** generated websites use one site header. The app name always links to Home. Extra destinations sit in that header on a wide window; below `md` a hamburger opens a left drawer with the same list. No sidebar, bottom bar, or duplicate links. iOS and Android keep native tab and app bars.
 - **Consistency:** `contracts/app.json` can set `consistency` to `strict` or `adapted` (default `adapted`). `strict` fails `make lint` when a feature spec uses `n/a`. Existing projects get a `parity` lint error after upgrading until they run `make parity`, because of the new header line. `create` takes `--consistency`; there is no setup prompt.

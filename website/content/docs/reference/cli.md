@@ -167,6 +167,8 @@ npx geeknative dev                            # same as run all
 
 `run all` needs a terminal. Piped input fails with a message, because the keys cannot be read. Web output is prefixed with `web`. iOS and Android builds log to `.geeknative/logs/` and run one at a time. Pressing a key while a build is already going prints "already building".
 
+Boot, install and launch wait in the background, so quit and web output keep working while a simulator or emulator starts. `a`, `i` and `r` still wait their turn.
+
 | Key | What it does |
 |---|---|
 | `a` | Build, install and launch Android. |
