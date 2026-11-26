@@ -76,6 +76,48 @@ export function capture(cmd, args, options = {}) {
   return result.status === 0 ? result.stdout.trim() : null
 }
 
+/**
+ * Same result as `capture`, but the event loop stays free while the command runs.
+ * The dev session uses this for boot, wait, install and launch, which can sit for minutes.
+ * `spawn` has no `timeout` option, so a timer sends SIGTERM, matching `spawnSync`.
+ * @param {string} cmd
+ * @param {string[]} args
+ * @param {{ cwd?: string, input?: string, timeout?: number }} [options]
+ * @returns {Promise<string | null>}
+ */
+export function captureAsync(cmd, args, { cwd, input, timeout } = {}) {
+  return new Promise((resolve) => {
+    const child = spawn(cmd, args, { cwd, stdio: ['pipe', 'pipe', 'ignore'] })
+    let stdout = ''
+    let settled = false
+    /** @type {ReturnType<typeof setTimeout> | undefined} */
+    let timer
+    /** @param {string | null} value */
+    const finish = (value) => {
+      if (settled) return
+      settled = true
+      if (timer) clearTimeout(timer)
+      resolve(value)
+    }
+    if (timeout) {
+      timer = setTimeout(() => {
+        try {
+          child.kill()
+        } catch {
+          // already exited
+        }
+        finish(null)
+      }, timeout)
+    }
+    child.stdout.on('data', (chunk) => {
+      stdout += chunk.toString()
+    })
+    child.on('error', () => finish(null))
+    child.on('close', (code) => finish(code === 0 ? stdout.trim() : null))
+    child.stdin.end(input ?? '')
+  })
+}
+
 /** @param {string} cmd */
 export function which(cmd) {
   return capture('which', [cmd])
