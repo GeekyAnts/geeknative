@@ -1,0 +1,12 @@
+{
+  "launchExtras": {
+    "screenshotTaskId": "0b6f4c1e-2a7d-4e59-9c3b-5d8e1f2a3b01"
+  },
+  "webStorage": {},
+  "screens": [
+    { "id": "tasks", "label": "Tasks", "signedIn": false, "webPath": "/", "showcase": true },
+    { "id": "task-detail", "label": "Task detail", "signedIn": false, "webPath": "/tasks/0b6f4c1e-2a7d-4e59-9c3b-5d8e1f2a3b01", "showcase": true },
+    { "id": "task-editor", "label": "Task editor", "signedIn": false, "webPath": "/tasks/0b6f4c1e-2a7d-4e59-9c3b-5d8e1f2a3b01/edit", "showcase": true },
+    { "id": "settings", "label": "Settings", "signedIn": false, "webPath": "/settings" }
+  ]
+}
