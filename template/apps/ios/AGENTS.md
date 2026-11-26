@@ -42,7 +42,8 @@ Same names and responsibilities as the Android and web apps.
 | Colors, spacing, radii, icon sizes, type | `AppColors.primary`, `AppSpacing.md`, `AppRadius.lg`, `AppIconSize.md`, `AppSize.touchTarget`, `AppTypography.title` (generated; the typeface comes with it) |
 | Motion and shadows | `withAnimation(AppMotion.reduced(AppMotion.snappy, reduceMotion))` with `@Environment(\.accessibilityReduceMotion)`, `AppMotion.standard(AppMotion.fast)`; `.shadow(AppElevation.low)`. Never raw durations, curves or shadow values. |
 | Icons | `Image(AppIcon.settings)` (generated template images in Icons.xcassets; color with `.foregroundStyle`) |
-| Config | `AppConfig.apiBaseUrl`, `AppEnvironment.current` (generated from contracts/config.json) |
+| Config | `AppConfig.apiBaseUrl`, `AppConfig.realtimeEnabled`, `AppEnvironment.current` (generated from contracts/config.json) |
+| WebSocket | `RealtimeClient` in Generated/, only when `contracts/realtime.json` exists and `realtimeEnabled` is true in some environment. Pass a token closure. Call `appDidEnterBackground()` and `appDidBecomeActive()` from `scenePhase`, and `networkDidReturn()` from `NWPathMonitor`. The repository owns the client. `connect()` does nothing when `AppConfig.realtimeEnabled` is false. |
 | HTTP API | Local repositories are the live backend until a server exists. When a backend is planned, read only this task's `contracts/api/<task>.json` and `contracts/api/common.json` if it uses a shared schema. `make gen` writes `Generated/api/<Task>.swift` (`Api<Task>.<operationId>`). Call that. Do not read the other task files. |
 | Secrets | `AppSecrets.mapsApiKey` (generated from .env, git-ignored; never commit values) |
 | Test IDs | `.accessibilityIdentifier("notes.addButton")` |

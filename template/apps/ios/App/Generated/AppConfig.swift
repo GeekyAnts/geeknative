@@ -23,4 +23,13 @@ nonisolated enum AppEnvironment: String, CaseIterable {
 }
 
 /// Settings that differ per environment, shared with the Android and web apps.
-nonisolated enum AppConfig {}
+nonisolated enum AppConfig {
+    /// Open the WebSocket while this build is in the foreground.
+    static let realtimeEnabled: Bool = {
+        switch AppEnvironment.current {
+        case .development: return false
+        case .staging: return false
+        case .production: return false
+        }
+    }()
+}

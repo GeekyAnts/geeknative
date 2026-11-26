@@ -50,6 +50,8 @@ Local repository implementations are the live backend: UserDefaults on iOS, Data
 
 On the web, TanStack Start's server functions and API routes are only for web-only concerns (rendering, cookies, SEO). Logic the mobile apps need too goes through repositories, so a future backend can serve all three apps.
 
+A live connection is separate from that HTTP API. Create `contracts/realtime.json` only when a feature needs a socket that stays open in the foreground, and set `realtimeEnabled` true only for those environments. The repository subscribes to the generated `RealtimeClient`. Screens and view models do not open the socket. See [realtime.json](/docs/reference/contracts/#realtimejson).
+
 ## Native, not identical
 
 | Same on every platform | Native to each platform |

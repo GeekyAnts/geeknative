@@ -14,5 +14,10 @@ if (!(environments as readonly string[]).includes(requested)) {
 /** The environment this build was made for: VITE_APP_ENVIRONMENT, else development when serving and production when built. */
 export const environment = requested as AppEnvironment
 
+const pick = <T>(values: Record<AppEnvironment, T>): T => values[environment]
+
 /** Settings that differ per environment, shared with the iOS and Android apps. */
-export const AppConfig = {} as const
+export const AppConfig = {
+  /** Open the WebSocket while this build is in the foreground. */
+  realtimeEnabled: pick<boolean>({ development: false, staging: false, production: false }),
+} as const

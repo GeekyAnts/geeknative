@@ -22,6 +22,7 @@ geeknative 0.1.0 is the foundation: three apps that build and test from the comm
 ## More
 
 - **Backends.** An API contract in `contracts/`, generated clients that use the URLs in `contracts/config.json`, and repository implementations that call it.
+- **Live updates.** Optional `contracts/realtime.json` generates native WebSocket clients when `realtimeEnabled` is on. HTTP stays the default.
 - **More icon families** as bundled catalogs beside Lucide, and multi-color icons.
 - **Italic and variable fonts**, and letter spacing in the type scale.
 - **Windows** support for the Android and web apps.

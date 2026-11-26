@@ -2,7 +2,8 @@ import assert from 'node:assert/strict'
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { test } from 'node:test'
-import { generate, generateAll } from '../src/codegen/index.js'
+import { generate, generateAll, staleFiles } from '../src/codegen/index.js'
+import { backoffDelay } from '../src/codegen/realtime.js'
 import { editJson, outputOf, TEMPLATE, tempProject } from './helpers.js'
 
 test('generation is deterministic', () => {
@@ -406,12 +407,12 @@ test('config: environments and typed values reach every platform', () => {
   assert.match(ts, /VITE_APP_ENVIRONMENT \|\| /, 'an empty VITE_APP_ENVIRONMENT falls back to the default')
 })
 
-test('config: with no values, nothing unused is generated', () => {
+test('config: the starter only declares realtimeEnabled, and it is off', () => {
   const outputs = generate(TEMPLATE)
-  assert.match(outputOf(outputs, 'AppConfig.swift'), /enum AppConfig \{\}/)
-  assert.match(outputOf(outputs, 'AppConfig.kt'), /object AppConfig \{\}/)
-  // The web tsconfig sets noUnusedLocals, so an unused `pick` would fail the type-check.
-  assert.doesNotMatch(outputOf(outputs, 'generated/config.ts'), /pick/)
+  assert.match(outputOf(outputs, 'AppConfig.swift'), /static let realtimeEnabled: Bool = \{[\s\S]*case \.development: return false/)
+  assert.match(outputOf(outputs, 'AppConfig.kt'), /val realtimeEnabled: Boolean = when \(AppEnvironment\.current\) \{[\s\S]*DEVELOPMENT -> false/)
+  assert.match(outputOf(outputs, 'generated/config.ts'), /realtimeEnabled: pick<boolean>\(\{ development: false, staging: false, production: false \}\)/)
+  assert.ok(!outputs.some((output) => /RealtimeClient|generated\/realtime\.ts/.test(output.path)))
 })
 
 /** A project that declares one secret, optionally with a .env. */
@@ -472,6 +473,114 @@ test('secrets: a .env missing one of several keys names only that key', () => {
   })
   writeFileSync(path.join(dir, '.env'), 'MAPS_API_KEY=x\n')
   assert.deepEqual(generateAll(dir).warnings, ['.env lacks ANALYTICS_KEY: ANALYTICS_KEY is empty in AppSecrets.'])
+})
+
+test('realtime: backoff delay is the shared formula, with a quarter of jitter', () => {
+  const policy = { initialMs: 1000, maxMs: 30000, factor: 2 }
+  assert.equal(backoffDelay(0, policy, () => 0.5), 1000)
+  assert.equal(backoffDelay(2, policy, () => 0.5), 4000)
+  assert.equal(backoffDelay(10, policy, () => 0.5), 30000)
+  assert.equal(backoffDelay(0, policy, () => 0), 750)
+  assert.equal(backoffDelay(0, policy, () => 1), 1250)
+})
+
+/**
+ * A project with a realtime contract. The starter flag is copied in, then overridden.
+ * @param {{ development: boolean, staging: boolean, production: boolean }} [enabled]
+ */
+function realtimeProject(enabled = { development: true, staging: false, production: false }) {
+  const dir = tempProject()
+  editJson(path.join(dir, 'contracts', 'config.json'), (config) => {
+    config.values.realtimeUrl = {
+      type: 'url',
+      development: 'ws://127.0.0.1:8080',
+      staging: 'wss://staging.example.com',
+      production: 'wss://example.com',
+    }
+    config.values.realtimeEnabled.development = enabled.development
+    config.values.realtimeEnabled.staging = enabled.staging
+    config.values.realtimeEnabled.production = enabled.production
+  })
+  writeFileSync(
+    path.join(dir, 'contracts', 'realtime.json'),
+    `${JSON.stringify({
+      url: 'realtimeUrl',
+      enabled: 'realtimeEnabled',
+      auth: 'bearer',
+      heartbeatMs: 25000,
+      reconnect: { initialMs: 1000, maxMs: 30000, factor: 2 },
+      events: { taskChanged: { id: 'string', fields: { taskId: 'string' } } },
+    }, null, 2)}\n`,
+  )
+  return dir
+}
+
+test('realtime: the starter has the flag off and no contract, so no client is generated', () => {
+  assert.ok(!generate(TEMPLATE).some((output) => output.path.endsWith('RealtimeClient.swift')))
+})
+
+test('realtime: a contract with the flag off is validated and generates nothing', () => {
+  const outputs = generate(realtimeProject({ development: false, staging: false, production: false }))
+  assert.ok(!outputs.some((output) => /RealtimeClient|realtime\.ts$/.test(output.path)))
+})
+
+test('realtime: a true flag without the contract fails', () => {
+  const dir = tempProject()
+  editJson(path.join(dir, 'contracts', 'config.json'), (config) => {
+    config.values.realtimeEnabled.development = true
+  })
+  assert.throws(() => generate(dir), /realtime\.json is missing/)
+})
+
+test('realtime: an enabled contract generates the same timings and a connect guard on every platform', () => {
+  const outputs = generate(realtimeProject())
+  for (const suffix of ['RealtimeClient.swift', 'RealtimeClient.kt', 'realtime.ts']) {
+    const source = outputOf(outputs, suffix)
+    assert.match(source, /25000/)
+    assert.match(source, /1000/)
+    assert.match(source, /30000/)
+    assert.match(source, /0\.25/)
+    assert.match(source, /realtimeEnabled/)
+    assert.match(source, /taskChanged/)
+    assert.match(source, /taskId/)
+    assert.match(source, /"ping"|\\"ping\\"|type: 'ping'/)
+    assert.match(source, /appDidEnterBackground/)
+    assert.match(source, /networkDidReturn/)
+  }
+  assert.match(outputOf(outputs, 'RealtimeClient.swift'), /guard AppConfig\.realtimeEnabled else \{ return \}/)
+  assert.match(outputOf(outputs, 'RealtimeClient.kt'), /if \(!AppConfig\.realtimeEnabled\) return/)
+  assert.match(outputOf(outputs, 'realtime.ts'), /if \(!AppConfig\.realtimeEnabled\) return/)
+  assert.match(outputOf(outputs, 'realtime.ts'), /typeof WebSocket === 'undefined'/)
+})
+
+test('realtime: turning the flag off again makes the clients stale', () => {
+  const dir = realtimeProject()
+  const produced = generate(dir).map((output) => output.path)
+  for (const file of produced.filter((file) => /RealtimeClient|realtime\.ts$/.test(file))) {
+    mkdirSync(path.join(dir, path.dirname(file)), { recursive: true })
+    writeFileSync(path.join(dir, file), 'generated\n')
+  }
+  editJson(path.join(dir, 'contracts', 'config.json'), (config) => {
+    config.values.realtimeEnabled.development = false
+  })
+  const next = new Set(generate(dir).map((output) => output.path))
+  const stale = staleFiles(dir, next)
+  assert.ok(stale.includes('apps/ios/App/Generated/RealtimeClient.swift'))
+  assert.ok(stale.includes('apps/android/app/src/main/kotlin/app/generated/RealtimeClient.kt'))
+  assert.ok(stale.includes('apps/web/src/generated/realtime.ts'))
+})
+
+test('realtime: an enabled Android app must have OkHttp and the internet permission', () => {
+  const dir = realtimeProject()
+  mkdirSync(path.join(dir, 'apps/android/gradle'), { recursive: true })
+  mkdirSync(path.join(dir, 'apps/android/app/src/main'), { recursive: true })
+  writeFileSync(path.join(dir, 'apps/android/gradle/libs.versions.toml'), '[versions]\n')
+  writeFileSync(path.join(dir, 'apps/android/app/build.gradle.kts'), 'dependencies {}\n')
+  writeFileSync(path.join(dir, 'apps/android/app/src/main/AndroidManifest.xml'), '<manifest></manifest>\n')
+  assert.throws(() => generate(dir), /no OkHttp dependency/)
+  writeFileSync(path.join(dir, 'apps/android/gradle/libs.versions.toml'), 'okhttp = "4.12.0"\n')
+  writeFileSync(path.join(dir, 'apps/android/app/build.gradle.kts'), 'implementation(libs.okhttp)\n')
+  assert.throws(() => generate(dir), /INTERNET/)
 })
 
 test('every generated file says it is generated and where it comes from', () => {

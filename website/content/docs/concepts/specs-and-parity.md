@@ -22,6 +22,7 @@ status:                 # planned | in-progress | done | n/a (not on this platfo
 ## Summary
 ## User stories
 ## Screens and states        (loading, empty, error and success for each screen)
+## Live updates              (none, unless a foreground socket is justified)
 ## Behavior and rules        (including stored data: keys, values and types)
 ## Acceptance criteria
 - AC-notes-1: ...

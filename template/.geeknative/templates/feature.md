@@ -21,6 +21,10 @@ One or two sentences: what the user can do, and why.
 
 For each screen: what it's for, what it shows, and its loading, empty, error and success states.
 
+## Live updates
+
+`none`, unless the feature needs a connection that stays open in the foreground. If it does, name the events and write why HTTP, server-sent events, polling, and push notifications were not enough.
+
 ## Behavior and rules
 
 Business rules, validation, limits and edge cases. For stored data: the keys, values and types, identical on every platform.
