@@ -16,6 +16,8 @@ export type ShowcaseApp = {
   /** Brand color for the browser tab mark, from shots.json `mark` or `color.primary`. */
   mark: string;
   shotPrefix: string;
+  /** Cross-platform consistency from contracts/app.json. Missing means adapted. */
+  consistency: "strict" | "adapted";
   screens: ShowcaseScreen[];
 };
 
@@ -28,6 +30,7 @@ export const showcaseApps: ShowcaseApp[] = deviceShowcaseCatalog.apps
     summary: app.summary,
     mark: app.mark,
     shotPrefix: app.shotPrefix,
+    consistency: app.consistency === "strict" ? "strict" : "adapted",
     screens: app.screens.map((screen) => ({
       id: screen.id,
       label: screen.label,

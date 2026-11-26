@@ -20,6 +20,8 @@ private val Context.weddingDataStore by preferencesDataStore(name = "wedding")
 class AppContainer(
     val settingsRepository: SettingsRepository,
     val weddingRepository: WeddingRepository,
+    /** Set when launched for screenshot capture; navigation starts on that screen. */
+    val screenshot: ScreenshotLaunch? = null,
 ) {
     companion object {
         fun live(context: Context) = AppContainer(
@@ -34,6 +36,13 @@ class AppContainer(
         ) = AppContainer(
             settingsRepository = settingsRepository,
             weddingRepository = weddingRepository,
+        )
+
+        /** In-memory dependencies seeded for screenshot capture of one screen. */
+        fun screenshot(launch: ScreenshotLaunch) = AppContainer(
+            settingsRepository = InMemorySettingsRepository(launch.appearance),
+            weddingRepository = InMemoryWeddingRepository(initialPlan = launch.plan()),
+            screenshot = launch,
         )
     }
 }

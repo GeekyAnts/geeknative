@@ -3,7 +3,8 @@
 // screen in previews/shots.json on iOS, Android and web, light and dark.
 //
 // Per-app seed data lives in shots.json: `webStorage` (localStorage keys) and `launchExtras`
-// (extra iOS/Android launch arguments). The script does not hardcode restaurant, ride, or wedding ids.
+// (extra iOS/Android launch arguments). A screen can set `settleMs` when its web images need
+// longer than the default wait. The script does not hardcode restaurant, ride, or wedding ids.
 //
 //   node scripts/publish-demo-app.mjs /path/to/app dine-in
 //   node scripts/publish-demo-app.mjs --capture dine-in
@@ -45,7 +46,7 @@ const APPEARANCES = ['light', 'dark']
 const PLATFORMS = ['ios', 'android', 'web']
 const ANDROID_ANIMATION_SCALES = ['animator_duration_scale', 'transition_animation_scale', 'window_animation_scale']
 const WEB_PORT = 4173
-const SETTLE_MS = { ios: 2500, android: 6000, web: 800 }
+const SETTLE_MS = { ios: 3000, android: 6000, web: 800 }
 const BLANK_STDEV = 12
 const CAPTURE_RETRIES = 8
 
@@ -257,6 +258,21 @@ function storageForScreen(shots, screen, appearance) {
   assignStorage(storage, groups.always)
   assignStorage(storage, screen.signedIn ? groups.signedIn : groups.signedOut)
   return storage
+}
+
+/**
+ * Wait before the first shot. Web defaults to 800 ms; a screen's `settleMs` overrides that
+ * when its images need longer. iOS and Android keep their own waits.
+ * @param {{ id?: string, settleMs?: number }} screen
+ * @param {'ios' | 'android' | 'web'} platform
+ */
+function settleFor(screen, platform) {
+  if (platform !== 'web' || screen.settleMs == null) return SETTLE_MS[platform]
+  const wait = screen.settleMs
+  if (typeof wait !== 'number' || !Number.isFinite(wait) || wait < 0) {
+    throw new CliError(`Screen "${screen.id ?? ''}" settleMs must be a number of milliseconds, 0 or more.`)
+  }
+  return wait
 }
 
 function launchExtrasFor(shots, screen, appearance) {
@@ -606,7 +622,7 @@ async function capturePlatforms({ root, shots, screens, platforms, dest }) {
             const page = await context.newPage()
             await page.goto(`${web.origin}${screen.webPath}`, { waitUntil: 'networkidle' })
             await page.waitForFunction(() => (document.body?.innerText ?? '').trim().length > 40)
-            await sleep(SETTLE_MS.web)
+            await sleep(settleFor(screen, 'web'))
             const png = path.join(tmp, `web-${screen.id}-${appearance}.png`)
             await page.screenshot({ path: png, type: 'png' })
             await toWebp(sharp, png, path.join(dest, 'web', `${screen.id}-${appearance}.webp`))
@@ -650,7 +666,7 @@ async function main() {
   log.ok('previews', path.relative(repo, previews))
 }
 
-export { animationScaleToRestore, launchExtrasFor, nightModeFromUimode, screensFromNavigation, storageForScreen }
+export { animationScaleToRestore, launchExtrasFor, nightModeFromUimode, screensFromNavigation, settleFor, storageForScreen }
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
   main().catch((error) => {

@@ -1,0 +1,33 @@
+{
+  "$comment": "Settings that differ per environment, and the names of secrets whose values live in .env (never here).",
+  "$example": "values: { \"apiBaseUrl\": { \"type\": \"url\", \"description\": \"Backend API.\", \"development\": \"http://localhost:8080\", \"staging\": \"https://staging.example.com\", \"production\": \"https://api.example.com\" } }. Types: string, url, boolean, int. secrets: { \"mapsApiKey\": { \"type\": \"string\", \"description\": \"Maps SDK key\" } }.",
+  "environments": [
+    "development",
+    "staging",
+    "production"
+  ],
+  "values": {
+    "deliveryMinutes": {
+      "type": "int",
+      "description": "Promised delivery time, in minutes.",
+      "development": 10,
+      "staging": 10,
+      "production": 10
+    },
+    "freeDeliveryThreshold": {
+      "type": "int",
+      "description": "Item total, in rupees, at or above which delivery is free.",
+      "development": 199,
+      "staging": 199,
+      "production": 199
+    },
+    "deliveryFee": {
+      "type": "int",
+      "description": "Delivery fee, in rupees, below the free-delivery threshold.",
+      "development": 25,
+      "staging": 25,
+      "production": 25
+    }
+  },
+  "secrets": {}
+}

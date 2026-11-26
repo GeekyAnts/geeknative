@@ -53,6 +53,7 @@ export default function Page() {
               <span className="xl:col-span-4">
                 <span className="block text-[1.4rem] font-[690] leading-[1.1] tracking-[-0.028em] transition-colors group-hover:text-brand wide">{app.name}</span>
                 <span className="label mt-2 block text-muted">SwiftUI, Jetpack Compose, TanStack Start</span>
+                <span className="label mt-2 block text-brand">Consistency · {app.consistency}</span>
               </span>
               <span className="order-3 col-span-2 text-[15.5px] leading-[1.55] text-ink/65 xl:order-none xl:col-span-6">{app.summary}</span>
               <span className="flex justify-end xl:col-span-1">

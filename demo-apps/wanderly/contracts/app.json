@@ -1,0 +1,8 @@
+{
+  "name": "Wanderly",
+  "id": "com.wanderly.app",
+  "version": "1.0.0",
+  "build": 1,
+  "defaultLocale": "en",
+  "consistency": "strict"
+}

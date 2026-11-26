@@ -53,15 +53,15 @@ function Flow({ d, hot = false, dashed = false }: { d: string; hot?: boolean; da
 
 const TRIAGE = ["Product", "Feature", "Behavior", "Design", "Copy", "Bug", "Platform-specific", "Engineering", "Question"];
 const APPS = [
-  { y: 96, dir: "apps/ios", stack: "SwiftUI", files: "NotesScreen.swift · NotesViewModel.swift" },
-  { y: 262, dir: "apps/android", stack: "Jetpack Compose", files: "NotesScreen.kt · NotesViewModel.kt" },
-  { y: 428, dir: "apps/web", stack: "TanStack Start", files: "NotesScreen.tsx · useNotesViewModel.ts" },
+  { y: 96, dir: "apps/ios", stack: "SwiftUI", files: ["NotesScreen.swift", "NotesViewModel.swift"] },
+  { y: 262, dir: "apps/android", stack: "Jetpack Compose", files: ["NotesScreen.kt", "NotesViewModel.kt"] },
+  { y: 428, dir: "apps/web", stack: "TanStack Start", files: ["NotesScreen.tsx", "useNotesViewModel.ts"] },
 ];
 
 export function ArchitectureDiagram({ className = "" }: { className?: string }) {
   return (
-    <div className={`overflow-x-auto [scrollbar-width:thin] ${className}`}>
-      <svg viewBox="0 0 1240 600" className="h-auto w-full min-w-[980px]" role="img" aria-labelledby="arch-title arch-desc">
+    <div className={`overflow-x-auto pb-3 [scrollbar-width:thin] ${className}`}>
+      <svg viewBox="0 0 1240 610" className="h-auto w-full min-w-[980px]" role="img" aria-labelledby="arch-title arch-desc">
         <title id="arch-title">How a prompt becomes three native apps</title>
         <desc id="arch-desc">
           A prompt goes to AGENTS.md, which triages it and updates the spec and contracts. make gen compiles the contracts into
@@ -79,7 +79,7 @@ export function ArchitectureDiagram({ className = "" }: { className?: string }) 
             <circle cx="1" cy="1" r="1" fill="rgb(11 11 11 / 0.07)" />
           </pattern>
         </defs>
-        <rect width="1240" height="600" fill="url(#dots)" />
+        <rect width="1240" height="610" fill="url(#dots)" />
 
         <Step x={24} n="01" title="Prompt" />
         <Step x={228} n="02" title="Triage" />
@@ -157,18 +157,22 @@ export function ArchitectureDiagram({ className = "" }: { className?: string }) 
         {APPS.map((a) => (
           <g key={a.dir}>
             <rect x={858} y={a.y} width={214} height={130} rx={12} fill="#fff" stroke={LINE} />
-            <text x={876} y={a.y + 28} fontSize={15} fontWeight={700} fill={INK} style={sans}>
+            <text x={876} y={a.y + 24} fontSize={15} fontWeight={700} fill={INK} style={sans}>
               {a.stack}
             </text>
-            <text x={876} y={a.y + 48} fontSize={11} fill={MUTED} style={mono}>
+            <text x={876} y={a.y + 42} fontSize={11} fill={MUTED} style={mono}>
               {a.dir} · AGENTS.md
             </text>
-            <text x={876} y={a.y + 76} fontSize={10.5} fill={INK} style={mono}>
-              {a.files}
+            <text x={876} y={a.y + 62} fontSize={10.5} fill={INK} style={mono}>
+              {a.files.map((file, i) => (
+                <tspan key={file} x={876} dy={i === 0 ? 0 : 14}>
+                  {file}
+                </tspan>
+              ))}
             </text>
-            <rect x={876} y={a.y + 92} width={110} height={22} rx={11} fill={MIST} />
-            <circle cx={889} cy={a.y + 103} r={3} fill={RED} />
-            <text x={898} y={a.y + 107} fontSize={10.5} fill={INK} style={mono}>
+            <rect x={876} y={a.y + 96} width={110} height={22} rx={11} fill={MIST} />
+            <circle cx={889} cy={a.y + 107} r={3} fill={RED} />
+            <text x={898} y={a.y + 111} fontSize={10.5} fill={INK} style={mono}>
               AC-notes tests
             </text>
           </g>
@@ -210,7 +214,7 @@ export function ArchitectureDiagram({ className = "" }: { className?: string }) 
         <Flow d="M1072 492 C1092 492 1086 258 1098 254" />
         <Flow d="M1158 270 L1158 298" />
 
-        <text x={858} y={588} fontSize={11} fill={MUTED} style={mono}>
+        <text x={820} y={592} fontSize={11} fill={MUTED} style={mono}>
           Dashed: built from the spec. Solid: compiled from contracts.
         </text>
       </svg>

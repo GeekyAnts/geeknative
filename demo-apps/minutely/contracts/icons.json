@@ -1,0 +1,20 @@
+{
+  "$family": "lucide",
+  "add": "plus",
+  "back": { "icon": "arrow-left", "mirrored": true },
+  "cart": "shopping-bag",
+  "check": "check",
+  "chevronRight": { "icon": "chevron-right", "mirrored": true },
+  "clear": "x",
+  "delivery": "bike",
+  "fast": "zap",
+  "home": "house",
+  "location": "map-pin",
+  "noResults": "search-x",
+  "orderPlaced": "circle-check",
+  "receipt": "receipt",
+  "remove": "minus",
+  "savings": "badge-percent",
+  "search": "search",
+  "settings": "settings"
+}

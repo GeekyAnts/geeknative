@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import { existsSync } from "node:fs";
 import path from "node:path";
@@ -6,7 +7,12 @@ import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/articles/JsonLd";
 import { AppShowcase } from "@/components/showcase/AppShowcase";
 import { Eyebrow, Stop } from "@/components/ui/primitives";
-import { getShowcase, showcaseApps, showcaseHref, type ShowcaseApp } from "@/content/showcase";
+import {
+  getShowcase,
+  showcaseApps,
+  showcaseHref,
+  type ShowcaseApp,
+} from "@/content/showcase";
 import { absoluteUrl, breadcrumbs, ogImage } from "@/lib/seo";
 
 const PLATFORMS = ["ios", "web", "android"] as const;
@@ -14,20 +20,30 @@ const MODES = ["light", "dark"] as const;
 
 /** Files present for this app, so the page never points at a missing capture. */
 function capturedShots(app: ShowcaseApp) {
-  const dir = path.join(process.cwd(), "public", app.shotPrefix.replace(/^\/geeknative\//, ""));
+  const dir = path.join(
+    process.cwd(),
+    "public",
+    app.shotPrefix.replace(/^\/geeknative\//, ""),
+  );
+
   return PLATFORMS.flatMap((platform) =>
-    app.screens.flatMap((screen) => MODES.map((mode) => `${platform}-${screen.id}-${mode}.webp`)),
+    app.screens.flatMap((screen) =>
+      MODES.map((mode) => `${platform}-${screen.id}-${mode}.webp`),
+    ),
   ).filter((file) => existsSync(path.join(dir, file)));
 }
 
 type Props = { params: Promise<{ slug: string }> };
 
-export const generateStaticParams = () => showcaseApps.map((app) => ({ slug: app.slug }));
+export const generateStaticParams = () =>
+  showcaseApps.map((app) => ({ slug: app.slug }));
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const app = getShowcase(slug);
+
   if (!app) return {};
+
   return {
     title: app.name,
     description: app.summary,
@@ -44,6 +60,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function Page({ params }: Props) {
   const { slug } = await params;
   const app = getShowcase(slug);
+
   if (!app) notFound();
 
   return (
@@ -66,19 +83,33 @@ export default async function Page({ params }: Props) {
           ]),
         ]}
       />
+
       <header className="max-w-[46rem]">
         <Eyebrow className="text-muted">
           <Link href="/showcase/" className="hover:text-ink">
             Showcase
           </Link>
         </Eyebrow>
-        <h1 className="mt-6 display-l">
+
+        <p className="label mt-6 text-brand">
+          Consistency · {app.consistency}
+        </p>
+
+        <h1 className="mt-4 display-l">
           {app.name}
           <Stop />
         </h1>
-        <p className="mt-6 text-[1.125rem] leading-[1.55] text-ink/70">{app.summary}</p>
-        <p className="label mt-6 text-muted">SwiftUI, Jetpack Compose and TanStack Start. The same screen on all three.</p>
+
+        <p className="mt-6 text-[1.125rem] leading-[1.55] text-ink/70">
+          {app.summary}
+        </p>
+
+        <p className="label mt-6 text-muted">
+          SwiftUI, Jetpack Compose and TanStack Start. The same screen on all
+          three.
+        </p>
       </header>
+
       <div className="mt-16">
         <AppShowcase app={app} shots={capturedShots(app)} />
       </div>

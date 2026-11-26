@@ -46,7 +46,7 @@ The base is a normal geeknative project, so you can review it, version it and im
 ## What to know first
 
 - There is no built-in multi-brand build yet. Each brand is its own project, copied from your base.
-- Automated upgrades for existing projects (`geeknative upgrade`) are on the [roadmap](/docs/project/roadmap/), not released.
+- `npx geeknative@latest upgrade` replaces framework files in an existing project. Project-owned files (brand, specs, app code) stay yours; see [File ownership](/docs/concepts/file-ownership/).
 - There is no backend layer. Each app talks to your services through repository interfaces.
 
 ## Related
