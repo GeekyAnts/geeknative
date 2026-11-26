@@ -1,0 +1,11 @@
+{
+  "mark": "#1F4D3A",
+  "webStorage": {},
+  "screens": [
+    { "id": "home", "label": "Home", "signedIn": false, "webPath": "/", "showcase": true },
+    { "id": "explore", "label": "Explore", "signedIn": false, "webPath": "/explore", "showcase": true },
+    { "id": "bali", "label": "City", "signedIn": false, "webPath": "/city/bali", "showcase": true },
+    { "id": "tegalalang", "label": "Place", "signedIn": false, "webPath": "/place/bali-tegalalang", "showcase": true },
+    { "id": "profile", "label": "Profile", "signedIn": false, "webPath": "/profile" }
+  ]
+}

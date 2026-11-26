@@ -1,0 +1,3211 @@
+{
+  "fallbackImageUrl": "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1600&q=80",
+  "inspirationDestinationIds": [
+    "santorini",
+    "kyoto",
+    "cape-town"
+  ],
+  "destinations": [
+    {
+      "id": "paris",
+      "name": "Paris",
+      "country": "France",
+      "tagline": "The city of light, still glowing",
+      "description": "Paris rewards slow walks: limestone facades, bakery steam, and monuments that look exactly as they do in every daydream. Come for the icons, stay for the side streets between them.",
+      "imageUrl": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1431274172768-2e1175320e47?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1502602898172-47bb2ccb5042?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "categories": [
+        "history",
+        "food"
+      ],
+      "trending": true,
+      "featured": false,
+      "bestTimeToVisit": "April–June and September–October",
+      "currency": "EUR",
+      "currencySymbol": "€",
+      "language": "French",
+      "weather": {
+        "summary": "Mild and bright",
+        "tempC": 18,
+        "season": "Spring"
+      },
+      "travelTips": [
+        "Book museum time slots before you fly.",
+        "The Metro is faster than taxis at rush hour.",
+        "A late-night Seine walk beats another crowded viewpoint."
+      ],
+      "budgetEstimates": {
+        "value": {
+          "lodging": 90,
+          "food": 40,
+          "activities": 30
+        },
+        "mid": {
+          "lodging": 190,
+          "food": 80,
+          "activities": 60
+        },
+        "luxury": {
+          "lodging": 450,
+          "food": 180,
+          "activities": 130
+        }
+      },
+      "itineraryTemplates": [
+        {
+          "title": "Day 1",
+          "items": [
+            {
+              "placeId": "paris-eiffel",
+              "startTime": "09:00",
+              "durationMinutes": 150
+            },
+            {
+              "placeId": "paris-flore",
+              "startTime": "12:30",
+              "durationMinutes": 75
+            },
+            {
+              "placeId": "paris-seine",
+              "startTime": "16:00",
+              "durationMinutes": 75
+            }
+          ]
+        },
+        {
+          "title": "Day 2",
+          "items": [
+            {
+              "placeId": "paris-louvre",
+              "startTime": "09:00",
+              "durationMinutes": 180
+            },
+            {
+              "placeId": "paris-septime",
+              "startTime": "12:30",
+              "durationMinutes": 150
+            },
+            {
+              "placeId": "paris-marais-walk",
+              "startTime": "16:00",
+              "durationMinutes": 180
+            }
+          ]
+        },
+        {
+          "title": "Day 3",
+          "items": [
+            {
+              "placeId": "paris-montmartre",
+              "startTime": "09:00",
+              "durationMinutes": 120
+            },
+            {
+              "placeId": "paris-grands-boulevards",
+              "startTime": "12:30",
+              "durationMinutes": 120
+            },
+            {
+              "placeId": "paris-le-meurice",
+              "startTime": "16:00",
+              "durationMinutes": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bali",
+      "name": "Bali",
+      "country": "Indonesia",
+      "tagline": "Temples, terraces and warm sea",
+      "description": "Bali is a study in contrast: jungle silence in Ubud, surf towns on the south coast, and ceremonies that spill into the street. It is the featured escape for a reason — the light loves a camera.",
+      "imageUrl": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1555400038-63f5ba517a47?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "categories": [
+        "beaches",
+        "adventure"
+      ],
+      "trending": true,
+      "featured": true,
+      "bestTimeToVisit": "April–October (dry season)",
+      "currency": "IDR",
+      "currencySymbol": "Rp",
+      "language": "Indonesian",
+      "weather": {
+        "summary": "Warm, humid, mostly dry",
+        "tempC": 29,
+        "season": "Dry season"
+      },
+      "travelTips": [
+        "Leave extra time — traffic across the island is real.",
+        "Dress modestly at temples; sarongs are often provided.",
+        "Sunrise at the volcano is worth the 02:00 alarm."
+      ],
+      "budgetEstimates": {
+        "value": {
+          "lodging": 45,
+          "food": 20,
+          "activities": 25
+        },
+        "mid": {
+          "lodging": 110,
+          "food": 40,
+          "activities": 55
+        },
+        "luxury": {
+          "lodging": 320,
+          "food": 90,
+          "activities": 110
+        }
+      },
+      "itineraryTemplates": [
+        {
+          "title": "Day 1",
+          "items": [
+            {
+              "placeId": "bali-tegalalang",
+              "startTime": "09:00",
+              "durationMinutes": 90
+            },
+            {
+              "placeId": "bali-locavore",
+              "startTime": "12:30",
+              "durationMinutes": 180
+            },
+            {
+              "placeId": "bali-tanah-lot",
+              "startTime": "16:00",
+              "durationMinutes": 90
+            }
+          ]
+        },
+        {
+          "title": "Day 2",
+          "items": [
+            {
+              "placeId": "bali-batur",
+              "startTime": "09:00",
+              "durationMinutes": 360
+            },
+            {
+              "placeId": "bali-canggu-club",
+              "startTime": "12:30",
+              "durationMinutes": 90
+            },
+            {
+              "placeId": "bali-uluwatu",
+              "startTime": "16:00",
+              "durationMinutes": 120
+            }
+          ]
+        },
+        {
+          "title": "Day 3",
+          "items": [
+            {
+              "placeId": "bali-nusa-penida",
+              "startTime": "09:00",
+              "durationMinutes": 540
+            },
+            {
+              "placeId": "bali-potato-head",
+              "startTime": "12:30",
+              "durationMinutes": 120
+            },
+            {
+              "placeId": "bali-hanging-gardens",
+              "startTime": "16:00",
+              "durationMinutes": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tokyo",
+      "name": "Tokyo",
+      "country": "Japan",
+      "tagline": "Neon, shrines and perfect bowls",
+      "description": "Tokyo is several cities stacked: quiet temple gardens at dawn, department-store food halls at noon, and electric nights in Shinjuku. Trains make it easy; curiosity makes it endless.",
+      "imageUrl": "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1513407030348-c983a97b98d8?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "categories": [
+        "food",
+        "adventure"
+      ],
+      "trending": true,
+      "featured": false,
+      "bestTimeToVisit": "March–May and October–November",
+      "currency": "JPY",
+      "currencySymbol": "¥",
+      "language": "Japanese",
+      "weather": {
+        "summary": "Cool and clear",
+        "tempC": 16,
+        "season": "Spring"
+      },
+      "travelTips": [
+        "Get a Suica or Pasmo card on day one.",
+        "Many tiny restaurants still prefer cash.",
+        "Book teamLab and popular cafés in advance."
+      ],
+      "budgetEstimates": {
+        "value": {
+          "lodging": 80,
+          "food": 35,
+          "activities": 30
+        },
+        "mid": {
+          "lodging": 180,
+          "food": 70,
+          "activities": 65
+        },
+        "luxury": {
+          "lodging": 420,
+          "food": 160,
+          "activities": 140
+        }
+      },
+      "itineraryTemplates": [
+        {
+          "title": "Day 1",
+          "items": [
+            {
+              "placeId": "tokyo-sensoji",
+              "startTime": "09:00",
+              "durationMinutes": 90
+            },
+            {
+              "placeId": "tokyo-tsukiji",
+              "startTime": "12:30",
+              "durationMinutes": 90
+            },
+            {
+              "placeId": "tokyo-shibuya",
+              "startTime": "16:00",
+              "durationMinutes": 45
+            }
+          ]
+        },
+        {
+          "title": "Day 2",
+          "items": [
+            {
+              "placeId": "tokyo-teamlab",
+              "startTime": "09:00",
+              "durationMinutes": 150
+            },
+            {
+              "placeId": "tokyo-ichiran",
+              "startTime": "12:30",
+              "durationMinutes": 40
+            },
+            {
+              "placeId": "tokyo-ghibli",
+              "startTime": "16:00",
+              "durationMinutes": 150
+            }
+          ]
+        },
+        {
+          "title": "Day 3",
+          "items": [
+            {
+              "placeId": "tokyo-fuji",
+              "startTime": "09:00",
+              "durationMinutes": 720
+            },
+            {
+              "placeId": "tokyo-yuen",
+              "startTime": "12:30",
+              "durationMinutes": 120
+            },
+            {
+              "placeId": "tokyo-park-hyatt",
+              "startTime": "16:00",
+              "durationMinutes": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dubai",
+      "name": "Dubai",
+      "country": "United Arab Emirates",
+      "tagline": "Desert city, sky-high ambition",
+      "description": "Dubai is spectacle done properly: towers that rewrite the skyline, a souk that still smells of spice, and a desert an hour from the mall. Go for the views, stay for the unexpected calm on the water.",
+      "imageUrl": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1518684079-3c830dcef090?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1526495124232-a04e1849168c?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "categories": [
+        "adventure",
+        "food"
+      ],
+      "trending": true,
+      "featured": false,
+      "bestTimeToVisit": "November–March",
+      "currency": "AED",
+      "currencySymbol": "AED ",
+      "language": "Arabic",
+      "weather": {
+        "summary": "Hot and clear",
+        "tempC": 28,
+        "season": "Winter"
+      },
+      "travelTips": [
+        "Plan outdoor sights for morning or dusk.",
+        "The Metro is inexpensive and air-conditioned.",
+        "Dress modestly in older neighbourhoods and mosques."
+      ],
+      "budgetEstimates": {
+        "value": {
+          "lodging": 100,
+          "food": 40,
+          "activities": 45
+        },
+        "mid": {
+          "lodging": 220,
+          "food": 90,
+          "activities": 90
+        },
+        "luxury": {
+          "lodging": 550,
+          "food": 200,
+          "activities": 180
+        }
+      },
+      "itineraryTemplates": [
+        {
+          "title": "Day 1",
+          "items": [
+            {
+              "placeId": "dubai-burj-khalifa",
+              "startTime": "09:00",
+              "durationMinutes": 90
+            },
+            {
+              "placeId": "dubai-fountain",
+              "startTime": "12:30",
+              "durationMinutes": 40
+            },
+            {
+              "placeId": "dubai-fanar",
+              "startTime": "16:00",
+              "durationMinutes": 75
+            }
+          ]
+        },
+        {
+          "title": "Day 2",
+          "items": [
+            {
+              "placeId": "dubai-future",
+              "startTime": "09:00",
+              "durationMinutes": 120
+            },
+            {
+              "placeId": "dubai-pierchic",
+              "startTime": "12:30",
+              "durationMinutes": 120
+            },
+            {
+              "placeId": "dubai-desert",
+              "startTime": "16:00",
+              "durationMinutes": 360
+            }
+          ]
+        },
+        {
+          "title": "Day 3",
+          "items": [
+            {
+              "placeId": "dubai-marina-yacht",
+              "startTime": "09:00",
+              "durationMinutes": 90
+            },
+            {
+              "placeId": "dubai-atlantis",
+              "startTime": "12:30",
+              "durationMinutes": 120
+            },
+            {
+              "placeId": "dubai-burj-al-arab",
+              "startTime": "16:00",
+              "durationMinutes": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "london",
+      "name": "London",
+      "country": "United Kingdom",
+      "tagline": "Parks, palaces and a thousand corners",
+      "description": "London is a city of villages sewn together by the Tube. Museums are world-class and often free, parks swallow whole afternoons, and the river keeps you oriented when the streets will not.",
+      "imageUrl": "https://images.unsplash.com/photo-1513635269971-016332d0a8c0?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1486299267070-83823f5448dd?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1529655683826-aba9b3e77383?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "categories": [
+        "history",
+        "food"
+      ],
+      "trending": true,
+      "featured": false,
+      "bestTimeToVisit": "May–September",
+      "currency": "GBP",
+      "currencySymbol": "£",
+      "language": "English",
+      "weather": {
+        "summary": "Mild with passing showers",
+        "tempC": 17,
+        "season": "Summer"
+      },
+      "travelTips": [
+        "An Oyster or contactless card beats paper tickets.",
+        "Book the Tower and West End seats ahead.",
+        "Sunday roast is a plan, not a maybe."
+      ],
+      "budgetEstimates": {
+        "value": {
+          "lodging": 110,
+          "food": 35,
+          "activities": 25
+        },
+        "mid": {
+          "lodging": 220,
+          "food": 75,
+          "activities": 55
+        },
+        "luxury": {
+          "lodging": 480,
+          "food": 160,
+          "activities": 120
+        }
+      },
+      "itineraryTemplates": [
+        {
+          "title": "Day 1",
+          "items": [
+            {
+              "placeId": "london-british-museum",
+              "startTime": "09:00",
+              "durationMinutes": 150
+            },
+            {
+              "placeId": "london-borough",
+              "startTime": "12:30",
+              "durationMinutes": 90
+            },
+            {
+              "placeId": "london-sky-garden",
+              "startTime": "16:00",
+              "durationMinutes": 75
+            }
+          ]
+        },
+        {
+          "title": "Day 2",
+          "items": [
+            {
+              "placeId": "london-tower",
+              "startTime": "09:00",
+              "durationMinutes": 150
+            },
+            {
+              "placeId": "london-dishoom",
+              "startTime": "12:30",
+              "durationMinutes": 75
+            },
+            {
+              "placeId": "london-thames",
+              "startTime": "16:00",
+              "durationMinutes": 60
+            }
+          ]
+        },
+        {
+          "title": "Day 3",
+          "items": [
+            {
+              "placeId": "london-west-end",
+              "startTime": "09:00",
+              "durationMinutes": 180
+            },
+            {
+              "placeId": "london-hoxton",
+              "startTime": "12:30",
+              "durationMinutes": 120
+            },
+            {
+              "placeId": "london-savoy",
+              "startTime": "16:00",
+              "durationMinutes": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rome",
+      "name": "Rome",
+      "country": "Italy",
+      "tagline": "A living museum with better pasta",
+      "description": "Rome stacks centuries in a single block. You will trip over history on the way to lunch, then find a fountain that has been posing for photographs since before photography.",
+      "imageUrl": "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1529260830199-42c24126f198?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1531572753322-ad063cecc358?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "categories": [
+        "history",
+        "food"
+      ],
+      "trending": true,
+      "featured": false,
+      "bestTimeToVisit": "April–June and September–October",
+      "currency": "EUR",
+      "currencySymbol": "€",
+      "language": "Italian",
+      "weather": {
+        "summary": "Sunny and pleasant",
+        "tempC": 21,
+        "season": "Spring"
+      },
+      "travelTips": [
+        "Skip-the-line tickets for the Colosseum and Vatican are worth it.",
+        "Fill a bottle at the nasoni street fountains.",
+        "Dinner starts late; gelato can bridge the wait."
+      ],
+      "budgetEstimates": {
+        "value": {
+          "lodging": 85,
+          "food": 40,
+          "activities": 30
+        },
+        "mid": {
+          "lodging": 180,
+          "food": 75,
+          "activities": 55
+        },
+        "luxury": {
+          "lodging": 400,
+          "food": 160,
+          "activities": 110
+        }
+      },
+      "itineraryTemplates": [
+        {
+          "title": "Day 1",
+          "items": [
+            {
+              "placeId": "rome-colosseum",
+              "startTime": "09:00",
+              "durationMinutes": 180
+            },
+            {
+              "placeId": "rome-armando",
+              "startTime": "12:30",
+              "durationMinutes": 90
+            },
+            {
+              "placeId": "rome-trevi",
+              "startTime": "16:00",
+              "durationMinutes": 30
+            }
+          ]
+        },
+        {
+          "title": "Day 2",
+          "items": [
+            {
+              "placeId": "rome-vatican",
+              "startTime": "09:00",
+              "durationMinutes": 180
+            },
+            {
+              "placeId": "rome-roscioli",
+              "startTime": "12:30",
+              "durationMinutes": 100
+            },
+            {
+              "placeId": "rome-trastevere",
+              "startTime": "16:00",
+              "durationMinutes": 120
+            }
+          ]
+        },
+        {
+          "title": "Day 3",
+          "items": [
+            {
+              "placeId": "rome-pasta-class",
+              "startTime": "09:00",
+              "durationMinutes": 210
+            },
+            {
+              "placeId": "rome-beehive",
+              "startTime": "12:30",
+              "durationMinutes": 120
+            },
+            {
+              "placeId": "rome-de-russie",
+              "startTime": "16:00",
+              "durationMinutes": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "singapore",
+      "name": "Singapore",
+      "country": "Singapore",
+      "tagline": "Gardens in the sky, hawker on the street",
+      "description": "Singapore is precision with soul: rainforest in a glass dome, chilli crab at a hawker centre, and a harbour that looks staged for night photographs. It is easy, delicious and compact.",
+      "imageUrl": "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1464817739973-0128fe77aaa1?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1565967511849-76a60a69eaf5?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "categories": [
+        "food",
+        "adventure"
+      ],
+      "trending": true,
+      "featured": false,
+      "bestTimeToVisit": "February–April",
+      "currency": "SGD",
+      "currencySymbol": "S$",
+      "language": "English",
+      "weather": {
+        "summary": "Warm and humid",
+        "tempC": 30,
+        "season": "Inter-monsoon"
+      },
+      "travelTips": [
+        "Hawker centres are the real national dish.",
+        "The MRT is spotless and obvious.",
+        "Carry a light layer for ferocious air-conditioning."
+      ],
+      "budgetEstimates": {
+        "value": {
+          "lodging": 90,
+          "food": 25,
+          "activities": 35
+        },
+        "mid": {
+          "lodging": 200,
+          "food": 60,
+          "activities": 70
+        },
+        "luxury": {
+          "lodging": 480,
+          "food": 150,
+          "activities": 140
+        }
+      },
+      "itineraryTemplates": [
+        {
+          "title": "Day 1",
+          "items": [
+            {
+              "placeId": "singapore-gardens",
+              "startTime": "09:00",
+              "durationMinutes": 150
+            },
+            {
+              "placeId": "singapore-hawker-chan",
+              "startTime": "12:30",
+              "durationMinutes": 45
+            },
+            {
+              "placeId": "singapore-mbs",
+              "startTime": "16:00",
+              "durationMinutes": 75
+            }
+          ]
+        },
+        {
+          "title": "Day 2",
+          "items": [
+            {
+              "placeId": "singapore-chinatown",
+              "startTime": "09:00",
+              "durationMinutes": 120
+            },
+            {
+              "placeId": "singapore-odette",
+              "startTime": "12:30",
+              "durationMinutes": 180
+            },
+            {
+              "placeId": "singapore-night-safari",
+              "startTime": "16:00",
+              "durationMinutes": 180
+            }
+          ]
+        },
+        {
+          "title": "Day 3",
+          "items": [
+            {
+              "placeId": "singapore-peranakan",
+              "startTime": "09:00",
+              "durationMinutes": 180
+            },
+            {
+              "placeId": "singapore-warehouse",
+              "startTime": "12:30",
+              "durationMinutes": 120
+            },
+            {
+              "placeId": "singapore-raffles",
+              "startTime": "16:00",
+              "durationMinutes": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "new-york",
+      "name": "New York",
+      "country": "United States",
+      "tagline": "The city that still looks like the movies",
+      "description": "New York is vertical energy: brownstones, bridges, and a skyline that rearranges itself every decade. Walk more than you plan to. Eat standing up at least once.",
+      "imageUrl": "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "categories": [
+        "food",
+        "history"
+      ],
+      "trending": false,
+      "featured": false,
+      "bestTimeToVisit": "April–June and September–November",
+      "currency": "USD",
+      "currencySymbol": "$",
+      "language": "English",
+      "weather": {
+        "summary": "Crisp and clear",
+        "tempC": 15,
+        "season": "Fall"
+      },
+      "travelTips": [
+        "An unlimited MetroCard (or OMNY) pays for itself quickly.",
+        "Book The Met and Broadway before the weekend.",
+        "Sunset from a west-facing pier is free and cinematic."
+      ],
+      "budgetEstimates": {
+        "value": {
+          "lodging": 140,
+          "food": 45,
+          "activities": 35
+        },
+        "mid": {
+          "lodging": 280,
+          "food": 90,
+          "activities": 75
+        },
+        "luxury": {
+          "lodging": 620,
+          "food": 200,
+          "activities": 160
+        }
+      },
+      "itineraryTemplates": [
+        {
+          "title": "Day 1",
+          "items": [
+            {
+              "placeId": "ny-central-park",
+              "startTime": "09:00",
+              "durationMinutes": 150
+            },
+            {
+              "placeId": "ny-katz",
+              "startTime": "12:30",
+              "durationMinutes": 60
+            },
+            {
+              "placeId": "ny-brooklyn-bridge",
+              "startTime": "16:00",
+              "durationMinutes": 75
+            }
+          ]
+        },
+        {
+          "title": "Day 2",
+          "items": [
+            {
+              "placeId": "ny-met",
+              "startTime": "09:00",
+              "durationMinutes": 180
+            },
+            {
+              "placeId": "ny-le-bernardin",
+              "startTime": "12:30",
+              "durationMinutes": 150
+            },
+            {
+              "placeId": "ny-broadway",
+              "startTime": "16:00",
+              "durationMinutes": 180
+            }
+          ]
+        },
+        {
+          "title": "Day 3",
+          "items": [
+            {
+              "placeId": "ny-ferry",
+              "startTime": "09:00",
+              "durationMinutes": 90
+            },
+            {
+              "placeId": "ny-ace",
+              "startTime": "12:30",
+              "durationMinutes": 120
+            },
+            {
+              "placeId": "ny-plaza",
+              "startTime": "16:00",
+              "durationMinutes": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "santorini",
+      "name": "Santorini",
+      "country": "Greece",
+      "tagline": "White walls, dark cliffs, gold hour",
+      "description": "Santorini is the postcard that turns out to be real: caldera views, volcanic beaches, and villages that glow at dusk. Stay for sunrise in Oia, when the terraces belong to you.",
+      "imageUrl": "https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1533105079780-fdcd5a8a0d19?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "categories": [
+        "beaches",
+        "history"
+      ],
+      "trending": false,
+      "featured": false,
+      "bestTimeToVisit": "April–June and September–October",
+      "currency": "EUR",
+      "currencySymbol": "€",
+      "language": "Greek",
+      "weather": {
+        "summary": "Warm with a sea breeze",
+        "tempC": 24,
+        "season": "Late spring"
+      },
+      "travelTips": [
+        "Oia sunset is famous for a reason — arrive early.",
+        "ATMs can be scarce in smaller villages.",
+        "A boat day on the caldera beats another cliff café."
+      ],
+      "budgetEstimates": {
+        "value": {
+          "lodging": 95,
+          "food": 40,
+          "activities": 40
+        },
+        "mid": {
+          "lodging": 210,
+          "food": 80,
+          "activities": 80
+        },
+        "luxury": {
+          "lodging": 520,
+          "food": 170,
+          "activities": 150
+        }
+      },
+      "itineraryTemplates": [
+        {
+          "title": "Day 1",
+          "items": [
+            {
+              "placeId": "santorini-fira",
+              "startTime": "09:00",
+              "durationMinutes": 120
+            },
+            {
+              "placeId": "santorini-ammoudi",
+              "startTime": "12:30",
+              "durationMinutes": 90
+            },
+            {
+              "placeId": "santorini-oia",
+              "startTime": "16:00",
+              "durationMinutes": 90
+            }
+          ]
+        },
+        {
+          "title": "Day 2",
+          "items": [
+            {
+              "placeId": "santorini-red-beach",
+              "startTime": "09:00",
+              "durationMinutes": 90
+            },
+            {
+              "placeId": "santorini-seaside",
+              "startTime": "12:30",
+              "durationMinutes": 90
+            },
+            {
+              "placeId": "santorini-sail",
+              "startTime": "16:00",
+              "durationMinutes": 360
+            }
+          ]
+        },
+        {
+          "title": "Day 3",
+          "items": [
+            {
+              "placeId": "santorini-wine",
+              "startTime": "09:00",
+              "durationMinutes": 240
+            },
+            {
+              "placeId": "santorini-vedema",
+              "startTime": "12:30",
+              "durationMinutes": 120
+            },
+            {
+              "placeId": "santorini-canaves",
+              "startTime": "16:00",
+              "durationMinutes": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kyoto",
+      "name": "Kyoto",
+      "country": "Japan",
+      "tagline": "Bamboo light and temple quiet",
+      "description": "Kyoto is Japan’s memory palace: torii gates in the trees, gardens raked into stillness, and neighbourhoods that still close the wooden shutters at dusk. Go early; the magic is a morning person.",
+      "imageUrl": "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1478436127897-769e1b3f0f36?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "categories": [
+        "history",
+        "food"
+      ],
+      "trending": false,
+      "featured": false,
+      "bestTimeToVisit": "March–May and October–November",
+      "currency": "JPY",
+      "currencySymbol": "¥",
+      "language": "Japanese",
+      "weather": {
+        "summary": "Cool mornings, clear days",
+        "tempC": 17,
+        "season": "Autumn"
+      },
+      "travelTips": [
+        "Fushimi Inari at 07:00 is a different mountain.",
+        "Reserve a tea ceremony; walk-ins fill up.",
+        "Buses are slower than they look on the map."
+      ],
+      "budgetEstimates": {
+        "value": {
+          "lodging": 75,
+          "food": 30,
+          "activities": 25
+        },
+        "mid": {
+          "lodging": 170,
+          "food": 65,
+          "activities": 55
+        },
+        "luxury": {
+          "lodging": 380,
+          "food": 150,
+          "activities": 120
+        }
+      },
+      "itineraryTemplates": [
+        {
+          "title": "Day 1",
+          "items": [
+            {
+              "placeId": "kyoto-fushimi",
+              "startTime": "09:00",
+              "durationMinutes": 120
+            },
+            {
+              "placeId": "kyoto-nishiki",
+              "startTime": "12:30",
+              "durationMinutes": 75
+            },
+            {
+              "placeId": "kyoto-gion",
+              "startTime": "16:00",
+              "durationMinutes": 90
+            }
+          ]
+        },
+        {
+          "title": "Day 2",
+          "items": [
+            {
+              "placeId": "kyoto-arashiyama",
+              "startTime": "09:00",
+              "durationMinutes": 90
+            },
+            {
+              "placeId": "kyoto-kikunoi",
+              "startTime": "12:30",
+              "durationMinutes": 150
+            },
+            {
+              "placeId": "kyoto-tea",
+              "startTime": "16:00",
+              "durationMinutes": 60
+            }
+          ]
+        },
+        {
+          "title": "Day 3",
+          "items": [
+            {
+              "placeId": "kyoto-kinkakuji",
+              "startTime": "09:00",
+              "durationMinutes": 60
+            },
+            {
+              "placeId": "kyoto-ace",
+              "startTime": "12:30",
+              "durationMinutes": 120
+            },
+            {
+              "placeId": "kyoto-hiiragiya",
+              "startTime": "16:00",
+              "durationMinutes": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cape-town",
+      "name": "Cape Town",
+      "country": "South Africa",
+      "tagline": "Mountain, vineyard, two oceans",
+      "description": "Cape Town is geography as drama: a flat-topped mountain in the middle of town, beaches that change colour with the weather, and wine country a short drive inland.",
+      "imageUrl": "https://images.unsplash.com/photo-1580060839134-75a5edca2e99?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1596003906949-67221c37965c?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1529528743788-d5c54b5b5c1b?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "categories": [
+        "mountains",
+        "adventure"
+      ],
+      "trending": false,
+      "featured": false,
+      "bestTimeToVisit": "November–March",
+      "currency": "ZAR",
+      "currencySymbol": "R",
+      "language": "English",
+      "weather": {
+        "summary": "Warm and windy",
+        "tempC": 26,
+        "season": "Summer"
+      },
+      "travelTips": [
+        "Book Table Mountain for a clear morning, not a windy afternoon.",
+        "The Atlantic and Indian oceans really do feel different.",
+        "A designated driver is part of a Stellenbosch day."
+      ],
+      "budgetEstimates": {
+        "value": {
+          "lodging": 60,
+          "food": 25,
+          "activities": 30
+        },
+        "mid": {
+          "lodging": 140,
+          "food": 50,
+          "activities": 60
+        },
+        "luxury": {
+          "lodging": 340,
+          "food": 120,
+          "activities": 130
+        }
+      },
+      "itineraryTemplates": [
+        {
+          "title": "Day 1",
+          "items": [
+            {
+              "placeId": "cape-table-mountain",
+              "startTime": "09:00",
+              "durationMinutes": 180
+            },
+            {
+              "placeId": "cape-kloof",
+              "startTime": "12:30",
+              "durationMinutes": 90
+            },
+            {
+              "placeId": "cape-bokaap",
+              "startTime": "16:00",
+              "durationMinutes": 75
+            }
+          ]
+        },
+        {
+          "title": "Day 2",
+          "items": [
+            {
+              "placeId": "cape-good-hope",
+              "startTime": "09:00",
+              "durationMinutes": 180
+            },
+            {
+              "placeId": "cape-penguins",
+              "startTime": "12:30",
+              "durationMinutes": 90
+            },
+            {
+              "placeId": "cape-test-kitchen",
+              "startTime": "16:00",
+              "durationMinutes": 180
+            }
+          ]
+        },
+        {
+          "title": "Day 3",
+          "items": [
+            {
+              "placeId": "cape-stellenbosch",
+              "startTime": "09:00",
+              "durationMinutes": 420
+            },
+            {
+              "placeId": "cape-nelson",
+              "startTime": "12:30",
+              "durationMinutes": 120
+            },
+            {
+              "placeId": "cape-silo",
+              "startTime": "16:00",
+              "durationMinutes": 120
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "barcelona",
+      "name": "Barcelona",
+      "country": "Spain",
+      "tagline": "Sea light and wild architecture",
+      "description": "Barcelona is a Mediterranean city that refused to be ordinary. Gaudí still sets the skyline, the grid of Eixample is made for wandering, and the beach is a metro ride from the Gothic Quarter.",
+      "imageUrl": "https://images.unsplash.com/photo-1583422409516-2895a77efded?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1562883676-8c7feb52d48d?auto=format&fit=crop&w=1600&q=80",
+        "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "categories": [
+        "food",
+        "history",
+        "beaches"
+      ],
+      "trending": false,
+      "featured": false,
+      "bestTimeToVisit": "May–June and September–October",
+      "currency": "EUR",
+      "currencySymbol": "€",
+      "language": "Catalan, Spanish",
+      "weather": {
+        "summary": "Warm and bright",
+        "tempC": 23,
+        "season": "Late spring"
+      },
+      "travelTips": [
+        "Sagrada Família tickets sell out — book the towers too.",
+        "Pickpockets love crowded Las Ramblas; keep bags forward.",
+        "Dinner is late; a vermouth at 19:00 is the local bridge."
+      ],
+      "budgetEstimates": {
+        "value": {
+          "lodging": 80,
+          "food": 35,
+          "activities": 30
+        },
+        "mid": {
+          "lodging": 170,
+          "food": 70,
+          "activities": 55
+        },
+        "luxury": {
+          "lodging": 390,
+          "food": 150,
+          "activities": 120
+        }
+      },
+      "itineraryTemplates": [
+        {
+          "title": "Day 1",
+          "items": [
+            {
+              "placeId": "barcelona-sagrada",
+              "startTime": "09:00",
+              "durationMinutes": 120
+            },
+            {
+              "placeId": "barcelona-boqueria",
+              "startTime": "12:30",
+              "durationMinutes": 75
+            },
+            {
+              "placeId": "barcelona-gothic",
+              "startTime": "16:00",
+              "durationMinutes": 120
+            }
+          ]
+        },
+        {
+          "title": "Day 2",
+          "items": [
+            {
+              "placeId": "barcelona-guell",
+              "startTime": "09:00",
+              "durationMinutes": 120
+            },
+            {
+              "placeId": "barcelona-tickets",
+              "startTime": "12:30",
+              "durationMinutes": 150
+            },
+            {
+              "placeId": "barcelona-bike",
+              "startTime": "16:00",
+              "durationMinutes": 150
+            }
+          ]
+        },
+        {
+          "title": "Day 3",
+          "items": [
+            {
+              "placeId": "barcelona-montserrat",
+              "startTime": "09:00",
+              "durationMinutes": 480
+            },
+            {
+              "placeId": "barcelona-cotton",
+              "startTime": "12:30",
+              "durationMinutes": 120
+            },
+            {
+              "placeId": "barcelona-fuster",
+              "startTime": "16:00",
+              "durationMinutes": 120
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "places": [
+    {
+      "rating": 4.7,
+      "reviewCount": 312450,
+      "openingHours": "09:00–00:45",
+      "durationMinutes": 150,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "paris-eiffel",
+      "destinationId": "paris",
+      "kind": "attraction",
+      "name": "Eiffel Tower",
+      "summary": "Iron lace over the Champ de Mars.",
+      "description": "Climb or ride to a viewing deck and watch Paris arrange itself in every direction. Go at dusk if you can — the tower sparkles on the hour.",
+      "imageUrl": "https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1549144511-f099e773c147?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "location": "Champ de Mars, 7th arrondissement",
+      "category": "history"
+    },
+    {
+      "rating": 4.8,
+      "reviewCount": 287110,
+      "openingHours": "09:00–18:00",
+      "durationMinutes": 180,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "paris-louvre",
+      "destinationId": "paris",
+      "kind": "attraction",
+      "name": "Louvre Museum",
+      "summary": "A palace of rooms you will not finish.",
+      "description": "The world’s most visited museum, from Mesopotamian reliefs to the glass pyramid. Pick two wings and leave the rest for another life.",
+      "imageUrl": "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&w=1600&q=80",
+      "gallery": [
+        "https://images.unsplash.com/photo-1478391679764-b2d8b3cd1e94?auto=format&fit=crop&w=1600&q=80"
+      ],
+      "location": "Rue de Rivoli, 1st arrondissement",
+      "category": "history"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 98400,
+      "openingHours": "09:00–18:00",
+      "durationMinutes": 120,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "paris-montmartre",
+      "destinationId": "paris",
+      "kind": "attraction",
+      "name": "Montmartre",
+      "summary": "Hilltop village above the city.",
+      "description": "Sacré-Cœur, steep lanes, and a square still full of easels. Come in the morning before the portrait painters outnumber the pigeons.",
+      "imageUrl": "https://images.unsplash.com/photo-1471623432079-b009d30b6729?auto=format&fit=crop&w=1600&q=80",
+      "location": "18th arrondissement",
+      "category": "history"
+    },
+    {
+      "rating": 4.8,
+      "reviewCount": 4210,
+      "openingHours": "24 hours",
+      "durationMinutes": 0,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "paris-le-meurice",
+      "destinationId": "paris",
+      "kind": "hotel",
+      "name": "Le Meurice",
+      "summary": "Palace hotel facing the Tuileries.",
+      "description": "Gilded salons, a Alain Ducasse dining room, and windows that look onto the gardens. A splurge that feels like a chapter of old Paris.",
+      "imageUrl": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1600&q=80",
+      "location": "228 Rue de Rivoli",
+      "pricePerNight": 980,
+      "category": "history"
+    },
+    {
+      "rating": 4.5,
+      "reviewCount": 1980,
+      "openingHours": "24 hours",
+      "durationMinutes": 0,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "paris-grands-boulevards",
+      "destinationId": "paris",
+      "kind": "hotel",
+      "name": "Hôtel des Grands Boulevards",
+      "summary": "Playful rooms in the 2nd.",
+      "description": "A lively, design-forward stay with a rooftop that actually gets used. Better value than the palaces, still unmistakably Paris.",
+      "imageUrl": "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=1600&q=80",
+      "location": "17 Boulevard Poissonnière",
+      "pricePerNight": 280,
+      "category": "food"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 3540,
+      "openingHours": "19:30–21:30",
+      "durationMinutes": 150,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "paris-septime",
+      "destinationId": "paris",
+      "kind": "restaurant",
+      "name": "Septime",
+      "summary": "Modern French, fiercely seasonal.",
+      "description": "A neighbourhood tasting room that still feels like the city’s most wanted table. Book the moment dates are firm.",
+      "imageUrl": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1600&q=80",
+      "location": "80 Rue de Charonne",
+      "category": "food"
+    },
+    {
+      "rating": 4.2,
+      "reviewCount": 18900,
+      "openingHours": "07:30–01:30",
+      "durationMinutes": 75,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "paris-flore",
+      "destinationId": "paris",
+      "kind": "restaurant",
+      "name": "Café de Flore",
+      "summary": "The Left Bank, still serving coffee.",
+      "description": "Touristy, yes — and still the right place for an omelette and a long watch over Saint-Germain.",
+      "imageUrl": "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1600&q=80",
+      "location": "172 Boulevard Saint-Germain",
+      "category": "food"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 22100,
+      "openingHours": "18:00–22:00",
+      "durationMinutes": 75,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "paris-seine",
+      "destinationId": "paris",
+      "kind": "activity",
+      "name": "Seine evening cruise",
+      "summary": "Monuments from the water.",
+      "description": "An hour on the river when the stone turns gold. Sit on the open deck; the bridges are the show.",
+      "imageUrl": "https://images.unsplash.com/photo-1502602898172-47bb2ccb5042?auto=format&fit=crop&w=1600&q=80",
+      "location": "Port de la Bourdonnais",
+      "category": "adventure"
+    },
+    {
+      "rating": 4.8,
+      "reviewCount": 6400,
+      "openingHours": "09:00–18:00",
+      "durationMinutes": 180,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "paris-marais-walk",
+      "destinationId": "paris",
+      "kind": "activity",
+      "name": "Marais food walk",
+      "summary": "Falafel, fromageries, hidden courtyards.",
+      "description": "A guided graze through the Marais: market streets, a falafel counter, and the kind of cheese shop you smell before you see.",
+      "imageUrl": "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?auto=format&fit=crop&w=1600&q=80",
+      "location": "Le Marais",
+      "category": "food"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 45200,
+      "openingHours": "09:00–18:00",
+      "durationMinutes": 90,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "bali-tegalalang",
+      "destinationId": "bali",
+      "kind": "attraction",
+      "name": "Tegalalang Rice Terraces",
+      "summary": "Green steps carved for water and light.",
+      "description": "Walk the ridges, drink young coconut, and photograph the terraces before midday haze. A classic for a reason.",
+      "imageUrl": "https://images.unsplash.com/photo-1559628233-eb1b1a45564b?auto=format&fit=crop&w=1600&q=80",
+      "location": "Tegalalang, Ubud",
+      "category": "adventure"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 38900,
+      "openingHours": "07:00–19:00",
+      "durationMinutes": 90,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "bali-tanah-lot",
+      "destinationId": "bali",
+      "kind": "attraction",
+      "name": "Tanah Lot",
+      "summary": "A temple on a rock in the surf.",
+      "description": "Time it for late afternoon. The sea road to the shrine is closed at high tide, which is part of the theatre.",
+      "imageUrl": "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=1600&q=80",
+      "location": "Beraban, Tabanan",
+      "category": "history"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 51100,
+      "openingHours": "07:00–19:00",
+      "durationMinutes": 120,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "bali-uluwatu",
+      "destinationId": "bali",
+      "kind": "attraction",
+      "name": "Uluwatu Temple",
+      "summary": "Cliffside kecak at sunset.",
+      "description": "A sea temple on a sheer headland, with monkeys who have seen every selfie. Stay for the kecak dance as the sun drops.",
+      "imageUrl": "https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?auto=format&fit=crop&w=1600&q=80",
+      "location": "Pecatu, South Kuta",
+      "category": "history"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 2104,
+      "openingHours": "24 hours",
+      "durationMinutes": 0,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "bali-hanging-gardens",
+      "destinationId": "bali",
+      "kind": "hotel",
+      "name": "Hanging Gardens of Bali",
+      "summary": "Infinity pools in the jungle canopy.",
+      "description": "Villas strung down a valley near Ubud, with that famous split pool. Quiet, green, and unashamedly photogenic.",
+      "imageUrl": "https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1600&q=80",
+      "location": "Buahan, Payangan",
+      "pricePerNight": 420,
+      "category": "adventure"
+    },
+    {
+      "rating": 4.5,
+      "reviewCount": 3310,
+      "openingHours": "24 hours",
+      "durationMinutes": 0,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "bali-potato-head",
+      "destinationId": "bali",
+      "kind": "hotel",
+      "name": "Potato Head Suites",
+      "summary": "Beach club energy, Seminyak.",
+      "description": "Design-led rooms above one of the island’s best sunset decks. Stay if you want the sea in the same sentence as dinner.",
+      "imageUrl": "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1600&q=80",
+      "location": "Seminyak",
+      "pricePerNight": 310,
+      "category": "beaches"
+    },
+    {
+      "rating": 4.8,
+      "reviewCount": 1890,
+      "openingHours": "18:00–21:00",
+      "durationMinutes": 180,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "bali-locavore",
+      "destinationId": "bali",
+      "kind": "restaurant",
+      "name": "Locavore NXT",
+      "summary": "Farm-led tasting in Ubud.",
+      "description": "A precise, playful tasting menu built from island farms. One of Southeast Asia’s destination tables.",
+      "imageUrl": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1600&q=80",
+      "location": "Ubud",
+      "category": "food"
+    },
+    {
+      "rating": 4.4,
+      "reviewCount": 8700,
+      "openingHours": "11:00–22:00",
+      "durationMinutes": 90,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "bali-canggu-club",
+      "destinationId": "bali",
+      "kind": "restaurant",
+      "name": "Canggu Beach Club",
+      "summary": "Grilled fish, sandy feet.",
+      "description": "A laid-back beach table for grilled catch and coconut. Come sandy; leave at golden hour.",
+      "imageUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80",
+      "location": "Canggu",
+      "category": "beaches"
+    },
+    {
+      "rating": 4.8,
+      "reviewCount": 19200,
+      "openingHours": "02:00–08:00",
+      "durationMinutes": 360,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "bali-batur",
+      "destinationId": "bali",
+      "kind": "activity",
+      "name": "Mount Batur sunrise trek",
+      "summary": "A volcano before the island wakes.",
+      "description": "A guided night climb to watch the sun rise over the caldera and, on clear days, Agung. Breakfast is boiled eggs in the steam.",
+      "imageUrl": "https://images.unsplash.com/photo-1483683804023-6ccdb62f86ef?auto=format&fit=crop&w=1600&q=80",
+      "location": "Kintamani",
+      "category": "adventure"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 14800,
+      "openingHours": "07:00–17:00",
+      "durationMinutes": 540,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "bali-nusa-penida",
+      "destinationId": "bali",
+      "kind": "activity",
+      "name": "Nusa Penida boat day",
+      "summary": "Cliffs, snorkels, turquoise water.",
+      "description": "A fast boat to Penida for Kelingking views and a snorkel over manta territory. Start early; the sea gets choppy later.",
+      "imageUrl": "https://images.unsplash.com/photo-1559827260-dc66d52bef19?auto=format&fit=crop&w=1600&q=80",
+      "location": "Sanur harbour",
+      "category": "beaches"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 82400,
+      "openingHours": "06:00–17:00",
+      "durationMinutes": 90,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "tokyo-sensoji",
+      "destinationId": "tokyo",
+      "kind": "attraction",
+      "name": "Sensō-ji",
+      "summary": "Incense and lanterns in Asakusa.",
+      "description": "Tokyo’s oldest temple, approached through a shopping street that has been selling snacks for centuries. Go at opening for calmer gates.",
+      "imageUrl": "https://images.unsplash.com/photo-1545569341-9eb8b30979d9?auto=format&fit=crop&w=1600&q=80",
+      "location": "Asakusa, Taito",
+      "category": "history"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 65100,
+      "openingHours": "Always open",
+      "durationMinutes": 45,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "tokyo-shibuya",
+      "destinationId": "tokyo",
+      "kind": "attraction",
+      "name": "Shibuya Crossing",
+      "summary": "The scramble, from street or sky.",
+      "description": "Wait for the light, then walk with a thousand others. The Mag’s Park rooftop is the kinder viewpoint.",
+      "imageUrl": "https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=1600&q=80",
+      "location": "Shibuya",
+      "category": "adventure"
+    },
+    {
+      "rating": 4.8,
+      "reviewCount": 29800,
+      "openingHours": "10:00–20:00",
+      "durationMinutes": 150,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "tokyo-teamlab",
+      "destinationId": "tokyo",
+      "kind": "attraction",
+      "name": "teamLab Borderless",
+      "summary": "Rooms made of light.",
+      "description": "An immersive digital museum that spills from one room into the next. Book a slot; wander without a map.",
+      "imageUrl": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=1600&q=80",
+      "location": "Azabudai Hills",
+      "category": "adventure"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 5120,
+      "openingHours": "24 hours",
+      "durationMinutes": 0,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "tokyo-park-hyatt",
+      "destinationId": "tokyo",
+      "kind": "hotel",
+      "name": "Park Hyatt Tokyo",
+      "summary": "Cloud-level calm in Shinjuku.",
+      "description": "The Lost in Translation hotel, still one of the city’s best stays: pool in the sky, New York Bar, and quiet rooms above the neon.",
+      "imageUrl": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1600&q=80",
+      "location": "3-7-1-2 Nishi Shinjuku",
+      "pricePerNight": 720,
+      "category": "adventure"
+    },
+    {
+      "rating": 4.5,
+      "reviewCount": 2760,
+      "openingHours": "24 hours",
+      "durationMinutes": 0,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "tokyo-yuen",
+      "destinationId": "tokyo",
+      "kind": "hotel",
+      "name": "Onsen Ryokan Yuen Shinjuku",
+      "summary": "A soak in the middle of the city.",
+      "description": "Tatami rooms and a rooftop onsen a few streets from the station. Proof you do not need to leave Tokyo to slow down.",
+      "imageUrl": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1600&q=80",
+      "location": "Shinjuku",
+      "pricePerNight": 210,
+      "category": "adventure"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 44100,
+      "openingHours": "05:00–14:00",
+      "durationMinutes": 90,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "tokyo-tsukiji",
+      "destinationId": "tokyo",
+      "kind": "restaurant",
+      "name": "Tsukiji Outer Market",
+      "summary": "Tamagoyaki, sushi, street steam.",
+      "description": "The inner market moved; the outer streets still feed the city. Eat standing, then eat again.",
+      "imageUrl": "https://images.unsplash.com/photo-1579871494447-9811cf80d66d?auto=format&fit=crop&w=1600&q=80",
+      "location": "Tsukiji",
+      "category": "food"
+    },
+    {
+      "rating": 4.4,
+      "reviewCount": 19800,
+      "openingHours": "10:00–23:00",
+      "durationMinutes": 40,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "tokyo-ichiran",
+      "destinationId": "tokyo",
+      "kind": "restaurant",
+      "name": "Ichiran Shibuya",
+      "summary": "Tonkotsu in a solo booth.",
+      "description": "A customisable bowl in a focus booth. Touristy, efficient, and oddly meditative at 23:00.",
+      "imageUrl": "https://images.unsplash.com/photo-1557872943-16a5ac26437e?auto=format&fit=crop&w=1600&q=80",
+      "location": "Shibuya",
+      "category": "food"
+    },
+    {
+      "rating": 4.5,
+      "reviewCount": 12300,
+      "openingHours": "07:00–19:00",
+      "durationMinutes": 720,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "tokyo-fuji",
+      "destinationId": "tokyo",
+      "kind": "activity",
+      "name": "Mount Fuji day trip",
+      "summary": "The cone, if the clouds agree.",
+      "description": "A coach or train day toward Kawaguchiko. Clear winter mornings are the honest bet; the mountain does not pose on command.",
+      "imageUrl": "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?auto=format&fit=crop&w=1600&q=80",
+      "location": "Kawaguchiko",
+      "category": "mountains"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 16700,
+      "openingHours": "10:00–18:00",
+      "durationMinutes": 150,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "tokyo-ghibli",
+      "destinationId": "tokyo",
+      "kind": "activity",
+      "name": "Ghibli Museum",
+      "summary": "A house that thinks like a film.",
+      "description": "Tickets are dated and sell out. No photographs inside, which is the point — you have to look.",
+      "imageUrl": "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=1600&q=80",
+      "location": "Mitaka",
+      "category": "adventure"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 198400,
+      "openingHours": "10:00–00:00",
+      "durationMinutes": 90,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "dubai-burj-khalifa",
+      "destinationId": "dubai",
+      "kind": "attraction",
+      "name": "Burj Khalifa",
+      "summary": "The tallest anything, anywhere.",
+      "description": "Observation decks at 124 and 148. Book sunset; the desert and the gulf both show up.",
+      "imageUrl": "https://images.unsplash.com/photo-1518684079-3c830dcef090?auto=format&fit=crop&w=1600&q=80",
+      "location": "Downtown Dubai",
+      "category": "adventure"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 54200,
+      "openingHours": "18:00–23:00",
+      "durationMinutes": 40,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "dubai-fountain",
+      "destinationId": "dubai",
+      "kind": "attraction",
+      "name": "Dubai Fountain",
+      "summary": "Water, light, the Burj as backdrop.",
+      "description": "Free shows on the lake beside Dubai Mall. Stand on the bridge, not in the crowd at the railing.",
+      "imageUrl": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1600&q=80",
+      "location": "Downtown Dubai",
+      "category": "adventure"
+    },
+    {
+      "rating": 4.5,
+      "reviewCount": 22100,
+      "openingHours": "10:00–18:00",
+      "durationMinutes": 120,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "dubai-future",
+      "destinationId": "dubai",
+      "kind": "attraction",
+      "name": "Museum of the Future",
+      "summary": "A calligraphy-clad oval of ideas.",
+      "description": "Speculative exhibitions inside one of the city’s best-looking buildings. Pair with a walk along the Emirates Towers boulevard.",
+      "imageUrl": "https://images.unsplash.com/photo-1526495124232-a04e1849168c?auto=format&fit=crop&w=1600&q=80",
+      "location": "Sheikh Zayed Road",
+      "category": "adventure"
+    },
+    {
+      "rating": 4.8,
+      "reviewCount": 8900,
+      "openingHours": "24 hours",
+      "durationMinutes": 0,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "dubai-burj-al-arab",
+      "destinationId": "dubai",
+      "kind": "hotel",
+      "name": "Burj Al Arab",
+      "summary": "The sail, on its own island.",
+      "description": "A suite hotel that still defines Dubai excess: gold, butlers, and a terrace over the gulf. Afternoon tea is the lighter way in.",
+      "imageUrl": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1600&q=80",
+      "location": "Jumeirah",
+      "pricePerNight": 1500,
+      "category": "adventure"
+    },
+    {
+      "rating": 4.5,
+      "reviewCount": 15400,
+      "openingHours": "24 hours",
+      "durationMinutes": 0,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "dubai-atlantis",
+      "destinationId": "dubai",
+      "kind": "hotel",
+      "name": "Atlantis, The Palm",
+      "summary": "A resort at the end of the crescent.",
+      "description": "Aquarium suites, a waterpark, and a beach that faces the skyline. Family spectacle, done at scale.",
+      "imageUrl": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1600&q=80",
+      "location": "Palm Jumeirah",
+      "pricePerNight": 480,
+      "category": "beaches"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 4100,
+      "openingHours": "12:30–23:00",
+      "durationMinutes": 120,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "dubai-pierchic",
+      "destinationId": "dubai",
+      "kind": "restaurant",
+      "name": "Pierchic",
+      "summary": "Seafood on a pier over the gulf.",
+      "description": "A walk to a dining room surrounded by water, with the Burj Al Arab in the frame. Sunset bookings vanish first.",
+      "imageUrl": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1600&q=80",
+      "location": "Al Qasr, Madinat Jumeirah",
+      "category": "food"
+    },
+    {
+      "rating": 4.4,
+      "reviewCount": 7200,
+      "openingHours": "09:00–23:00",
+      "durationMinutes": 75,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "dubai-fanar",
+      "destinationId": "dubai",
+      "kind": "restaurant",
+      "name": "Al Fanar",
+      "summary": "Emirati home cooking, courtyard style.",
+      "description": "Machboos, luqaimat and karak in a reconstructed old Dubai courtyard. A useful counterweight to the towers.",
+      "imageUrl": "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1600&q=80",
+      "location": "Al Seef or Festival City",
+      "category": "food"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 33100,
+      "openingHours": "15:00–21:00",
+      "durationMinutes": 360,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "dubai-desert",
+      "destinationId": "dubai",
+      "kind": "activity",
+      "name": "Desert safari",
+      "summary": "Dunes, dinner, a sky without towers.",
+      "description": "Dune bashing, optional camel photos, and a camp dinner. Choose a small-group operator; the sunset is the point.",
+      "imageUrl": "https://images.unsplash.com/photo-1451337516015-6b6e9a44a8a3?auto=format&fit=crop&w=1600&q=80",
+      "location": "Al Marmoom Desert",
+      "category": "adventure"
+    },
+    {
+      "rating": 4.5,
+      "reviewCount": 5600,
+      "openingHours": "16:00–20:00",
+      "durationMinutes": 90,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "dubai-marina-yacht",
+      "destinationId": "dubai",
+      "kind": "activity",
+      "name": "Dubai Marina yacht hour",
+      "summary": "The marina skyline from the water.",
+      "description": "A short private or shared cruise past the clustered towers. Golden hour photographs almost take themselves.",
+      "imageUrl": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1600&q=80",
+      "location": "Dubai Marina",
+      "category": "adventure"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 210300,
+      "openingHours": "10:00–17:00",
+      "durationMinutes": 150,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "london-british-museum",
+      "destinationId": "london",
+      "kind": "attraction",
+      "name": "British Museum",
+      "summary": "A free encyclopedia of objects.",
+      "description": "Rosetta Stone to Sutton Hoo, under a great glass court. It is huge; pick a theme and ignore the rest.",
+      "imageUrl": "https://images.unsplash.com/photo-1577720643272-265310c0c8c4?auto=format&fit=crop&w=1600&q=80",
+      "location": "Great Russell Street, Bloomsbury",
+      "category": "history"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 98700,
+      "openingHours": "09:00–17:30",
+      "durationMinutes": 150,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "london-tower",
+      "destinationId": "london",
+      "kind": "attraction",
+      "name": "Tower of London",
+      "summary": "Crowns, ravens, a thousand years.",
+      "description": "Yeoman Warder tours are the way in. The crown jewels queue looks worse than it is; the ravens are unionised.",
+      "imageUrl": "https://images.unsplash.com/photo-1529655683826-aba9b3e77383?auto=format&fit=crop&w=1600&q=80",
+      "location": "St Katharine’s & Wapping",
+      "category": "history"
+    },
+    {
+      "rating": 4.5,
+      "reviewCount": 41200,
+      "openingHours": "10:00–18:00",
+      "durationMinutes": 75,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "london-sky-garden",
+      "destinationId": "london",
+      "kind": "attraction",
+      "name": "Sky Garden",
+      "summary": "A greenhouse on the 35th floor.",
+      "description": "Free timed tickets for a public garden and bar in the Walkie Talkie. Book the day before; views run from St Paul’s to the Thames Barrier.",
+      "imageUrl": "https://images.unsplash.com/photo-1486299267070-83823f5448dd?auto=format&fit=crop&w=1600&q=80",
+      "location": "20 Fenchurch Street",
+      "category": "adventure"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 6400,
+      "openingHours": "24 hours",
+      "durationMinutes": 0,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "london-savoy",
+      "destinationId": "london",
+      "kind": "hotel",
+      "name": "The Savoy",
+      "summary": "Thames-facing Edwardian glamour.",
+      "description": "A theatre-land palace with an American Bar that still takes mixing seriously. Afternoon tea is a production.",
+      "imageUrl": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1600&q=80",
+      "location": "Strand, Covent Garden",
+      "pricePerNight": 620,
+      "category": "history"
+    },
+    {
+      "rating": 4.4,
+      "reviewCount": 5100,
+      "openingHours": "24 hours",
+      "durationMinutes": 0,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "london-hoxton",
+      "destinationId": "london",
+      "kind": "hotel",
+      "name": "The Hoxton, Shoreditch",
+      "summary": "A sociable stay east of the City.",
+      "description": "Lively lobby, compact rooms, and a neighbourhood that rewards wandering. A mid-range favourite for a reason.",
+      "imageUrl": "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=1600&q=80",
+      "location": "Shoreditch",
+      "pricePerNight": 220,
+      "category": "food"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 28900,
+      "openingHours": "08:00–23:00",
+      "durationMinutes": 75,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "london-dishoom",
+      "destinationId": "london",
+      "kind": "restaurant",
+      "name": "Dishoom Covent Garden",
+      "summary": "Bombay café, London queues.",
+      "description": "Bacon naan at breakfast, black daal at any hour. Walk in early or book; the queue is part of the folklore.",
+      "imageUrl": "https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=1600&q=80",
+      "location": "12 Upper St Martin’s Lane",
+      "category": "food"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 67300,
+      "openingHours": "10:00–17:00",
+      "durationMinutes": 90,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "london-borough",
+      "destinationId": "london",
+      "kind": "restaurant",
+      "name": "Borough Market",
+      "summary": "A thousand lunches under iron roofs.",
+      "description": "Cheese, bread, and a grilled sandwich you will think about later. Avoid Saturday noon if you like your elbows.",
+      "imageUrl": "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?auto=format&fit=crop&w=1600&q=80",
+      "location": "8 Southwark Street",
+      "category": "food"
+    },
+    {
+      "rating": 4.5,
+      "reviewCount": 15400,
+      "openingHours": "09:00–21:00",
+      "durationMinutes": 60,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "london-thames",
+      "destinationId": "london",
+      "kind": "activity",
+      "name": "Thames clipper",
+      "summary": "The city from the river.",
+      "description": "An Uber Boat hop from Westminster to Greenwich. Sit outside if the weather allows; the bridges do the narration.",
+      "imageUrl": "https://images.unsplash.com/photo-1513635269971-016332d0a8c0?auto=format&fit=crop&w=1600&q=80",
+      "location": "Westminster Pier",
+      "category": "adventure"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 8900,
+      "openingHours": "19:00–22:30",
+      "durationMinutes": 180,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "london-west-end",
+      "destinationId": "london",
+      "kind": "activity",
+      "name": "West End evening",
+      "summary": "A stall seat and a late Tube.",
+      "description": "Theatre land still delivers. Same-day TKTS in Leicester Square can be kind; otherwise book the show you actually want.",
+      "imageUrl": "https://images.unsplash.com/photo-1503095396549-4366989bd196?auto=format&fit=crop&w=1600&q=80",
+      "location": "Covent Garden / Soho",
+      "category": "history"
+    },
+    {
+      "rating": 4.8,
+      "reviewCount": 401200,
+      "openingHours": "08:30–19:00",
+      "durationMinutes": 180,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "rome-colosseum",
+      "destinationId": "rome",
+      "kind": "attraction",
+      "name": "Colosseum",
+      "summary": "The arena that still holds a crowd.",
+      "description": "Combine with the Forum and Palatine on one ticket. Morning light on the arches is the photograph everyone wants — and should get.",
+      "imageUrl": "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1600&q=80",
+      "location": "Piazza del Colosseo",
+      "category": "history"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 298400,
+      "openingHours": "08:00–18:00",
+      "durationMinutes": 180,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "rome-vatican",
+      "destinationId": "rome",
+      "kind": "attraction",
+      "name": "Vatican Museums",
+      "summary": "A mile of rooms, then the ceiling.",
+      "description": "The Sistine Chapel is the destination; the map room and the pinecone courtyard are the surprises. Pre-book or suffer.",
+      "imageUrl": "https://images.unsplash.com/photo-1531572753322-ad063cecc358?auto=format&fit=crop&w=1600&q=80",
+      "location": "Vatican City",
+      "category": "history"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 187000,
+      "openingHours": "Always open",
+      "durationMinutes": 30,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "rome-trevi",
+      "destinationId": "rome",
+      "kind": "attraction",
+      "name": "Trevi Fountain",
+      "summary": "A coin, a wish, a thousand cameras.",
+      "description": "Go at 07:00 or after 23:00. The marble still looks wet in the floodlights. One coin only — the rest is folklore inflation.",
+      "imageUrl": "https://images.unsplash.com/photo-1529260830199-42c24126f198?auto=format&fit=crop&w=1600&q=80",
+      "location": "Piazza di Trevi",
+      "category": "history"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 3200,
+      "openingHours": "24 hours",
+      "durationMinutes": 0,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "rome-de-russie",
+      "destinationId": "rome",
+      "kind": "hotel",
+      "name": "Hotel de Russie",
+      "summary": "A secret garden off Piazza del Popolo.",
+      "description": "Rocco Forte calm, a terraced garden, and a location that makes the rest of the centro a stroll.",
+      "imageUrl": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1600&q=80",
+      "location": "Via del Babuino 9",
+      "pricePerNight": 720,
+      "category": "history"
+    },
+    {
+      "rating": 4.5,
+      "reviewCount": 2100,
+      "openingHours": "24 hours",
+      "durationMinutes": 0,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "rome-beehive",
+      "destinationId": "rome",
+      "kind": "hotel",
+      "name": "The Beehive",
+      "summary": "A friendly inn by Termini.",
+      "description": "Thoughtful budget rooms, a garden café, and staff who actually like helping. Proof Rome is not only palazzi.",
+      "imageUrl": "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=1600&q=80",
+      "location": "Via Marghera 8",
+      "pricePerNight": 130,
+      "category": "food"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 5400,
+      "openingHours": "12:00–16:00, 18:00–23:30",
+      "durationMinutes": 100,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "rome-roscioli",
+      "destinationId": "rome",
+      "kind": "restaurant",
+      "name": "Roscioli",
+      "summary": "Carbonara among the salumi.",
+      "description": "Part deli, part dining room. Sit at the back if you can; the wine list is a second education.",
+      "imageUrl": "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=1600&q=80",
+      "location": "Via dei Giubbonari 21",
+      "category": "food"
+    },
+    {
+      "rating": 4.5,
+      "reviewCount": 3800,
+      "openingHours": "12:30–15:00, 19:00–22:30",
+      "durationMinutes": 90,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "rome-armando",
+      "destinationId": "rome",
+      "kind": "restaurant",
+      "name": "Armando al Pantheon",
+      "summary": "Trattoria in the shadow of the dome.",
+      "description": "Roman classics without theatre. Book; the room is small and the pasta is the reason people still queue.",
+      "imageUrl": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1600&q=80",
+      "location": "Salita de’ Crescenzi 31",
+      "category": "food"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 9100,
+      "openingHours": "17:00–21:00",
+      "durationMinutes": 120,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "rome-trastevere",
+      "destinationId": "rome",
+      "kind": "activity",
+      "name": "Twilight Trastevere walk",
+      "summary": "Lanterns, ivy, a spritz on the piazza.",
+      "description": "Cross Ponte Sisto as the stone warms, then lose an hour in lanes that still feel like a village. Dinner wherever the locals are standing.",
+      "imageUrl": "https://images.unsplash.com/photo-1531572753322-ad063cecc358?auto=format&fit=crop&w=1600&q=80",
+      "location": "Trastevere",
+      "category": "food"
+    },
+    {
+      "rating": 4.8,
+      "reviewCount": 4200,
+      "openingHours": "10:00–13:30",
+      "durationMinutes": 210,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "rome-pasta-class",
+      "destinationId": "rome",
+      "kind": "activity",
+      "name": "Pasta-making class",
+      "summary": "Eggs, flour, a Roman nonna energy.",
+      "description": "A hands-on class: dough, sauce, and a lunch you actually made. Book a small group in a home kitchen, not a theatre.",
+      "imageUrl": "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a7?auto=format&fit=crop&w=1600&q=80",
+      "location": "Centro Storico",
+      "category": "food"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 142000,
+      "openingHours": "09:00–21:00",
+      "durationMinutes": 150,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "singapore-gardens",
+      "destinationId": "singapore",
+      "kind": "attraction",
+      "name": "Gardens by the Bay",
+      "summary": "Supertrees and a cloud forest.",
+      "description": "The outdoor grove is free; the cooled conservatories are the show. Stay for the night light show if the heat has not won.",
+      "imageUrl": "https://images.unsplash.com/photo-1464817739973-0128fe77aaa1?auto=format&fit=crop&w=1600&q=80",
+      "location": "Marina Bay",
+      "category": "adventure"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 89000,
+      "openingHours": "10:00–22:00",
+      "durationMinutes": 75,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "singapore-mbs",
+      "destinationId": "singapore",
+      "kind": "attraction",
+      "name": "Marina Bay Sands SkyPark",
+      "summary": "The infinity edge everyone knows.",
+      "description": "A ticketed observation deck (the pool is for guests). Go at blue hour when the bay reflects the skyline.",
+      "imageUrl": "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?auto=format&fit=crop&w=1600&q=80",
+      "location": "Marina Bay",
+      "category": "adventure"
+    },
+    {
+      "rating": 4.5,
+      "reviewCount": 33400,
+      "openingHours": "Always open",
+      "durationMinutes": 120,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "singapore-chinatown",
+      "destinationId": "singapore",
+      "kind": "attraction",
+      "name": "Chinatown",
+      "summary": "Temples, shophouses, late satay.",
+      "description": "Sri Mariamman, Thian Hock Keng, and Maxwell Food Centre within a few blocks. Come hungry and stay for the lanterns.",
+      "imageUrl": "https://images.unsplash.com/photo-1565967511849-76a60a69eaf5?auto=format&fit=crop&w=1600&q=80",
+      "location": "Chinatown",
+      "category": "food"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 4100,
+      "openingHours": "24 hours",
+      "durationMinutes": 0,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "singapore-raffles",
+      "destinationId": "singapore",
+      "kind": "hotel",
+      "name": "Raffles Singapore",
+      "summary": "Whitewashed courtyards and a sling.",
+      "description": "The restored colonial hotel, still serving the original sling in the Long Bar (peanut shells on the floor, as tradition insists).",
+      "imageUrl": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1600&q=80",
+      "location": "1 Beach Road",
+      "pricePerNight": 850,
+      "category": "history"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 1900,
+      "openingHours": "24 hours",
+      "durationMinutes": 0,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "singapore-warehouse",
+      "destinationId": "singapore",
+      "kind": "hotel",
+      "name": "The Warehouse Hotel",
+      "summary": "A restored riverside godown.",
+      "description": "Industrial bones, excellent beds, and a bar that takes tropical drinks seriously. A design stay without the atrium circus.",
+      "imageUrl": "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=1600&q=80",
+      "location": "320 Havelock Road",
+      "pricePerNight": 280,
+      "category": "food"
+    },
+    {
+      "rating": 4.3,
+      "reviewCount": 22100,
+      "openingHours": "10:30–16:00",
+      "durationMinutes": 45,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "singapore-hawker-chan",
+      "destinationId": "singapore",
+      "kind": "restaurant",
+      "name": "Hawker Chan",
+      "summary": "Soya sauce chicken, still a pilgrimage.",
+      "description": "The Michelin-starred stall’s descendants still serve the same glossy chicken and rice. Queue, eat, understand Singapore.",
+      "imageUrl": "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1600&q=80",
+      "location": "Chinatown Complex",
+      "category": "food"
+    },
+    {
+      "rating": 4.8,
+      "reviewCount": 1600,
+      "openingHours": "12:00–13:30, 19:00–20:30",
+      "durationMinutes": 180,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "singapore-odette",
+      "destinationId": "singapore",
+      "kind": "restaurant",
+      "name": "Odette",
+      "summary": "A garden of a tasting menu.",
+      "description": "French technique, Asian produce, a room inside the National Gallery. For a celebration night.",
+      "imageUrl": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1600&q=80",
+      "location": "National Gallery Singapore",
+      "category": "food"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 47800,
+      "openingHours": "18:30–00:00",
+      "durationMinutes": 180,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "singapore-night-safari",
+      "destinationId": "singapore",
+      "kind": "activity",
+      "name": "Night Safari",
+      "summary": "A tram through the dark.",
+      "description": "The world’s first nocturnal zoo. Tram first, then the walking trails when your eyes adjust.",
+      "imageUrl": "https://images.unsplash.com/photo-1546182990-dffe3f866b1c?auto=format&fit=crop&w=1600&q=80",
+      "location": "Mandai",
+      "category": "adventure"
+    },
+    {
+      "rating": 4.5,
+      "reviewCount": 2800,
+      "openingHours": "09:00–18:00",
+      "durationMinutes": 180,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "singapore-peranakan",
+      "destinationId": "singapore",
+      "kind": "activity",
+      "name": "Peranakan trail",
+      "summary": "Tiles, kebaya, a museum of a culture.",
+      "description": "Joo Chiat shophouses and the Peranakan Museum. Eat a laksa that actually burns.",
+      "imageUrl": "https://images.unsplash.com/photo-1565967511849-76a60a69eaf5?auto=format&fit=crop&w=1600&q=80",
+      "location": "Joo Chiat / Armenian Street",
+      "category": "history"
+    },
+    {
+      "rating": 4.8,
+      "reviewCount": 210000,
+      "openingHours": "06:00–01:00",
+      "durationMinutes": 150,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "ny-central-park",
+      "destinationId": "new-york",
+      "kind": "attraction",
+      "name": "Central Park",
+      "summary": "The city’s green lung.",
+      "description": "Enter at Grand Army Plaza and walk until the buildings disappear. The Mall, the lake, and a pretzel are a complete afternoon.",
+      "imageUrl": "https://images.unsplash.com/photo-1568515387631-8b650bbcdb90?auto=format&fit=crop&w=1600&q=80",
+      "location": "Manhattan",
+      "category": "adventure"
+    },
+    {
+      "rating": 4.8,
+      "reviewCount": 156000,
+      "openingHours": "10:00–17:00",
+      "durationMinutes": 180,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "ny-met",
+      "destinationId": "new-york",
+      "kind": "attraction",
+      "name": "The Met",
+      "summary": "Temple of Dendur and then some.",
+      "description": "Pay-what-you-wish for New York State residents; everyone else buys a ticket. The rooftop (in season) is the secret gallery.",
+      "imageUrl": "https://images.unsplash.com/photo-1572953109213-3be62398eb95?auto=format&fit=crop&w=1600&q=80",
+      "location": "1000 Fifth Avenue",
+      "category": "history"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 98000,
+      "openingHours": "Always open",
+      "durationMinutes": 75,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "ny-brooklyn-bridge",
+      "destinationId": "new-york",
+      "kind": "attraction",
+      "name": "Brooklyn Bridge",
+      "summary": "A walk between boroughs.",
+      "description": "Start on the Manhattan side at sunrise or dusk. Stay on the raised pedestrian boardwalk; the photographs face south.",
+      "imageUrl": "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=1600&q=80",
+      "location": "Manhattan / Brooklyn",
+      "category": "history"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 7200,
+      "openingHours": "24 hours",
+      "durationMinutes": 0,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "ny-plaza",
+      "destinationId": "new-york",
+      "kind": "hotel",
+      "name": "The Plaza",
+      "summary": "A chateau on the park.",
+      "description": "Gilded, storied, and still a scene. Eloise would approve of the palm court; the park is across the street.",
+      "imageUrl": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1600&q=80",
+      "location": "Fifth Avenue at 59th Street",
+      "pricePerNight": 890,
+      "category": "history"
+    },
+    {
+      "rating": 4.4,
+      "reviewCount": 3100,
+      "openingHours": "24 hours",
+      "durationMinutes": 0,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "ny-ace",
+      "destinationId": "new-york",
+      "kind": "hotel",
+      "name": "Ace Hotel Brooklyn",
+      "summary": "A sociable stay south of the bridge.",
+      "description": "Industrial bones, a serious lobby bar, and a neighbourhood that has already eaten. Easier on the budget than Midtown palaces.",
+      "imageUrl": "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=1600&q=80",
+      "location": "Downtown Brooklyn",
+      "pricePerNight": 260,
+      "category": "food"
+    },
+    {
+      "rating": 4.5,
+      "reviewCount": 31200,
+      "openingHours": "08:00–22:45",
+      "durationMinutes": 60,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "ny-katz",
+      "destinationId": "new-york",
+      "kind": "restaurant",
+      "name": "Katz's Delicatessen",
+      "summary": "Pastrami that requires a strategy.",
+      "description": "Take a ticket, know your cut, split a sandwich. The line is the tax; the meat is the refund.",
+      "imageUrl": "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1600&q=80",
+      "location": "205 E Houston Street",
+      "category": "food"
+    },
+    {
+      "rating": 4.8,
+      "reviewCount": 2900,
+      "openingHours": "12:00–14:30, 17:15–22:30",
+      "durationMinutes": 150,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "ny-le-bernardin",
+      "destinationId": "new-york",
+      "kind": "restaurant",
+      "name": "Le Bernardin",
+      "summary": "Seafood, almost silent.",
+      "description": "One of the city’s great dining rooms. Jackets, tasting menus, and fish treated with religious attention.",
+      "imageUrl": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1600&q=80",
+      "location": "155 W 51st Street",
+      "category": "food"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 15400,
+      "openingHours": "19:00–22:30",
+      "durationMinutes": 180,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "ny-broadway",
+      "destinationId": "new-york",
+      "kind": "activity",
+      "name": "Broadway evening",
+      "summary": "A marquee, an orchestra, a late diner.",
+      "description": "TKTS or a lottery can work; otherwise buy the seat you want. Walk Times Square afterwards only if you enjoy chaos.",
+      "imageUrl": "https://images.unsplash.com/photo-1503095396549-4366989bd196?auto=format&fit=crop&w=1600&q=80",
+      "location": "Theatre District",
+      "category": "history"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 22000,
+      "openingHours": "Always running",
+      "durationMinutes": 90,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "ny-ferry",
+      "destinationId": "new-york",
+      "kind": "activity",
+      "name": "Staten Island Ferry sunset",
+      "summary": "The harbour, the statue, no ticket.",
+      "description": "A free round trip with the skyline as the show. Stand on the right side outbound for the statue.",
+      "imageUrl": "https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?auto=format&fit=crop&w=1600&q=80",
+      "location": "Whitehall Terminal",
+      "category": "adventure"
+    },
+    {
+      "rating": 4.8,
+      "reviewCount": 67000,
+      "openingHours": "Always open",
+      "durationMinutes": 90,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "santorini-oia",
+      "destinationId": "santorini",
+      "kind": "attraction",
+      "name": "Oia sunset",
+      "summary": "Blue domes, a thousand cameras, gold light.",
+      "description": "Walk the caldera path from Fira if you have the legs, or arrive early and claim a wall. The sun is punctual; the crowd is not.",
+      "imageUrl": "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=1600&q=80",
+      "location": "Oia",
+      "category": "beaches"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 28000,
+      "openingHours": "09:00–18:00",
+      "durationMinutes": 120,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "santorini-fira",
+      "destinationId": "santorini",
+      "kind": "attraction",
+      "name": "Fira",
+      "summary": "The island’s lively rim.",
+      "description": "Cafés, the cable car, and a caldera view that does not require a hotel key. The Orthodox cathedral steps are a quiet pause.",
+      "imageUrl": "https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?auto=format&fit=crop&w=1600&q=80",
+      "location": "Fira",
+      "category": "history"
+    },
+    {
+      "rating": 4.4,
+      "reviewCount": 15200,
+      "openingHours": "09:00–18:00",
+      "durationMinutes": 90,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "santorini-red-beach",
+      "destinationId": "santorini",
+      "kind": "attraction",
+      "name": "Red Beach",
+      "summary": "Volcanic sand under rust cliffs.",
+      "description": "A short walk from Akrotiri. Bring water shoes; the colour is the point, not the loungers.",
+      "imageUrl": "https://images.unsplash.com/photo-1533105079780-fdcd5a8a0d19?auto=format&fit=crop&w=1600&q=80",
+      "location": "Akrotiri",
+      "category": "beaches"
+    },
+    {
+      "rating": 4.8,
+      "reviewCount": 2100,
+      "openingHours": "24 hours",
+      "durationMinutes": 0,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "santorini-canaves",
+      "destinationId": "santorini",
+      "kind": "hotel",
+      "name": "Canaves Oia",
+      "summary": "Cave suites on the caldera.",
+      "description": "Whitewashed luxury with private terraces over the water. The kind of stay people get engaged at.",
+      "imageUrl": "https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1600&q=80",
+      "location": "Oia",
+      "pricePerNight": 780,
+      "category": "beaches"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 1600,
+      "openingHours": "24 hours",
+      "durationMinutes": 0,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "santorini-vedema",
+      "destinationId": "santorini",
+      "kind": "hotel",
+      "name": "Vedema Resort",
+      "summary": "A wine-country hide in Megalochori.",
+      "description": "Quieter than Oia, with a cellar and a village that still has a bakery. A luxury stay that sleeps.",
+      "imageUrl": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1600&q=80",
+      "location": "Megalochori",
+      "pricePerNight": 520,
+      "category": "food"
+    },
+    {
+      "rating": 4.5,
+      "reviewCount": 3400,
+      "openingHours": "12:00–22:00",
+      "durationMinutes": 90,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "santorini-ammoudi",
+      "destinationId": "santorini",
+      "kind": "restaurant",
+      "name": "Ammoudi Fish Tavern",
+      "summary": "Grilled catch at the waterline.",
+      "description": "Descend the steps from Oia (or take a taxi back up). Order whatever came in that morning.",
+      "imageUrl": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1600&q=80",
+      "location": "Ammoudi Bay",
+      "category": "food"
+    },
+    {
+      "rating": 4.4,
+      "reviewCount": 2100,
+      "openingHours": "11:00–22:00",
+      "durationMinutes": 90,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "santorini-seaside",
+      "destinationId": "santorini",
+      "kind": "restaurant",
+      "name": "Seaside Santo",
+      "summary": "A long lunch on Perivolos.",
+      "description": "Beachfront, unhurried, and close enough to the water to hear it. The Greek salad is not ironic.",
+      "imageUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80",
+      "location": "Perivolos",
+      "category": "beaches"
+    },
+    {
+      "rating": 4.8,
+      "reviewCount": 9800,
+      "openingHours": "14:00–20:00",
+      "durationMinutes": 360,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "santorini-sail",
+      "destinationId": "santorini",
+      "kind": "activity",
+      "name": "Caldera sail",
+      "summary": "Volcanic islands and a swim stop.",
+      "description": "A catamaran afternoon: hot springs, the red and white beaches from the water, and a sunset you do not have to share with a wall.",
+      "imageUrl": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1600&q=80",
+      "location": "Vlychada or Ammoudi",
+      "category": "beaches"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 4300,
+      "openingHours": "09:00–18:00",
+      "durationMinutes": 240,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "santorini-wine",
+      "destinationId": "santorini",
+      "kind": "activity",
+      "name": "Santorini wine tour",
+      "summary": "Assyrtiko in a volcanic cellar.",
+      "description": "Three houses, a driver, and a grape that tastes like stone and sea. Santo and Venetsanos are the usual pillars.",
+      "imageUrl": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=1600&q=80",
+      "location": "Pyrgos / Megalochori",
+      "category": "food"
+    },
+    {
+      "rating": 4.8,
+      "reviewCount": 112000,
+      "openingHours": "Always open",
+      "durationMinutes": 120,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "kyoto-fushimi",
+      "destinationId": "kyoto",
+      "kind": "attraction",
+      "name": "Fushimi Inari Taisha",
+      "summary": "A thousand vermilion gates.",
+      "description": "Start at dawn and you may have a stretch of tunnel to yourself. The summit is optional; the first 15 minutes are the photograph.",
+      "imageUrl": "https://images.unsplash.com/photo-1478436127897-769e1b3f0f36?auto=format&fit=crop&w=1600&q=80",
+      "location": "Fushimi-ku",
+      "category": "history"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 64000,
+      "openingHours": "09:00–18:00",
+      "durationMinutes": 90,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "kyoto-arashiyama",
+      "destinationId": "kyoto",
+      "kind": "attraction",
+      "name": "Arashiyama bamboo grove",
+      "summary": "Green light, a path like a film still.",
+      "description": "Walk through early, then continue to the river and Tenryu-ji. Midday is a shuffle; dawn is a gift.",
+      "imageUrl": "https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=1600&q=80",
+      "location": "Arashiyama",
+      "category": "history"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 89000,
+      "openingHours": "09:00–17:00",
+      "durationMinutes": 60,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "kyoto-kinkakuji",
+      "destinationId": "kyoto",
+      "kind": "attraction",
+      "name": "Kinkaku-ji",
+      "summary": "The gold pavilion on the pond.",
+      "description": "You will not go inside; you will circle the water and understand why every postcard chose this angle.",
+      "imageUrl": "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1600&q=80",
+      "location": "Kita-ku",
+      "category": "history"
+    },
+    {
+      "rating": 4.8,
+      "reviewCount": 980,
+      "openingHours": "24 hours",
+      "durationMinutes": 0,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "kyoto-hiiragiya",
+      "destinationId": "kyoto",
+      "kind": "hotel",
+      "name": "Hiiragiya Ryokan",
+      "summary": "A classic inn near the river.",
+      "description": "Tatami, kaiseki in-room, and a wooden architecture that has hosted writers for a century. Book far ahead.",
+      "imageUrl": "https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=1600&q=80",
+      "location": "Nakagyo-ku",
+      "pricePerNight": 900,
+      "category": "history"
+    },
+    {
+      "rating": 4.5,
+      "reviewCount": 2400,
+      "openingHours": "24 hours",
+      "durationMinutes": 0,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "kyoto-ace",
+      "destinationId": "kyoto",
+      "kind": "hotel",
+      "name": "Ace Hotel Kyoto",
+      "summary": "A contemporary stay in a former telephone building.",
+      "description": "Kengo Kuma interiors, a lively lobby, and a location that makes Gion a night walk. Modern Kyoto without the onsen ritual.",
+      "imageUrl": "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=1600&q=80",
+      "location": "Nakagyo-ku",
+      "pricePerNight": 320,
+      "category": "food"
+    },
+    {
+      "rating": 4.4,
+      "reviewCount": 41000,
+      "openingHours": "09:00–18:00",
+      "durationMinutes": 75,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "kyoto-nishiki",
+      "destinationId": "kyoto",
+      "kind": "restaurant",
+      "name": "Nishiki Market",
+      "summary": "Pickled everything, still-warm tofu.",
+      "description": "A narrow food street for grazing. Do not try to have a sit-down meal in the lane; snack, then sit elsewhere.",
+      "imageUrl": "https://images.unsplash.com/photo-1557872943-16a5ac26437e?auto=format&fit=crop&w=1600&q=80",
+      "location": "Nakagyo-ku",
+      "category": "food"
+    },
+    {
+      "rating": 4.8,
+      "reviewCount": 1100,
+      "openingHours": "12:00–13:30, 17:00–20:00",
+      "durationMinutes": 150,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "kyoto-kikunoi",
+      "destinationId": "kyoto",
+      "kind": "restaurant",
+      "name": "Kikunoi",
+      "summary": "Kaiseki as a season on a tray.",
+      "description": "A three-star house in Higashiyama. Reserve as soon as you have dates; this is the meal people rearrange flights for.",
+      "imageUrl": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1600&q=80",
+      "location": "Higashiyama",
+      "category": "food"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 3600,
+      "openingHours": "09:00–18:00",
+      "durationMinutes": 60,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "kyoto-tea",
+      "destinationId": "kyoto",
+      "kind": "activity",
+      "name": "Tea ceremony",
+      "summary": "Matcha, tatami, a practised quiet.",
+      "description": "A small-group ceremony with explanation. Camellia or a temple-affiliated tea house; leave the rushing at the door.",
+      "imageUrl": "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?auto=format&fit=crop&w=1600&q=80",
+      "location": "Higashiyama",
+      "category": "history"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 12800,
+      "openingHours": "17:00–21:00",
+      "durationMinutes": 90,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "kyoto-gion",
+      "destinationId": "kyoto",
+      "kind": "activity",
+      "name": "Gion evening walk",
+      "summary": "Lanterns on Hanami-koji.",
+      "description": "A dusk walk through Gion. Be courteous if you see a geiko — this is a neighbourhood, not a set.",
+      "imageUrl": "https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=1600&q=80",
+      "location": "Gion",
+      "category": "history"
+    },
+    {
+      "rating": 4.8,
+      "reviewCount": 89000,
+      "openingHours": "08:00–19:00",
+      "durationMinutes": 180,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "cape-table-mountain",
+      "destinationId": "cape-town",
+      "kind": "attraction",
+      "name": "Table Mountain",
+      "summary": "A flat summit above the city.",
+      "description": "Cable car if the wind allows; hike Platteklip if you have legs and a clear morning. The view is the Cape Peninsula in one turn.",
+      "imageUrl": "https://images.unsplash.com/photo-1596003906949-67221c37965c?auto=format&fit=crop&w=1600&q=80",
+      "location": "Table Mountain National Park",
+      "category": "mountains"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 41200,
+      "openingHours": "06:00–18:00",
+      "durationMinutes": 180,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "cape-good-hope",
+      "destinationId": "cape-town",
+      "kind": "attraction",
+      "name": "Cape of Good Hope",
+      "summary": "Where two oceans argue.",
+      "description": "A day on the peninsula: Chapman’s Peak, the Cape, and a lighthouse if the legs still work. Baboons have seen your sandwiches.",
+      "imageUrl": "https://images.unsplash.com/photo-1580060839134-75a5edca2e99?auto=format&fit=crop&w=1600&q=80",
+      "location": "Cape Point",
+      "category": "adventure"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 18700,
+      "openingHours": "09:00–18:00",
+      "durationMinutes": 75,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "cape-bokaap",
+      "destinationId": "cape-town",
+      "kind": "attraction",
+      "name": "Bo-Kaap",
+      "summary": "Colour-blocked houses, a spice history.",
+      "description": "Walk, do not just photograph. The museum and a Cape Malay cooking class add the part the facades cannot tell.",
+      "imageUrl": "https://images.unsplash.com/photo-1529528743788-d5c54b5b5c1b?auto=format&fit=crop&w=1600&q=80",
+      "location": "Bo-Kaap",
+      "category": "history"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 3400,
+      "openingHours": "24 hours",
+      "durationMinutes": 0,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "cape-nelson",
+      "destinationId": "cape-town",
+      "kind": "hotel",
+      "name": "Belmond Mount Nelson",
+      "summary": "Pink walls and a famous tea.",
+      "description": "A colonial grande dame at the foot of the mountain, with gardens that make a city stay feel like a retreat.",
+      "imageUrl": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1600&q=80",
+      "location": "Gardens",
+      "pricePerNight": 480,
+      "category": "history"
+    },
+    {
+      "rating": 4.8,
+      "reviewCount": 2100,
+      "openingHours": "24 hours",
+      "durationMinutes": 0,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "cape-silo",
+      "destinationId": "cape-town",
+      "kind": "hotel",
+      "name": "The Silo",
+      "summary": "A grain elevator turned jewel box.",
+      "description": "Rooms above the Zeitz Museum, with pillowed windows over the harbour. Design hotel of the decade, still.",
+      "imageUrl": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1600&q=80",
+      "location": "V&A Waterfront",
+      "pricePerNight": 720,
+      "category": "adventure"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 1900,
+      "openingHours": "18:30–21:00",
+      "durationMinutes": 180,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "cape-test-kitchen",
+      "destinationId": "cape-town",
+      "kind": "restaurant",
+      "name": "The Test Kitchen",
+      "summary": "A tasting menu that put the city on lists.",
+      "description": "Bookings are a sport. If you miss it, the city’s wider dining scene is no consolation prize — it is the main event.",
+      "imageUrl": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1600&q=80",
+      "location": "Woodstock",
+      "category": "food"
+    },
+    {
+      "rating": 4.5,
+      "reviewCount": 4200,
+      "openingHours": "12:00–22:00",
+      "durationMinutes": 90,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "cape-kloof",
+      "destinationId": "cape-town",
+      "kind": "restaurant",
+      "name": "Kloof Street House",
+      "summary": "A garden villa of a dining room.",
+      "description": "Candlelit, leafy, and reliably good. A neighbourhood table that works for a first night in town.",
+      "imageUrl": "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1600&q=80",
+      "location": "Tamboerskloof",
+      "category": "food"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 33400,
+      "openingHours": "08:00–17:00",
+      "durationMinutes": 90,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "cape-penguins",
+      "destinationId": "cape-town",
+      "kind": "activity",
+      "name": "Boulders Beach penguins",
+      "summary": "African penguins, close enough to hear.",
+      "description": "A boardwalk colony in Simon’s Town. Morning is calmer; do not step off the path — they nest in the scrub.",
+      "imageUrl": "https://images.unsplash.com/photo-1551986782-d14b6d1b0b3a?auto=format&fit=crop&w=1600&q=80",
+      "location": "Simon’s Town",
+      "category": "adventure"
+    },
+    {
+      "rating": 4.8,
+      "reviewCount": 8700,
+      "openingHours": "09:00–18:00",
+      "durationMinutes": 420,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "cape-stellenbosch",
+      "destinationId": "cape-town",
+      "kind": "activity",
+      "name": "Stellenbosch wine day",
+      "summary": "Oaks, estate lawns, a designated driver.",
+      "description": "Three estates and a long lunch. The mountains do as much work as the wine. Book a driver; the N1 is not a tasting note.",
+      "imageUrl": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=1600&q=80",
+      "location": "Stellenbosch",
+      "category": "food"
+    },
+    {
+      "rating": 4.8,
+      "reviewCount": 312000,
+      "openingHours": "09:00–18:00",
+      "durationMinutes": 120,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "barcelona-sagrada",
+      "destinationId": "barcelona",
+      "kind": "attraction",
+      "name": "Sagrada Família",
+      "summary": "A forest of stone, still unfinished.",
+      "description": "Book a tower. The interior is the revelation — stained glass that behaves like weather. Gaudí is not a punchline here.",
+      "imageUrl": "https://images.unsplash.com/photo-1583422409516-2895a77efded?auto=format&fit=crop&w=1600&q=80",
+      "location": "Eixample",
+      "category": "history"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 178000,
+      "openingHours": "09:30–19:30",
+      "durationMinutes": 120,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "barcelona-guell",
+      "destinationId": "barcelona",
+      "kind": "attraction",
+      "name": "Park Güell",
+      "summary": "Mosaic benches and a view of the sea.",
+      "description": "Timed entry for the monumental zone. The rest of the park is free and almost as photogenic.",
+      "imageUrl": "https://images.unsplash.com/photo-1562883676-8c7feb52d48d?auto=format&fit=crop&w=1600&q=80",
+      "location": "Gràcia",
+      "category": "history"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 54000,
+      "openingHours": "09:00–18:00",
+      "durationMinutes": 120,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "barcelona-gothic",
+      "destinationId": "barcelona",
+      "kind": "attraction",
+      "name": "Gothic Quarter",
+      "summary": "A maze that predates the grid.",
+      "description": "Lose the map between the cathedral and Plaça Reial. The quarter is at its best just after breakfast, before the tour groups.",
+      "imageUrl": "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?auto=format&fit=crop&w=1600&q=80",
+      "location": "Ciutat Vella",
+      "category": "history"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 2800,
+      "openingHours": "24 hours",
+      "durationMinutes": 0,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "barcelona-fuster",
+      "destinationId": "barcelona",
+      "kind": "hotel",
+      "name": "Hotel Casa Fuster",
+      "summary": "Modernista palace on Passeig de Gràcia.",
+      "description": "A landmark building with a rooftop that looks down the avenue. Piano in the café, city at the door.",
+      "imageUrl": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1600&q=80",
+      "location": "Passeig de Gràcia 132",
+      "pricePerNight": 380,
+      "category": "history"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 1900,
+      "openingHours": "24 hours",
+      "durationMinutes": 0,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "barcelona-cotton",
+      "destinationId": "barcelona",
+      "kind": "hotel",
+      "name": "Cotton House Hotel",
+      "summary": "A former cotton guild, still dressed up.",
+      "description": "Tapestries, a spiral stair, and a pool in the Eixample. A luxury stay that feels like a private club.",
+      "imageUrl": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1600&q=80",
+      "location": "Gran Via de les Corts Catalanes",
+      "pricePerNight": 340,
+      "category": "food"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 4100,
+      "openingHours": "19:00–22:30",
+      "durationMinutes": 150,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "barcelona-tickets",
+      "destinationId": "barcelona",
+      "kind": "restaurant",
+      "name": "Tickets",
+      "summary": "Playful tapas, if it is still in season.",
+      "description": "Adrià-world theatre on a plate. Bookings are scarce; a well-chosen tapas crawl is the honest backup.",
+      "imageUrl": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1600&q=80",
+      "location": "Avinguda del Paral·lel",
+      "category": "food"
+    },
+    {
+      "rating": 4.4,
+      "reviewCount": 89000,
+      "openingHours": "08:00–20:30",
+      "durationMinutes": 75,
+      "priceLevel": 2,
+      "popular": true,
+      "id": "barcelona-boqueria",
+      "destinationId": "barcelona",
+      "kind": "restaurant",
+      "name": "La Boqueria",
+      "summary": "Fruit cones and a counter lunch.",
+      "description": "Enter from the back streets, not Las Ramblas. Eat at a stall counter; the fruit juice is a tourist tax you may still pay.",
+      "imageUrl": "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?auto=format&fit=crop&w=1600&q=80",
+      "location": "La Rambla 91",
+      "category": "food"
+    },
+    {
+      "rating": 4.6,
+      "reviewCount": 6200,
+      "openingHours": "09:00–18:00",
+      "durationMinutes": 150,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "barcelona-bike",
+      "destinationId": "barcelona",
+      "kind": "activity",
+      "name": "Beach bike to Barceloneta",
+      "summary": "A flat ride from Gothic to the sea.",
+      "description": "Rent a bike and follow the waterfront. Swim if the flags agree; vermouth after if they do not.",
+      "imageUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80",
+      "location": "Barceloneta",
+      "category": "beaches"
+    },
+    {
+      "rating": 4.7,
+      "reviewCount": 15400,
+      "openingHours": "09:00–18:00",
+      "durationMinutes": 480,
+      "priceLevel": 2,
+      "popular": false,
+      "id": "barcelona-montserrat",
+      "destinationId": "barcelona",
+      "kind": "activity",
+      "name": "Montserrat day trip",
+      "summary": "A serrated mountain and a monastery.",
+      "description": "Train plus rack railway. Hike a peak if the cloud is kind; the boys’ choir sings at noon on many days.",
+      "imageUrl": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=80",
+      "location": "Montserrat",
+      "category": "mountains"
+    }
+  ]
+}
