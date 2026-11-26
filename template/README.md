@@ -15,6 +15,7 @@ Native iOS, Android and web apps built from one spec by your coding agent, using
 | `make run-ios` | The iOS app in a simulator |
 | `make run-android` | The Android app on an emulator or connected device |
 | `make run-web` | The web app at http://localhost:3000 |
+| `make run-all` | The web app, with keys to launch iOS and Android from the same terminal |
 
 ## What's where
 

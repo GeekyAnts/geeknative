@@ -26,7 +26,8 @@ Usage: geeknative <command>
   doctor [--fix]       Check Xcode, the Android SDK and Node; --fix installs what it can
   parity               Update spec/parity.md from feature specs and tests
   lint [platforms]     Find hardcoded text, unknown test IDs, centered titles and stale specs (or one app's code)
-  run <platform>       Build and launch: ios (simulator), android (emulator or device), web (dev server)
+  run <platform>       Build and launch: ios (simulator), android (emulator or device), web (dev server), all (web plus keys)
+  dev                  Same as run all: web stays up, and keys launch iOS and Android
   pin                  Pin the project to a fresh snapshot of the geeknative checkout it came from
   upgrade              Replace framework files from this CLI; merge ones you edited. Options: --dry-run --force --no-install
   migrate              Apply/prepare project-owned migrations. Options: --dry-run --status --complete <id>
@@ -106,6 +107,8 @@ export async function main(argv) {
         status: values.status,
         complete: values.complete,
       }))
+    case 'dev':
+      return run(findProjectRoot(), 'all')
     case 'run':
       return run(findProjectRoot(), rest[0])
     default:

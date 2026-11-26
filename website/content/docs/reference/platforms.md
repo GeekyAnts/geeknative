@@ -26,7 +26,7 @@ Each app has its own `AGENTS.md` with these conventions, for agents working in t
 
 **Appearance:** `RootView` applies the chosen appearance to the windows themselves, so sheets and alerts follow it too.
 
-**Commands:** `make check-ios` (build, unit tests and UI tests on a simulator), `make run-ios`, or `open apps/ios/App.xcodeproj`.
+**Commands:** `make check-ios` (build, unit tests and UI tests on a simulator), `make run-ios`, `make run-all` (web, plus a key to launch this simulator), or `open apps/ios/App.xcodeproj`.
 
 **Gotchas:** adding a Swift package changes the project file, so the agent asks you first.
 
@@ -44,7 +44,7 @@ Each app has its own `AGENTS.md` with these conventions, for agents working in t
 
 **Appearance:** `MainActivity` themes the whole app from the stored appearance, waits for it to load before the first frame, and keeps the system bar icons readable.
 
-**Commands:** `make check-android` (build and unit tests), `make run-android`, or open `apps/android` in Android Studio for previews.
+**Commands:** `make check-android` (build and unit tests), `make run-android`, `make run-all` (web, plus a key to launch this emulator or device), or open `apps/android` in Android Studio for previews.
 
 ## Web
 
@@ -60,4 +60,4 @@ Each app has its own `AGENTS.md` with these conventions, for agents working in t
 
 **Secrets:** `AppSecrets` from `generated/secrets.server.ts` reads `process.env` on the server and throws in the browser. Use it only in server functions and API routes.
 
-**Commands:** `make check-web` (type-check, unit tests and a production build) and `make run-web` (dev server at `http://localhost:3000`).
+**Commands:** `make check-web` (type-check, unit tests and a production build), `make run-web` (dev server at `http://localhost:3000`), and `make run-all` (that server, with keys to launch iOS and Android from the same terminal).
