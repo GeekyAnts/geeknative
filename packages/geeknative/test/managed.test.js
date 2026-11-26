@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict'
-import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { test } from 'node:test'
-import { extractBlock, MANAGED_BLOCK_FILES, MANAGED_DIRS, MANAGED_FILES, managedHashes } from '../src/lib/managed.js'
+import { extractBlock, MANAGED_BLOCK_FILES, MANAGED_DIRS, MANAGED_FILES, managedHashes, readLock, replaceBlock, writeLock } from '../src/lib/managed.js'
 import { TEMPLATE, tempProject } from './helpers.js'
 
 test('every framework-owned file and block exists in the template', () => {
@@ -21,6 +21,14 @@ test('the managed block is found between its markers', () => {
   assert.equal(extractBlock('no markers here'), null)
 })
 
+test('managed hashes skip incoming conflict copies', () => {
+  const dir = tempProject(['.geeknative/playbooks'])
+  writeFileSync(path.join(dir, '.geeknative', 'playbooks', 'feature.md.geeknative-new'), 'incoming\n')
+  const files = managedHashes(dir).files
+  assert.equal(files['.geeknative/playbooks/feature.md.geeknative-new'], undefined)
+  assert.match(files['.geeknative/playbooks/feature.md'], /^sha256-/)
+})
+
 test('project rules can change without touching the framework block hash', () => {
   const dir = tempProject(['AGENTS.md'])
   const file = path.join(dir, 'AGENTS.md')
@@ -31,4 +39,27 @@ test('project rules can change without touching the framework block hash', () =>
 
   writeFileSync(file, readFileSync(file, 'utf8').replace('# How to work in this repo', '# Edited'))
   assert.notEqual(managedHashes(dir).blocks['AGENTS.md'], before, 'editing inside the block changes its hash')
+})
+
+test('replaceBlock updates the markers and leaves project rules', () => {
+  const text = '<!-- geeknative:begin -->\nold\n<!-- geeknative:end -->\n\n## Project rules\n- mine'
+  assert.equal(
+    replaceBlock(text, '<!-- geeknative:begin -->\nnew\n<!-- geeknative:end -->'),
+    '<!-- geeknative:begin -->\nnew\n<!-- geeknative:end -->\n\n## Project rules\n- mine',
+  )
+})
+
+test('replaceBlock inserts a missing block, after @AGENTS.md when present', () => {
+  assert.equal(replaceBlock('## Project rules\n', '<!-- geeknative:begin -->\nx\n<!-- geeknative:end -->'), '<!-- geeknative:begin -->\nx\n<!-- geeknative:end -->\n## Project rules\n')
+  assert.match(replaceBlock('@AGENTS.md\n\n', '<!-- geeknative:begin -->\nx\n<!-- geeknative:end -->'), /^@AGENTS.md\n\n<!-- geeknative:begin -->\nx\n<!-- geeknative:end -->/)
+})
+
+test('readLock returns null when the file is missing, and the written lock otherwise', () => {
+  const dir = tempProject(['AGENTS.md'])
+  assert.equal(readLock(dir), null)
+  mkdirSync(path.join(dir, '.geeknative'), { recursive: true })
+  writeLock(dir, '0.1.1')
+  const lock = readLock(dir)
+  assert.equal(lock?.geeknative, '0.1.1')
+  assert.match(lock?.blocks['AGENTS.md'] ?? '', /^sha256-/)
 })
