@@ -179,15 +179,6 @@ export function setLockMigrationState(root, state) {
   writeFileSync(path.join(root, '.geeknative', 'lock.json'), `${JSON.stringify(lock, null, 2)}\n`)
 }
 
-/**
- * @deprecated Prefer setLockMigrationState. Updates completed migration ids only.
- * @param {string} root
- * @param {string[]} migrations
- */
-export function setLockMigrations(root, migrations) {
-  setLockMigrationState(root, { migrations })
-}
-
 /** @param {Record<string, string>} object */
 function sortKeys(object) {
   return Object.fromEntries(Object.entries(object).sort(([a], [b]) => a.localeCompare(b)))

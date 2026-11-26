@@ -50,11 +50,13 @@ export async function migrate(
     return showStatus(lock, version, list)
   }
 
-  assertCleanGit(root)
-
+  // --complete only updates lock.json and MIGRATION.md, so it can follow
+  // uncommitted agent edits. Scripted apply and prepare rewrite project files.
   if (complete) {
     return completeMigration(root, lock, version, complete, list, { dryRun })
   }
+
+  assertCleanGit(root)
 
   const waiting = pending(lock, version, list)
   if (!waiting.length) {

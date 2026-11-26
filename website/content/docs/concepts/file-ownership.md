@@ -67,7 +67,7 @@ Run `npx geeknative@latest upgrade` so the command and the template come from th
 
 ## Migrations
 
-Project-owned catch-up is opt-in: `geeknative migrate` (or `make migrate`). It applies scripted transforms and prepares agent-assisted work in `.geeknative/migrations/pending/MIGRATION.md` for you to hand to an agent. It does not call an agent. Use `--status` and `--complete <id>` to track agent-assisted work. Apply / prepare refuse a dirty git tree, support `--dry-run`, and never commit. If you prefer the project as it was, restore the previous commit (including `.geeknative/lock.json`). See [migrate](/docs/reference/cli/#migrate).
+Project-owned catch-up is opt-in: `geeknative migrate` (or `make migrate`). It applies scripted transforms and prepares agent-assisted work in `.geeknative/migrations/pending/MIGRATION.md` for you to hand to an agent. It does not call an agent. Use `--status` and `--complete <id>` to track agent-assisted work. Apply and prepare refuse a dirty git tree. `--complete` does not, so it can follow uncommitted agent edits. Migrate supports `--dry-run` and never commits. If you prefer the project as it was, restore the previous commit (including `.geeknative/lock.json`). See [migrate](/docs/reference/cli/#migrate).
 
 ## Generated files
 

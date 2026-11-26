@@ -140,6 +140,20 @@ test('migrate prepares agent-assisted work without completing it', async () => {
   assert.match(doc, /does \*\*not\*\* invoke/)
 })
 
+test('migrate --complete works on a dirty tree', async () => {
+  const dir = projectWithLock()
+  const list = [agentMigration()]
+  await migrate(dir, { gen: false, list })
+  writeFileSync(path.join(dir, 'agent-edit.txt'), 'applied\n')
+
+  const result = await migrate(dir, { complete: 'demo-agent', list })
+  assert.equal(result.completed, 'demo-agent')
+  assert.deepEqual(readLock(dir)?.migrations, ['demo-agent'])
+  assert.deepEqual(readLock(dir)?.migrationsPrepared, [])
+  assert.equal(existsSync(path.join(dir, PENDING_MIGRATION_DOC)), false)
+  assert.equal(readFileSync(path.join(dir, 'agent-edit.txt'), 'utf8'), 'applied\n')
+})
+
 test('migrate --complete marks agent-assisted work done and refreshes the doc', async () => {
   const dir = projectWithLock()
   const list = [agentMigration('one'), agentMigration('two')]

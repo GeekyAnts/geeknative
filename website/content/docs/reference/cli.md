@@ -213,7 +213,7 @@ Status on the lockfile:
 
 Rules:
 
-- Requires `.geeknative/lock.json`. Apply / prepare / `--complete` need a **clean** git working tree. `--status` does not.
+- Requires `.geeknative/lock.json`. Apply and prepare need a **clean** git working tree. `--status` and `--complete` do not.
 - `--dry-run` prints the plan and writes nothing (including no `MIGRATION.md` and no lock changes).
 - `--status` prints every migration for this CLI version and its status.
 - `--complete <id>` is for agent-assisted ids only. It moves the id to `lock.migrations`, drops it from `migrationsPrepared`, and refreshes or removes `MIGRATION.md`.
