@@ -42,7 +42,8 @@ Same names and responsibilities as the iOS and Android apps.
 | Widths and sizes | `w-*`, `min-w-*` and `max-w-*` with a size name (`max-w-md`, `w-xl`) are Tailwind's container widths, for layout. For a spacing-sized width write `w-(--spacing-md)`. `size-*`, `h-*`, `p-*` and `gap-*` with a token name use the spacing tokens (`size-xs` is 4px). |
 | Motion and shadows | `motion-safe:transition duration-fast ease-standard`; a spring is `ease-snappy duration-snappy`; `shadow-low`. Never raw durations, curves or shadow values, and wrap motion in `motion-safe:`. |
 | Icons | `<AppIcons.settings className="size-icon-md" />` (generated) |
-| Config | `AppConfig.apiBaseUrl`, `environment` from `#/generated/config` (generated from contracts/config.json) |
+| Config | `AppConfig.apiBaseUrl`, `AppConfig.realtimeEnabled`, `environment` from `#/generated/config` (generated from contracts/config.json) |
+| WebSocket | `RealtimeClient` from `#/generated/realtime`, only when `contracts/realtime.json` exists and `realtimeEnabled` is true in some environment. Pass a token function. Call `appDidEnterBackground()` and `appDidBecomeActive()` from `visibilitychange`, and `networkDidReturn()` from the window `online` event. The repository owns the client. `connect()` does nothing when `AppConfig.realtimeEnabled` is false. Do not construct the client during server rendering. |
 | HTTP API | Local repositories are the live backend until a server exists. When a backend is planned, read only this task's `contracts/api/<task>.json` and `contracts/api/common.json` if it uses a shared schema. `make gen` writes `#/generated/api/<task>` (functions named by `operationId`). Call those. Do not read the other task files. |
 | Secrets | `AppSecrets.mapsApiKey` from `#/generated/secrets.server` (server functions and API routes only) |
 | Test IDs | `data-testid="notes.addButton"` |

@@ -204,7 +204,7 @@ Settings that differ per environment, like a backend URL or a feature flag. Ever
 | `description` | Optional. Becomes a doc comment on every platform. |
 | One key per environment | Required for every value. There is no fallback between environments. |
 
-The starter project declares the three environments above and no values, because it has no backend yet.
+The starter project declares the three environments above and one value, `realtimeEnabled`, set to `false` in every environment. It has no backend yet, and it does not open a socket.
 
 ### Generated
 
@@ -226,6 +226,48 @@ Debug builds use `development` and release builds use `production`. To build ano
 | Web | The `VITE_APP_ENVIRONMENT` environment variable. Without it, the dev server uses `development` and a build uses `production`. |
 
 An unknown environment name fails when the app starts, with a message listing the valid names.
+
+## realtime.json
+
+Optional. A new project does not contain this file. HTTP stays the default for create, read, update, delete, and a refresh when a screen opens.
+
+Create `contracts/realtime.json` only after HTTP, server-sent events, polling, and push notifications have each been ruled out. A socket is for a connection that stays open while the app is in the foreground. Push is for a change the user must hear while the app is backgrounded. Do not add a background mode to keep a socket alive. Record the reason in the feature spec, and set `realtimeEnabled` to true only in the environments that need the socket.
+
+```json
+{
+  "url": "realtimeUrl",
+  "enabled": "realtimeEnabled",
+  "auth": "bearer",
+  "heartbeatMs": 25000,
+  "reconnect": { "initialMs": 1000, "maxMs": 30000, "factor": 2 },
+  "events": {
+    "taskChanged": { "id": "string", "fields": { "taskId": "string" } }
+  }
+}
+```
+
+| Field | Rule |
+|---|---|
+| `url` | The name of a `url` value in `config.json`. `ws://` and `wss://` are valid. |
+| `enabled` | Must be the string `realtimeEnabled`. That boolean already exists in the starter, and it is false in every environment. |
+| `auth` | `none` or `bearer`. Bearer sends `{"type":"auth","token":"..."}` as the first text frame on iOS, Android and web. The client takes a token function. It does not read the keychain, DataStore or localStorage. |
+| `heartbeatMs` | A positive integer. The client sends `{"type":"ping"}`. A missed `{"type":"pong"}` within one interval closes the socket. |
+| `reconnect` | `initialMs` and `maxMs` are positive integers and `maxMs` is at least `initialMs`. `factor` is an integer of 2 or more. The wait is the capped base delay, plus or minus a quarter. |
+| `events` | Each event has `"id": "string"` and `fields` of `string`, `int` or `boolean`. No nested objects and no `$ref`. |
+
+`make gen` validates the file whenever it exists. It writes `RealtimeClient` on iOS (URLSession), Android (OkHttp) and the web (the browser `WebSocket`) only when the file exists and `realtimeEnabled` is true in at least one environment. A true flag with no file fails. A file with the flag false in every environment is checked and generates nothing. Turning the flag off, or deleting the file, removes clients that were generated before.
+
+`connect()` does nothing when the active environment has `realtimeEnabled` set to false. Development can stay on while production stays off.
+
+The Android client needs OkHttp. The starter does not depend on it. `make gen` checks `apps/android/gradle/libs.versions.toml`, `app/build.gradle.kts` and `AndroidManifest.xml` only when it is about to write the client, and it fails if OkHttp or `android.permission.INTERNET` is missing. The starter manifest already has that permission. A project with no `apps/android` directory skips the check.
+
+The envelope is one JSON text frame: `{"type":"taskChanged","id":"evt_9","taskId":"task_1"}`. After auth, a reconnect sends `{"type":"resume","lastId":"..."}`. `{"type":"error","code":"unauthorized"}` closes the socket and the next handshake asks for a token again. Unknown types are ignored. `lastId` lives in memory. The client does not call HTTP. If the server cannot replay, the repository refetches through its existing read.
+
+A repository owned by `AppContainer` subscribes. Screens and view models never construct `RealtimeClient` or call `connect`. Previews and tests use a fake event source.
+
+Supabase Realtime is not generated. It does not speak this envelope. The project owns a repository adapter until a captured frame fixture exists.
+
+A development `ws://` URL is cleartext. On Android, confirm the debug build allows it. The emulator reaches the host machine with `adb reverse`.
 
 ### Secrets
 
