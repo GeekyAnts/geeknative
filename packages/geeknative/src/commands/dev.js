@@ -39,13 +39,13 @@ export function keyToAction(key) {
   }
 }
 
-/** Slanted GeekNative wordmark. Widest line is 72 columns. */
+/** Small slant wordmark, lowercase. Widest line is 46 columns. */
 const WORDMARK = [
-  '   ______                __      _   __           __     _',
-  '  / ____/  ___   ___    / /__   / | / /  ____ _  / /_   (_) _   __  ___',
-  ' / / __   / _ \\ / _ \\  / //_/  /  |/ /  / __ `/ / __/  / / | | / / / _ \\',
-  '/ /_/ /  /  __//  __/ / ,<    / /|  /  / /_/ / / /_   / /  | |/ / /  __/',
-  '\\____/   \\___/ \\___/ /_/|_|  /_/ |_/   \\__,_/  \\__/  /_/   |___/  \\___/',
+  '                __              __  _         ',
+  '  ___ ____ ___ / /__ ___  ___ _/ /_(_)  _____ ',
+  ' / _ `/ -_) -_)  \'_// _ \\/ _ `/ __/ / |/ / -_)',
+  ' \\_, /\\__/\\__/_/\\_\\/_//_/\\_,_/\\__/_/|___/\\__/ ',
+  '/___/                                         ',
 ].join('\n')
 
 /** Key list for the session. Native reload is a full rebuild, not live reload. */

@@ -33,7 +33,7 @@ test('menu names every key and says native reload is a rebuild', () => {
 
 test('sessionBanner shows the wordmark and what is running', () => {
   const down = plain(sessionBanner({ name: 'Notes', url: 'http://localhost:3000', webUp: false, ios: false, android: false }))
-  assert.match(down, /______/)
+  assert.match(down, /\/___\//)
   assert.match(down, /^Notes$/m)
   assert.match(down, /^web {7}exited$/m)
   assert.match(down, /^ios {7}not launched$/m)
