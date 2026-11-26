@@ -5,6 +5,7 @@ import { capture, runInherit } from '../lib/exec.js'
 import { copyTemplate } from '../lib/fsutil.js'
 import { CliError, color, log } from '../lib/log.js'
 import { writeLock } from '../lib/managed.js'
+import { knownMigrationIds } from '../migrations/registry.js'
 import { isLocalCheckout, PACKAGE_DIR, packCheckout, packageVersion, templateDir } from '../lib/project.js'
 import { findAndroidSdk, writeLocalProperties } from '../lib/toolchains.js'
 import { validateApp } from '../codegen/app.js'
@@ -65,7 +66,8 @@ export async function create(dir, { name, id, consistency, install = true, git =
   }
 
   gen(root, { quiet: true })
-  writeLock(root, version)
+  // Fresh projects are already at this CLI's shape; mark every known migration applied.
+  writeLock(root, version, root, { migrations: knownMigrationIds() })
   const sdk = findAndroidSdk(root)
   if (sdk) writeLocalProperties(root, sdk)
   log.ok('create', 'project files written')

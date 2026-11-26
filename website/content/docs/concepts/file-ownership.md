@@ -38,6 +38,8 @@ The same applies to `apps/ios/AGENTS.md`, `apps/android/AGENTS.md`, `apps/web/AG
 ```json
 {
   "geeknative": "0.1.0",
+  "migrations": [],
+  "migrationsPrepared": [],
   "files": {
     ".claude/agents/android-engineer.md": "sha256-3a8f...",
     ".geeknative/framework.mk": "sha256-fc52...",
@@ -50,6 +52,8 @@ The same applies to `apps/ios/AGENTS.md`, `apps/android/AGENTS.md`, `apps/web/AG
 }
 ```
 
+`migrations` lists **completed** project-owned migration ids (or every known id after `create`). `migrationsPrepared` lists agent-assisted ids whose instructions were written to `.geeknative/migrations/pending/MIGRATION.md` but not yet completed with `migrate --complete`. Older lockfiles without `migrationsPrepared` are read as `[]`. `upgrade` rewrites the hashes and version but keeps both lists.
+
 ## Upgrades
 
 `geeknative upgrade` (or `make upgrade`) applies this CLI's template to the framework-owned files, using the lockfile:
@@ -59,7 +63,11 @@ The same applies to `apps/ios/AGENTS.md`, `apps/android/AGENTS.md`, `apps/web/AG
 - your files are never touched;
 - generated files are rebuilt by `gen` after a clean apply.
 
-Run `npx geeknative@latest upgrade` so the command and the template come from the release you want. See [upgrade](/docs/reference/cli/#upgrade). Scripted migrations for project-owned files are still on the [roadmap](/docs/project/roadmap/).
+Run `npx geeknative@latest upgrade` so the command and the template come from the release you want. See [upgrade](/docs/reference/cli/#upgrade).
+
+## Migrations
+
+Project-owned catch-up is opt-in: `geeknative migrate` (or `make migrate`). It applies scripted transforms and prepares agent-assisted work in `.geeknative/migrations/pending/MIGRATION.md` for you to hand to an agent. It does not call an agent. Use `--status` and `--complete <id>` to track agent-assisted work. Apply and prepare refuse a dirty git tree. `--complete` does not, so it can follow uncommitted agent edits. Migrate supports `--dry-run` and never commits. If you prefer the project as it was, restore the previous commit (including `.geeknative/lock.json`). See [migrate](/docs/reference/cli/#migrate).
 
 ## Generated files
 
