@@ -94,11 +94,18 @@ function projectWithCli() {
   return dir
 }
 
-test('after-edit ignores files outside contracts/', () => {
+test('after-edit ignores files outside contracts/ and assets/', () => {
   const dir = projectWithCli()
   const result = runHook('after-edit.mjs', dir, { tool_input: { file_path: path.join(dir, 'README.md') } })
   assert.equal(result.status, 0)
   assert.equal(result.stdout, '')
+})
+
+test('after-edit regenerates when a file under assets/ changes', () => {
+  const dir = projectWithCli()
+  const result = runHook('after-edit.mjs', dir, { tool_input: { file_path: path.join(dir, 'assets', 'images', 'logo.png') } })
+  assert.equal(result.status, 0, result.stderr)
+  assert.match(JSON.parse(result.stdout).hookSpecificOutput.additionalContext, /^Assets changed/)
 })
 
 test('after-edit regenerates code when a contract changes', () => {

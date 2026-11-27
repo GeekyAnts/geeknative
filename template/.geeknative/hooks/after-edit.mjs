@@ -1,7 +1,7 @@
 // Claude Code PostToolUse hook (managed by geeknative).
-// When a file in contracts/ (or the root .env, which feeds the generated AppSecrets) is edited,
-// regenerate app code right away, so the next build sees the change and mistakes in the
-// contract are reported immediately.
+// When a file in contracts/ or assets/ is edited, or the root .env (which feeds the generated
+// AppSecrets), regenerate app code right away, so the next build sees the change and mistakes
+// are reported immediately.
 import { spawnSync } from 'node:child_process'
 import path from 'node:path'
 
@@ -11,7 +11,10 @@ const file = JSON.parse(input || '{}').tool_input?.file_path
 const root = process.env.CLAUDE_PROJECT_DIR ?? process.cwd()
 
 const edited = file ? path.resolve(root, file) : ''
-if (!file || !(edited.startsWith(path.join(root, 'contracts') + path.sep) || edited === path.join(root, '.env'))) process.exit(0)
+const inContracts = edited.startsWith(path.join(root, 'contracts') + path.sep)
+const inAssets = edited.startsWith(path.join(root, 'assets') + path.sep)
+const isEnv = edited === path.join(root, '.env')
+if (!file || !(inContracts || inAssets || isEnv)) process.exit(0)
 
 const result = spawnSync(path.join(root, 'node_modules', '.bin', 'geeknative'), ['gen'], { cwd: root, encoding: 'utf8' })
 const output = `${result.stdout ?? ''}${result.stderr ?? ''}`.trim()
@@ -24,7 +27,7 @@ console.log(
   JSON.stringify({
     hookSpecificOutput: {
       hookEventName: 'PostToolUse',
-      additionalContext: `${path.basename(file) === '.env' ? '.env' : 'Contracts'} changed, so geeknative regenerated the app code:\n${output}`,
+      additionalContext: `${isEnv ? '.env' : inAssets ? 'Assets' : 'Contracts'} changed, so geeknative regenerated the app code:\n${output}`,
     },
   }),
 )

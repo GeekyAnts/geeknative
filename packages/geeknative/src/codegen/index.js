@@ -5,6 +5,7 @@ import { walk } from '../lib/fsutil.js'
 import { readEnvFile } from '../lib/env.js'
 import { rel } from '../lib/project.js'
 import { apiOutputs, readApi } from './api.js'
+import { ANDROID_ASSET_DIR, readRuntimeAssets, runtimeOutputs } from './assets.js'
 import { appOutputs, readApp } from './app.js'
 import { configOutputs, ENV_EXAMPLE, readConfig, resolveSecrets } from './config.js'
 import { iconOutputs, readIcons } from './icons.js'
@@ -30,6 +31,7 @@ export function generateAll(root) {
       ...tokenOutputs(readTokens(root)),
       ...stringOutputs(readStrings(root, app.defaultLocale), app.name),
       ...iconOutputs(readIcons(root)),
+      ...runtimeOutputs(readRuntimeAssets(root)),
       ...configOutputs(config, secrets.values),
       ...(api ? apiOutputs(api, { includeClient }) : []),
     ],
@@ -51,7 +53,9 @@ export function generate(root) {
  * @param {Set<string>} produced relative paths
  */
 export function staleFiles(root, produced) {
-  const owned = [OUT.iosGenerated, OUT.androidKotlin, OUT.webGenerated].flatMap((dir) => walk(path.join(root, dir)))
+  const owned = [OUT.iosGenerated, OUT.androidKotlin, OUT.webGenerated, ANDROID_ASSET_DIR].flatMap((dir) =>
+    walk(path.join(root, dir)),
+  )
   const res = path.join(root, OUT.androidRes)
   if (existsSync(res)) {
     for (const dir of readdirSync(res)) {
