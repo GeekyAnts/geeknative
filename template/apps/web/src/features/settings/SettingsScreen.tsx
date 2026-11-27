@@ -35,6 +35,24 @@ export function SettingsScreen() {
       </AppCard>
 
       <AppCard>
+        <div className="flex min-h-touch-target items-center justify-between gap-md">
+          <div>
+            <h2 className="text-label text-on-surface-variant">{strings.settingsNotificationsTitle}</h2>
+            <p className="mt-xs text-body">{strings.settingsNotificationsBody}</p>
+          </div>
+          <input
+            type="checkbox"
+            role="switch"
+            data-testid="settings.notifications"
+            aria-label={strings.settingsNotificationsTitle}
+            checked={viewModel.notificationsEnabled}
+            onChange={(event) => void viewModel.selectNotifications(event.target.checked)}
+            className="size-4 accent-primary"
+          />
+        </div>
+      </AppCard>
+
+      <AppCard>
         <h2 className="text-label text-on-surface-variant">{strings.settingsAboutTitle}</h2>
         <p data-testid="settings.version" className="mt-sm text-body">
           {viewModel.versionText}

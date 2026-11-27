@@ -21,6 +21,8 @@ const messages: Record<Locale, Record<string, string | Plural>> = {
     "settings.appearance.light": "Light",
     "settings.appearance.system": "System",
     "settings.appearance.title": "Appearance",
+    "settings.notifications.body": "Show reminders from this app",
+    "settings.notifications.title": "Notifications",
     "settings.title": "Settings",
   },
 }
@@ -95,6 +97,14 @@ export const strings = {
   /** Appearance */
   get settingsAppearanceTitle() {
     return text("settings.appearance.title")
+  },
+  /** Show reminders from this app */
+  get settingsNotificationsBody() {
+    return text("settings.notifications.body")
+  },
+  /** Notifications */
+  get settingsNotificationsTitle() {
+    return text("settings.notifications.title")
   },
   /** Settings */
   get settingsTitle() {

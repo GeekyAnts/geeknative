@@ -24,6 +24,15 @@ struct SettingsScreen: View {
                 .listRowBackground(AppColors.surface)
             }
 
+            Section(Strings.settingsNotificationsTitle) {
+                Toggle(Strings.settingsNotificationsBody, isOn: Binding(
+                    get: { viewModel.notificationsEnabled },
+                    set: { viewModel.setNotificationsEnabled($0) }
+                ))
+                .accessibilityIdentifier("settings.notifications")
+                .listRowBackground(AppColors.surface)
+            }
+
             Section(Strings.settingsAboutTitle) {
                 Text(viewModel.versionText)
                     .foregroundStyle(AppColors.onSurfaceVariant)
@@ -40,6 +49,9 @@ struct SettingsScreen: View {
 
 #Preview {
     NavigationStack {
-        SettingsScreen(viewModel: SettingsViewModel(repository: InMemorySettingsRepository()))
+        SettingsScreen(viewModel: SettingsViewModel(
+            repository: InMemorySettingsRepository(),
+            notificationsRepository: InMemoryNotificationsRepository()
+        ))
     }
 }

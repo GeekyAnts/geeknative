@@ -2,8 +2,10 @@ import { QueryClient } from '@tanstack/react-query'
 import { describe, expect, test } from 'vitest'
 import { AppIdentity } from '#/generated/app'
 import { isDark, parseAppearance } from './Appearance'
+import { InMemoryNotificationsRepository } from '#/features/notifications/InMemoryNotificationsRepository'
+import { LocalNotificationsRepository } from '#/features/notifications/LocalNotificationsRepository'
 import { LocalStorageSettingsRepository } from './LocalStorageSettingsRepository'
-import { appearanceQuery, selectAppearance, versionText } from './useSettingsViewModel'
+import { appearanceQuery, selectAppearance, selectNotifications, versionText } from './useSettingsViewModel'
 
 function memoryStorage() {
   const values = new Map<string, string>()
@@ -36,6 +38,20 @@ describe('Settings', () => {
     const storage = memoryStorage()
     await new LocalStorageSettingsRepository(storage).setAppearance('light')
     expect(await new LocalStorageSettingsRepository(storage).getAppearance()).toBe('light')
+  })
+
+  test('AC-settings-5: notifications default to off', async () => {
+    const repository = new InMemoryNotificationsRepository()
+    expect(await repository.isEnabled()).toBe(false)
+  })
+
+  test('AC-settings-6: turning notifications on is still on after a restart', async () => {
+    const storage = memoryStorage()
+    const queryClient = new QueryClient()
+    const repository = new LocalNotificationsRepository(storage)
+    await selectNotifications(queryClient, repository, true)
+    expect(queryClient.getQueryData(['settings', 'notifications'])).toBe(true)
+    expect(await new LocalNotificationsRepository(storage).isEnabled()).toBe(true)
   })
 
   test('AC-settings-4: shows the app version and build number', () => {

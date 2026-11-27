@@ -44,6 +44,12 @@ nonisolated enum Strings {
     /// Appearance
     static var settingsAppearanceTitle: String { NSLocalizedString("settings.appearance.title", comment: "") }
 
+    /// Show reminders from this app
+    static var settingsNotificationsBody: String { NSLocalizedString("settings.notifications.body", comment: "") }
+
+    /// Notifications
+    static var settingsNotificationsTitle: String { NSLocalizedString("settings.notifications.title", comment: "") }
+
     /// Settings
     static var settingsTitle: String { NSLocalizedString("settings.title", comment: "") }
 }

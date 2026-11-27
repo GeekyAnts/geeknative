@@ -11,7 +11,7 @@ test drives the real UI (iOS UI tests, Android Compose tests, web tests that ren
 | Feature | iOS | Android | Web |
 |---|---|---|---|
 | [Home](features/home.md) | ✅ done · 3/3 tested | ✅ done · 3/3 tested | ✅ done · 3/3 tested |
-| [Settings](features/settings.md) | ✅ done · 4/4 tested | ✅ done · 4/4 tested | ✅ done · 4/4 tested |
+| [Settings](features/settings.md) | ✅ done · 6/6 tested | ✅ done · 6/6 tested | ✅ done · 6/6 tested |
 
 ## Acceptance criteria coverage
 
@@ -31,3 +31,5 @@ test drives the real UI (iOS UI tests, Android Compose tests, web tests that ren
 | AC-settings-2: Choosing an appearance applies it to the whole app immediately. | ✅ | ✅ | ✅ |
 | AC-settings-3: The chosen appearance is still applied after the app restarts. | ✅ | ✅ | ✅ |
 | AC-settings-4: Settings shows the app version and build number. | ✅ | ✅ | ✅ |
+| AC-settings-5: Notifications default to off. | ✅ | ✅ | ✅ |
+| AC-settings-6: Turning notifications on is still on after the app restarts. | ✅ | ✅ | ✅ |

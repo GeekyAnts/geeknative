@@ -12,7 +12,10 @@ struct RootView: View {
                 .navigationDestination(for: Route.self) { route in
                     switch route {
                     case .settings:
-                        SettingsScreen(viewModel: SettingsViewModel(repository: container.settingsRepository))
+                        SettingsScreen(viewModel: SettingsViewModel(
+                            repository: container.settingsRepository,
+                            notificationsRepository: container.notificationsRepository
+                        ))
                     }
                 }
         }

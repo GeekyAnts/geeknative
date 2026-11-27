@@ -50,6 +50,10 @@ Local repository implementations are the live backend: UserDefaults on iOS, Data
 
 On the web, TanStack Start's server functions and API routes are only for web-only concerns (rendering, cookies, SEO). Logic the mobile apps need too goes through repositories, so a future backend can serve all three apps.
 
+## Notifications
+
+The starter includes `NotificationsRepository` on all three platforms. The local implementation is the inbox (UserDefaults, DataStore, localStorage) and the device preference `notifications.enabled`. `RemoteNotificationsRepository` keeps that preference locally and stores the same rows through a gateway, which is where a generated API client goes once `contracts/api/notifications.json` and `apiBaseUrl` exist. See [Notifications](/docs/concepts/notifications/).
+
 ## Native, not identical
 
 | Same on every platform | Native to each platform |

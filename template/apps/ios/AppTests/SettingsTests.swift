@@ -28,7 +28,7 @@ struct SettingsTests {
     @Test("AC-settings-2: choosing an appearance applies it to the whole app immediately")
     func appliesImmediately() {
         let repository = InMemorySettingsRepository()
-        let viewModel = SettingsViewModel(repository: repository)
+        let viewModel = SettingsViewModel(repository: repository, notificationsRepository: InMemoryNotificationsRepository())
 
         viewModel.selectAppearance(.dark)
 
@@ -51,8 +51,36 @@ struct SettingsTests {
 
     @Test("AC-settings-4: shows the app version and build number")
     func showsVersion() {
-        let text = SettingsViewModel(repository: InMemorySettingsRepository()).versionText
+        let text = SettingsViewModel(
+            repository: InMemorySettingsRepository(),
+            notificationsRepository: InMemoryNotificationsRepository()
+        ).versionText
         #expect(text.contains(AppIdentity.version))
         #expect(text.contains(String(AppIdentity.build)))
+    }
+
+    @Test("AC-settings-5: notifications default to off")
+    func notificationsDefaultOff() {
+        let viewModel = SettingsViewModel(
+            repository: InMemorySettingsRepository(),
+            notificationsRepository: InMemoryNotificationsRepository()
+        )
+        #expect(viewModel.notificationsEnabled == false)
+    }
+
+    @Test("AC-settings-6: turning notifications on is still on after a restart")
+    func notificationsSurviveRestart() {
+        withFreshDefaults { defaults in
+            let viewModel = SettingsViewModel(
+                repository: InMemorySettingsRepository(),
+                notificationsRepository: UserDefaultsNotificationsRepository(defaults: defaults)
+            )
+            viewModel.setNotificationsEnabled(true)
+            #expect(viewModel.notificationsEnabled)
+
+            let again = UserDefaultsNotificationsRepository(defaults: defaults)
+            #expect(again.enabled)
+            #expect(defaults.string(forKey: "notifications.enabled") == "on")
+        }
     }
 }

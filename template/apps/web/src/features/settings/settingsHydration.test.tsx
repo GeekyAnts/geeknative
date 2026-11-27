@@ -7,6 +7,7 @@ import { renderToString } from 'react-dom/server'
 import { describe, expect, test } from 'vitest'
 import type { AppContainer } from '#/core/AppContainer'
 import type { Appearance } from './Appearance'
+import { InMemoryNotificationsRepository } from '#/features/notifications/InMemoryNotificationsRepository'
 import { InMemorySettingsRepository } from './InMemorySettingsRepository'
 import { SettingsScreen } from './SettingsScreen'
 import { appearanceQuery } from './useSettingsViewModel'
@@ -25,7 +26,7 @@ async function settingsRouter(stored: Appearance, { loadStoredFirst = false } = 
   const router = createRouter({
     routeTree: rootRoute.addChildren([settingsRoute]),
     history: createMemoryHistory({ initialEntries: ['/settings'] }),
-    context: { queryClient, container: { settingsRepository } },
+    context: { queryClient, container: { settingsRepository, notificationsRepository: new InMemoryNotificationsRepository() } },
   })
   await router.load()
   // In a browser the stored value can be ready before the page finishes hydrating.

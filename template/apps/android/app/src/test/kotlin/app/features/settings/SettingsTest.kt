@@ -1,5 +1,7 @@
 package app.features.settings
 
+import app.features.notifications.DataStoreNotificationsRepository
+import app.features.notifications.InMemoryNotificationsRepository
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import app.generated.AppIdentity
 import java.io.File
@@ -55,7 +57,7 @@ class SettingsTest {
     @Test
     fun `AC-settings-2 choosing an appearance applies it to the whole app immediately`() = runTest {
         val repository = InMemorySettingsRepository()
-        val viewModel = SettingsViewModel(repository)
+        val viewModel = SettingsViewModel(repository, InMemoryNotificationsRepository())
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
 
         viewModel.selectAppearance(Appearance.Dark)
@@ -86,5 +88,33 @@ class SettingsTest {
         val state = SettingsUiState()
         assertEquals(AppIdentity.VERSION, state.version)
         assertEquals(AppIdentity.BUILD, state.build)
+        assertFalse(state.notificationsEnabled)
+    }
+
+    @Test
+    fun `AC-settings-5 notifications default to off`() = runTest {
+        val repository = InMemoryNotificationsRepository()
+        val viewModel = SettingsViewModel(InMemorySettingsRepository(), repository)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        assertFalse(viewModel.uiState.value.notificationsEnabled)
+    }
+
+    @Test
+    fun `AC-settings-6 turning notifications on is still on after a restart`() = runTest {
+        val file = File(folder.root, "notifications.preferences_pb")
+        fun open(scope: CoroutineScope) = DataStoreNotificationsRepository(
+            PreferenceDataStoreFactory.create(scope = scope, produceFile = { file }),
+        )
+
+        val first = CoroutineScope(UnconfinedTestDispatcher(testScheduler) + Job())
+        val viewModel = SettingsViewModel(InMemorySettingsRepository(), open(first))
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
+        viewModel.setNotificationsEnabled(true)
+        assertTrue(viewModel.uiState.value.notificationsEnabled)
+        first.coroutineContext[Job]?.cancelAndJoin()
+
+        val second = CoroutineScope(UnconfinedTestDispatcher(testScheduler) + Job())
+        assertTrue(open(second).enabled.first())
+        second.coroutineContext[Job]?.cancelAndJoin()
     }
 }

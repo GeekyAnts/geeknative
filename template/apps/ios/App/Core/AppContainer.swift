@@ -6,17 +6,26 @@ import Observation
 @Observable
 final class AppContainer {
     let settingsRepository: any SettingsRepository
+    let notificationsRepository: any NotificationsRepository
 
-    init(settingsRepository: any SettingsRepository) {
+    init(settingsRepository: any SettingsRepository, notificationsRepository: any NotificationsRepository) {
         self.settingsRepository = settingsRepository
+        self.notificationsRepository = notificationsRepository
     }
 
     static func live() -> AppContainer {
-        AppContainer(settingsRepository: UserDefaultsSettingsRepository(defaults: .standard))
+        let defaults = UserDefaults.standard
+        return AppContainer(
+            settingsRepository: UserDefaultsSettingsRepository(defaults: defaults),
+            notificationsRepository: UserDefaultsNotificationsRepository(defaults: defaults)
+        )
     }
 
     /// In-memory dependencies, for previews and tests.
     static func preview() -> AppContainer {
-        AppContainer(settingsRepository: InMemorySettingsRepository())
+        AppContainer(
+            settingsRepository: InMemorySettingsRepository(),
+            notificationsRepository: InMemoryNotificationsRepository()
+        )
     }
 }

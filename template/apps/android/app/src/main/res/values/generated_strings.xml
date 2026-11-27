@@ -15,5 +15,7 @@
     <string name="settings_appearance_light">Light</string>
     <string name="settings_appearance_system">System</string>
     <string name="settings_appearance_title">Appearance</string>
+    <string name="settings_notifications_body">Show reminders from this app</string>
+    <string name="settings_notifications_title">Notifications</string>
     <string name="settings_title">Settings</string>
 </resources>

@@ -12,7 +12,7 @@ export const DOCS_SECTIONS = [
   {
     id: "concepts",
     title: "Concepts",
-    pages: ["how-it-works", "project-structure", "architecture", "specs-and-parity", "file-ownership"],
+    pages: ["how-it-works", "project-structure", "architecture", "notifications", "specs-and-parity", "file-ownership"],
   },
   { id: "reference", title: "Reference", pages: ["cli", "contracts", "platforms"] },
   { id: "project", title: "Project", pages: ["roadmap", "contributing", "changelog"] },

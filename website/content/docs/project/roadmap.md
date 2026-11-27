@@ -21,7 +21,8 @@ geeknative 0.1.0 is the foundation: three apps that build and test from the comm
 
 ## More
 
-- **Backends.** An API contract in `contracts/`, generated clients that use the URLs in `contracts/config.json`, and repository implementations that call it.
+- **Backends.** An API contract in `contracts/`, generated clients that use the URLs in `contracts/config.json`, and repository implementations that call it. The notifications inbox already has the local and remote repositories; a hosted inbox is the gateway in front of that client.
+- **OS notification presenters.** The inbox records when a row is due. Wiring that to APNs, FCM and the browser Notifications API, including permission prompts on the settings switch, is still per app.
 - **More icon families** as bundled catalogs beside Lucide, and multi-color icons.
 - **Italic and variable fonts**, and letter spacing in the type scale.
 - **Windows** support for the Android and web apps.

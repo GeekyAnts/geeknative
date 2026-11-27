@@ -11,6 +11,8 @@
   "settings.appearance.system": "System",
   "settings.appearance.light": "Light",
   "settings.appearance.dark": "Dark",
+  "settings.notifications.title": "Notifications",
+  "settings.notifications.body": "Show reminders from this app",
   "settings.about.title": "About",
   "settings.about.version": "Version {version} ({build:int})"
 }

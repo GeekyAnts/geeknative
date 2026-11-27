@@ -31,7 +31,9 @@ fun AppNavigation() {
             }
             entry<Route.Settings> {
                 SettingsScreen(
-                    viewModel = viewModel { SettingsViewModel(container.settingsRepository) },
+                    viewModel = viewModel {
+                        SettingsViewModel(container.settingsRepository, container.notificationsRepository)
+                    },
                     onBack = { backStack.removeLastOrNull() },
                 )
             }

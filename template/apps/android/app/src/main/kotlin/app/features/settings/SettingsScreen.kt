@@ -17,6 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -40,12 +41,22 @@ import app.generated.AppTypography
 @Composable
 fun SettingsScreen(viewModel: SettingsViewModel, onBack: () -> Unit) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    SettingsContent(state = state, onSelectAppearance = viewModel::selectAppearance, onBack = onBack)
+    SettingsContent(
+        state = state,
+        onSelectAppearance = viewModel::selectAppearance,
+        onNotificationsEnabled = viewModel::setNotificationsEnabled,
+        onBack = onBack,
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SettingsContent(state: SettingsUiState, onSelectAppearance: (Appearance) -> Unit, onBack: () -> Unit) {
+private fun SettingsContent(
+    state: SettingsUiState,
+    onSelectAppearance: (Appearance) -> Unit,
+    onNotificationsEnabled: (Boolean) -> Unit,
+    onBack: () -> Unit,
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -90,6 +101,24 @@ private fun SettingsContent(state: SettingsUiState, onSelectAppearance: (Appeara
             }
 
             AppCard {
+                Row(
+                    modifier = Modifier.fillMaxWidth().heightIn(min = AppSize.touchTarget),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(AppSpacing.md),
+                ) {
+                    Column(Modifier.weight(1f)) {
+                        SectionTitle(stringResource(R.string.settings_notifications_title))
+                        Text(stringResource(R.string.settings_notifications_body), style = AppTypography.body)
+                    }
+                    Switch(
+                        checked = state.notificationsEnabled,
+                        onCheckedChange = onNotificationsEnabled,
+                        modifier = Modifier.testTag("settings.notifications"),
+                    )
+                }
+            }
+
+            AppCard {
                 SectionTitle(stringResource(R.string.settings_about_title))
                 Text(
                     stringResource(R.string.settings_about_version, state.version, state.build),
@@ -110,6 +139,6 @@ private fun SectionTitle(text: String) {
 @Composable
 private fun SettingsScreenPreview() {
     AppTheme(darkTheme = false) {
-        SettingsContent(state = SettingsUiState(), onSelectAppearance = {}, onBack = {})
+        SettingsContent(state = SettingsUiState(), onSelectAppearance = {}, onNotificationsEnabled = {}, onBack = {})
     }
 }
