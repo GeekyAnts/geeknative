@@ -56,7 +56,11 @@ A project created from npm depends on `geeknative` at `^<version>`. A project cr
 npx geeknative gen        # or: make gen
 ```
 
-Validates every contract, writes the generated files that changed, and deletes generated files that are no longer produced (for example, after removing a locale). It lists the files it changed. Invalid contracts fail with a message naming the file and field. See [Contracts](/docs/reference/contracts/).
+Validates every contract and `assets/`, writes the generated files that changed, and deletes generated files that are no longer produced (for example, after removing a locale or a photo). It lists the files it changed. Invalid contracts and invalid icons fail with a message naming the file. See [Contracts](/docs/reference/contracts/) and [Project structure](/docs/concepts/project-structure/).
+
+`assets/` is the source for photos, video, PDFs and the app icon. There is no manifest. `make gen` copies `images/`, `videos/` and `documents/` into each app unchanged and names them on `AppAssets`. Photos are `.png`, `.jpg`, `.jpeg` or `.webp`. Video is `.mp4` or `.mov`. Documents are `.pdf`. Files sit directly in those folders, named in lowercase words separated by hyphens, such as `logo.png` or `empty-state.png`. `Logo.png` and `empty_state.png` fail. A hyphen becomes the property, so `empty-state.png` is `AppAssets.images.emptyState`. On iOS the copies are flat files named with the folder, such as `images-logo.png`, because the app bundle keeps resources by file name. `assets/icon.png` (a square PNG, 1024 or larger) becomes the iOS app icon, the Android launcher icons, a 512 Play Store image and `apps/web/public/favicon.ico`. Optional `assets/android/foreground.png` and `background.png` (square, 432 or larger) are the adaptive icon layers. `monochrome.png` is the themed icon, and only when those two exist. Fonts stay in `contracts/fonts`. There is no splash file.
+
+A missing `icon.png` does not fail the build. If `assets/` exists without it, `make gen` warns and leaves the current app icon in place. Adaptive layers without the master icon fail. A file that is not a square PNG of the required size fails.
 
 Files built from `.env` (`AppSecrets.swift` and `AppSecrets.kt`) are always written, even by `check`, and are never compared, because they are not committed. If `.env` lacks a declared key, `gen` prints a warning.
 

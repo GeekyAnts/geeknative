@@ -24,7 +24,7 @@ apps/android/
     core/                        AppContainer, navigation/ (Route, AppNavigation), designsystem/ (AppTheme, AppCard)
     features/<name>/             <Name>Screen.kt, <Name>ViewModel.kt, <Name>Repository.kt, models
     generated/                   From contracts/ by `make gen`. Never edit.
-  app/src/main/res/              values/generated_*.xml, drawable/generated_* (icons) and font/generated_* are generated; everything else is yours
+  app/src/main/res/              values/generated_*.xml, drawable/generated_* and font/generated_* are generated. Launcher mipmaps come from assets/icon.png. Everything else is yours.
   app/src/test/kotlin/app/       Unit tests, named after acceptance criteria
 ```
 
@@ -46,6 +46,7 @@ Same names and responsibilities as the iOS and web apps.
 | Sized controls | To draw a control at a size token (`AppSize.x`) as iOS and web do: Button and SegmentedButton with `Modifier.height(AppSize.x)` and `contentPadding = ControlContentPadding`; Switch, Checkbox and RadioButton with `Modifier.scaledToHeight(AppSize.x)` and `onCheckedChange = null` inside a toggleable row at least `AppSize.touchTarget` tall (core/designsystem/ControlSize.kt). `heightIn(min = ...)` alone leaves them taller. |
 | Motion and shadows | `animationSpec = AppMotion.snappy()`, `AppMotion.standard(AppMotion.fast)`; `Modifier.shadow(AppElevation.low, shape)`. Never raw durations, easings or elevations. Material components draw their own elevation, so set it to 0 when you apply a token shadow (for example `FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp)`), or they draw two. Compose follows the system's animation scale, so "Remove animations" turns motion off. |
 | Icons | `Icon(AppIcons.settings, contentDescription = ...)` (generated vector drawables; never `Icons.Filled.*`) |
+| Images, video, documents | `AppAssets.images.logo` (an AssetManager path, `generated/images/logo.png`) |
 | Config | `AppConfig.apiBaseUrl`, `AppEnvironment.current` (generated from contracts/config.json) |
 | HTTP API | Local repositories are the live backend until a server exists. When a backend is planned, read only this task's `contracts/api/<task>.json` and `contracts/api/common.json` if it uses a shared schema. `make gen` writes `generated/api/<Task>.kt` (`Api<Task>.<operationId>`). Call that. Do not read the other task files. |
 | Secrets | `AppSecrets.mapsApiKey` (generated from .env, git-ignored; never commit values) |

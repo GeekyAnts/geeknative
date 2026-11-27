@@ -12,7 +12,7 @@ help: ## List the commands
 doctor: ## Check toolchains (FIX=1 installs what it can)
 	@$(GEEKNATIVE) doctor $(if $(FIX),--fix)
 
-gen: ## Regenerate app code from contracts/
+gen: ## Regenerate app code from contracts/ and assets/
 	@$(GEEKNATIVE) gen
 
 font: ## Switch the shared typeface (FAMILY="Open Sans" from Google Fonts, or FAMILY=system)

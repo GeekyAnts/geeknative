@@ -56,9 +56,10 @@ Before changing anything, decide what kind of request it is. State it as the fir
 | The typeface, one for all three apps | contracts/tokens.json `font`, with the files in contracts/fonts (`make font FAMILY=...`) |
 | All user-facing text | `contracts/strings/<locale>.json` |
 | Icons (Lucide names, or your own SVGs in contracts/icons) | contracts/icons.json |
+| Photos, video, documents and the app icon | `assets/` (`images/`, `videos/`, `documents/`, `icon.png`, optional `android/`). Names are lowercase words with hyphens, such as `logo.png` or `empty-state.png`. No splash file. Fonts stay in `contracts/fonts` (`make font`) |
 | Which platform has what | feature front matter → `make parity` → spec/parity.md |
 
-`make gen` compiles contracts/ into each app (`Generated/` with `Icons.xcassets` and `Fonts/`, `generated/` including `AppConfig`, optional `generated/api/<Task>` files, one per `contracts/api/<task>.json`, `generated_*.xml`, `res/drawable/generated_*`, `res/font/generated_*`, `Identity.xcconfig`, `identity.properties`, `.env.example`). `AppSecrets.swift` and `AppSecrets.kt` are built from `.env` and git-ignored. Never edit generated files: change the contract and regenerate.
+`make gen` compiles contracts/ and assets/ into each app (`Generated/` with `Icons.xcassets`, `Fonts/`, `AppAssets` and `AppIcon.xcassets`; `generated/` including `AppConfig`, `assets.ts`, optional `generated/api/<Task>` files, one per `contracts/api/<task>.json`, `generated_*.xml`, `res/drawable/generated_*`, `res/font/generated_*`, the Android launcher mipmaps, `Identity.xcconfig`, `identity.properties`, `.env.example`, and `apps/web/public/favicon.ico`). `AppSecrets.swift` and `AppSecrets.kt` are built from `.env` and git-ignored. Never edit generated files: change the contract or `assets/` and regenerate.
 
 ## 4. The loop
 

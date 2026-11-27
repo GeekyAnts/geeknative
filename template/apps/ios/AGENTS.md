@@ -21,8 +21,8 @@ apps/ios/
     AppMain.swift       @main: creates AppContainer and shows RootView
     Core/               AppContainer, RootView, Navigation/Route.swift, DesignSystem/
     Features/<Name>/    <Name>Screen.swift, <Name>ViewModel.swift, <Name>Repository.swift, models
-    Generated/          From contracts/ by `make gen`. Never edit.
-    Resources/          Assets.xcassets (app icon)
+    Generated/          From contracts/ and assets/ by `make gen`. Never edit. The app icon is AppIcon.xcassets.
+    Resources/          Assets.xcassets
   AppTests/             Swift Testing tests, named after acceptance criteria
   AppUITests/           XCUITest tests that launch the app and tap through it, for (ui) criteria
 ```
@@ -42,6 +42,7 @@ Same names and responsibilities as the Android and web apps.
 | Colors, spacing, radii, icon sizes, type | `AppColors.primary`, `AppSpacing.md`, `AppRadius.lg`, `AppIconSize.md`, `AppSize.touchTarget`, `AppTypography.title` (generated; the typeface comes with it) |
 | Motion and shadows | `withAnimation(AppMotion.reduced(AppMotion.snappy, reduceMotion))` with `@Environment(\.accessibilityReduceMotion)`, `AppMotion.standard(AppMotion.fast)`; `.shadow(AppElevation.low)`. Never raw durations, curves or shadow values. |
 | Icons | `Image(AppIcon.settings)` (generated template images in Icons.xcassets; color with `.foregroundStyle`) |
+| Images, video, documents | `AppAssets.images.logo` (a file URL; `UIImage(contentsOfFile:)`, `AVPlayer`, `PDFDocument`) |
 | Config | `AppConfig.apiBaseUrl`, `AppEnvironment.current` (generated from contracts/config.json) |
 | HTTP API | Local repositories are the live backend until a server exists. When a backend is planned, read only this task's `contracts/api/<task>.json` and `contracts/api/common.json` if it uses a shared schema. `make gen` writes `Generated/api/<Task>.swift` (`Api<Task>.<operationId>`). Call that. Do not read the other task files. |
 | Secrets | `AppSecrets.mapsApiKey` (generated from .env, git-ignored; never commit values) |

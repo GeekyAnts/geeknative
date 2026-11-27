@@ -22,6 +22,12 @@ my-app/
 │   ├── api/                  One JSON file per task (optional until a hosted backend is planned)
 │   ├── strings/en.json       All user-facing copy (one file per locale)
 │   └── icons.json            Each icon's Lucide name, or an SVG of yours in contracts/icons/
+├── assets/
+│   ├── icon.png              Optional square PNG, 1024 or larger. make gen builds the launcher icons
+│   ├── images/               .png, .jpg, .jpeg, .webp. Flat files only. AppAssets.images.*
+│   ├── videos/               .mp4, .mov. Flat files only
+│   ├── documents/            .pdf. Flat files only
+│   └── android/              Optional. foreground.png and background.png together, 432 or larger. monochrome.png only with that pair
 ├── spec/
 │   ├── features/             One spec per feature: home.md, settings.md
 │   ├── navigation.md         Screens and routes
@@ -43,6 +49,8 @@ my-app/
 └── .github/dependabot.yml    Weekly npm and Gradle dependency updates
 ```
 
+Files in `images/`, `videos/` and `documents/` are lowercase words separated by hyphens, such as `logo.png` or `empty-state.png`. `Logo.png` and `empty_state.png` fail. A hyphen becomes the property, so `empty-state.png` is `AppAssets.images.emptyState`. Put files directly in those folders. `assets/fonts` is rejected; fonts stay in `contracts/fonts`. There is no splash file.
+
 ## The apps
 
 ```text
@@ -54,7 +62,7 @@ apps/ios/
 │   ├── Core/                 AppContainer, RootView, Navigation/Route.swift, DesignSystem/
 │   ├── Features/             Home/, Settings/
 │   ├── Generated/            From contracts/; never edit
-│   └── Resources/            Assets.xcassets (app icon)
+│   └── Resources/            Assets.xcassets. The app icon is generated in Generated/AppIcon.xcassets
 └── AppTests/                 Swift Testing tests
 
 apps/android/
@@ -80,12 +88,12 @@ apps/web/src/
 
 ## Generated files
 
-`make gen` writes these from `contracts/`. They're committed, so each app builds on its own, but never edited by hand.
+`make gen` writes these from `contracts/` and `assets/`. They're committed, so each app builds on its own, but never edited by hand.
 
 | App | Generated |
 |---|---|
-| iOS | `App/Generated/` (Swift, `Localizable.xcstrings`, `Colors.xcassets`) and `Config/Identity.xcconfig`. `AppSecrets.swift` is git-ignored. |
-| Android | `app/src/main/kotlin/app/generated/`, `res/values*/generated_*.xml` and `app/identity.properties`. `AppSecrets.kt` is git-ignored. |
-| Web | `src/generated/` |
+| iOS | `App/Generated/` (Swift, `Localizable.xcstrings`, `Colors.xcassets`, `AppIcon.xcassets`, copied assets) and `Config/Identity.xcconfig`. `AppSecrets.swift` is git-ignored. |
+| Android | `app/src/main/kotlin/app/generated/`, `res/values*/generated_*.xml`, launcher mipmaps, `app/src/main/ic_launcher-playstore.png` and `app/identity.properties`. `AppSecrets.kt` is git-ignored. |
+| Web | `src/generated/`, including copied assets, and `public/favicon.ico` |
 
 See [File ownership](/docs/concepts/file-ownership/) for which files belong to you and which to the framework.
