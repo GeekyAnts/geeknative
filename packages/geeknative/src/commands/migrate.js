@@ -27,7 +27,7 @@ import { gen } from './gen.js'
  *   gen?: boolean,
  *   list?: import('../migrations/registry.js').Migration[],
  * }} [options]
- *   `list` is for tests; production uses the empty registry until a release ships entries.
+ *   `list` is for tests; production uses `MIGRATIONS`.
  */
 export async function migrate(
   root,

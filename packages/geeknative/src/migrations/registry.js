@@ -1,7 +1,9 @@
 // @ts-check
+import { seedContractsConfig } from './contracts-config.js'
+
 /**
  * Project-owned migrations. `geeknative upgrade` never runs these; `geeknative migrate` does.
- * Production list stays empty until a release ships a real format change. Tests pass a fixture list.
+ * Tests pass a fixture list; production uses `MIGRATIONS`.
  *
  * @typedef {'pending' | 'prepared' | 'completed'} MigrationStatus
  * @typedef {{
@@ -19,7 +21,15 @@
  */
 
 /** @type {Migration[]} */
-export const MIGRATIONS = []
+export const MIGRATIONS = [
+  {
+    id: 'contracts-config',
+    since: '0.1.1',
+    kind: 'scripted',
+    title: 'Add contracts/config.json when the project does not have one',
+    run: (root) => seedContractsConfig(root),
+  },
+]
 
 /**
  * @param {string} a

@@ -225,6 +225,8 @@ Rules:
 
 When a scripted migration regenerates contracts, `migrate` runs `gen` once at the end.
 
+`contracts-config` (since 0.1.1) copies the template `contracts/config.json` only when the project does not have that file. It does not edit xcconfig, Gradle, or `.gitignore`.
+
 ## run
 
 ```sh

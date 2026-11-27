@@ -4,6 +4,7 @@ import path from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { test } from 'node:test'
 import { migrate } from '../src/commands/migrate.js'
+import { templateDir } from '../src/lib/project.js'
 import { readLock, setLockMigrationState, writeLock } from '../src/lib/managed.js'
 import { PENDING_MIGRATION_DOC } from '../src/migrations/pending-doc.js'
 import { packageVersion } from '../src/lib/project.js'
@@ -188,6 +189,31 @@ test('migrate --complete refuses scripted ids', async () => {
     },
   ]
   await assert.rejects(migrate(dir, { complete: 'demo-scripted', list }), /scripted/)
+})
+
+test('contracts-config writes the template starter only when missing', async () => {
+  const dir = projectWithLock()
+  const dest = path.join(dir, 'contracts', 'config.json')
+  const starter = readFileSync(path.join(templateDir(), 'contracts', 'config.json'))
+
+  const created = await migrate(dir, { gen: false })
+  assert.deepEqual(created.applied, ['contracts-config'])
+  assert.deepEqual(created.changed, ['contracts/config.json'])
+  assert.deepEqual(readFileSync(dest), starter)
+  assert.deepEqual(readLock(dir)?.migrations, ['contracts-config'])
+
+  gitCommitAll(dir, 'seeded config')
+  writeFileSync(dest, '{"environments":["development","production"],"values":{"kept":true},"secrets":{}}\n')
+  gitCommitAll(dir, 'custom config')
+  setLockMigrationState(dir, { migrations: [], migrationsPrepared: [] })
+  gitCommitAll(dir, 'reset lock')
+
+  const kept = readFileSync(dest, 'utf8')
+  const skipped = await migrate(dir, { gen: false })
+  assert.deepEqual(skipped.applied, ['contracts-config'])
+  assert.deepEqual(skipped.changed, [])
+  assert.equal(readFileSync(dest, 'utf8'), kept)
+  assert.deepEqual(readLock(dir)?.migrations, ['contracts-config'])
 })
 
 test('setLockMigrationState leaves hashes and version alone', () => {
