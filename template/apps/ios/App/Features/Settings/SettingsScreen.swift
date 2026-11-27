@@ -27,7 +27,15 @@ struct SettingsScreen: View {
             Section(Strings.settingsNotificationsTitle) {
                 Toggle(Strings.settingsNotificationsBody, isOn: Binding(
                     get: { viewModel.notificationsEnabled },
-                    set: { viewModel.setNotificationsEnabled($0) }
+                    set: { enabled in
+                        guard enabled else {
+                            viewModel.setNotificationsEnabled(false)
+                            return
+                        }
+                        SystemNotificationScheduler.shared.requestPermission { granted in
+                            viewModel.setNotificationsEnabled(granted)
+                        }
+                    }
                 ))
                 .accessibilityIdentifier("settings.notifications")
                 .listRowBackground(AppColors.surface)

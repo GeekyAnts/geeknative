@@ -22,6 +22,10 @@ struct RootView: View {
         .onChange(of: container.settingsRepository.appearance, initial: true) { _, appearance in
             apply(appearance)
         }
+        .onReceive(NotificationCenter.default.publisher(for: .notificationOpened)) { note in
+            // A tap already opened this app. Show the screen the row points at.
+            path = (note.object as? String) == "settings" ? [.settings] : []
+        }
     }
 
     /// Overrides the style on the windows themselves, so sheets and alerts follow too.

@@ -6,6 +6,7 @@ struct AppMain: App {
 
     init() {
         AppFonts.register()
+        SystemNotificationScheduler.shared.start()
     }
 
     var body: some Scene {

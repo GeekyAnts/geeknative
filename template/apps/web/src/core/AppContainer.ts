@@ -1,3 +1,4 @@
+import { browserNotifications } from '#/features/notifications/BrowserNotifications'
 import { LocalNotificationsRepository } from '#/features/notifications/LocalNotificationsRepository'
 import type { NotificationsRepository } from '#/features/notifications/NotificationsRepository'
 import { LocalStorageSettingsRepository } from '#/features/settings/LocalStorageSettingsRepository'
@@ -17,8 +18,10 @@ export interface AppContainer {
 export function createAppContainer(): AppContainer {
   // During server rendering there's no localStorage, so the repository falls back to defaults.
   const storage = typeof window === 'undefined' ? undefined : window.localStorage
+  const notifications = new LocalNotificationsRepository(storage)
+  if (storage) notifications.scheduler = browserNotifications
   return {
     settingsRepository: new LocalStorageSettingsRepository(storage),
-    notificationsRepository: new LocalNotificationsRepository(storage),
+    notificationsRepository: notifications,
   }
 }

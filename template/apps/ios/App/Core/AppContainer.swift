@@ -15,9 +15,11 @@ final class AppContainer {
 
     static func live() -> AppContainer {
         let defaults = UserDefaults.standard
+        let notifications = UserDefaultsNotificationsRepository(defaults: defaults)
+        notifications.scheduler = SystemNotificationScheduler.shared
         return AppContainer(
             settingsRepository: UserDefaultsSettingsRepository(defaults: defaults),
-            notificationsRepository: UserDefaultsNotificationsRepository(defaults: defaults)
+            notificationsRepository: notifications
         )
     }
 

@@ -12,7 +12,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
+import android.Manifest
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.RadioButton
@@ -36,15 +41,23 @@ import app.generated.AppIconSize
 import app.generated.AppIcons
 import app.generated.AppSize
 import app.generated.AppSpacing
+import app.features.notifications.canPostNotifications
 import app.generated.AppTypography
 
 @Composable
 fun SettingsScreen(viewModel: SettingsViewModel, onBack: () -> Unit) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        viewModel.setNotificationsEnabled(granted)
+    }
     SettingsContent(
         state = state,
         onSelectAppearance = viewModel::selectAppearance,
-        onNotificationsEnabled = viewModel::setNotificationsEnabled,
+        onNotificationsEnabled = { enabled ->
+            if (!enabled || canPostNotifications(context)) viewModel.setNotificationsEnabled(enabled)
+            else if (Build.VERSION.SDK_INT >= 33) permission.launch(Manifest.permission.POST_NOTIFICATIONS)
+        },
         onBack = onBack,
     )
 }

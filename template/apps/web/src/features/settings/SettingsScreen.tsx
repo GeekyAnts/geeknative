@@ -46,7 +46,16 @@ export function SettingsScreen() {
             data-testid="settings.notifications"
             aria-label={strings.settingsNotificationsTitle}
             checked={viewModel.notificationsEnabled}
-            onChange={(event) => void viewModel.selectNotifications(event.target.checked)}
+            onChange={(event) => {
+              const enabled = event.target.checked
+              if (!enabled || typeof Notification === 'undefined') {
+                void viewModel.selectNotifications(enabled)
+                return
+              }
+              void Notification.requestPermission().then((permission) => {
+                void viewModel.selectNotifications(permission === 'granted')
+              })
+            }}
             className="size-4 accent-primary"
           />
         </div>

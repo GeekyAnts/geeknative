@@ -3,6 +3,7 @@ package app
 import android.app.UiModeManager
 import android.graphics.Color
 import android.os.Build
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -17,6 +18,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.core.LocalAppContainer
 import app.core.designsystem.AppTheme
 import app.core.navigation.AppNavigation
+import app.features.notifications.NOTIFICATION_ROUTE
 import app.features.settings.Appearance
 
 class MainActivity : ComponentActivity() {
@@ -24,6 +26,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val container = (application as App).container
+        // A notification tap starts this activity with the row's route.
+        intent.getStringExtra(NOTIFICATION_ROUTE)?.let { NotificationRoutes.open(it) }
 
         setContent {
             // Null until the stored choice loads. Skip that first frame rather than flash the wrong theme.
@@ -53,6 +57,12 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        intent.getStringExtra(NOTIFICATION_ROUTE)?.let { NotificationRoutes.open(it) }
     }
 
     /** Android 12+ starts the app in this mode; earlier versions have no API for it, so their splash follows the system. */

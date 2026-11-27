@@ -6,6 +6,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import app.features.notifications.DataStoreNotificationsRepository
 import app.features.notifications.InMemoryNotificationsRepository
 import app.features.notifications.NotificationsRepository
+import app.features.notifications.SystemNotificationScheduler
 import app.features.settings.DataStoreSettingsRepository
 import app.features.settings.InMemorySettingsRepository
 import app.features.settings.SettingsRepository
@@ -24,10 +25,14 @@ class AppContainer(
     val notificationsRepository: NotificationsRepository,
 ) {
     companion object {
-        fun live(context: Context) = AppContainer(
-            settingsRepository = DataStoreSettingsRepository(context.applicationContext.settingsDataStore),
-            notificationsRepository = DataStoreNotificationsRepository(context.applicationContext.notificationsDataStore),
-        )
+        fun live(context: Context): AppContainer {
+            val notifications = DataStoreNotificationsRepository(context.applicationContext.notificationsDataStore)
+            notifications.scheduler = SystemNotificationScheduler(context.applicationContext)
+            return AppContainer(
+                settingsRepository = DataStoreSettingsRepository(context.applicationContext.settingsDataStore),
+                notificationsRepository = notifications,
+            )
+        }
 
         /** In-memory dependencies, for previews and tests. */
         fun preview() = AppContainer(
