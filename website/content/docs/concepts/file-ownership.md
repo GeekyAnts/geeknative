@@ -8,8 +8,8 @@ Every file in a geeknative project has one owner. That's what makes framework up
 | Owner | Files | On upgrade |
 |---|---|---|
 | **Framework** | `.geeknative/framework.mk`, `.geeknative/playbooks/`, `.geeknative/templates/`, `.geeknative/hooks/`, `.claude/agents/ios-engineer.md`, `android-engineer.md` and `web-engineer.md`, and the managed block in each `AGENTS.md` and the root `CLAUDE.md` | Replaced |
-| **You** | Everything else: PRODUCT.md, DESIGN.md, `spec/`, `contracts/`, all app code, your sections of `AGENTS.md`, the Makefile, `.claude/settings.json` | Never touched |
-| **Generated** | `Generated/`, `generated/`, `generated_*.xml`, `Identity.xcconfig`, `identity.properties`, `.env.example` | Rebuilt by `make gen` |
+| **You** | Everything else: PRODUCT.md, DESIGN.md, `spec/`, `contracts/`, `assets/`, all app code, your sections of `AGENTS.md`, the Makefile, `.claude/settings.json` | Never touched |
+| **Generated** | `Generated/`, `generated/`, `generated_*.xml`, Android launcher mipmaps, `ic_launcher-playstore.png`, `public/favicon.ico`, `Identity.xcconfig`, `identity.properties`, `.env.example` | Rebuilt by `make gen` |
 
 ## Managed blocks
 

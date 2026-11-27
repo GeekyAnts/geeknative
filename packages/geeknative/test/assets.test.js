@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict'
-import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { test } from 'node:test'
 import sharp from 'sharp'
 import { launcherOutputs, readRuntimeAssets } from '../src/codegen/assets.js'
 import { generate, staleFiles } from '../src/codegen/index.js'
 import { gen } from '../src/commands/gen.js'
-import { outputOf, tempProject } from './helpers.js'
+import { outputOf, tempDir, tempProject } from './helpers.js'
+import { MIGRATIONS } from '../src/migrations/registry.js'
 
 const PNG = Buffer.from(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
@@ -163,4 +164,19 @@ test('a missing icon.png warns and still renders the built-in mark', () => {
   const { warnings, outputs } = launcherOutputs(tempProject())
   assert.deepEqual(warnings, ['assets/icon.png is missing, so the built-in icon was used.'])
   assert.ok(outputs.some((item) => item.path.endsWith('icon-1024.png')))
+})
+
+test('the favicon migration rewrites only the old svg link', () => {
+  const migration = MIGRATIONS.find((item) => item.id === 'favicon-ico')
+  assert.ok(migration?.run)
+  const dir = tempDir()
+  const relative = 'apps/web/src/routes/__root.tsx'
+  const file = path.join(dir, relative)
+  mkdirSync(path.dirname(file), { recursive: true })
+  writeFileSync(file, `links: [\n      { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },\n    ]\n`)
+  assert.deepEqual(migration.run(dir, { dryRun: true }).changed, [relative])
+  assert.match(readFileSync(file, 'utf8'), /favicon\.svg/)
+  assert.deepEqual(migration.run(dir, { dryRun: false }).changed, [relative])
+  assert.match(readFileSync(file, 'utf8'), /href: '\/favicon\.ico'/)
+  assert.deepEqual(migration.run(dir, { dryRun: false }).changed, [])
 })

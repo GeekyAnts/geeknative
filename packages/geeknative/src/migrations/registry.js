@@ -1,7 +1,9 @@
 // @ts-check
+import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+import path from 'node:path'
+
 /**
  * Project-owned migrations. `geeknative upgrade` never runs these; `geeknative migrate` does.
- * Production list stays empty until a release ships a real format change. Tests pass a fixture list.
  *
  * @typedef {'pending' | 'prepared' | 'completed'} MigrationStatus
  * @typedef {{
@@ -19,7 +21,35 @@
  */
 
 /** @type {Migration[]} */
-export const MIGRATIONS = []
+export const MIGRATIONS = [
+  {
+    id: 'favicon-ico',
+    since: '0.1.1',
+    kind: 'scripted',
+    title: 'Point the web shell at the generated favicon.ico',
+    run: pointWebShellAtFavicon,
+  },
+]
+
+const OLD_FAVICON_LINK = `{ rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }`
+const NEW_FAVICON_LINK = `{ rel: 'icon', href: '/favicon.ico' }`
+
+/**
+ * Rewrites the template's old favicon link. Leaves a shell that already points at favicon.ico,
+ * or any other icon link, alone.
+ * @param {string} root
+ * @param {{ dryRun: boolean }} options
+ * @returns {{ changed: string[] }}
+ */
+function pointWebShellAtFavicon(root, { dryRun }) {
+  const relative = 'apps/web/src/routes/__root.tsx'
+  const file = path.join(root, relative)
+  if (!existsSync(file)) return { changed: [] }
+  const text = readFileSync(file, 'utf8')
+  if (!text.includes(OLD_FAVICON_LINK)) return { changed: [] }
+  if (!dryRun) writeFileSync(file, text.replace(OLD_FAVICON_LINK, NEW_FAVICON_LINK))
+  return { changed: [relative] }
+}
 
 /**
  * @param {string} a

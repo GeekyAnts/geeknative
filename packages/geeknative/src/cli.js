@@ -20,7 +20,7 @@ Usage: geeknative <command>
 
   create <folder>      Create a project. Options: --name "My App" --id com.acme.myapp --consistency <strict|adapted> --no-install --no-git
                        (from a geeknative checkout, --link follows the checkout instead of pinning a snapshot)
-  gen                  Regenerate platform code from contracts/
+  gen                  Regenerate platform code from contracts/ and assets/
   font <family>        Switch the shared typeface: a Google Fonts family ("Open Sans") or system
   check [targets]      Verify contracts, then build and test. Targets: all (default), contracts, ios, android, web
   doctor [--fix]       Check Xcode, the Android SDK and Node; --fix installs what it can

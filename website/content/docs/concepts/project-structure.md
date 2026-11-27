@@ -22,6 +22,12 @@ my-app/
 │   ├── api/                  One JSON file per task (optional until a hosted backend is planned)
 │   ├── strings/en.json       All user-facing copy (one file per locale)
 │   └── icons.json            Each icon's Lucide name, or an SVG of yours in contracts/icons/
+├── assets/
+│   ├── icon.png              App icon, 1024×1024 PNG. make gen builds the iOS, Android and web icons
+│   ├── images/               Photos. Referenced as AppAssets.images.*
+│   ├── videos/
+│   ├── documents/            PDFs
+│   └── android/              Optional adaptive icon: foreground.png, background.png, monochrome.png
 ├── spec/
 │   ├── features/             One spec per feature: home.md, settings.md
 │   ├── navigation.md         Screens and routes
@@ -54,7 +60,7 @@ apps/ios/
 │   ├── Core/                 AppContainer, RootView, Navigation/Route.swift, DesignSystem/
 │   ├── Features/             Home/, Settings/
 │   ├── Generated/            From contracts/; never edit
-│   └── Resources/            Assets.xcassets (app icon)
+│   └── Resources/            Assets.xcassets. The app icon is generated in Generated/AppIcon.xcassets
 └── AppTests/                 Swift Testing tests
 
 apps/android/
@@ -84,8 +90,8 @@ apps/web/src/
 
 | App | Generated |
 |---|---|
-| iOS | `App/Generated/` (Swift, `Localizable.xcstrings`, `Colors.xcassets`) and `Config/Identity.xcconfig`. `AppSecrets.swift` is git-ignored. |
-| Android | `app/src/main/kotlin/app/generated/`, `res/values*/generated_*.xml` and `app/identity.properties`. `AppSecrets.kt` is git-ignored. |
-| Web | `src/generated/` |
+| iOS | `App/Generated/` (Swift, `Localizable.xcstrings`, `Colors.xcassets`, `AppIcon.xcassets`, copied assets) and `Config/Identity.xcconfig`. `AppSecrets.swift` is git-ignored. |
+| Android | `app/src/main/kotlin/app/generated/`, `res/values*/generated_*.xml`, launcher mipmaps, `app/src/main/ic_launcher-playstore.png` and `app/identity.properties`. `AppSecrets.kt` is git-ignored. |
+| Web | `src/generated/`, including copied assets, and `public/favicon.ico` |
 
 See [File ownership](/docs/concepts/file-ownership/) for which files belong to you and which to the framework.
