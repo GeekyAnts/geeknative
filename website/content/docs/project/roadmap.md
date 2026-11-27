@@ -10,7 +10,7 @@ geeknative 0.1.0 is the foundation: three apps that build and test from the comm
 ## Upgrades and agent evaluation
 
 - **`geeknative upgrade`.** Shipped: it replaces framework files you have not changed, three-way merges the ones you have, and lists conflicts, using the hashes in `.geeknative/lock.json`. See [File ownership](/docs/concepts/file-ownership/) and [upgrade](/docs/reference/cli/#upgrade).
-- **`geeknative migrate`.** Shipped as the opt-in runner: scripted migrations for mechanical project-owned changes, and agent-assisted migrations that write `.geeknative/migrations/pending/MIGRATION.md` for the user to hand to an agent (`--status` / `--complete`). `upgrade` never rewrites project-owned files; it only announces when migrations are waiting. Concrete migrations land in the registry per release (the list starts empty).
+- **`geeknative migrate`.** Shipped as the opt-in runner: scripted migrations for mechanical project-owned changes, and agent-assisted migrations that write `.geeknative/migrations/pending/MIGRATION.md` for the user to hand to an agent (`--status` / `--complete`). `upgrade` never rewrites project-owned files; it only announces when migrations are waiting. Scripted migrations write `contracts/config.json` when that file is missing, align system-font type sizes with Dynamic Type, and rewrite the starter `back`, `home`, and `settings` icons to Lucide names. Other icons stay manual.
 - **Agent evaluation.** A set of real prompts (a feature, a design change, a bug, a platform-only tweak) run through several agents, used to tune AGENTS.md and the playbooks wherever agents go wrong.
 
 ## Visual and end-to-end parity

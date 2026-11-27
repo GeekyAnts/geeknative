@@ -159,7 +159,7 @@ const cases = [
   [
     'a missing config.json',
     (c) => rmSync(path.join(c, 'config.json')),
-    /contracts\/config\.json is missing\. Create it with/,
+    /contracts\/config\.json is missing\. Run geeknative migrate, or create it with/,
   ],
   [
     'an unknown top-level config key',

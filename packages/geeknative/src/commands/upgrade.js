@@ -33,7 +33,7 @@ import { pin } from './pin.js'
  *   migrationsList?: import('../migrations/registry.js').Migration[],
  * }} [options]
  *   `incoming` / `previous` are template roots (tests pass fixtures). `pin` and `gen` default on.
- *   `migrationsList` is for tests; production uses the empty registry.
+ *   `migrationsList` is for tests; production uses `MIGRATIONS`.
  */
 export async function upgrade(
   root,

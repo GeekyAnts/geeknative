@@ -1,7 +1,11 @@
 // @ts-check
+import { seedContractsConfig } from './contracts-config.js'
+import { rewriteStarterIcons } from './lucide-starter-icons.js'
+import { alignSystemFontTypeSizes } from './system-font-type-sizes.js'
+
 /**
  * Project-owned migrations. `geeknative upgrade` never runs these; `geeknative migrate` does.
- * Production list stays empty until a release ships a real format change. Tests pass a fixture list.
+ * Tests pass a fixture list; production uses `MIGRATIONS`.
  *
  * @typedef {'pending' | 'prepared' | 'completed'} MigrationStatus
  * @typedef {{
@@ -19,7 +23,29 @@
  */
 
 /** @type {Migration[]} */
-export const MIGRATIONS = []
+export const MIGRATIONS = [
+  {
+    id: 'contracts-config',
+    since: '0.1.1',
+    kind: 'scripted',
+    title: 'Add contracts/config.json when the project does not have one',
+    run: (root) => seedContractsConfig(root),
+  },
+  {
+    id: 'system-font-type-sizes',
+    since: '0.1.1',
+    kind: 'scripted',
+    title: 'Match system-font type sizes to their Dynamic Type styles',
+    run: (root) => alignSystemFontTypeSizes(root),
+  },
+  {
+    id: 'lucide-starter-icons',
+    since: '0.1.1',
+    kind: 'scripted',
+    title: 'Rewrite the starter back, home, and settings icons as Lucide names',
+    run: (root) => rewriteStarterIcons(root),
+  },
+]
 
 /**
  * @param {string} a

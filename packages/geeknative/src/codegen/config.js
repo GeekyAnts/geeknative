@@ -27,7 +27,7 @@ export function readConfig(root) {
   // A specific hint beats the generic "is missing" from readJson: projects made before config.json existed hit this.
   if (!existsSync(file)) {
     throw new CliError(
-      `${SOURCE} is missing. Create it with {"environments": ["development", "staging", "production"], "values": {}, "secrets": {}}.`,
+      `${SOURCE} is missing. Run geeknative migrate, or create it with {"environments": ["development", "staging", "production"], "values": {}, "secrets": {}}.`,
     )
   }
   return validateConfig(readJson(file, SOURCE))
