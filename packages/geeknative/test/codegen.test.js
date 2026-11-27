@@ -438,14 +438,13 @@ test('secrets: without a .env, values are empty and a warning says how to fix it
   const { outputs, warnings } = generateAll(projectWithSecret())
   assert.match(outputOf(outputs, 'AppSecrets.swift'), /static let mapsApiKey = ""/)
   assert.match(outputOf(outputs, 'AppSecrets.kt'), /val mapsApiKey: String = ""/)
-  assert.equal(warnings.length, 2)
+  assert.equal(warnings.length, 1)
   assert.match(warnings[0], /\.env is missing: MAPS_API_KEY is empty in AppSecrets\. Copy \.env\.example to \.env/)
-  assert.equal(warnings[1], 'assets/icon.png is missing, so the built-in icon was used.')
 })
 
 test('secrets: values from .env are inlined on mobile and only named on the web', () => {
   const { outputs, warnings } = generateAll(projectWithSecret('MAPS_API_KEY="abc$123"\n'))
-  assert.deepEqual(warnings, ['assets/icon.png is missing, so the built-in icon was used.'])
+  assert.deepEqual(warnings, [])
   assert.match(outputOf(outputs, 'AppSecrets.swift'), /static let mapsApiKey = "abc\$123"/)
   assert.match(outputOf(outputs, 'AppSecrets.kt'), /val mapsApiKey: String = "abc\\\$123"/, 'Kotlin escapes $')
   for (const suffix of ['AppSecrets.swift', 'AppSecrets.kt']) {
@@ -477,7 +476,6 @@ test('secrets: a .env missing one of several keys names only that key', () => {
   writeFileSync(path.join(dir, '.env'), 'MAPS_API_KEY=x\n')
   assert.deepEqual(generateAll(dir).warnings, [
     '.env lacks ANALYTICS_KEY: ANALYTICS_KEY is empty in AppSecrets.',
-    'assets/icon.png is missing, so the built-in icon was used.',
   ])
 })
 

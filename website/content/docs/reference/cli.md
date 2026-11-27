@@ -60,7 +60,7 @@ Validates every contract and `assets/`, writes the generated files that changed,
 
 `assets/` is the source for photos, video, PDFs and the app icon. There is no manifest. `make gen` copies `images/`, `videos/` and `documents/` into each app unchanged and names them on `AppAssets`. `assets/icon.png` (a square PNG, 1024 or larger) becomes the iOS app icon, the Android launcher icons, a 512 Play Store image and `apps/web/public/favicon.ico`. Optional `assets/android/foreground.png` and `background.png` (square, 432 or larger) are the adaptive icon layers. `monochrome.png` is the themed icon, and only when those two exist. Fonts stay in `contracts/fonts`.
 
-A missing `icon.png` does not fail the build. `make gen` warns and uses a built-in mark. A file that is not a square PNG of the required size fails.
+A missing `icon.png` does not fail the build. If `assets/` exists without it, `make gen` warns and leaves the current app icon in place. Adaptive layers without the master icon fail. A file that is not a square PNG of the required size fails.
 
 Files built from `.env` (`AppSecrets.swift` and `AppSecrets.kt`) are always written, even by `check`, and are never compared, because they are not committed. If `.env` lacks a declared key, `gen` prints a warning.
 

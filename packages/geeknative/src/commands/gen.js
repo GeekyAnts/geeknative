@@ -14,7 +14,7 @@ import { CliError, log } from '../lib/log.js'
  * @returns {{ changed: string[], removed: string[] }}
  */
 export function gen(root, { check = false, quiet = false } = {}) {
-  const { outputs, warnings } = generateAll(root)
+  const { outputs, warnings, assetWarnings } = generateAll(root)
   /** @type {string[]} */
   const changed = []
   for (const output of outputs) {
@@ -35,13 +35,14 @@ export function gen(root, { check = false, quiet = false } = {}) {
   }
   const removed = staleFiles(root, new Set(outputs.map((o) => o.path)))
   const legacyIcon = path.join(root, LEGACY_APP_ICON)
+  const ownsLauncher = existsSync(path.join(root, 'assets', 'icon.png'))
   if (!check) {
     for (const file of removed) rmSync(path.join(root, file), { force: true })
-    if (existsSync(legacyIcon)) {
+    if (ownsLauncher && existsSync(legacyIcon)) {
       rmSync(legacyIcon, { recursive: true, force: true })
       if (!removed.includes(LEGACY_APP_ICON)) removed.push(LEGACY_APP_ICON)
     }
-  } else if (existsSync(legacyIcon) && !removed.includes(LEGACY_APP_ICON)) {
+  } else if (ownsLauncher && existsSync(legacyIcon) && !removed.includes(LEGACY_APP_ICON)) {
     removed.push(LEGACY_APP_ICON)
   }
 
@@ -52,6 +53,7 @@ export function gen(root, { check = false, quiet = false } = {}) {
   }
   if (!quiet) {
     for (const warning of warnings) log.warn('secrets', warning)
+    for (const warning of assetWarnings) log.warn('assets', warning)
     if (check) log.ok('contracts', 'valid, generated files up to date')
     else if (changed.length || removed.length) {
       log.ok('gen', `${changed.length} file${changed.length === 1 ? '' : 's'} updated${removed.length ? `, ${removed.length} removed` : ''}`)

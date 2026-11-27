@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { test } from 'node:test'
 import sharp from 'sharp'
@@ -160,10 +160,40 @@ test('icon validation rejects a bad master and a short adaptive layer', async ()
   assert.throws(() => launcherOutputs(dir), /needs foreground\.png and background\.png/)
 })
 
-test('a missing icon.png warns and still renders the built-in mark', () => {
+test('a project with no assets/ does not warn about the icon', () => {
   const { warnings, outputs } = launcherOutputs(tempProject())
-  assert.deepEqual(warnings, ['assets/icon.png is missing, so the built-in icon was used.'])
-  assert.ok(outputs.some((item) => item.path.endsWith('icon-1024.png')))
+  assert.deepEqual(warnings, [])
+  assert.ok(!outputs.some((item) => item.path.endsWith('icon-1024.png')))
+})
+
+test('a missing icon.png warns and leaves an existing launcher icon alone', async () => {
+  const dir = tempProject()
+  mkdirSync(path.join(dir, 'assets'), { recursive: true })
+  const legacy = 'apps/ios/App/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png'
+  const favicon = 'apps/web/public/favicon.svg'
+  put(dir, legacy, PNG)
+  put(dir, favicon, '<svg xmlns="http://www.w3.org/2000/svg"/>')
+  const { warnings, outputs } = launcherOutputs(dir)
+  assert.deepEqual(warnings, ['assets/icon.png is missing, so the current app icon was left in place.'])
+  assert.equal(outputs.length, 0)
+  const kept = gen(dir, { quiet: true })
+  assert.ok(!kept.removed.some((file) => file.includes('AppIcon') || file.endsWith('favicon.svg')))
+  assert.ok(existsSync(path.join(dir, legacy)))
+  assert.ok(existsSync(path.join(dir, favicon)))
+
+  put(dir, 'assets/icon.png', await png(1024, 1024))
+  const replaced = gen(dir, { quiet: true })
+  assert.ok(replaced.removed.includes(legacy))
+  assert.ok(replaced.removed.includes(favicon))
+  assert.ok(!existsSync(path.join(dir, legacy)))
+  assert.ok(!existsSync(path.join(dir, favicon)))
+})
+
+test('adaptive layers without a master icon fail', async () => {
+  const dir = tempProject()
+  put(dir, 'assets/android/foreground.png', await png(432, 432))
+  put(dir, 'assets/android/background.png', await png(432, 432))
+  assert.throws(() => launcherOutputs(dir), /needs assets\/icon\.png/)
 })
 
 test('the favicon migration rewrites only the old svg link', () => {

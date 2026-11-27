@@ -242,15 +242,15 @@ const LAUNCHER_PNGS = [
   'ic_launcher_monochrome.png',
 ]
 
-const DEFAULT_ICON = readFileSync(new URL('./default-icon.png', import.meta.url))
-
 /**
  * Launcher files this generator owns, including the placeholders it replaces.
+ * Only when assets/icon.png exists: a project that has not adopted the master icon keeps its own.
  * Only paths that exist are returned, so a missing file is not reported as stale.
  * @param {string} root
  * @returns {string[]}
  */
 export function ownedIconFiles(root) {
+  if (!existsSync(path.join(root, 'assets', 'icon.png'))) return []
   /** @type {string[]} */
   const candidates = []
   for (const [density] of LAUNCHER_DENSITIES) {
@@ -270,17 +270,18 @@ export function ownedIconFiles(root) {
   return candidates.filter((file) => existsSync(path.join(root, file)))
 }
 
+const MISSING_ICON = 'assets/icon.png is missing, so the current app icon was left in place.'
+
 /**
  * Reads the master icon and the optional Android layers.
- * A missing icon.png warns and uses the built-in mark, so generation still has a source.
+ * No icon.png means no launcher outputs: the project's existing icon stays.
  * @param {string} root
  * @returns {{ warnings: string[], outputs: Output[] }}
  */
 export function launcherOutputs(root) {
-  const warnings = []
+  const hasAssets = existsSync(path.join(root, 'assets'))
   const iconFile = path.join(root, 'assets', 'icon.png')
   const icon = existsSync(iconFile) ? readFileSync(iconFile) : null
-  if (!icon) warnings.push('assets/icon.png is missing, so the built-in icon was used.')
 
   const layer = (/** @type {string} */ name) => {
     const file = path.join(root, 'assets', 'android', name)
@@ -297,9 +298,13 @@ export function launcherOutputs(root) {
   if (monochrome && !foreground) {
     throw new CliError('assets/android/monochrome.png needs foreground.png and background.png.')
   }
+  if (!icon) {
+    if (foreground) throw new CliError('assets/android/ needs assets/icon.png.')
+    return { warnings: hasAssets ? [MISSING_ICON] : [], outputs: [] }
+  }
 
   const rendered = renderIcons({
-    icon: source(icon ?? DEFAULT_ICON, 'assets/icon.png', 1024),
+    icon: source(icon, 'assets/icon.png', 1024),
     foreground: foreground ? source(foreground, 'assets/android/foreground.png', 432) : null,
     background: background ? source(background, 'assets/android/background.png', 432) : null,
     monochrome: monochrome ? source(monochrome, 'assets/android/monochrome.png', 432) : null,
@@ -311,7 +316,7 @@ export function launcherOutputs(root) {
     adaptive: ADAPTIVE_DENSITIES.map(([, size]) => size),
   })
 
-  return { warnings, outputs: iconFiles(rendered) }
+  return { warnings: [], outputs: iconFiles(rendered) }
 }
 
 /**
