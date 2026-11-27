@@ -229,6 +229,8 @@ When a scripted migration regenerates contracts, `migrate` runs `gen` once at th
 
 `system-font-type-sizes` (since 0.1.1) sets each typography role's `size` to its Dynamic Type point size when `font.family` is `system` or missing (`body` 16 becomes 17). A shared family is left alone.
 
+`lucide-starter-icons` (since 0.1.1) rewrites only `back`, `home`, and `settings` when they are still `{ "ios", "android", "web" }` objects (`back` becomes `{ "icon": "arrow-left", "mirrored": true }`). Every other icon stays as it is. `Image(systemName:)` call sites and the icon library dependencies stay manual.
+
 ## run
 
 ```sh

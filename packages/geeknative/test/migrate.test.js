@@ -197,10 +197,10 @@ test('contracts-config writes the template starter only when missing', async () 
   const starter = readFileSync(path.join(templateDir(), 'contracts', 'config.json'))
 
   const created = await migrate(dir, { gen: false })
-  assert.deepEqual(created.applied, ['contracts-config', 'system-font-type-sizes'])
+  assert.deepEqual(created.applied, ['contracts-config', 'system-font-type-sizes', 'lucide-starter-icons'])
   assert.deepEqual(created.changed, ['contracts/config.json'])
   assert.deepEqual(readFileSync(dest), starter)
-  assert.deepEqual(readLock(dir)?.migrations, ['contracts-config', 'system-font-type-sizes'])
+  assert.deepEqual(readLock(dir)?.migrations, ['contracts-config', 'system-font-type-sizes', 'lucide-starter-icons'])
 
   gitCommitAll(dir, 'seeded config')
   writeFileSync(dest, '{"environments":["development","production"],"values":{"kept":true},"secrets":{}}\n')
@@ -210,10 +210,10 @@ test('contracts-config writes the template starter only when missing', async () 
 
   const kept = readFileSync(dest, 'utf8')
   const skipped = await migrate(dir, { gen: false })
-  assert.deepEqual(skipped.applied, ['contracts-config', 'system-font-type-sizes'])
+  assert.deepEqual(skipped.applied, ['contracts-config', 'system-font-type-sizes', 'lucide-starter-icons'])
   assert.deepEqual(skipped.changed, [])
   assert.equal(readFileSync(dest, 'utf8'), kept)
-  assert.deepEqual(readLock(dir)?.migrations, ['contracts-config', 'system-font-type-sizes'])
+  assert.deepEqual(readLock(dir)?.migrations, ['contracts-config', 'system-font-type-sizes', 'lucide-starter-icons'])
 })
 
 test('system-font-type-sizes rewrites only a system font whose sizes disagree', async () => {
@@ -238,7 +238,7 @@ test('system-font-type-sizes rewrites only a system font whose sizes disagree', 
   assert.equal(after.typography.body.size, 17)
   assert.equal(after.typography.body.lineHeight, 24)
   assert.equal(after.typography.label.size, 15)
-  assert.deepEqual(readLock(system)?.migrations, ['contracts-config', 'system-font-type-sizes'])
+  assert.deepEqual(readLock(system)?.migrations, ['contracts-config', 'system-font-type-sizes', 'lucide-starter-icons'])
 
   const shared = projectWithLock()
   mkdirSync(path.join(shared, 'contracts'), { recursive: true })
@@ -259,6 +259,38 @@ test('system-font-type-sizes rewrites only a system font whose sizes disagree', 
   const same = await migrate(aligned, { gen: false })
   assert.deepEqual(same.changed, [])
   assert.equal(readFileSync(path.join(aligned, 'contracts', 'tokens.json'), 'utf8'), matching)
+})
+
+test('lucide-starter-icons rewrites only the starter platform triples', async () => {
+  const oldIcons = {
+    back: { ios: 'chevron.backward', android: 'Icons.AutoMirrored.Filled.ArrowBack', web: 'ArrowLeft' },
+    home: { ios: 'house', android: 'Icons.Filled.Home', web: 'House' },
+    settings: { ios: 'gearshape', android: 'Icons.Filled.Settings', web: 'Settings' },
+    star: { ios: 'star', android: 'Icons.Filled.Star', web: 'Star' },
+  }
+  const dir = projectWithLock()
+  mkdirSync(path.join(dir, 'contracts'), { recursive: true })
+  writeFileSync(path.join(dir, 'contracts', 'config.json'), '{}\n')
+  writeFileSync(path.join(dir, 'contracts', 'icons.json'), `${JSON.stringify(oldIcons)}\n`)
+  gitCommitAll(dir, 'old icons')
+  const rewritten = await migrate(dir, { gen: false })
+  assert.deepEqual(rewritten.changed, ['contracts/icons.json'])
+  const after = JSON.parse(readFileSync(path.join(dir, 'contracts', 'icons.json'), 'utf8'))
+  assert.deepEqual(after.back, { icon: 'arrow-left', mirrored: true })
+  assert.equal(after.home, 'house')
+  assert.equal(after.settings, 'settings')
+  assert.deepEqual(after.star, oldIcons.star)
+  assert.deepEqual(readLock(dir)?.migrations, ['contracts-config', 'system-font-type-sizes', 'lucide-starter-icons'])
+
+  const current = projectWithLock()
+  mkdirSync(path.join(current, 'contracts'), { recursive: true })
+  const lucide = `${JSON.stringify({ $family: 'lucide', back: { icon: 'arrow-left', mirrored: true }, home: 'house', settings: 'settings' })}\n`
+  writeFileSync(path.join(current, 'contracts', 'config.json'), '{}\n')
+  writeFileSync(path.join(current, 'contracts', 'icons.json'), lucide)
+  gitCommitAll(current, 'lucide icons')
+  const left = await migrate(current, { gen: false })
+  assert.deepEqual(left.changed, [])
+  assert.equal(readFileSync(path.join(current, 'contracts', 'icons.json'), 'utf8'), lucide)
 })
 
 test('setLockMigrationState leaves hashes and version alone', () => {

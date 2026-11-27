@@ -1,5 +1,6 @@
 // @ts-check
 import { seedContractsConfig } from './contracts-config.js'
+import { rewriteStarterIcons } from './lucide-starter-icons.js'
 import { alignSystemFontTypeSizes } from './system-font-type-sizes.js'
 
 /**
@@ -36,6 +37,13 @@ export const MIGRATIONS = [
     kind: 'scripted',
     title: 'Match system-font type sizes to their Dynamic Type styles',
     run: (root) => alignSystemFontTypeSizes(root),
+  },
+  {
+    id: 'lucide-starter-icons',
+    since: '0.1.1',
+    kind: 'scripted',
+    title: 'Rewrite the starter back, home, and settings icons as Lucide names',
+    run: (root) => rewriteStarterIcons(root),
   },
 ]
 
