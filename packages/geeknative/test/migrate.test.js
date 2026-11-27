@@ -197,10 +197,10 @@ test('contracts-config writes the template starter only when missing', async () 
   const starter = readFileSync(path.join(templateDir(), 'contracts', 'config.json'))
 
   const created = await migrate(dir, { gen: false })
-  assert.deepEqual(created.applied, ['contracts-config'])
+  assert.deepEqual(created.applied, ['contracts-config', 'system-font-type-sizes'])
   assert.deepEqual(created.changed, ['contracts/config.json'])
   assert.deepEqual(readFileSync(dest), starter)
-  assert.deepEqual(readLock(dir)?.migrations, ['contracts-config'])
+  assert.deepEqual(readLock(dir)?.migrations, ['contracts-config', 'system-font-type-sizes'])
 
   gitCommitAll(dir, 'seeded config')
   writeFileSync(dest, '{"environments":["development","production"],"values":{"kept":true},"secrets":{}}\n')
@@ -210,10 +210,55 @@ test('contracts-config writes the template starter only when missing', async () 
 
   const kept = readFileSync(dest, 'utf8')
   const skipped = await migrate(dir, { gen: false })
-  assert.deepEqual(skipped.applied, ['contracts-config'])
+  assert.deepEqual(skipped.applied, ['contracts-config', 'system-font-type-sizes'])
   assert.deepEqual(skipped.changed, [])
   assert.equal(readFileSync(dest, 'utf8'), kept)
-  assert.deepEqual(readLock(dir)?.migrations, ['contracts-config'])
+  assert.deepEqual(readLock(dir)?.migrations, ['contracts-config', 'system-font-type-sizes'])
+})
+
+test('system-font-type-sizes rewrites only a system font whose sizes disagree', async () => {
+  const tokens = (font, bodySize, labelSize) =>
+    `${JSON.stringify({
+      typography: {
+        body: { size: bodySize, lineHeight: 24, weight: 400, ios: 'body' },
+        label: { size: labelSize, lineHeight: 20, weight: 500, ios: 'subheadline' },
+      },
+      ...(font ? { font } : {}),
+    })}\n`
+
+  const system = projectWithLock()
+  mkdirSync(path.join(system, 'contracts'), { recursive: true })
+  writeFileSync(path.join(system, 'contracts', 'config.json'), '{}\n')
+  writeFileSync(path.join(system, 'contracts', 'tokens.json'), tokens({ family: 'system' }, 16, 14))
+  gitCommitAll(system, 'system font')
+  const rewritten = await migrate(system, { gen: false })
+  assert.ok(rewritten.applied.includes('system-font-type-sizes'))
+  assert.deepEqual(rewritten.changed, ['contracts/tokens.json'])
+  const after = JSON.parse(readFileSync(path.join(system, 'contracts', 'tokens.json'), 'utf8'))
+  assert.equal(after.typography.body.size, 17)
+  assert.equal(after.typography.body.lineHeight, 24)
+  assert.equal(after.typography.label.size, 15)
+  assert.deepEqual(readLock(system)?.migrations, ['contracts-config', 'system-font-type-sizes'])
+
+  const shared = projectWithLock()
+  mkdirSync(path.join(shared, 'contracts'), { recursive: true })
+  const inter = tokens({ family: 'Inter' }, 16, 14)
+  writeFileSync(path.join(shared, 'contracts', 'config.json'), '{}\n')
+  writeFileSync(path.join(shared, 'contracts', 'tokens.json'), inter)
+  gitCommitAll(shared, 'inter')
+  const left = await migrate(shared, { gen: false })
+  assert.deepEqual(left.changed, [])
+  assert.equal(readFileSync(path.join(shared, 'contracts', 'tokens.json'), 'utf8'), inter)
+
+  const aligned = projectWithLock()
+  mkdirSync(path.join(aligned, 'contracts'), { recursive: true })
+  const matching = tokens(undefined, 17, 15)
+  writeFileSync(path.join(aligned, 'contracts', 'config.json'), '{}\n')
+  writeFileSync(path.join(aligned, 'contracts', 'tokens.json'), matching)
+  gitCommitAll(aligned, 'aligned')
+  const same = await migrate(aligned, { gen: false })
+  assert.deepEqual(same.changed, [])
+  assert.equal(readFileSync(path.join(aligned, 'contracts', 'tokens.json'), 'utf8'), matching)
 })
 
 test('setLockMigrationState leaves hashes and version alone', () => {

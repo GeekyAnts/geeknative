@@ -227,6 +227,8 @@ When a scripted migration regenerates contracts, `migrate` runs `gen` once at th
 
 `contracts-config` (since 0.1.1) copies the template `contracts/config.json` only when the project does not have that file. It does not edit xcconfig, Gradle, or `.gitignore`.
 
+`system-font-type-sizes` (since 0.1.1) sets each typography role's `size` to its Dynamic Type point size when `font.family` is `system` or missing (`body` 16 becomes 17). A shared family is left alone.
+
 ## run
 
 ```sh

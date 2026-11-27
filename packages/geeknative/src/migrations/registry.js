@@ -1,5 +1,6 @@
 // @ts-check
 import { seedContractsConfig } from './contracts-config.js'
+import { alignSystemFontTypeSizes } from './system-font-type-sizes.js'
 
 /**
  * Project-owned migrations. `geeknative upgrade` never runs these; `geeknative migrate` does.
@@ -28,6 +29,13 @@ export const MIGRATIONS = [
     kind: 'scripted',
     title: 'Add contracts/config.json when the project does not have one',
     run: (root) => seedContractsConfig(root),
+  },
+  {
+    id: 'system-font-type-sizes',
+    since: '0.1.1',
+    kind: 'scripted',
+    title: 'Match system-font type sizes to their Dynamic Type styles',
+    run: (root) => alignSystemFontTypeSizes(root),
   },
 ]
 
