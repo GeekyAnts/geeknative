@@ -166,7 +166,12 @@ export async function upgrade(
 
     if (dryRun || conflicts.length) {
       if (conflicts.length && !dryRun) {
-        log.detail('Incoming copies are next to the files as *.geeknative-new. Fix them, then run upgrade again.')
+        log.detail(
+          '\n' +
+          'Conflicts found. Incoming changes are available in `*.geeknative-new` files for reference.\n' +
+          'Edit your original files to resolve the conflicts. Do not edit the `*.geeknative-new` files; they are temporary and will be removed when `upgrade` is run again.\n' +
+          'After resolving the conflicts, run `upgrade` again.'
+        )
       }
       return finish({ changed, conflicts })
     }
