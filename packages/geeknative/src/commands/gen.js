@@ -2,6 +2,7 @@
 import { existsSync, readFileSync, rmSync } from 'node:fs'
 import path from 'node:path'
 import { generateAll, staleFiles } from '../codegen/index.js'
+import { LEGACY_APP_ICON } from '../codegen/assets.js'
 import { writeIfChanged } from '../lib/fsutil.js'
 import { CliError, log } from '../lib/log.js'
 
@@ -33,7 +34,16 @@ export function gen(root, { check = false, quiet = false } = {}) {
     }
   }
   const removed = staleFiles(root, new Set(outputs.map((o) => o.path)))
-  if (!check) for (const file of removed) rmSync(path.join(root, file))
+  const legacyIcon = path.join(root, LEGACY_APP_ICON)
+  if (!check) {
+    for (const file of removed) rmSync(path.join(root, file), { force: true })
+    if (existsSync(legacyIcon)) {
+      rmSync(legacyIcon, { recursive: true, force: true })
+      if (!removed.includes(LEGACY_APP_ICON)) removed.push(LEGACY_APP_ICON)
+    }
+  } else if (existsSync(legacyIcon) && !removed.includes(LEGACY_APP_ICON)) {
+    removed.push(LEGACY_APP_ICON)
+  }
 
   if (check && (changed.length || removed.length)) {
     throw new CliError(

@@ -22,7 +22,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     ],
     links: [
       { rel: 'stylesheet', href: appCss },
-      { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+      { rel: 'icon', href: '/favicon.ico' },
     ],
   }),
   shellComponent: RootDocument,

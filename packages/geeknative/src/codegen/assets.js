@@ -1,8 +1,10 @@
 // @ts-check
+import { spawnSync } from 'node:child_process'
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { CliError } from '../lib/log.js'
-import { assertIdentifier, OUT } from './util.js'
+import { assertIdentifier, OUT, xcodeJson } from './util.js'
 
 const SOURCE = 'assets'
 
@@ -75,6 +77,15 @@ export function runtimeOutputs(assets) {
 
 /** Android asset copies live beside res/, not inside it. */
 export const ANDROID_ASSET_DIR = 'apps/android/app/src/main/assets/generated'
+
+/** The hand-written catalog the generator replaces. `make gen` deletes it. */
+export const LEGACY_APP_ICON = 'apps/ios/App/Resources/Assets.xcassets/AppIcon.appiconset'
+
+/** Play listing artwork. It sits outside res/, so it is not packaged into the APK. */
+export const PLAY_STORE_ICON = 'apps/android/app/src/main/ic_launcher-playstore.png'
+
+export const FAVICON = 'apps/web/public/favicon.ico'
+export const LEGACY_FAVICON = 'apps/web/public/favicon.svg'
 
 /**
  * @param {string} root
@@ -184,4 +195,245 @@ export const AppAssets = {
 ${groups.join('\n')}
 } as const
 `
+}
+
+const IOS_SLOTS = [
+  { idiom: 'iphone', size: '20x20', scale: '2x', px: 40 },
+  { idiom: 'iphone', size: '20x20', scale: '3x', px: 60 },
+  { idiom: 'iphone', size: '29x29', scale: '2x', px: 58 },
+  { idiom: 'iphone', size: '29x29', scale: '3x', px: 87 },
+  { idiom: 'iphone', size: '40x40', scale: '2x', px: 80 },
+  { idiom: 'iphone', size: '40x40', scale: '3x', px: 120 },
+  { idiom: 'iphone', size: '60x60', scale: '2x', px: 120 },
+  { idiom: 'iphone', size: '60x60', scale: '3x', px: 180 },
+  { idiom: 'ipad', size: '20x20', scale: '1x', px: 20 },
+  { idiom: 'ipad', size: '20x20', scale: '2x', px: 40 },
+  { idiom: 'ipad', size: '29x29', scale: '1x', px: 29 },
+  { idiom: 'ipad', size: '29x29', scale: '2x', px: 58 },
+  { idiom: 'ipad', size: '40x40', scale: '1x', px: 40 },
+  { idiom: 'ipad', size: '40x40', scale: '2x', px: 80 },
+  { idiom: 'ipad', size: '76x76', scale: '1x', px: 76 },
+  { idiom: 'ipad', size: '76x76', scale: '2x', px: 152 },
+  { idiom: 'ipad', size: '83.5x83.5', scale: '2x', px: 167 },
+  { idiom: 'ios-marketing', size: '1024x1024', scale: '1x', px: 1024 },
+]
+
+const LAUNCHER_DENSITIES = [
+  ['mdpi', 48],
+  ['hdpi', 72],
+  ['xhdpi', 96],
+  ['xxhdpi', 144],
+  ['xxxhdpi', 192],
+]
+
+const ADAPTIVE_DENSITIES = [
+  ['mdpi', 108],
+  ['hdpi', 162],
+  ['xhdpi', 216],
+  ['xxhdpi', 324],
+  ['xxxhdpi', 432],
+]
+
+const LAUNCHER_PNGS = [
+  'ic_launcher.png',
+  'ic_launcher_round.png',
+  'ic_launcher_foreground.png',
+  'ic_launcher_background.png',
+  'ic_launcher_monochrome.png',
+]
+
+const DEFAULT_ICON = readFileSync(new URL('./default-icon.png', import.meta.url))
+
+/**
+ * Launcher files this generator owns, including the placeholders it replaces.
+ * Only paths that exist are returned, so a missing file is not reported as stale.
+ * @param {string} root
+ * @returns {string[]}
+ */
+export function ownedIconFiles(root) {
+  /** @type {string[]} */
+  const candidates = []
+  for (const [density] of LAUNCHER_DENSITIES) {
+    for (const name of LAUNCHER_PNGS) candidates.push(`${OUT.androidRes}/mipmap-${density}/${name}`)
+  }
+  candidates.push(
+    `${OUT.androidRes}/mipmap-anydpi-v26/ic_launcher.xml`,
+    `${OUT.androidRes}/mipmap-anydpi-v26/ic_launcher_round.xml`,
+    `${OUT.androidRes}/mipmap/ic_launcher.xml`,
+    `${OUT.androidRes}/mipmap/ic_launcher_round.xml`,
+    `${OUT.androidRes}/drawable/ic_launcher_foreground.xml`,
+    `${OUT.androidRes}/values/ic_launcher_background.xml`,
+    PLAY_STORE_ICON,
+    FAVICON,
+    LEGACY_FAVICON,
+  )
+  return candidates.filter((file) => existsSync(path.join(root, file)))
+}
+
+/**
+ * Reads the master icon and the optional Android layers.
+ * A missing icon.png warns and uses the built-in mark, so generation still has a source.
+ * @param {string} root
+ * @returns {{ warnings: string[], outputs: Output[] }}
+ */
+export function launcherOutputs(root) {
+  const warnings = []
+  const iconFile = path.join(root, 'assets', 'icon.png')
+  const icon = existsSync(iconFile) ? readFileSync(iconFile) : null
+  if (!icon) warnings.push('assets/icon.png is missing, so the built-in icon was used.')
+
+  const layer = (/** @type {string} */ name) => {
+    const file = path.join(root, 'assets', 'android', name)
+    return existsSync(file) ? readFileSync(file) : null
+  }
+  const foreground = layer('foreground.png')
+  const background = layer('background.png')
+  const monochrome = layer('monochrome.png')
+  if (Boolean(foreground) !== Boolean(background)) {
+    throw new CliError(
+      foreground ? 'assets/android/background.png is missing.' : 'assets/android/foreground.png is missing.',
+    )
+  }
+  if (monochrome && !foreground) {
+    throw new CliError('assets/android/monochrome.png needs foreground.png and background.png.')
+  }
+
+  const rendered = renderIcons({
+    icon: source(icon ?? DEFAULT_ICON, 'assets/icon.png', 1024),
+    foreground: foreground ? source(foreground, 'assets/android/foreground.png', 432) : null,
+    background: background ? source(background, 'assets/android/background.png', 432) : null,
+    monochrome: monochrome ? source(monochrome, 'assets/android/monochrome.png', 432) : null,
+    ios: [...new Set(IOS_SLOTS.map((slot) => slot.px))],
+    iosOpaque: [1024],
+    launcher: LAUNCHER_DENSITIES.map(([, size]) => size),
+    playStore: 512,
+    favicon: [16, 32, 48],
+    adaptive: ADAPTIVE_DENSITIES.map(([, size]) => size),
+  })
+
+  return { warnings, outputs: iconFiles(rendered) }
+}
+
+/**
+ * @param {Buffer} png
+ * @param {string} where
+ * @param {number} min
+ */
+function source(png, where, min) {
+  return { where, min, png: png.toString('base64') }
+}
+
+/** @param {RenderedIcons} rendered */
+function iconFiles(rendered) {
+  const catalog = `${OUT.iosGenerated}/AppIcon.xcassets`
+  const set = `${catalog}/AppIcon.appiconset`
+  /** @type {Output[]} */
+  const outputs = [
+    { path: `${catalog}/Contents.json`, content: `${xcodeJson({ info: { author: 'xcode', version: 1 } })}\n` },
+    {
+      path: `${set}/Contents.json`,
+      content: `${xcodeJson({
+        images: IOS_SLOTS.map((slot) => ({
+          filename: `icon-${slot.px}.png`,
+          idiom: slot.idiom,
+          scale: slot.scale,
+          size: slot.size,
+        })),
+        info: { author: 'xcode', version: 1 },
+      })}\n`,
+    },
+  ]
+  const written = new Set()
+  for (const slot of IOS_SLOTS) {
+    if (written.has(slot.px)) continue
+    written.add(slot.px)
+    outputs.push({ path: `${set}/icon-${slot.px}.png`, content: Buffer.from(rendered.ios[String(slot.px)], 'base64') })
+  }
+
+  for (const [density, size] of LAUNCHER_DENSITIES) {
+    const png = Buffer.from(rendered.launcher[String(size)], 'base64')
+    outputs.push({ path: `${OUT.androidRes}/mipmap-${density}/ic_launcher.png`, content: png })
+    outputs.push({ path: `${OUT.androidRes}/mipmap-${density}/ic_launcher_round.png`, content: png })
+  }
+  outputs.push({ path: PLAY_STORE_ICON, content: Buffer.from(rendered.playStore, 'base64') })
+  outputs.push({ path: FAVICON, content: Buffer.from(rendered.favicon, 'base64') })
+
+  for (const [density, size] of ADAPTIVE_DENSITIES) {
+    outputs.push({
+      path: `${OUT.androidRes}/mipmap-${density}/ic_launcher_foreground.png`,
+      content: Buffer.from(rendered.foreground[String(size)], 'base64'),
+    })
+    if (rendered.background) {
+      outputs.push({
+        path: `${OUT.androidRes}/mipmap-${density}/ic_launcher_background.png`,
+        content: Buffer.from(rendered.background[String(size)], 'base64'),
+      })
+    }
+    if (rendered.monochrome) {
+      outputs.push({
+        path: `${OUT.androidRes}/mipmap-${density}/ic_launcher_monochrome.png`,
+        content: Buffer.from(rendered.monochrome[String(size)], 'base64'),
+      })
+    }
+  }
+
+  const backgroundRef = rendered.background ? '@mipmap/ic_launcher_background' : '@color/ic_launcher_background'
+  const monoRef = rendered.monochrome ? '@mipmap/ic_launcher_monochrome' : null
+  const xml = adaptiveXml(backgroundRef, monoRef)
+  outputs.push({ path: `${OUT.androidRes}/mipmap-anydpi-v26/ic_launcher.xml`, content: xml })
+  outputs.push({ path: `${OUT.androidRes}/mipmap-anydpi-v26/ic_launcher_round.xml`, content: xml })
+  if (rendered.backgroundColor) {
+    outputs.push({
+      path: `${OUT.androidRes}/values/generated_ic_launcher_background.xml`,
+      content: `<?xml version="1.0" encoding="utf-8"?>
+<!-- GENERATED by geeknative from assets/icon.png. Do not edit: change the asset, then run \`make gen\`. -->
+<resources>
+    <color name="ic_launcher_background">#${rendered.backgroundColor}</color>
+</resources>
+`,
+    })
+  }
+  return outputs
+}
+
+/**
+ * @param {string} background
+ * @param {string | null} monochrome
+ */
+function adaptiveXml(background, monochrome) {
+  const mono = monochrome ? `\n    <monochrome android:drawable="${monochrome}" />` : ''
+  return `<?xml version="1.0" encoding="utf-8"?>
+<!-- GENERATED by geeknative from assets/icon.png. Do not edit: change the asset, then run \`make gen\`. -->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="${background}" />
+    <foreground android:drawable="@mipmap/ic_launcher_foreground" />${mono}
+</adaptive-icon>
+`
+}
+
+/**
+ * @typedef {{
+ *   ios: Record<string, string>,
+ *   launcher: Record<string, string>,
+ *   playStore: string,
+ *   favicon: string,
+ *   foreground: Record<string, string>,
+ *   background: Record<string, string> | null,
+ *   backgroundColor: string | null,
+ *   monochrome: Record<string, string> | null,
+ * }} RenderedIcons
+ */
+
+/** @param {object} request @returns {RenderedIcons} */
+function renderIcons(request) {
+  const script = fileURLToPath(new URL('./render-icons.js', import.meta.url))
+  const result = spawnSync(process.execPath, [script], {
+    input: JSON.stringify(request),
+    maxBuffer: 64 * 1024 * 1024,
+  })
+  if (result.status !== 0) {
+    const message = (result.stderr ?? result.stdout)?.toString().trim() || result.error?.message || 'Could not render icons.'
+    throw new CliError(message.split('\n')[0] ?? message)
+  }
+  return JSON.parse(result.stdout.toString())
 }
