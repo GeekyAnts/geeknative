@@ -30,10 +30,10 @@ test('runtime assets are copied unchanged and named on every platform', () => {
 
   const outputs = generate(dir)
   const copies = [
-    ['apps/ios/App/Generated/Assets/images/empty-state.png', PNG],
+    ['apps/ios/App/Generated/Assets/images-empty-state.png', PNG],
     ['apps/android/app/src/main/assets/generated/images/empty-state.png', PNG],
     ['apps/web/src/generated/assets/images/empty-state.png', PNG],
-    ['apps/ios/App/Generated/Assets/videos/intro.mp4', Buffer.from('video-bytes')],
+    ['apps/ios/App/Generated/Assets/videos-intro.mp4', Buffer.from('video-bytes')],
     ['apps/android/app/src/main/assets/generated/documents/terms.pdf', Buffer.from('%PDF-1.1')],
   ]
   for (const [suffix, bytes] of copies) {
@@ -43,9 +43,9 @@ test('runtime assets are copied unchanged and named on every platform', () => {
   }
   assert.ok(!outputs.some((item) => item.path.endsWith('.gitkeep')))
 
-  assert.match(outputOf(outputs, 'AppAssets.swift'), /static let emptyState = AppAssets\.file\("empty-state\.png"\)/)
-  assert.match(outputOf(outputs, 'AppAssets.swift'), /static let intro = AppAssets\.file\("intro\.mp4"\)/)
-  assert.match(outputOf(outputs, 'AppAssets.swift'), /static let terms = AppAssets\.file\("terms\.pdf"\)/)
+  assert.match(outputOf(outputs, 'AppAssets.swift'), /static let emptyState = AppAssets\.file\("images-empty-state\.png"\)/)
+  assert.match(outputOf(outputs, 'AppAssets.swift'), /static let intro = AppAssets\.file\("videos-intro\.mp4"\)/)
+  assert.match(outputOf(outputs, 'AppAssets.swift'), /static let terms = AppAssets\.file\("documents-terms\.pdf"\)/)
   assert.match(outputOf(outputs, 'AppAssets.kt'), /const val emptyState = "generated\/images\/empty-state\.png"/)
   assert.match(outputOf(outputs, 'assets.ts'), /emptyState: new URL\('\.\/assets\/images\/empty-state\.png', import\.meta\.url\)\.href/)
 })
@@ -57,7 +57,7 @@ test('a removed runtime asset is deleted from the apps', () => {
   rmSync(path.join(dir, 'assets/images/logo.png'))
   const { removed } = gen(dir, { quiet: true })
   for (const suffix of [
-    'apps/ios/App/Generated/Assets/images/logo.png',
+    'apps/ios/App/Generated/Assets/images-logo.png',
     'apps/android/app/src/main/assets/generated/images/logo.png',
     'apps/web/src/generated/assets/images/logo.png',
   ]) {

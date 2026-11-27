@@ -62,7 +62,7 @@ export function runtimeOutputs(assets) {
   const copies = assets.flatMap((asset) => {
     const relative = `${asset.group}/${asset.file}`
     return [
-      { path: `${OUT.iosGenerated}/Assets/${relative}`, content: asset.data },
+      { path: `${OUT.iosGenerated}/Assets/${asset.group}-${asset.file}`, content: asset.data },
       { path: `${OUT.androidRes.replace(/\/res$/, '/assets')}/generated/${relative}`, content: asset.data },
       { path: `${OUT.webGenerated}/assets/${relative}`, content: asset.data },
     ]
@@ -134,13 +134,13 @@ const inGroup = (assets, group) => assets.filter((asset) => asset.group === grou
 function swiftAssets(assets) {
   const groups = /** @type {Group[]} */ (Object.keys(GROUPS)).map((group) => {
     const members = inGroup(assets, group)
-      .map((asset) => `        /// ${SOURCE}/${group}/${asset.file}\n        static let ${asset.name} = AppAssets.file("${asset.file}")`)
+      .map((asset) => `        /// ${SOURCE}/${group}/${asset.file}\n        static let ${asset.name} = AppAssets.file("${asset.group}-${asset.file}")`)
       .join('\n')
     return members ? `    enum ${GROUP_TYPE[group]} {\n${members}\n    }` : `    enum ${GROUP_TYPE[group]} {}`
   })
   const lookup = assets.length
     ? `
-    /// The bundled copy of a file from ${SOURCE}/. Xcode copies resources by file name.
+    /// The bundled copy of a file from ${SOURCE}/. The name includes the folder, because Xcode copies resources by file name.
     static func file(_ name: String) -> URL {
         let base = (name as NSString).deletingPathExtension
         let ext = (name as NSString).pathExtension
