@@ -23,11 +23,11 @@ my-app/
 │   ├── strings/en.json       All user-facing copy (one file per locale)
 │   └── icons.json            Each icon's Lucide name, or an SVG of yours in contracts/icons/
 ├── assets/
-│   ├── icon.png              App icon, 1024×1024 PNG. make gen builds the iOS, Android and web icons
-│   ├── images/               Photos. Referenced as AppAssets.images.*
-│   ├── videos/
-│   ├── documents/            PDFs
-│   └── android/              Optional adaptive icon: foreground.png, background.png, monochrome.png
+│   ├── icon.png              Optional square PNG, 1024 or larger. make gen builds the launcher icons
+│   ├── images/               .png, .jpg, .jpeg, .webp. Flat files only. AppAssets.images.*
+│   ├── videos/               .mp4, .mov. Flat files only
+│   ├── documents/            .pdf. Flat files only
+│   └── android/              Optional. foreground.png and background.png together, 432 or larger. monochrome.png only with that pair
 ├── spec/
 │   ├── features/             One spec per feature: home.md, settings.md
 │   ├── navigation.md         Screens and routes
@@ -48,6 +48,8 @@ my-app/
 ├── .gemini/settings.json     Points Gemini CLI at AGENTS.md
 └── .github/dependabot.yml    Weekly npm and Gradle dependency updates
 ```
+
+Files in `images/`, `videos/` and `documents/` are lowercase words separated by hyphens, such as `logo.png` or `empty-state.png`. `Logo.png` and `empty_state.png` fail. A hyphen becomes the property, so `empty-state.png` is `AppAssets.images.emptyState`. Put files directly in those folders. `assets/fonts` is rejected; fonts stay in `contracts/fonts`. There is no splash file.
 
 ## The apps
 
@@ -86,7 +88,7 @@ apps/web/src/
 
 ## Generated files
 
-`make gen` writes these from `contracts/`. They're committed, so each app builds on its own, but never edited by hand.
+`make gen` writes these from `contracts/` and `assets/`. They're committed, so each app builds on its own, but never edited by hand.
 
 | App | Generated |
 |---|---|
